@@ -27,22 +27,22 @@ Before implementing any changes, analyze the codebase and create a context map.
 ### Files to Modify
 | File | Purpose | Changes Needed |
 |------|---------|----------------|
-| path/to/file | description | what changes |
+| src/main/java/com/example/MyService.java | description | what changes |
 
 ### Dependencies (may need updates)
 | File | Relationship |
 |------|--------------|
-| path/to/dep | imports X from modified file |
+| src/main/java/com/example/MyDao.java | used by modified file |
 
 ### Test Files
 | Test | Coverage |
 |------|----------|
-| path/to/test | tests affected functionality |
+| src/test/java/com/example/MyServiceTest.java | tests affected functionality |
 
 ### Reference Patterns
 | File | Pattern |
 |------|---------|
-| path/to/similar | example to follow |
+| src/main/java/com/example/SimilarService.java | example to follow |
 
 ### Risk Assessment
 - [ ] Breaking changes to public API

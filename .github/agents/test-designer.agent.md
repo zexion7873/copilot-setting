@@ -2,7 +2,7 @@
 description: 'Design comprehensive test cases covering happy path, edge cases, error conditions, boundary values, and integration scenarios.'
 name: Test Designer
 model: Claude Sonnet 4.6
-tools: ['search', 'read/problems']
+tools: ['edit', 'search', 'read/problems']
 ---
 
 # Test Designer — Test Case Specialist

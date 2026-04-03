@@ -34,21 +34,21 @@ Create a detailed plan for this refactoring task.
 ### Affected Files
 | File | Change Type | Dependencies |
 |------|-------------|--------------|
-| path | modify/create/delete | blocks X, blocked by Y |
+| src/main/java/com/example/MyService.java | modify/create/delete | blocks X, blocked by Y |
 
 ### Execution Plan
 
-#### Phase 1: Types and Interfaces
-- [ ] Step 1.1: [action] in `file.ts`
+#### Phase 1: Interfaces and Abstract Classes
+- [ ] Step 1.1: [action] in `MyInterface.java`
 - [ ] Verify: [how to check it worked]
 
 #### Phase 2: Implementation
-- [ ] Step 2.1: [action] in `file.ts`
+- [ ] Step 2.1: [action] in `MyService.java`
 - [ ] Verify: [how to check]
 
 #### Phase 3: Tests
-- [ ] Step 3.1: Update tests in `file.test.ts`
-- [ ] Verify: Run `npm test`
+- [ ] Step 3.1: Update tests in `MyServiceTest.java`
+- [ ] Verify: Run `mvn test`
 
 #### Phase 4: Cleanup
 - [ ] Remove deprecated code

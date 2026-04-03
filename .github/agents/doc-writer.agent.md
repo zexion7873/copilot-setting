@@ -1,8 +1,8 @@
 ---
 description: 'Write technical documents including SDD, architecture docs, Javadoc, API documentation, and migration guides.'
 name: 'Doc Writer'
-model: GPT-4.1
-tools: ['edit', 'search', 'web/fetch']
+model: GPT-5 mini
+tools: ['edit', 'search', 'read/problems', 'web/fetch']
 ---
 
 # Doc Writer — Technical Documentation Specialist

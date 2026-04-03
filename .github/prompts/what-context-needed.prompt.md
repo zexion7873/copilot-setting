@@ -25,13 +25,13 @@ Before answering my question, tell me what files you need to see.
 ## Files I Need
 
 ### Must See (required for accurate answer)
-- `path/to/file.ts` — [why needed]
+- `src/main/java/com/example/MyService.java` — [why needed]
 
 ### Should See (helpful for complete answer)
-- `path/to/file.ts` — [why helpful]
+- `src/main/java/com/example/MyDao.java` — [why helpful]
 
 ### Already Have
-- `path/to/file.ts` — [from earlier in conversation]
+- `pom.xml` — [from earlier in conversation]
 
 ### Uncertainties
 - [What I'm not sure about without seeing the code]

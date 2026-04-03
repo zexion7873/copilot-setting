@@ -70,7 +70,7 @@ NodeImpl( long id)
 
 Apply **Remove Parameter** to improve readability, testability, maintainability, reusability, modularity, cohesion, low coupling, and consistency.
 
-Always return a complete and compilable method (Java 17).
+Always return a complete and compilable method (Java 8).
 
 Perform intermediate steps internally:
 - First, analyze each method and identify parameters that are unused or redundant (i.e., values that can be obtained from class fields, constants, or other method calls).

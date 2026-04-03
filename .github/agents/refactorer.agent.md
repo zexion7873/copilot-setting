@@ -1,7 +1,7 @@
 ---
 description: 'Refactor existing code to improve structure, readability, and maintainability without changing external behavior.'
 name: Refactorer
-model: GPT-5.3-Codex
+model: Claude Sonnet 4.6
 tools: ['edit', 'search', 'read/problems', 'execute/runInTerminal']
 ---
 
