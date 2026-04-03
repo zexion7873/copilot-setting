@@ -27,9 +27,9 @@
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── test-designer        (Claude Sonnet 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   ├── refactorer           (GPT-5.3-Codex)
+│   ├── refactorer           (Claude Sonnet 4.6)
 │   ├── sql-expert           (Claude Sonnet 4.6)
-│   ├── doc-writer           (GPT-4.1)
+│   ├── doc-writer           (GPT-5 mini)
 │   └── security             (Claude Opus 4.6)
 │
 ├── prompts/                               ← 可重複使用的提示模板
@@ -82,7 +82,7 @@
 | `performance-optimization` | 前端、後端、資料庫全方位效能最佳化指南 |
 | `security-and-owasp` | 基於 OWASP Top 10 的安全編碼指南 |
 | `self-explanatory-code-commenting` | 撰寫自解釋程式碼，減少冗餘註解 |
-| `sql-sp-generation` | SQL 語句與預存程序的產生規範 |
+| `sql-sp-generation` | MySQL SQL 語句與預存程序的產生規範 |
 
 ---
 
@@ -97,9 +97,9 @@
 | `@reviewer` | Claude Opus 4.6 | 全面程式碼審查：正確性、安全性、效能、可維護性 |
 | `@test-designer` | Claude Sonnet 4.6 | 設計完整測試案例（正常路徑、邊界、異常） |
 | `@debugger` | Claude Opus 4.6 | 系統化除錯：分析堆疊追蹤、追蹤執行流程 |
-| `@refactorer` | GPT-5.3-Codex | 在不改變行為的前提下改善程式碼結構 |
+| `@refactorer` | Claude Sonnet 4.6 | 在不改變行為的前提下改善程式碼結構 |
 | `@sql-expert` | Claude Sonnet 4.6 | SQL 撰寫、優化、審查與效能分析 |
-| `@doc-writer` | GPT-4.1 | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
+| `@doc-writer` | GPT-5 mini | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
 | `@security` | Claude Opus 4.6 | 基於 OWASP Top 10 的 Java Web 安全審查 |
 
 ---

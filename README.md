@@ -27,9 +27,9 @@ All files sourced from [awesome-copilot](https://github.com/microsoft/awesome-co
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── test-designer        (Claude Sonnet 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   ├── refactorer           (GPT-5.3-Codex)
+│   ├── refactorer           (Claude Sonnet 4.6)
 │   ├── sql-expert           (Claude Sonnet 4.6)
-│   ├── doc-writer           (GPT-4.1)
+│   ├── doc-writer           (GPT-5 mini)
 │   └── security             (Claude Opus 4.6)
 │
 ├── prompts/                               ← Reusable prompt templates
@@ -82,7 +82,7 @@ Automatically applied based on `applyTo` glob patterns (e.g., `**/*.java`, `**/*
 | `performance-optimization` | Comprehensive performance optimization for frontend, backend, and database |
 | `security-and-owasp` | Secure coding based on OWASP Top 10 and industry best practices |
 | `self-explanatory-code-commenting` | Write self-explanatory code with minimal but meaningful comments |
-| `sql-sp-generation` | Guidelines for generating SQL statements and stored procedures |
+| `sql-sp-generation` | Guidelines for generating MySQL SQL statements and stored procedures |
 
 ---
 
@@ -97,9 +97,9 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | `@reviewer` | Claude Opus 4.6 | Thorough code review: correctness, security, performance, maintainability |
 | `@test-designer` | Claude Sonnet 4.6 | Design comprehensive test cases (happy path, edge cases, boundary) |
 | `@debugger` | Claude Opus 4.6 | Systematically debug issues by analyzing stack traces and tracing execution |
-| `@refactorer` | GPT-5.3-Codex | Improve code structure without changing behavior |
+| `@refactorer` | Claude Sonnet 4.6 | Improve code structure without changing behavior |
 | `@sql-expert` | Claude Sonnet 4.6 | SQL writing, optimization, review, and performance analysis |
-| `@doc-writer` | GPT-4.1 | Write SDD, Javadoc, API docs, migration guides |
+| `@doc-writer` | GPT-5 mini | Write SDD, Javadoc, API docs, migration guides |
 | `@security` | Claude Opus 4.6 | Security review based on OWASP Top 10 for Java web applications |
 
 ---
