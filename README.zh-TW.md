@@ -8,8 +8,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-個人全域 Copilot 設定，適用於所有工作區。
-初始架構參考自 [awesome-copilot](https://github.com/microsoft/awesome-copilot)，並依個人需求調整。
+個人 Copilot 設定。除 `copilot-instructions.md` 外，其餘檔案皆參考自 [awesome-copilot](https://github.com/github/awesome-copilot)，並依需求調整。
 
 ## 目錄結構
 
