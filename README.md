@@ -9,7 +9,7 @@
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
 Personal global Copilot settings for all workspaces.
-All files sourced from [awesome-copilot](https://github.com/microsoft/awesome-copilot), except `copilot-instructions.md` which is custom.
+Initial structure inspired by [awesome-copilot](https://github.com/microsoft/awesome-copilot), customized to fit personal needs.
 
 ## Directory Structure
 
