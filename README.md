@@ -68,9 +68,9 @@ Personal Copilot settings. All files except `copilot-instructions.md` are based 
 Global base instructions loaded in every conversation.
 
 - Respond in Traditional Chinese (繁體中文)
-- All code, comments, variable names in English
+- All comments, variable names, and class names in code must be in English
 - Tech stack: Java 8, Maven, no Spring Boot
-- Coding style, error handling, security, performance rules
+- Coding style, error handling, git conventions, logging standards
 
 ---
 
