@@ -1,5 +1,13 @@
 # 全域 GitHub Copilot 設定
 
+[English](README.md) | **繁體中文**
+
+[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/commits)
+[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
+[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
+
 個人全域 Copilot 設定，適用於所有工作區。
 除 `copilot-instructions.md` 為客製外，其餘檔案皆來自 [awesome-copilot](https://github.com/github/awesome-copilot)。
 

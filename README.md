@@ -1,5 +1,13 @@
 # Global GitHub Copilot Configuration
 
+**English** | [繁體中文](README.zh-TW.md)
+
+[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/commits)
+[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
+[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
+
 Personal global Copilot settings for all workspaces.
 All files sourced from [awesome-copilot](https://github.com/microsoft/awesome-copilot), except `copilot-instructions.md` which is custom.
 
