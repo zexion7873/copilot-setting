@@ -42,6 +42,25 @@ applyTo: '**'
 - Prefer specific exception types — avoid catching `Exception` or `Throwable`
 - Handle exceptions at the appropriate level — do not swallow errors in low-level code
 
+## Git & Commit
+
+- Follow [Conventional Commits](https://www.conventionalcommits.org/) format (e.g., `feat:`, `fix:`, `refactor:`, `docs:`)
+- Commit messages must be in **English**
+- Keep commits small and focused — one logical change per commit
+- Write clear, descriptive commit messages that explain **why**, not just **what**
+
+## Logging
+
+- Use **SLF4J** as the logging facade with **Logback** as the implementation
+- Use appropriate log levels:
+  - `ERROR` — unexpected failures that require immediate attention
+  - `WARN` — recoverable issues or degraded functionality
+  - `INFO` — key business events and application lifecycle (startup, shutdown)
+  - `DEBUG` — detailed diagnostic information for development and troubleshooting
+- Include sufficient context in log messages (e.g., user ID, request ID, relevant parameters)
+- Never log sensitive data (passwords, tokens, PII)
+- Use parameterized logging — `log.info("User {} logged in", userId)` instead of string concatenation
+
 ## Security Basics
 
 - Never hardcode passwords, API keys, or secrets in source code

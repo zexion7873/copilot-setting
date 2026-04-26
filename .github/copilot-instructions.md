@@ -22,6 +22,13 @@
 - Avoid nesting beyond 3 levels of if/for blocks
 - Use meaningful variable names — no single-letter names except loop indices (`i`, `j`, `k`)
 
+## Comments
+
+- Use Javadoc format for public APIs
+- Comments should explain **why**, not **what**
+- Avoid redundant comments (e.g., `// get user` above `getUser()`)
+- Complex business logic must have explanatory comments
+
 ## Error Handling
 
 - Empty catch blocks are not allowed
@@ -47,3 +54,17 @@
 - Include sufficient context in log messages (e.g., user ID, request ID, relevant parameters)
 - Never log sensitive data (passwords, tokens, PII)
 - Use parameterized logging — `log.info("User {} logged in", userId)` instead of string concatenation
+
+## Security Basics
+
+- Never hardcode passwords, API keys, or secrets in source code
+- All user inputs must be validated and sanitized
+- SQL queries must use parameterized queries (PreparedStatement) — no string concatenation
+- Sensitive data must not appear in log output
+
+## Performance Awareness
+
+- Watch for database queries inside loops (N+1 problem)
+- SELECT only the columns you need — avoid SELECT *
+- Use caching where appropriate to reduce redundant computation or queries
+- Process large datasets with pagination or streaming

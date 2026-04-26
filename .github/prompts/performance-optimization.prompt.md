@@ -1,15 +1,9 @@
 ---
-applyTo: '**'
-description: 'The most comprehensive, practical, and engineer-authored performance optimization instructions for all languages, frameworks, and stacks. Covers frontend, backend, and database best practices with actionable guidance, scenario-based checklists, troubleshooting, and pro tips.'
+agent: 'agent'
+description: 'Comprehensive performance optimization reference covering frontend, backend, and database best practices. Use when reviewing or improving performance, or when writing performance-critical code.'
 ---
 
 # Performance Optimization Best Practices
-
-## Introduction
-
-Performance isn't just a buzzword—it's the difference between a product people love and one they abandon. I've seen firsthand how a slow app can frustrate users, rack up cloud bills, and even lose customers. This guide is a living collection of the most effective, real-world performance practices I've used and reviewed, covering frontend, backend, and database layers, as well as advanced topics. Use it as a reference, a checklist, and a source of inspiration for building fast, efficient, and scalable software.
-
----
 
 ## General Principles
 
@@ -62,43 +56,23 @@ Performance isn't just a buzzword—it's the difference between a product people
 - **Avoid Global Variables:** Globals can cause memory leaks and unpredictable performance.
 - **Avoid Deep Object Cloning:** Use shallow copies or libraries like lodash's `cloneDeep` only when necessary.
 
-### Accessibility and Performance
-- **Accessible Components:** Ensure ARIA updates are not excessive. Use semantic HTML for both accessibility and performance.
-- **Screen Reader Performance:** Avoid rapid DOM updates that can overwhelm assistive tech.
-
 ### Framework-Specific Tips
 #### React
 - Use `React.memo`, `useMemo`, and `useCallback` to avoid unnecessary renders.
 - Split large components and use code-splitting (`React.lazy`, `Suspense`).
 - Avoid anonymous functions in render; they create new references on every render.
 - Use `ErrorBoundary` to catch and handle errors gracefully.
-- Profile with React DevTools Profiler.
 
 #### Angular
 - Use OnPush change detection for components that don't need frequent updates.
 - Avoid complex expressions in templates; move logic to the component class.
 - Use `trackBy` in `ngFor` for efficient list rendering.
 - Lazy load modules and components with the Angular Router.
-- Profile with Angular DevTools.
 
 #### Vue
 - Use computed properties over methods in templates for caching.
 - Use `v-show` vs `v-if` appropriately (`v-show` is better for toggling visibility frequently).
 - Lazy load components and routes with Vue Router.
-- Profile with Vue Devtools.
-
-### Common Frontend Pitfalls
-- Loading large JS bundles on initial page load.
-- Not compressing images or using outdated formats.
-- Failing to clean up event listeners, causing memory leaks.
-- Overusing third-party libraries for simple tasks.
-- Ignoring mobile performance (test on real devices!).
-
-### Frontend Troubleshooting
-- Use Chrome DevTools' Performance tab to record and analyze slow frames.
-- Use Lighthouse to audit performance and get actionable suggestions.
-- Use WebPageTest for real-world load testing.
-- Monitor Core Web Vitals (LCP, FID, CLS) for user-centric metrics.
 
 ---
 
@@ -139,20 +113,6 @@ Performance isn't just a buzzword—it's the difference between a product people
 - **Alerting:** Set up alerts for performance regressions and resource exhaustion.
 
 ### Language/Framework-Specific Tips
-#### Node.js
-- Use asynchronous APIs; avoid blocking the event loop (e.g., never use `fs.readFileSync` in production).
-- Use clustering or worker threads for CPU-bound tasks.
-- Limit concurrent open connections to avoid resource exhaustion.
-- Use streams for large file or network data processing.
-- Profile with `clinic.js`, `node --inspect`, or Chrome DevTools.
-
-#### Python
-- Use built-in data structures (`dict`, `set`, `deque`) for speed.
-- Profile with `cProfile`, `line_profiler`, or `Py-Spy`.
-- Use `multiprocessing` or `asyncio` for parallelism.
-- Avoid GIL bottlenecks in CPU-bound code; use C extensions or subprocesses.
-- Use `lru_cache` for memoization.
-
 #### Java
 - Use efficient collections (`ArrayList`, `HashMap`, etc.).
 - Profile with VisualVM, JProfiler, or YourKit.
@@ -160,25 +120,18 @@ Performance isn't just a buzzword—it's the difference between a product people
 - Tune JVM options for heap and garbage collection (`-Xmx`, `-Xms`, `-XX:+UseG1GC`).
 - Use `CompletableFuture` for async programming.
 
-#### .NET
-- Use `async/await` for I/O-bound operations.
-- Use `Span<T>` and `Memory<T>` for efficient memory access.
-- Profile with dotTrace, Visual Studio Profiler, or PerfView.
-- Pool objects and connections where appropriate.
-- Use `IAsyncEnumerable<T>` for streaming data.
+#### Node.js
+- Use asynchronous APIs; avoid blocking the event loop (e.g., never use `fs.readFileSync` in production).
+- Use clustering or worker threads for CPU-bound tasks.
+- Limit concurrent open connections to avoid resource exhaustion.
+- Use streams for large file or network data processing.
 
-### Common Backend Pitfalls
-- Synchronous/blocking I/O in web servers.
-- Not using connection pooling for databases.
-- Over-caching or caching sensitive/volatile data.
-- Ignoring error handling in async code.
-- Not monitoring or alerting on performance regressions.
-
-### Backend Troubleshooting
-- Use flame graphs to visualize CPU usage.
-- Use distributed tracing (OpenTelemetry, Jaeger, Zipkin) to track request latency across services.
-- Use heap dumps and memory profilers to find leaks.
-- Log slow queries and API calls for analysis.
+#### Python
+- Use built-in data structures (`dict`, `set`, `deque`) for speed.
+- Profile with `cProfile`, `line_profiler`, or `Py-Spy`.
+- Use `multiprocessing` or `asyncio` for parallelism.
+- Avoid GIL bottlenecks in CPU-bound code; use C extensions or subprocesses.
+- Use `lru_cache` for memoization.
 
 ---
 
@@ -210,26 +163,6 @@ Performance isn't just a buzzword—it's the difference between a product people
 - **Write-Through/Write-Behind:** Choose the right strategy for your consistency needs.
 - **Sharding:** Distribute data across multiple servers for scalability.
 
-### NoSQL Databases
-- **Design for Access Patterns:** Model your data for the queries you need.
-- **Avoid Hot Partitions:** Distribute writes/reads evenly.
-- **Unbounded Growth:** Watch for unbounded arrays or documents.
-- **Sharding and Replication:** Use for scalability and availability.
-- **Consistency Models:** Understand eventual vs strong consistency and choose appropriately.
-
-### Common Database Pitfalls
-- Missing or unused indexes.
-- SELECT * in production queries.
-- Not monitoring slow queries.
-- Ignoring replication lag.
-- Not archiving old data.
-
-### Database Troubleshooting
-- Use slow query logs to identify bottlenecks.
-- Use `EXPLAIN` to analyze query plans.
-- Monitor cache hit/miss ratios.
-- Use database-specific monitoring tools (pg_stat_statements, MySQL Performance Schema).
-
 ---
 
 ## Code Review Checklist for Performance
@@ -242,13 +175,9 @@ Performance isn't just a buzzword—it's the difference between a product people
 - [ ] Are large payloads paginated, streamed, or chunked?
 - [ ] Are there any memory leaks or unbounded resource usage?
 - [ ] Are network requests minimized, batched, and retried on failure?
-- [ ] Are assets optimized, compressed, and served efficiently?
 - [ ] Are there any blocking operations in hot paths?
 - [ ] Is logging in hot paths minimized and structured?
 - [ ] Are performance-critical code paths documented and tested?
-- [ ] Are there automated tests or benchmarks for performance-sensitive code?
-- [ ] Are there alerts for performance regressions?
-- [ ] Are there any anti-patterns (e.g., SELECT *, blocking I/O, global variables)?
 
 ---
 
@@ -271,150 +200,3 @@ Performance isn't just a buzzword—it's the difference between a product people
 - **Auto-Scaling:** Use cloud auto-scaling groups and set sensible thresholds.
 - **Bottleneck Analysis:** Identify and address single points of failure.
 - **Distributed Systems:** Use idempotent operations, retries, and circuit breakers.
-
-### Security and Performance
-- **Efficient Crypto:** Use hardware-accelerated and well-maintained cryptographic libraries.
-- **Validation:** Validate inputs efficiently; avoid regexes in hot paths.
-- **Rate Limiting:** Protect against DoS without harming legitimate users.
-
-### Mobile Performance
-- **Startup Time:** Lazy load features, defer heavy work, and minimize initial bundle size.
-- **Image/Asset Optimization:** Use responsive images and compress assets for mobile bandwidth.
-- **Efficient Storage:** Use SQLite, Realm, or platform-optimized storage.
-- **Profiling:** Use Android Profiler, Instruments (iOS), or Firebase Performance Monitoring.
-
-### Cloud and Serverless
-- **Cold Starts:** Minimize dependencies and keep functions warm.
-- **Resource Allocation:** Tune memory/CPU for serverless functions.
-- **Managed Services:** Use managed caching, queues, and DBs for scalability.
-- **Cost Optimization:** Monitor and optimize for cloud cost as a performance metric.
-
----
-
-## Practical Examples
-
-### Example 1: Debouncing User Input in JavaScript
-```javascript
-// BAD: Triggers API call on every keystroke
-input.addEventListener('input', (e) => {
-  fetch(`/search?q=${e.target.value}`);
-});
-
-// GOOD: Debounce API calls
-let timeout;
-input.addEventListener('input', (e) => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    fetch(`/search?q=${e.target.value}`);
-  }, 300);
-});
-```
-
-### Example 2: Efficient SQL Query
-```sql
--- BAD: Selects all columns and does not use an index
-SELECT * FROM users WHERE email = 'user@example.com';
-
--- GOOD: Selects only needed columns and uses an index
-SELECT id, name FROM users WHERE email = 'user@example.com';
-```
-
-### Example 3: Caching Expensive Computation in Python
-```python
-# BAD: Recomputes result every time
-result = expensive_function(x)
-
-# GOOD: Cache result
-from functools import lru_cache
-
-@lru_cache(maxsize=128)
-def expensive_function(x):
-    ...
-result = expensive_function(x)
-```
-
-### Example 4: Lazy Loading Images in HTML
-```html
-<!-- BAD: Loads all images immediately -->
-<img src="large-image.jpg" />
-
-<!-- GOOD: Lazy loads images -->
-<img src="large-image.jpg" loading="lazy" />
-```
-
-### Example 5: Asynchronous I/O in Node.js
-```javascript
-// BAD: Blocking file read
-const data = fs.readFileSync('file.txt');
-
-// GOOD: Non-blocking file read
-fs.readFile('file.txt', (err, data) => {
-  if (err) throw err;
-  // process data
-});
-```
-
-### Example 6: Profiling a Python Function
-```python
-import cProfile
-import pstats
-
-def slow_function():
-    ...
-
-cProfile.run('slow_function()', 'profile.stats')
-p = pstats.Stats('profile.stats')
-p.sort_stats('cumulative').print_stats(10)
-```
-
-### Example 7: Using Redis for Caching in Node.js
-```javascript
-const redis = require('redis');
-const client = redis.createClient();
-
-function getCachedData(key, fetchFunction) {
-  return new Promise((resolve, reject) => {
-    client.get(key, (err, data) => {
-      if (data) return resolve(JSON.parse(data));
-      fetchFunction().then(result => {
-        client.setex(key, 3600, JSON.stringify(result));
-        resolve(result);
-      });
-    });
-  });
-}
-```
-
----
-
-## References and Further Reading
-- [Google Web Fundamentals: Performance](https://web.dev/performance/)
-- [MDN Web Docs: Performance](https://developer.mozilla.org/en-US/docs/Web/Performance)
-- [OWASP: Performance Testing](https://owasp.org/www-project-performance-testing/)
-- [Microsoft Performance Best Practices](https://learn.microsoft.com/en-us/azure/architecture/best-practices/performance)
-- [PostgreSQL Performance Optimization](https://wiki.postgresql.org/wiki/Performance_Optimization)
-- [MySQL Performance Tuning](https://dev.mysql.com/doc/refman/8.0/en/optimization.html)
-- [Node.js Performance Best Practices](https://nodejs.org/en/docs/guides/simple-profiling/)
-- [Python Performance Tips](https://docs.python.org/3/library/profile.html)
-- [Java Performance Tuning](https://www.oracle.com/java/technologies/javase/performance.html)
-- [.NET Performance Guide](https://learn.microsoft.com/en-us/dotnet/standard/performance/)
-- [WebPageTest](https://www.webpagetest.org/)
-- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
-- [Prometheus](https://prometheus.io/)
-- [Grafana](https://grafana.com/)
-- [k6 Load Testing](https://k6.io/)
-- [Gatling](https://gatling.io/)
-- [Locust](https://locust.io/)
-- [OpenTelemetry](https://opentelemetry.io/)
-- [Jaeger](https://www.jaegertracing.io/)
-- [Zipkin](https://zipkin.io/)
-
----
-
-## Conclusion
-
-Performance optimization is an ongoing process. Always measure, profile, and iterate. Use these best practices, checklists, and troubleshooting tips to guide your development and code reviews for high-performance, scalable, and efficient software. If you have new tips or lessons learned, add them here—let's keep this guide growing!
-
----
-
-<!-- End of Performance Optimization Instructions --> 

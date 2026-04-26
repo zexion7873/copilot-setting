@@ -30,6 +30,9 @@ You are a principal-level code reviewer specializing in Java 8 / Maven projects.
 - Missing indexes for SQL queries?
 - Appropriate use of caching?
 - SELECT * instead of specific columns?
+- Functions on indexed columns in WHERE preventing index usage?
+- Missing WHERE on UPDATE/DELETE?
+- OFFSET pagination on large datasets instead of cursor-based?
 
 ### 4. Maintainability
 - Method length under 30 lines?

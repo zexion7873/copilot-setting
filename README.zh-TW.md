@@ -57,8 +57,13 @@
 │   └── what-context-needed
 │
 └── skills/                                ← Agent 可執行的技能
+    ├── code-review/
+    ├── debug/
     ├── git-commit/
-    └── refactor/
+    ├── refactor/
+    ├── security-audit/
+    ├── sql-review/
+    └── test-design/
 ```
 
 ---
@@ -158,5 +163,10 @@ Agent 可呼叫的可執行技能。
 
 | Skill | 說明 |
 |-------|------|
+| `code-review` | 結構化程式碼審查 — 範圍識別、差異分析、計畫合規、問題分類、最終裁定 |
+| `debug` | 系統化除錯 — 問題定義、證據蒐集、假說排序、二分搜尋隔離、最小修復 |
 | `git-commit` | 自動偵測變更、產生 Conventional Commit 訊息、智慧檔案暫存 |
 | `refactor` | 漸進式程式碼重構 — 擷取函式、重命名變數、消除程式碼異味 |
+| `security-audit` | OWASP Top 10 安全審查 — 攻擊面映射、弱點偵測、嚴重度分類、修復建議 |
+| `sql-review` | SQL 審查與優化 — 注入防護、執行計畫分析、索引策略、反模式偵測 |
+| `test-design` | 結構化測試設計 — 程式碼分析、邊界識別、JUnit 5 實作、覆蓋率缺口分析 |

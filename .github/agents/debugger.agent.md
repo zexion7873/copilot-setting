@@ -60,3 +60,11 @@ You are an expert debugger specializing in Java 8 / Maven projects.
 - `Connection pool exhaustion` — Unclosed connections in error paths
 - `Deadlocks` — Inconsistent lock ordering
 - `Character encoding` — UTF-8 vs system default
+
+## SQL-Related Debugging
+
+- **Slow query** — Check execution plan (`EXPLAIN`), look for missing indexes or functions on indexed columns in WHERE
+- **N+1 queries** — Look for SQL execution inside `for` / `while` loops
+- **Connection leak** — Verify connections are closed in `finally` or try-with-resources, especially on error paths
+- **Wrong results** — Check implicit type conversion in WHERE/JOIN (`WHERE varchar_col = 123`)
+- **Full table scan** — Look for `SELECT *`, missing WHERE, or `LIKE '%prefix'` patterns

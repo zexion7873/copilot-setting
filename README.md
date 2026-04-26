@@ -57,8 +57,13 @@ Personal Copilot settings. All files except `copilot-instructions.md` are based 
 │   └── what-context-needed
 │
 └── skills/                                ← Executable skills for agents
+    ├── code-review/
+    ├── debug/
     ├── git-commit/
-    └── refactor/
+    ├── refactor/
+    ├── security-audit/
+    ├── sql-review/
+    └── test-design/
 ```
 
 ---
@@ -158,5 +163,10 @@ Executable capabilities that agents can invoke.
 
 | Skill | Description |
 |-------|-------------|
+| `code-review` | Structured code review workflow — scope identification, diff analysis, plan compliance, issue classification, verdict |
+| `debug` | Systematic debugging — problem definition, evidence gathering, hypothesis ranking, binary search isolation, minimal fix |
 | `git-commit` | Auto-detect changes, generate conventional commit messages, intelligent staging |
 | `refactor` | Surgical code refactoring — extract functions, rename variables, eliminate code smells |
+| `security-audit` | OWASP Top 10 security audit — attack surface mapping, vulnerability detection, severity classification, remediation |
+| `sql-review` | SQL review and optimization — injection prevention, execution plan analysis, index strategy, anti-pattern detection |
+| `test-design` | Structured test case design — code analysis, boundary identification, JUnit 5 implementation, coverage gap analysis |
