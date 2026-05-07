@@ -2,7 +2,16 @@
 description: 'Perform thorough code reviews focusing on correctness, security, performance, maintainability, and adherence to coding standards.'
 model: Claude Opus 4.6
 name: Reviewer
-tools: ['search', 'read/problems']
+tools: ['search', 'read', 'context7/*']
+handoffs:
+  - label: 修復問題
+    agent: Implementer
+    prompt: 請根據上面的 Code Review 回饋修復問題。
+    send: false
+  - label: 重構程式碼
+    agent: Refactorer
+    prompt: 請根據上面的 Code Review 建議進行重構。
+    send: false
 ---
 
 # Reviewer — Code Review Specialist

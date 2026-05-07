@@ -2,7 +2,20 @@
 description: 'Write production-ready Java code following established patterns, conventions, and best practices. Implements features based on plans or requirements.'
 name: Implementer
 model: GPT-5.3-Codex
-tools: ['edit', 'search', 'read/problems', 'read/terminalLastCommand', 'execute/runInTerminal']
+tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'todo']
+handoffs:
+  - label: Code Review
+    agent: Reviewer
+    prompt: 請審查上面實作的程式碼變更。
+    send: false
+  - label: 寫測試
+    agent: Test Designer
+    prompt: 請為上面實作的程式碼設計測試案例。
+    send: false
+  - label: 安全性審查
+    agent: Security
+    prompt: 請對上面實作的程式碼進行安全性審查。
+    send: false
 ---
 
 # Implementer — Code Implementation Specialist

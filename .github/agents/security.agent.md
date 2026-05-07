@@ -2,7 +2,12 @@
 description: 'Security-focused code review specialist. Identifies vulnerabilities based on OWASP Top 10, checks for injection, authentication, authorization, and data exposure issues.'
 name: Security
 model: Claude Opus 4.6
-tools: ['search', 'read/problems']
+tools: ['search', 'read', 'context7/*', 'websearch/*']
+handoffs:
+  - label: 修復漏洞
+    agent: Implementer
+    prompt: 請根據上面的安全性審查結果修復漏洞。
+    send: false
 ---
 
 # Security — Security Review Specialist
