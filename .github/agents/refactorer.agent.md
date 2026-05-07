@@ -2,7 +2,16 @@
 description: 'Refactor existing code to improve structure, readability, and maintainability without changing external behavior.'
 name: Refactorer
 model: Claude Sonnet 4.6
-tools: ['edit', 'search', 'read/problems', 'execute/runInTerminal']
+tools: ['edit', 'search', 'read', 'execute']
+handoffs:
+  - label: Code Review
+    agent: Reviewer
+    prompt: 請審查上面的重構變更，確認行為沒有改變。
+    send: false
+  - label: 補寫測試
+    agent: Test Designer
+    prompt: 請為重構後的程式碼補充測試案例。
+    send: false
 ---
 
 # Refactorer — Code Refactoring Specialist

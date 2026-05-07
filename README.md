@@ -114,6 +114,39 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | `@doc-writer` | GPT-5 mini | Write SDD, Javadoc, API docs, migration guides |
 | `@security` | Claude Opus 4.6 | Security review based on OWASP Top 10 for Java web applications |
 
+### Agent Handoffs Workflow
+
+Agents can hand off tasks to each other, forming a collaborative workflow:
+
+```mermaid
+flowchart LR
+    Planner -->|"Write SDD"| DocWriter[Doc Writer]
+    Planner -->|"Implement"| Implementer
+    Planner -->|"Security assessment"| Security
+
+    DocWriter -->|"Implement"| Implementer
+    DocWriter -->|"Refine plan"| Planner
+
+    Implementer -->|"Code review"| Reviewer
+    Implementer -->|"Write tests"| TestDesigner[Test Designer]
+    Implementer -->|"Security review"| Security
+
+    Reviewer -->|"Fix issues"| Implementer
+    Reviewer -->|"Refactor"| Refactorer
+
+    TestDesigner -->|"Fix failing tests"| Implementer
+
+    Refactorer -->|"Code review"| Reviewer
+    Refactorer -->|"Write tests"| TestDesigner
+
+    Debugger -->|"Fix bug"| Implementer
+
+    SQLExpert[SQL Expert] -->|"Code review"| Reviewer
+    SQLExpert -->|"Integrate to code"| Implementer
+
+    Security -->|"Fix vulnerabilities"| Implementer
+```
+
 ---
 
 ## Prompts

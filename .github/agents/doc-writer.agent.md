@@ -2,7 +2,16 @@
 description: 'Write technical documents including SDD, architecture docs, Javadoc, API documentation, and migration guides.'
 name: 'Doc Writer'
 model: GPT-5 mini
-tools: ['edit', 'search', 'read/problems', 'web/fetch']
+tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-chat-features/renderMermaidDiagram']
+handoffs:
+  - label: 開始實作
+    agent: Implementer
+    prompt: 請根據上面的 SDD 文件開始實作。
+    send: false
+  - label: 回到規劃
+    agent: Planner
+    prompt: 請根據上面的文件繼續細化實作計劃。
+    send: false
 ---
 
 # Doc Writer — Technical Documentation Specialist

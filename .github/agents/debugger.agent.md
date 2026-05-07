@@ -2,7 +2,12 @@
 description: 'Systematically debug issues by analyzing stack traces, reproducing problems, tracing execution flow, and identifying root causes.'
 name: 'Debugger'
 model: Claude Opus 4.6
-tools: ['search', 'read/problems', 'read/terminalLastCommand', 'execute/runInTerminal']
+tools: ['search', 'read', 'execute', 'context7/*']
+handoffs:
+  - label: 修復 Bug
+    agent: Implementer
+    prompt: 請根據上面的除錯分析結果修復這個 Bug。
+    send: false
 ---
 
 # Debugger — Debug & Troubleshooting Specialist

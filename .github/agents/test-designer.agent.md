@@ -2,7 +2,12 @@
 description: 'Design comprehensive test cases covering happy path, edge cases, error conditions, boundary values, and integration scenarios.'
 name: Test Designer
 model: Claude Sonnet 4.6
-tools: ['edit', 'search', 'read/problems']
+tools: ['edit', 'search', 'read', 'execute', 'context7/*']
+handoffs:
+  - label: 修復失敗測試
+    agent: Implementer
+    prompt: 請修復上面設計的測試案例中失敗的項目。
+    send: false
 ---
 
 # Test Designer — Test Case Specialist

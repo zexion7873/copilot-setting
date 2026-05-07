@@ -114,6 +114,39 @@
 | `@doc-writer` | GPT-5 mini | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
 | `@security` | Claude Opus 4.6 | 基於 OWASP Top 10 的 Java Web 安全審查 |
 
+### Agent Handoffs 工作流程
+
+Agent 間可互相交接任務，形成協作工作流：
+
+```mermaid
+flowchart LR
+    Planner -->|"寫成 SDD"| DocWriter[Doc Writer]
+    Planner -->|"開始實作"| Implementer
+    Planner -->|"安全性評估"| Security
+
+    DocWriter -->|"開始實作"| Implementer
+    DocWriter -->|"回到規劃"| Planner
+
+    Implementer -->|"Code Review"| Reviewer
+    Implementer -->|"寫測試"| TestDesigner[Test Designer]
+    Implementer -->|"安全性審查"| Security
+
+    Reviewer -->|"修復問題"| Implementer
+    Reviewer -->|"重構程式碼"| Refactorer
+
+    TestDesigner -->|"修復失敗測試"| Implementer
+
+    Refactorer -->|"Code Review"| Reviewer
+    Refactorer -->|"補寫測試"| TestDesigner
+
+    Debugger -->|"修復 Bug"| Implementer
+
+    SQLExpert[SQL Expert] -->|"Code Review"| Reviewer
+    SQLExpert -->|"整合到程式碼"| Implementer
+
+    Security -->|"修復漏洞"| Implementer
+```
+
 ---
 
 ## Prompts（提示模板）

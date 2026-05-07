@@ -2,7 +2,20 @@
 description: 'Analyze requirements, break down tasks, estimate impact scope, and create structured implementation plans for features, refactoring, or upgrades.'
 name: Planner
 model: Claude Opus 4.6
-tools: ['search', 'read/problems', 'web/fetch']
+tools: ['search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
+handoffs:
+  - label: 寫成 SDD 文件
+    agent: Doc Writer
+    prompt: 請將上面的規劃整理成 SDD（System Design Document）文件。
+    send: false
+  - label: 開始實作
+    agent: Implementer
+    prompt: 請根據上面的規劃開始實作。
+    send: false
+  - label: 安全性評估
+    agent: Security
+    prompt: 請針對上面的設計規劃進行安全性評估。
+    send: false
 ---
 
 # Planner — Technical Planning Specialist

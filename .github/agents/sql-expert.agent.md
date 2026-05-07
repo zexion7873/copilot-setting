@@ -2,7 +2,16 @@
 description: 'Expert in SQL writing, optimization, code review, and database performance analysis across MySQL, PostgreSQL, SQL Server, and Oracle.'
 name: Sql Expert
 model: Claude Sonnet 4.6
-tools: ['search', 'read/problems', 'execute/runInTerminal']
+tools: ['edit', 'search', 'read', 'execute', 'context7/*']
+handoffs:
+  - label: Code Review
+    agent: Reviewer
+    prompt: 請審查上面的 SQL 和相關 Java 程式碼變更。
+    send: false
+  - label: 整合到程式碼
+    agent: Implementer
+    prompt: 請將上面的 SQL 整合到 Java 程式碼中。
+    send: false
 ---
 
 # SQL Expert — Database & SQL Specialist
