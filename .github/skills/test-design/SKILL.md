@@ -1,8 +1,7 @@
 ---
 name: test-design
 description: 'Structured test case design workflow for systematic test coverage. Use when user asks to design tests, create test cases, plan test coverage, or mentions "/test-design". Walks through: code analysis, test boundary identification, case design by category (happy path, edge, error, boundary, integration, security), JUnit 5 implementation with data-driven patterns, and coverage gap analysis. Designed for @test-designer agent but usable by any agent writing tests.'
-license: MIT
-allowed-tools: ['search', 'edit', 'read/problems']
+context: fork
 ---
 
 # Test Design — Executable Workflow

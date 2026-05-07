@@ -1,8 +1,7 @@
 ---
 name: security-audit
 description: 'Systematic security audit workflow based on OWASP Top 10 for Java web applications. Use when user asks for a security review, vulnerability assessment, or mentions "/security-audit". Walks through: attack surface mapping, OWASP category-by-category analysis, Java 8 specific vulnerability checks, severity classification, remediation planning, and verification. Designed for @security agent but usable by any agent performing security review.'
-license: MIT
-allowed-tools: ['search', 'read/problems']
+context: fork
 ---
 
 # Security Audit — Executable Workflow

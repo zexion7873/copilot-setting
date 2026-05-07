@@ -1,8 +1,6 @@
 ---
 name: debug
 description: 'Systematic debugging workflow for reproducing, isolating, and fixing bugs. Use when user reports a bug, error, exception, or unexpected behavior. Walks through: problem definition, evidence gathering, hypothesis ranking, binary search isolation, root cause identification, minimal fix, and regression prevention. Designed for @debugger agent but usable by any agent troubleshooting issues.'
-license: MIT
-allowed-tools: ['search', 'read/problems', 'read/terminalLastCommand', 'execute/runInTerminal']
 ---
 
 # Debug — Executable Workflow

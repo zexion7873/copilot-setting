@@ -1,8 +1,7 @@
 ---
 name: code-review
 description: 'Structured code review workflow for systematic, reproducible reviews. Use when reviewing a PR, a set of changes, or code against a plan. Walks through: scope identification, diff analysis, plan compliance check, issue classification, and final verdict. Designed for @reviewer agent but usable by any agent performing review.'
-license: MIT
-allowed-tools: ['search', 'read/problems']
+context: fork
 ---
 
 # Code Review — Executable Workflow

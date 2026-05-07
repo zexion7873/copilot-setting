@@ -1,8 +1,7 @@
 ---
 name: sql-review
 description: 'Structured SQL review and optimization workflow for database code quality and performance. Use when user asks to review SQL, optimize queries, analyze execution plans, or mentions "/sql-review". Walks through: query inventory, security audit (injection prevention), performance analysis (execution plans, index strategy), code quality review, anti-pattern detection, and optimization recommendations. Designed for @sql-expert agent but usable by any agent reviewing SQL.'
-license: MIT
-allowed-tools: ['search', 'read/problems', 'execute/runInTerminal']
+context: fork
 ---
 
 # SQL Review — Executable Workflow
