@@ -1,7 +1,7 @@
 ---
 description: 'Perform thorough code reviews focusing on correctness, security, performance, maintainability, and adherence to coding standards.'
-model: Claude Opus 4.6
 name: Reviewer
+model: Claude Opus 4.6
 tools: ['search', 'read', 'context7/*']
 handoffs:
   - label: 修復問題

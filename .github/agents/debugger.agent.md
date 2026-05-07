@@ -2,7 +2,7 @@
 description: 'Systematically debug issues by analyzing stack traces, reproducing problems, tracing execution flow, and identifying root causes.'
 name: 'Debugger'
 model: Claude Opus 4.6
-tools: ['search', 'read', 'execute', 'context7/*', 'Debugger for Java/*']
+tools: ['search', 'read', 'execute', 'context7/*']
 handoffs:
   - label: 修復 Bug
     agent: Implementer
