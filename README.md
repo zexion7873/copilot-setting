@@ -8,7 +8,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-Personal Copilot settings. All files except `copilot-instructions.md` are based on [awesome-copilot](https://github.com/github/awesome-copilot), customized as needed.
+Personal Copilot settings. Some files are based on [awesome-copilot](https://github.com/github/awesome-copilot), customized as needed.
 
 ## Directory Structure
 
