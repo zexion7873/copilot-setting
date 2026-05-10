@@ -93,7 +93,7 @@
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
 | `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP 設計模式（GoF + SOLID） |
-| `security-and-owasp` | `**/*.java` | 基於 OWASP Top 10 的安全編碼 |
+| `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
 | `sql-sp-generation` | `**/*.sql` | MySQL SQL 語句與預存程序的產生規範 |
 
