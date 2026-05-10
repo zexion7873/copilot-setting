@@ -1,6 +1,6 @@
 ---
 name: test-design
-description: 'Structured test case design workflow for systematic test coverage. Use when user asks to design tests, create test cases, plan test coverage, or mentions "/test-design". Walks through: code analysis, test boundary identification, case design by category (happy path, edge, error, boundary, integration, security), JUnit 5 implementation with data-driven patterns, and coverage gap analysis. Designed for @test-designer agent but usable by any agent writing tests.'
+description: 'Use when user asks to design tests, write test cases, plan test coverage, or identify what to test. Also triggers on: 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率. Produces JUnit 5 tests covering happy path, edge cases, error handling, and boundary conditions. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
 context: fork
 ---
 

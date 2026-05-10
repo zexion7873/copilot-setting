@@ -1,6 +1,6 @@
 ---
 name: debug
-description: 'Systematic debugging workflow for reproducing, isolating, and fixing bugs. Use when user reports a bug, error, exception, or unexpected behavior. Walks through: problem definition, evidence gathering, hypothesis ranking, binary search isolation, root cause identification, minimal fix, and regression prevention. Designed for @debugger agent but usable by any agent troubleshooting issues.'
+description: 'Use when user reports a bug, error, exception, stack trace, or unexpected behavior and needs root cause analysis. Also triggers on: 除錯, 找 bug, 這裡怪怪的, 報錯了, 為什麼會錯. Performs systematic isolation and minimal fix. Do NOT use for general "how to" questions, feature requests, or known simple typo fixes.'
 ---
 
 # Debug — Executable Workflow

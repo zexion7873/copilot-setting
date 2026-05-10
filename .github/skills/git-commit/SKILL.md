@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: 'Execute git commit with conventional commit message analysis, intelligent staging, and message generation. Use when user asks to commit changes, create a git commit, or mentions "/commit". Supports: (1) Auto-detecting type and scope from changes, (2) Generating conventional commit messages from diff, (3) Interactive commit with optional type/scope/description overrides, (4) Intelligent file staging for logical grouping'
+description: 'Use when user asks to commit, stage changes, generate a commit message, 幫我 commit, 提交, 寫 commit message, or mentions "/commit". Auto-detects type/scope from diff and generates conventional commit messages with intelligent file staging. Do NOT use for git log, branch operations, or push/pull.'
 context: fork
 disable-model-invocation: true
 ---

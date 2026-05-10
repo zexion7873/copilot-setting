@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 'Structured code review workflow for systematic, reproducible reviews. Use when reviewing a PR, a set of changes, or code against a plan. Walks through: scope identification, diff analysis, plan compliance check, issue classification, and final verdict. Designed for @reviewer agent but usable by any agent performing review.'
+description: 'Use when user asks to review code, check a PR, audit changes, 審查程式碼, 看一下這段 code, 幫我 review, or verify code against a plan. Performs structured review with issue classification and verdict. Do NOT use for simple "what does this code do" explanations or refactoring requests.'
 context: fork
 ---
 
