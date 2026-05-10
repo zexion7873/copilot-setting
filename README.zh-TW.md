@@ -61,6 +61,7 @@
     ├── code-review/
     ├── debug/
     ├── git-commit/
+    ├── implement/
     ├── refactor/
     ├── security-audit/
     ├── sql-review/
@@ -184,6 +185,7 @@ flowchart LR
 | `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
+| `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、開發、自我驗證 |
 | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |

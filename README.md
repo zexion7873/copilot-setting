@@ -61,6 +61,7 @@ Personal Copilot settings. All files except `copilot-instructions.md` are based 
     ├── code-review/
     ├── debug/
     ├── git-commit/
+    ├── implement/
     ├── refactor/
     ├── security-audit/
     ├── sql-review/
@@ -184,6 +185,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
+| `implement` | Auto + Manual | Feature implementation with pattern discovery and self-verification |
 | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
