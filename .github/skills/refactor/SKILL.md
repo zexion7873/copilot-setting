@@ -81,3 +81,73 @@ Improve structure without changing external behavior. Refactoring is evolution, 
 - Big-bang rewrite labeled "refactor" → that's a rewrite; price it as such
 - Refactoring untouched code "while I'm here" → scope creep; separate task
 - Adding abstractions for hypothetical needs → YAGNI; refactor to a real need
+
+## Multi-File Refactor Plan
+
+When a refactor spans more than one file, write a plan **before** touching code. Sequence matters: changing implementations before interfaces breaks every consumer mid-flight.
+
+### Sequencing Rule
+
+1. **Interfaces / abstract types first** — establish the new contract
+2. **Implementations** — adapt to the new contract one at a time
+3. **Call sites** — migrate consumers
+4. **Tests** — update to match new shape
+5. **Cleanup** — delete deprecated code, update docs
+
+### Plan Output Format
+
+```markdown
+## Refactor Plan: [title]
+
+### Current State
+[How things work now]
+
+### Target State
+[How things will work after]
+
+### Affected Files
+| File | Change Type | Dependencies |
+|---|---|---|
+| src/main/java/com/example/MyService.java | modify / create / delete | blocks X, blocked by Y |
+
+### Execution Plan
+
+#### Phase 1: Interfaces and Abstract Classes
+- [ ] Step 1.1: [action] in `MyInterface.java`
+- [ ] Verify: [how to check]
+
+#### Phase 2: Implementation
+- [ ] Step 2.1: [action] in `MyService.java`
+- [ ] Verify: `mvn -pl service test`
+
+#### Phase 3: Tests
+- [ ] Step 3.1: Update `MyServiceTest.java`
+- [ ] Verify: `mvn test`
+
+#### Phase 4: Cleanup
+- [ ] Remove deprecated code
+- [ ] Update documentation
+
+### Rollback Plan
+If a phase fails, the previous phases must remain in a green state:
+1. Revert this phase's commit
+2. Re-run the previous phase's verify step
+3. Investigate before re-attempting
+
+### Risks
+- [Potential issue and mitigation]
+```
+
+### Rules
+
+- Each phase ends in a green build — never leave the tree broken between phases
+- One commit per phase (or per atomic step within a phase) for clean rollback
+- "Cleanup" is a real phase, not an afterthought — schedule it or it never happens
+- Verification step is **mandatory** between phases; "I'll check at the end" is how silent regressions ship
+
+## Reference Examples
+
+Concrete before / after Java examples for common refactorings:
+
+- `examples/extract-method.md` — Extract Method with thresholds (LOC > 15, NOM > 10, CC > 10)
+- `examples/remove-parameter.md` — Remove Parameter (unused / redundant params)
