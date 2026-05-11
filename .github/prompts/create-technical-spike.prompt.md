@@ -1,22 +1,27 @@
 ---
 agent: 'agent'
-description: 'Create time-boxed technical spike documents for researching and resolving critical development decisions before implementation.'
-tools: ['execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/runTask', 'read/getTaskOutput', 'edit', 'search', 'vscode/extensions', 'search/usages', 'vscode/vscodeAPI', 'read/problems', 'search/changes', 'execute/testFailure', 'vscode/openSimpleBrowser', 'web/fetch', 'web/githubRepo', 'todo', 'search']
+description: 'Create a time-boxed technical spike document for researching a single decision before implementation.'
+tools: ['search/codebase', 'edit/editFiles', 'web/fetch', 'read/problems']
 ---
 
 # Create Technical Spike Document
 
-Create time-boxed technical spike documents for researching critical questions that must be answered before development can proceed. Each spike focuses on a specific technical decision with clear deliverables and timelines.
+Create a time-boxed spike for a single technical question that must be answered before development can proceed. One question per spike, with a deadline and concrete deliverable.
 
-## Document Structure
+## Output
 
-Create individual files in `${input:FolderPath|docs/spikes}` directory. Name each file using the pattern: `[category]-[short-description]-spike.md` (e.g., `api-copilot-integration-spike.md`, `performance-realtime-audio-spike.md`).
+- Location: `${input:FolderPath|docs/spikes}` directory
+- Filename: `[category]-[short-description]-spike.md` (kebab-case)
+- Common categories: `api`, `architecture`, `performance`, `platform`, `security`, `ux`
+- Examples: `api-copilot-chat-integration-spike.md`, `performance-audio-latency-spike.md`
+
+## Template
 
 ```md
 ---
 title: "${input:SpikeTitle}"
 category: "${input:Category|Technical}"
-status: "🔴 Not Started"
+status: "Not Started"
 priority: "${input:Priority|High}"
 timebox: "${input:Timebox|1 week}"
 created: [YYYY-MM-DD]
@@ -29,203 +34,72 @@ tags: ["technical-spike", "${input:Category|technical}", "research"]
 
 ## Summary
 
-**Spike Objective:** [Clear, specific question or decision that needs resolution]
+- **Objective:** [Specific question or decision]
+- **Why it matters:** [Impact on development / architecture]
+- **Timebox:** [Time allocated]
+- **Decision deadline:** [When to resolve to avoid blocking]
 
-**Why This Matters:** [Impact on development/architecture decisions]
+## Research Questions
 
-**Timebox:** [How much time allocated to this spike]
+**Primary:** [Main question]
 
-**Decision Deadline:** [When this must be resolved to avoid blocking development]
-
-## Research Question(s)
-
-**Primary Question:** [Main technical question that needs answering]
-
-**Secondary Questions:**
-
+**Secondary:**
 - [Related question 1]
 - [Related question 2]
-- [Related question 3]
 
 ## Investigation Plan
 
-### Research Tasks
+- [ ] [Research task 1]
+- [ ] [Research task 2]
+- [ ] [Build proof of concept]
+- [ ] [Document findings]
 
-- [ ] [Specific research task 1]
-- [ ] [Specific research task 2]
-- [ ] [Specific research task 3]
-- [ ] [Create proof of concept/prototype]
-- [ ] [Document findings and recommendations]
+## Success Criteria
 
-### Success Criteria
+Spike is complete when:
 
-**This spike is complete when:**
-
-- [ ] [Specific criteria 1]
-- [ ] [Specific criteria 2]
-- [ ] [Clear recommendation documented]
-- [ ] [Proof of concept completed (if applicable)]
+- [ ] [Criterion 1]
+- [ ] Clear recommendation documented
+- [ ] PoC completed (if applicable)
 
 ## Technical Context
 
-**Related Components:** [List system components affected by this decision]
+- **Components:** [Affected system components]
+- **Dependencies:** [Other spikes / decisions this blocks or is blocked by]
+- **Constraints:** [Known limitations or requirements]
 
-**Dependencies:** [What other spikes or decisions depend on resolving this]
+## Findings
 
-**Constraints:** [Known limitations or requirements that affect the solution]
-
-## Research Findings
-
-### Investigation Results
-
-[Document research findings, test results, and evidence gathered]
-
-### Prototype/Testing Notes
-
-[Results from any prototypes, spikes, or technical experiments]
+[Research notes, test results, evidence]
 
 ### External Resources
 
-- [Link to relevant documentation]
-- [Link to API references]
-- [Link to community discussions]
-- [Link to examples/tutorials]
+- [Link to docs / API / examples]
 
 ## Decision
 
-### Recommendation
+- **Recommendation:** [Chosen approach]
+- **Rationale:** [Why over alternatives]
+- **Implementation notes:** [Key considerations]
 
-[Clear recommendation based on research findings]
+**Follow-up:**
 
-### Rationale
+- [ ] [Action 1]
+- [ ] Update architecture docs
+- [ ] Create implementation tasks
 
-[Why this approach was chosen over alternatives]
+## Status
 
-### Implementation Notes
-
-[Key considerations for implementation]
-
-### Follow-up Actions
-
-- [ ] [Action item 1]
-- [ ] [Action item 2]
-- [ ] [Update architecture documents]
-- [ ] [Create implementation tasks]
-
-## Status History
-
-| Date   | Status         | Notes                      |
-| ------ | -------------- | -------------------------- |
-| [Date] | 🔴 Not Started | Spike created and scoped   |
-| [Date] | 🟡 In Progress | Research commenced         |
-| [Date] | 🟢 Complete    | [Resolution summary]       |
-
----
-
-_Last updated: [Date] by [Name]_
+| Date | Status | Notes |
+|---|---|---|
+| [Date] | Not Started | Created |
+| [Date] | In Progress | Research started |
+| [Date] | Complete | [Resolution] |
 ```
 
-## Categories for Technical Spikes
+## Rules
 
-### API Integration
-
-- Third-party API capabilities and limitations
-- Integration patterns and authentication
-- Rate limits and performance characteristics
-
-### Architecture & Design
-
-- System architecture decisions
-- Design pattern applicability
-- Component interaction models
-
-### Performance & Scalability
-
-- Performance requirements and constraints
-- Scalability bottlenecks and solutions
-- Resource utilization patterns
-
-### Platform & Infrastructure
-
-- Platform capabilities and limitations
-- Infrastructure requirements
-- Deployment and hosting considerations
-
-### Security & Compliance
-
-- Security requirements and implementations
-- Compliance constraints
-- Authentication and authorization approaches
-
-### User Experience
-
-- User interaction patterns
-- Accessibility requirements
-- Interface design decisions
-
-## File Naming Conventions
-
-Use descriptive, kebab-case names that indicate the category and specific unknown:
-
-**API/Integration Examples:**
-
-- `api-copilot-chat-integration-spike.md`
-- `api-azure-speech-realtime-spike.md`
-- `api-vscode-extension-capabilities-spike.md`
-
-**Performance Examples:**
-
-- `performance-audio-processing-latency-spike.md`
-- `performance-extension-host-limitations-spike.md`
-- `performance-webrtc-reliability-spike.md`
-
-**Architecture Examples:**
-
-- `architecture-voice-pipeline-design-spike.md`
-- `architecture-state-management-spike.md`
-- `architecture-error-handling-strategy-spike.md`
-
-## Best Practices for AI Agents
-
-1. **One Question Per Spike:** Each document focuses on a single technical decision or research question
-
-2. **Time-Boxed Research:** Define specific time limits and deliverables for each spike
-
-3. **Evidence-Based Decisions:** Require concrete evidence (tests, prototypes, documentation) before marking as complete
-
-4. **Clear Recommendations:** Document specific recommendations and rationale for implementation
-
-5. **Dependency Tracking:** Identify how spikes relate to each other and impact project decisions
-
-6. **Outcome-Focused:** Every spike must result in an actionable decision or recommendation
-
-## Research Strategy
-
-### Phase 1: Information Gathering
-
-1. **Search existing documentation** using search/fetch tools
-2. **Analyze codebase** for existing patterns and constraints
-3. **Research external resources** (APIs, libraries, examples)
-
-### Phase 2: Validation & Testing
-
-1. **Create focused prototypes** to test specific hypotheses
-2. **Run targeted experiments** to validate assumptions
-3. **Document test results** with supporting evidence
-
-### Phase 3: Decision & Documentation
-
-1. **Synthesize findings** into clear recommendations
-2. **Document implementation guidance** for development team
-3. **Create follow-up tasks** for implementation
-
-## Tools Usage
-
-- **search/searchResults:** Research existing solutions and documentation
-- **fetch/githubRepo:** Analyze external APIs, libraries, and examples
-- **codebase:** Understand existing system constraints and patterns
-- **runTasks:** Execute prototypes and validation tests
-- **editFiles:** Update research progress and findings
-- **vscodeAPI:** Test VS Code extension capabilities and limitations
-
-Focus on time-boxed research that resolves critical technical decisions and unblocks development progress.
+- One question per spike — split if there are multiple
+- Always time-boxed — no open-ended research
+- Evidence-based — prototypes / tests / cited docs, not opinion
+- Every spike ends with an actionable decision

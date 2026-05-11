@@ -1,202 +1,98 @@
 ---
 agent: 'agent'
-description: 'Comprehensive performance optimization reference covering frontend, backend, and database best practices. Use when reviewing or improving performance, or when writing performance-critical code.'
+description: 'Performance optimization checklist covering profiling, frontend, backend (Java 8), and database. DB rules live in instructions/sql-rules.instructions.md.'
 ---
 
-# Performance Optimization Best Practices
+# Performance Optimization
 
-## General Principles
+Practical performance tuning checklist. Database rules live in `instructions/sql-rules.instructions.md`. This prompt covers methodology, frontend, backend (Java 8), and profiling.
 
-- **Measure First, Optimize Second:** Always profile and measure before optimizing. Use benchmarks, profilers, and monitoring tools to identify real bottlenecks. Guessing is the enemy of performance.
-  - *Pro Tip:* Use tools like Chrome DevTools, Lighthouse, New Relic, Datadog, Py-Spy, or your language's built-in profilers.
-- **Optimize for the Common Case:** Focus on optimizing code paths that are most frequently executed. Don't waste time on rare edge cases unless they're critical.
-- **Avoid Premature Optimization:** Write clear, maintainable code first; optimize only when necessary. Premature optimization can make code harder to read and maintain.
-- **Minimize Resource Usage:** Use memory, CPU, network, and disk resources efficiently. Always ask: "Can this be done with less?"
-- **Prefer Simplicity:** Simple algorithms and data structures are often faster and easier to optimize. Don't over-engineer.
-- **Document Performance Assumptions:** Clearly comment on any code that is performance-critical or has non-obvious optimizations. Future maintainers (including you) will thank you.
-- **Understand the Platform:** Know the performance characteristics of your language, framework, and runtime. What's fast in Python may be slow in JavaScript, and vice versa.
-- **Automate Performance Testing:** Integrate performance tests and benchmarks into your CI/CD pipeline. Catch regressions early.
-- **Set Performance Budgets:** Define acceptable limits for load time, memory usage, API latency, etc. Enforce them with automated checks.
+## Methodology
 
----
+1. **Measure first** — profile before optimizing. Guessing is the enemy of performance.
+2. **Set a budget** — define acceptable latency, memory, payload size; enforce in CI.
+3. **Target the common case** — optimize hot paths, not rare edge cases.
+4. **Compare before / after** — every change verified by benchmark, not vibes.
+5. **Avoid premature optimization** — write clear code first; optimize where measurement says.
 
-## Frontend Performance
+## Frontend (browser)
 
-### Rendering and DOM
-- **Minimize DOM Manipulations:** Batch updates where possible. Frequent DOM changes are expensive.
-  - *Anti-pattern:* Updating the DOM in a loop. Instead, build a document fragment and append it once.
-- **Virtual DOM Frameworks:** Use React, Vue, or similar efficiently—avoid unnecessary re-renders.
-  - *React Example:* Use `React.memo`, `useMemo`, and `useCallback` to prevent unnecessary renders.
-- **Keys in Lists:** Always use stable keys in lists to help virtual DOM diffing. Avoid using array indices as keys unless the list is static.
-- **Avoid Inline Styles:** Inline styles can trigger layout thrashing. Prefer CSS classes.
-- **CSS Animations:** Use CSS transitions/animations over JavaScript for smoother, GPU-accelerated effects.
-- **Defer Non-Critical Rendering:** Use `requestIdleCallback` or similar to defer work until the browser is idle.
+### Rendering
+- Batch DOM mutations; build off-DOM fragments before insertion
+- Stable keys on list items; never array index for dynamic lists
+- CSS animations over JS (GPU-accelerated, off the main thread)
+- Defer non-critical work via `requestIdleCallback`
 
-### Asset Optimization
-- **Image Compression:** Use tools like ImageOptim, Squoosh, or TinyPNG. Prefer modern formats (WebP, AVIF) for web delivery.
-- **SVGs for Icons:** SVGs scale well and are often smaller than PNGs for simple graphics.
-- **Minification and Bundling:** Use Webpack, Rollup, or esbuild to bundle and minify JS/CSS. Enable tree-shaking to remove dead code.
-- **Cache Headers:** Set long-lived cache headers for static assets. Use cache busting for updates.
-- **Lazy Loading:** Use `loading="lazy"` for images, and dynamic imports for JS modules/components.
-- **Font Optimization:** Use only the character sets you need. Subset fonts and use `font-display: swap`.
+### Assets
+- Modern image formats (WebP, AVIF); compress aggressively
+- Subset fonts; `font-display: swap`
+- Minify + tree-shake JS / CSS; long-cache static assets with cache busting
 
-### Network Optimization
-- **Reduce HTTP Requests:** Combine files, use image sprites, and inline critical CSS.
-- **HTTP/2 and HTTP/3:** Enable these protocols for multiplexing and lower latency.
-- **Client-Side Caching:** Use Service Workers, IndexedDB, and localStorage for offline and repeat visits.
-- **CDNs:** Serve static assets from a CDN close to your users. Use multiple CDNs for redundancy.
-- **Defer/Async Scripts:** Use `defer` or `async` for non-critical JS to avoid blocking rendering.
-- **Preload and Prefetch:** Use `<link rel="preload">` and `<link rel="prefetch">` for critical resources.
+### Network
+- HTTP/2 or HTTP/3 for multiplexing
+- `<link rel="preload">` for critical resources; `defer` / `async` for non-critical JS
+- CDN for static assets; client-side cache (Service Worker, IndexedDB)
+- Lazy-load images (`loading="lazy"`) and route-level code splits
 
-### JavaScript Performance
-- **Avoid Blocking the Main Thread:** Offload heavy computation to Web Workers.
-- **Debounce/Throttle Events:** For scroll, resize, and input events, use debounce/throttle to limit handler frequency.
-- **Memory Leaks:** Clean up event listeners, intervals, and DOM references. Use browser dev tools to check for detached nodes.
-- **Efficient Data Structures:** Use Maps/Sets for lookups, TypedArrays for numeric data.
-- **Avoid Global Variables:** Globals can cause memory leaks and unpredictable performance.
-- **Avoid Deep Object Cloning:** Use shallow copies or libraries like lodash's `cloneDeep` only when necessary.
+### JavaScript hot paths
+- Offload heavy compute to Web Workers
+- Debounce / throttle scroll, resize, input handlers
+- `Map` / `Set` for O(1) lookups; TypedArrays for numeric data
+- Avoid deep clones inside render paths
 
-### Framework-Specific Tips
-#### React
-- Use `React.memo`, `useMemo`, and `useCallback` to avoid unnecessary renders.
-- Split large components and use code-splitting (`React.lazy`, `Suspense`).
-- Avoid anonymous functions in render; they create new references on every render.
-- Use `ErrorBoundary` to catch and handle errors gracefully.
+## Backend (Java 8)
 
-#### Angular
-- Use OnPush change detection for components that don't need frequent updates.
-- Avoid complex expressions in templates; move logic to the component class.
-- Use `trackBy` in `ngFor` for efficient list rendering.
-- Lazy load modules and components with the Angular Router.
+### Algorithm & data
+- Match data structure to access pattern (`HashMap` for lookup, `ArrayDeque` for queue)
+- Reject O(n²) over collections that can grow
+- Stream large data sets via `Stream` / iterators; don't load into memory
 
-#### Vue
-- Use computed properties over methods in templates for caching.
-- Use `v-show` vs `v-if` appropriately (`v-show` is better for toggling visibility frequently).
-- Lazy load components and routes with Vue Router.
-
----
-
-## Backend Performance
-
-### Algorithm and Data Structure Optimization
-- **Choose the Right Data Structure:** Arrays for sequential access, hash maps for fast lookups, trees for hierarchical data, etc.
-- **Efficient Algorithms:** Use binary search, quicksort, or hash-based algorithms where appropriate.
-- **Avoid O(n^2) or Worse:** Profile nested loops and recursive calls. Refactor to reduce complexity.
-- **Batch Processing:** Process data in batches to reduce overhead (e.g., bulk database inserts).
-- **Streaming:** Use streaming APIs for large data sets to avoid loading everything into memory.
-
-### Concurrency and Parallelism
-- **Asynchronous I/O:** Use async/await, callbacks, or event loops to avoid blocking threads.
-- **Thread/Worker Pools:** Use pools to manage concurrency and avoid resource exhaustion.
-- **Avoid Race Conditions:** Use locks, semaphores, or atomic operations where needed.
-- **Bulk Operations:** Batch network/database calls to reduce round trips.
-- **Backpressure:** Implement backpressure in queues and pipelines to avoid overload.
+### Concurrency
+- Async I/O (`CompletableFuture`); never block in request-serving threads
+- Bound concurrency via thread pools (`Executors.newFixedThreadPool`) — prevent exhaustion
+- `ConcurrentHashMap` over synchronized maps; `AtomicLong` over locks for counters
+- Watch hidden contention: `synchronized` on hot paths, contended CAS loops
 
 ### Caching
-- **Cache Expensive Computations:** Use in-memory caches (Redis, Memcached) for hot data.
-- **Cache Invalidation:** Use time-based (TTL), event-based, or manual invalidation. Stale cache is worse than no cache.
-- **Distributed Caching:** For multi-server setups, use distributed caches and be aware of consistency issues.
-- **Cache Stampede Protection:** Use locks or request coalescing to prevent thundering herd problems.
-- **Don't Cache Everything:** Some data is too volatile or sensitive to cache.
+- Cache hot reads; pick eviction per volatility (TTL / LRU)
+- Distributed cache (Redis / Memcached) for multi-instance setups
+- Cache stampede protection: request coalescing, jittered TTL
+- Don't cache freshness-sensitive data (auth, balances)
 
-### API and Network
-- **Minimize Payloads:** Use JSON, compress responses (gzip, Brotli), and avoid sending unnecessary data.
-- **Pagination:** Always paginate large result sets. Use cursors for real-time data.
-- **Rate Limiting:** Protect APIs from abuse and overload.
-- **Connection Pooling:** Reuse connections for databases and external services.
-- **Protocol Choice:** Use HTTP/2, gRPC, or WebSockets for high-throughput, low-latency communication.
+### I/O & network
+- Connection pooling (DB, HTTP); never open per-request
+- Bulk operations: batch INSERT, bulk HTTP requests
+- Compress responses (gzip, Brotli) for >1KB payloads
+- Pagination / cursors for large result sets — never return unbounded lists
 
-### Logging and Monitoring
-- **Minimize Logging in Hot Paths:** Excessive logging can slow down critical code.
-- **Structured Logging:** Use JSON or key-value logs for easier parsing and analysis.
-- **Monitor Everything:** Latency, throughput, error rates, resource usage. Use Prometheus, Grafana, Datadog, or similar.
-- **Alerting:** Set up alerts for performance regressions and resource exhaustion.
+### Logging
+- Minimize logging in hot paths; DEBUG level by default
+- Parameterized logging (`log.info("user={}", id)`) — never `+` concatenation
+- Structured (JSON) logs for production aggregation
 
-### Language/Framework-Specific Tips
-#### Java
-- Use efficient collections (`ArrayList`, `HashMap`, etc.).
-- Profile with VisualVM, JProfiler, or YourKit.
-- Use thread pools (`Executors`) for concurrency.
-- Tune JVM options for heap and garbage collection (`-Xmx`, `-Xms`, `-XX:+UseG1GC`).
-- Use `CompletableFuture` for async programming.
+## Database
 
-#### Node.js
-- Use asynchronous APIs; avoid blocking the event loop (e.g., never use `fs.readFileSync` in production).
-- Use clustering or worker threads for CPU-bound tasks.
-- Limit concurrent open connections to avoid resource exhaustion.
-- Use streams for large file or network data processing.
+Apply rules from `instructions/sql-rules.instructions.md`. Key reminders:
 
-#### Python
-- Use built-in data structures (`dict`, `set`, `deque`) for speed.
-- Profile with `cProfile`, `line_profiler`, or `Py-Spy`.
-- Use `multiprocessing` or `asyncio` for parallelism.
-- Avoid GIL bottlenecks in CPU-bound code; use C extensions or subprocesses.
-- Use `lru_cache` for memoization.
+- Indexes on WHERE / JOIN / ORDER BY; composite order matches predicate order
+- No `SELECT *`, no functions on indexed columns, no `OFFSET` pagination on large tables
+- Detect N+1 (SQL inside loops); batch with `IN` or JOIN
+- Read replicas for scale; bounded transaction lifetime
 
----
+## Profiling Tools
 
-## Database Performance
+- Frontend: Chrome DevTools (Performance tab), Lighthouse, WebPageTest
+- Java: VisualVM, JProfiler, async-profiler, JFR (Java Flight Recorder)
+- DB: `EXPLAIN ANALYZE` (MySQL 8+), `pg_stat_statements` (PostgreSQL), slow query log
+- Load testing: k6, Gatling, JMeter, Locust
 
-### Query Optimization
-- **Indexes:** Use indexes on columns that are frequently queried, filtered, or joined. Monitor index usage and drop unused indexes.
-- **Avoid SELECT *:** Select only the columns you need. Reduces I/O and memory usage.
-- **Parameterized Queries:** Prevent SQL injection and improve plan caching.
-- **Query Plans:** Analyze and optimize query execution plans. Use `EXPLAIN` in SQL databases.
-- **Avoid N+1 Queries:** Use joins or batch queries to avoid repeated queries in loops.
-- **Limit Result Sets:** Use `LIMIT`/`OFFSET` or cursors for large tables.
+## Quick Checklist
 
-### Schema Design
-- **Normalization:** Normalize to reduce redundancy, but denormalize for read-heavy workloads if needed.
-- **Data Types:** Use the most efficient data types and set appropriate constraints.
-- **Partitioning:** Partition large tables for scalability and manageability.
-- **Archiving:** Regularly archive or purge old data to keep tables small and fast.
-- **Foreign Keys:** Use them for data integrity, but be aware of performance trade-offs in high-write scenarios.
-
-### Transactions
-- **Short Transactions:** Keep transactions as short as possible to reduce lock contention.
-- **Isolation Levels:** Use the lowest isolation level that meets your consistency needs.
-- **Avoid Long-Running Transactions:** They can block other operations and increase deadlocks.
-
-### Caching and Replication
-- **Read Replicas:** Use for scaling read-heavy workloads. Monitor replication lag.
-- **Cache Query Results:** Use Redis or Memcached for frequently accessed queries.
-- **Write-Through/Write-Behind:** Choose the right strategy for your consistency needs.
-- **Sharding:** Distribute data across multiple servers for scalability.
-
----
-
-## Code Review Checklist for Performance
-
-- [ ] Are there any obvious algorithmic inefficiencies (O(n^2) or worse)?
-- [ ] Are data structures appropriate for their use?
-- [ ] Are there unnecessary computations or repeated work?
-- [ ] Is caching used where appropriate, and is invalidation handled correctly?
-- [ ] Are database queries optimized, indexed, and free of N+1 issues?
-- [ ] Are large payloads paginated, streamed, or chunked?
-- [ ] Are there any memory leaks or unbounded resource usage?
-- [ ] Are network requests minimized, batched, and retried on failure?
-- [ ] Are there any blocking operations in hot paths?
-- [ ] Is logging in hot paths minimized and structured?
-- [ ] Are performance-critical code paths documented and tested?
-
----
-
-## Advanced Topics
-
-### Profiling and Benchmarking
-- **Profilers:** Use language-specific profilers (Chrome DevTools, Py-Spy, VisualVM, dotTrace, etc.) to identify bottlenecks.
-- **Microbenchmarks:** Write microbenchmarks for critical code paths. Use `benchmark.js`, `pytest-benchmark`, or JMH for Java.
-- **A/B Testing:** Measure real-world impact of optimizations with A/B or canary releases.
-- **Continuous Performance Testing:** Integrate performance tests into CI/CD. Use tools like k6, Gatling, or Locust.
-
-### Memory Management
-- **Resource Cleanup:** Always release resources (files, sockets, DB connections) promptly.
-- **Object Pooling:** Use for frequently created/destroyed objects (e.g., DB connections, threads).
-- **Heap Monitoring:** Monitor heap usage and garbage collection. Tune GC settings for your workload.
-- **Memory Leaks:** Use leak detection tools (Valgrind, LeakCanary, Chrome DevTools).
-
-### Scalability
-- **Horizontal Scaling:** Design stateless services, use sharding/partitioning, and load balancers.
-- **Auto-Scaling:** Use cloud auto-scaling groups and set sensible thresholds.
-- **Bottleneck Analysis:** Identify and address single points of failure.
-- **Distributed Systems:** Use idempotent operations, retries, and circuit breakers.
+- [ ] Profiled before optimizing? (no guessing)
+- [ ] Budget defined and enforced in CI?
+- [ ] No N+1 queries (DB calls outside loops)?
+- [ ] Hot paths cached appropriately?
+- [ ] Async I/O for blocking calls?
+- [ ] Large payloads paginated / streamed / compressed?
+- [ ] Resources cleaned up (try-with-resources for `AutoCloseable`)?
+- [ ] Memory monitored; no unbounded caches or collections?
