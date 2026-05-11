@@ -41,15 +41,8 @@
 │   ├── doc-writer           (GPT-5 mini)
 │   └── security             (Claude Opus 4.6)
 │
-├── prompts/                               ← 可重複使用的提示模板
+├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── code-review-checklist
-│   ├── conventional-commit
-│   ├── java-docs
-│   ├── java-junit
-│   ├── java-refactoring-extract-method
-│   ├── java-refactoring-remove-parameter
-│   ├── refactor-plan
-│   ├── review-and-refactor
 │   └── sql-review
 │
 └── skills/                                ← Agent 可執行的技能
@@ -156,19 +149,12 @@ flowchart LR
 
 ## Prompts（提示模板）
 
-可重複使用的提示模板，在 Copilot Chat 中以 `/prompt-name` 呼叫。
+標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
 
-| Prompt | 說明 |
-|--------|------|
-| `code-review-checklist` | 標準參考，搭配 `code-review` skill 使用 |
-| `sql-review` | 輸出格式參考，搭配 `sql-review` skill 使用 |
-| `java-docs` | 產生 Javadoc 註解 |
-| `java-junit` | JUnit 5 單元測試含資料驅動測試 |
-| `java-refactoring-extract-method` | 擷取方法（Extract Method）重構 |
-| `java-refactoring-remove-parameter` | 移除參數（Remove Parameter）重構 |
-| `refactor-plan` | 規劃多檔案重構的順序與回滾步驟 |
-| `review-and-refactor` | 依定義的規範審查並重構程式碼 |
-| `conventional-commit` | 產生 Conventional Commits 規範的提交訊息 |
+| Prompt | 配對 skill | 用途 |
+|--------|------------|------|
+| `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
+| `sql-review` | `sql-review` | 審查工作流的輸出格式（跨方言：MySQL/PostgreSQL/SQL Server/Oracle） |
 
 ---
 

@@ -41,15 +41,8 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── doc-writer           (GPT-5 mini)
 │   └── security             (Claude Opus 4.6)
 │
-├── prompts/                               ← Reusable prompt templates
+├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist
-│   ├── conventional-commit
-│   ├── java-docs
-│   ├── java-junit
-│   ├── java-refactoring-extract-method
-│   ├── java-refactoring-remove-parameter
-│   ├── refactor-plan
-│   ├── review-and-refactor
 │   └── sql-review
 │
 └── skills/                                ← Executable skills for agents
@@ -156,19 +149,12 @@ flowchart LR
 
 ## Prompts
 
-Reusable prompt templates. Invoke via `/prompt-name` in Copilot Chat.
+Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
 
-| Prompt | Description |
-|--------|-------------|
-| `code-review-checklist` | Standards reference paired with `code-review` skill |
-| `sql-review` | Output format reference paired with `sql-review` skill |
-| `java-docs` | Generate Javadoc comments |
-| `java-junit` | JUnit 5 unit testing with data-driven tests |
-| `java-refactoring-extract-method` | Extract Method refactoring |
-| `java-refactoring-remove-parameter` | Remove Parameter refactoring |
-| `refactor-plan` | Plan multi-file refactors with sequencing and rollback |
-| `review-and-refactor` | Review and refactor code per defined instructions |
-| `conventional-commit` | Generate conventional commit messages |
+| Prompt | Paired skill | Purpose |
+|--------|-------------|---------|
+| `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
+| `sql-review` | `sql-review` | Review workflow output format (cross-dialect: MySQL/PostgreSQL/SQL Server/Oracle) |
 
 ---
 
