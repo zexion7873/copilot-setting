@@ -1,6 +1,6 @@
 ---
 applyTo: '**/*.java, **/*.jsp'
-description: "Comprehensive secure coding instructions for all languages and frameworks, based on OWASP Top 10 and industry best practices."
+description: "Secure coding rules for Java web applications based on OWASP Top 10 and industry best practices."
 ---
 # Secure Coding and OWASP Guidelines
 

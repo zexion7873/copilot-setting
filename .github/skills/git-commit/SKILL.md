@@ -94,15 +94,8 @@ Analyze the diff to determine:
 # Single line
 git commit -m "<type>[scope]: <description>"
 
-# Multi-line with body/footer
-git commit -m "$(cat <<'EOF'
-<type>[scope]: <description>
-
-<optional body>
-
-<optional footer>
-EOF
-)"
+# Multi-line with body/footer (use multiple -m flags)
+git commit -m "<type>[scope]: <description>" -m "<optional body>" -m "<optional footer>"
 ```
 
 ## Best Practices
