@@ -51,16 +51,11 @@ You are a senior Java developer specializing in Java 8 / Maven projects (no Spri
 - Log at appropriate levels (ERROR/WARN/INFO/DEBUG)
 
 ### Security
-- Use PreparedStatement for all SQL — never string concatenation
 - Validate all user inputs
 - Never log sensitive data (passwords, tokens, PII)
 
-### SQL Pitfalls
-- Never execute SQL inside a loop — batch with `IN` clause or `JOIN` to avoid N+1
-- No `SELECT *` — list specific columns
-- No functions on indexed columns in WHERE (`WHERE YEAR(col)`) — use range conditions
-- Always include `WHERE` on `UPDATE` / `DELETE`
-- Use cursor-based pagination (`WHERE id > ?`) — avoid `OFFSET` on large datasets
+### SQL
+- Apply rules from `instructions/sql-rules.instructions.md`
 
 ## Process
 

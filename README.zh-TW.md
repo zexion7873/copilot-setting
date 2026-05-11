@@ -25,6 +25,7 @@
 │   ├── oop-design-patterns
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
+│   ├── sql-rules
 │   └── sql-sp-generation
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
@@ -53,8 +54,7 @@
 │   ├── performance-optimization
 │   ├── refactor-plan
 │   ├── review-and-refactor
-│   ├── sql-code-review
-│   ├── sql-optimization
+│   ├── sql-review
 │   └── what-context-needed
 │
 └── skills/                                ← Agent 可執行的技能
@@ -95,7 +95,8 @@
 | `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP 設計模式（GoF + SOLID） |
 | `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
-| `sql-sp-generation` | `**/*.sql` | MySQL SQL 語句與預存程序的產生規範 |
+| `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
+| `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
 
 ---
 
@@ -166,8 +167,7 @@ flowchart LR
 | `java-junit` | JUnit 5 單元測試含資料驅動測試 |
 | `java-refactoring-extract-method` | 擷取方法（Extract Method）重構 |
 | `java-refactoring-remove-parameter` | 移除參數（Remove Parameter）重構 |
-| `sql-code-review` | SQL 審查（MySQL/PostgreSQL/SQL Server/Oracle） |
-| `sql-optimization` | SQL 效能優化與執行計畫分析 |
+| `sql-review` | SQL 審查（涵蓋安全、效能、程式碼品質；MySQL/PostgreSQL/SQL Server/Oracle） |
 | `review-and-refactor` | 依定義的規範審查並重構程式碼 |
 | `refactor-plan` | 規劃多檔案重構的順序與回滾步驟 |
 | `conventional-commit` | 產生 Conventional Commits 規範的提交訊息 |

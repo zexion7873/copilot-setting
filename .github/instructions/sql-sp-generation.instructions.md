@@ -1,82 +1,61 @@
 ---
-description: 'Guidelines for generating MySQL SQL statements and stored procedures'
+description: 'MySQL stored procedure and schema generation conventions. General SQL rules live in sql-rules.instructions.md.'
 applyTo: '**/*.sql'
 ---
 
-# SQL Development (MySQL)
+# MySQL Stored Procedure & Schema Conventions
 
-## Database Schema Generation
-- Use InnoDB as the default storage engine
-- All table names should be in singular form and use snake_case (e.g., `customer_order`)
-- All column names should be in singular form and use snake_case
-- All tables should have a primary key column named `id` with AUTO_INCREMENT
-- All tables should have a column named `created_at` of type `DATETIME DEFAULT CURRENT_TIMESTAMP`
-- All tables should have a column named `updated_at` of type `DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
-- Use `UNSIGNED` for columns that should never be negative (e.g., `id`, `quantity`)
-- Specify `CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci` for tables containing text data
+Conventions specific to MySQL DDL and stored procedures. For general SQL rules (injection prevention, performance pitfalls), see `sql-rules.instructions.md`.
 
-## Database Schema Design
-- All tables should have a primary key constraint
-- All foreign key constraints should have a descriptive name (e.g., `fk_order_customer_id`)
-- All foreign key constraints should reference the primary key of the parent table
-- Choose `ON DELETE` behavior carefully per relationship:
-  - `CASCADE` for child records that have no meaning without the parent (e.g., order_item → order)
-  - `RESTRICT` or `NO ACTION` for records that should be protected (e.g., order → customer)
-  - `SET NULL` when the relationship is optional
-- Avoid `ON DELETE CASCADE` as a blanket default — evaluate each relationship individually
-- Add indexes on foreign key columns for JOIN performance
+## Schema Generation
 
-## SQL Coding Style
-- Use uppercase for SQL keywords (SELECT, FROM, WHERE, INSERT, UPDATE, DELETE)
-- Use consistent indentation for nested queries and conditions
-- Include comments to explain complex logic
-- Break long queries into multiple lines for readability
-- Organize clauses consistently (SELECT, FROM, JOIN, WHERE, GROUP BY, HAVING, ORDER BY)
-- Use backticks only when column/table names conflict with MySQL reserved words
+- Storage engine: InnoDB
+- Table & column names: singular, snake_case (e.g., `customer_order`, `created_at`)
+- Charset / collation for text: `CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+- Required columns on every table:
+  - `id` — PK, AUTO_INCREMENT, UNSIGNED
+  - `created_at` — `DATETIME DEFAULT CURRENT_TIMESTAMP`
+  - `updated_at` — `DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
+- Use `UNSIGNED` on columns that cannot be negative
 
-## SQL Query Structure
-- Use explicit column names in SELECT statements instead of SELECT *
-- Qualify column names with table name or alias when using multiple tables
-- Limit the use of subqueries when JOINs can be used instead
-- Include LIMIT clauses to restrict result sets
-- Use appropriate indexing for frequently queried columns
-- Avoid using functions on indexed columns in WHERE clauses (prevents index usage)
-- Use `EXISTS` instead of `IN` for correlated subqueries when appropriate
+## Schema Design
 
-## Stored Procedure Naming Conventions
-- Prefix stored procedure names with `sp_` (e.g., `sp_get_customer_orders`)
-- Use snake_case for stored procedure names
-- Use descriptive names that indicate purpose
-- Include plural noun when returning multiple records (e.g., `sp_get_products`)
-- Include singular noun when returning single record (e.g., `sp_get_product`)
+- Foreign key constraints named `fk_<child>_<parent_col>` (e.g., `fk_order_customer_id`)
+- Always reference the parent's PK; index every FK column
+- Choose `ON DELETE` per relationship:
+  - `CASCADE` — child has no meaning without parent (e.g., `order_item` → `order`)
+  - `RESTRICT` / `NO ACTION` — parent must be protected (e.g., `order` → `customer`)
+  - `SET NULL` — relationship is optional
+- Avoid `ON DELETE CASCADE` as a blanket default
 
-## Parameter Handling
-- Use `IN`, `OUT`, `INOUT` parameter modes explicitly
-- Use snake_case prefixed with `p_` for parameter names (e.g., `p_customer_id`)
-- Provide default values for optional parameters where supported
-- Validate parameter values before use with IF checks
-- Document parameters with comments in the header block
-- Arrange parameters consistently (IN first, then OUT, then INOUT)
+## Stored Procedure Naming
 
-## Stored Procedure Structure
-- Include header comment block with description, parameters, author, and date
-- Use DECLARE for local variables with `v_` prefix (e.g., `v_total`)
-- Use DECLARE ... HANDLER for error handling (e.g., `DECLARE EXIT HANDLER FOR SQLEXCEPTION`)
-- Use BEGIN ... END blocks for procedure body
-- Use SIGNAL SQLSTATE for raising custom errors
-- Prefix temporary tables with `tmp_`
+- Procedure name prefix: `sp_` (e.g., `sp_get_customer_orders`)
+- Plural noun for procedures returning multiple records; singular for single record
+- snake_case throughout
 
-## SQL Security Best Practices
-- Parameterize all queries to prevent SQL injection
-- Use prepared statements (`PREPARE`, `EXECUTE`, `DEALLOCATE PREPARE`) when dynamic SQL is necessary
-- Avoid embedding credentials in SQL scripts
-- Implement proper error handling without exposing system details
-- Minimize the use of dynamic SQL within stored procedures
-- Use `SQL SECURITY INVOKER` or `DEFINER` appropriately
+## Parameters
 
-## Transaction Management
-- Explicitly use `START TRANSACTION`, `COMMIT`, and `ROLLBACK`
-- Set appropriate transaction isolation levels (`SET TRANSACTION ISOLATION LEVEL ...`)
-- Avoid long-running transactions that lock rows/tables
-- Use batch processing with LIMIT for large data operations
-- Use `SELECT ... FOR UPDATE` when locking rows for modification
+- Explicit `IN` / `OUT` / `INOUT` mode
+- Name prefix: `p_` (e.g., `p_customer_id`)
+- Order: `IN` first, then `OUT`, then `INOUT`
+- Default values for optional parameters where supported
+- Document each parameter in the header comment block
+
+## Procedure Structure
+
+- Header comment block: description, parameters, author, date
+- Local variables: `DECLARE` with `v_` prefix (e.g., `v_total`)
+- Error handling: `DECLARE EXIT HANDLER FOR SQLEXCEPTION ...`
+- Body wrapped in `BEGIN ... END`
+- Custom errors via `SIGNAL SQLSTATE`
+- Temporary tables: `tmp_` prefix
+- Use `SQL SECURITY INVOKER` or `DEFINER` deliberately, not by default
+
+## Transactions in Stored Procedures
+
+- Explicit `START TRANSACTION` / `COMMIT` / `ROLLBACK`
+- Set isolation level when needed: `SET TRANSACTION ISOLATION LEVEL ...`
+- Avoid long-running transactions
+- Use `SELECT ... FOR UPDATE` only when locking is required for the update
+- For bulk work, batch with `LIMIT` to bound transaction size

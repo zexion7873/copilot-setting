@@ -25,6 +25,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── oop-design-patterns
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
+│   ├── sql-rules
 │   └── sql-sp-generation
 │
 ├── agents/                                ← Invoke via @agent-name in chat
@@ -53,8 +54,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── performance-optimization
 │   ├── refactor-plan
 │   ├── review-and-refactor
-│   ├── sql-code-review
-│   ├── sql-optimization
+│   ├── sql-review
 │   └── what-context-needed
 │
 └── skills/                                ← Executable skills for agents
@@ -95,7 +95,8 @@ Automatically injected into the system prompt when the current file matches the 
 | `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP design patterns (GoF + SOLID) |
 | `security-and-owasp` | `**/*.{java,jsp}` | Secure coding based on OWASP Top 10 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments |
-| `sql-sp-generation` | `**/*.sql` | Guidelines for MySQL SQL and stored procedures |
+| `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL hard rules: injection prevention, performance, code quality (single source of truth) |
+| `sql-sp-generation` | `**/*.sql` | MySQL stored procedure & schema conventions |
 
 ---
 
@@ -166,8 +167,7 @@ Reusable prompt templates. Invoke via `/prompt-name` in Copilot Chat.
 | `java-junit` | JUnit 5 unit testing with data-driven tests |
 | `java-refactoring-extract-method` | Extract Method refactoring |
 | `java-refactoring-remove-parameter` | Remove Parameter refactoring |
-| `sql-code-review` | SQL code review (MySQL/PostgreSQL/SQL Server/Oracle) |
-| `sql-optimization` | SQL performance optimization and execution plan analysis |
+| `sql-review` | SQL review covering security, performance, and code quality (MySQL/PostgreSQL/SQL Server/Oracle) |
 | `review-and-refactor` | Review and refactor code per defined instructions |
 | `refactor-plan` | Plan multi-file refactors with sequencing and rollback |
 | `conventional-commit` | Generate conventional commit messages |
