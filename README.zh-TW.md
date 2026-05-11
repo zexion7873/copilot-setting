@@ -193,4 +193,4 @@ flowchart LR
 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | `test-design` | 自動 + 手動 | 測試設計 — 邊界識別、JUnit 5 實作、覆蓋率分析 |
 
-> `git-commit` 設定 `disable-model-invocation: true`，因為它會執行寫入操作（修改 git history）。
+> `git-commit` 在 description 中標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。

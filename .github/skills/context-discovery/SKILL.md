@@ -1,12 +1,11 @@
 ---
 name: context-discovery
 description: 'Use before implementing changes when the affected files / dependencies / tests are not yet identified. Triggers on 動手前先盤點 / 影響範圍 / 哪些檔案會被改到 / context map / 我要先看哪些檔案. Produces a two-part artifact: (1) the files needed to answer / act, and (2) a context map of files-to-modify, dependencies, tests, and reference patterns. Do NOT use for trivial single-file edits or when the user has already supplied the file list.'
-context: fork
 ---
 
 # Context Discovery — Workflow
 
-Map the blast radius before touching anything. This skill prevents two failure modes: (a) editing without seeing related code, and (b) answering questions on incomplete information. Runs in `context: fork` so the file scan does not pollute the main thread.
+Map the blast radius before touching anything. This skill prevents two failure modes: (a) editing without seeing related code, and (b) answering questions on incomplete information.
 
 ## Phase 1 — Decide the Mode
 

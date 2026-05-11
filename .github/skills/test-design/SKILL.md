@@ -1,7 +1,6 @@
 ---
 name: test-design
 description: 'Use when user asks to design tests, write test cases, plan test coverage, or identify what to test. Also triggers on: 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率. Produces JUnit 5 tests covering happy path, edge cases, error handling, and boundary conditions. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
-context: fork
 ---
 
 # Test Design — Workflow

@@ -1,8 +1,6 @@
 ---
 name: git-commit
-description: 'Use when user asks to commit, stage changes, generate a commit message, 幫我 commit, 提交, 寫 commit message, or mentions "/commit". Auto-detects type/scope from diff and generates conventional commit messages with intelligent file staging. Do NOT use for git log, branch operations, or push/pull.'
-context: fork
-disable-model-invocation: true
+description: 'MANUAL ONLY — invoke explicitly via /git-commit when the user asks to commit, stage changes, generate a commit message, 幫我 commit, 提交, or 寫 commit message. NEVER auto-trigger from conversational mentions of commits, diffs, or git status; this skill writes git history (a side effect that must require explicit user intent). Do NOT use for git log, branch operations, push/pull, or any read-only git inspection.'
 ---
 
 # Git Commit with Conventional Commits

@@ -1,7 +1,6 @@
 ---
 name: plan
 description: 'Use when user asks to plan a feature, design implementation steps, write a spec for upgrade / refactor / migration, or 寫實作計畫 / 規劃 / 拆 task / 升級計畫 / 遷移計畫. Produces a structured Markdown spec under /plan/ with phases, atomic tasks, acceptance criteria, and risks. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), or open-ended research (prefer spike skill).'
-context: fork
 ---
 
 # Plan — Workflow

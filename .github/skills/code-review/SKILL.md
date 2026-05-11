@@ -1,7 +1,6 @@
 ---
 name: code-review
 description: 'Use when user asks to review code, check a PR, audit changes, 審查程式碼, 看一下這段 code, 幫我 review, or verify code against a plan. Performs structured review with issue classification and verdict. Do NOT use for simple "what does this code do" explanations or refactoring requests.'
-context: fork
 ---
 
 # Code Review — Workflow

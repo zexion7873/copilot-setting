@@ -193,4 +193,4 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | `test-design` | Auto + Manual | Test case design with boundary identification and coverage analysis |
 
-> `git-commit` sets `disable-model-invocation: true` because it performs write operations (modifies git history).
+> `git-commit` is marked **manual only** in its description because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.

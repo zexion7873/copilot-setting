@@ -1,7 +1,6 @@
 ---
 name: security-audit
 description: 'Use when user asks for security review, vulnerability scan, penetration test preparation, or OWASP assessment. Also triggers on: 資安審查, 有沒有漏洞, 安全性檢查, 弱點掃描. Targets Java web applications with OWASP Top 10 analysis and severity classification. Do NOT use for general code review without security focus — prefer code-review skill instead.'
-context: fork
 ---
 
 # Security Audit — Workflow
