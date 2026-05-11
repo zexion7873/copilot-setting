@@ -31,64 +31,51 @@ Record as a table: `| Entry Point | Input Type | Auth Required | Sensitive Data 
 
 ## Phase 2 — OWASP Top 10 Sweep
 
-Work each category in order. Do not skip even if it seems unlikely.
+Work each category in order. Do not skip.
 
 ### A01 — Broken Access Control
 
 ```bash
-grep -rn "doGet\|doPost" --include="*.java" src/ -A 20 | grep -v "getSession\|isUserInRole\|checkAccess"
-grep -rn "getParameter.*[Ii]d" --include="*.java" src/                    # IDOR candidates
+grep -rn "getParameter.*[Ii]d" --include="*.java" src/                              # IDOR candidates
 grep -rn "new File.*getParameter\|Paths.get.*getParameter" --include="*.java" src/  # path traversal
-grep -rn "Access-Control-Allow-Origin" --include="*.java" src/            # CORS misconfig
 ```
 
 ### A02 — Cryptographic Failures
 
 ```bash
 grep -rn 'password\s*=\s*"[^"]\+"\|apiKey\s*=\s*"[^"]\+"\|secret\s*=\s*"[^"]\+"' --include="*.java" src/
-grep -rn "MessageDigest.getInstance.*\(MD5\|SHA-1\|SHA1\)" --include="*.java" src/
-grep -rn "log\.[a-z]\+.*\(password\|token\|secret\)" --include="*.java" src/
-grep -rn '"http://' --include="*.java" --include="*.properties" --include="*.xml" src/
-# Insecure Random for security-sensitive ops (use SecureRandom)
-grep -rn "new Random()\|Math.random()" --include="*.java" src/ -B 3 | grep -i "token\|session\|key\|secret\|nonce"
+grep -rn "MessageDigest.getInstance.*\(MD5\|SHA-1\|SHA1\)" --include="*.java" src/  # weak hash
+grep -rn "new Random()\|Math.random()" --include="*.java" src/ -B 3 | grep -i "token\|session\|key\|nonce"  # use SecureRandom
 ```
 
 ### A03 — Injection
 
 ```bash
-grep -rn '"SELECT\|"INSERT\|"UPDATE\|"DELETE' --include="*.java" src/ | grep "+"
-grep -rn "createStatement()\|Statement [a-z]" --include="*.java" src/
-grep -rn "Runtime.getRuntime().exec\|ProcessBuilder" --include="*.java" src/
-grep -rn "getWriter().print\|getWriter().write" --include="*.java" src/   # XSS surfaces
-grep -rn "log\.[a-z]\+.*getParameter\|log\.[a-z]\+.*getHeader" --include="*.java" src/  # log injection
+grep -rn '"SELECT\|"INSERT\|"UPDATE\|"DELETE' --include="*.java" src/ | grep "+"   # SQL concat
+grep -rn "createStatement()\|Statement [a-z]" --include="*.java" src/              # non-prepared
+grep -rn "Runtime.getRuntime().exec\|ProcessBuilder" --include="*.java" src/       # shell injection
+grep -rn "getWriter().print\|getWriter().write" --include="*.java" src/            # XSS surfaces
 ```
 
 ### A04 — Insecure Design
 
 ```bash
-grep -rn "doPost" --include="*.java" src/ -A 30 | grep -i "login\|authenticate"
-grep -rn "failedAttempts\|lockout\|loginAttempt" --include="*.java" src/  # absence is the finding
-grep -rn "getParameter" --include="*.java" src/ | grep -v "isEmpty\|matches\|validate\|length"
-# Servlet instance variables — servlets are singletons, instance fields = shared mutable state
-grep -rn "class.*extends HttpServlet" --include="*.java" src/ -A 20 | grep "private [^s]"
+grep -rn "failedAttempts\|lockout\|loginAttempt" --include="*.java" src/     # absence is the finding
+grep -rn "class.*extends HttpServlet" --include="*.java" src/ -A 20 | grep "private [^s]"  # singleton instance fields = shared mutable state
 ```
 
 ### A05 — Security Misconfiguration
 
 ```bash
-grep -rn "debug\s*=\s*true\|DEBUG\s*=\s*true" --include="*.properties" --include="*.xml" .
-grep -rn "admin.*admin\|root.*root\|changeme" --include="*.properties" --include="*.xml" .
-grep -rn "e.printStackTrace\|getWriter.*getMessage" --include="*.java" src/   # leaking traces
-grep -rn "setHeader\|addHeader" --include="*.java" src/ | grep -i "X-Frame\|Content-Security\|Strict-Transport"  # absence is the finding
-# Resource leaks (Connection without try-with-resources)
-grep -rn "getConnection()" --include="*.java" src/ -A 20 | grep -v "try\s*("
+grep -rn "debug\s*=\s*true\|admin.*admin\|root.*root\|changeme" --include="*.properties" --include="*.xml" .
+grep -rn "e.printStackTrace\|getWriter.*getMessage" --include="*.java" src/                # leaking traces
+grep -rn "getConnection()" --include="*.java" src/ -A 20 | grep -v "try\s*("              # resource leak
 ```
 
 ### A07 — Authentication Failures
 
 ```bash
 grep -rn "getSession(true)" --include="*.java" src/ -B 5 | grep -v "invalidate"  # session fixation
-grep -rn "session-timeout\|setMaxInactiveInterval" --include="*.java" --include="*.xml" .
 grep -rn "new Cookie" --include="*.java" src/ -A 5 | grep -v "setHttpOnly\|setSecure"
 ```
 
@@ -101,21 +88,7 @@ grep -rn "DocumentBuilderFactory\|SAXParserFactory\|XMLInputFactory" --include="
 
 ## Phase 3 — Classify Findings
 
-Severity:
-
-```
-CRITICAL — Exploitable vulnerability, immediate risk
-  SQL injection, RCE, auth bypass, hardcoded credentials
-
-HIGH — Significant vulnerability, fix this sprint
-  XSS, session fixation, missing auth on sensitive endpoint, XXE
-
-MEDIUM — Potential vulnerability, fix in next sprint
-  Missing rate limiting, weak hashing, verbose errors, missing security headers
-
-LOW — Minor issue, opportunistic fix
-  Missing HttpOnly on non-session cookie, low-impact log injection, info disclosure
-```
+Severity: **CRITICAL** (exploitable now — SQLi, RCE, auth bypass, hardcoded creds) → **HIGH** (fix this sprint — XSS, session fixation, missing auth on sensitive endpoint, XXE) → **MEDIUM** (next sprint — weak hashing, missing rate limiting, verbose errors, missing security headers) → **LOW** (opportunistic — info disclosure, low-impact log injection). Full category criteria in `instructions/security-and-owasp.instructions.md`.
 
 Finding format:
 
@@ -167,8 +140,4 @@ Auth bypass:      access /api/user/999 as user with ID 1
 
 ## Workflow Anti-Patterns
 
-- Checklist-only review → map the attack surface first
-- Fixing symptoms not root cause → trace data flow end-to-end
-- Auditing only "security code" → vulnerabilities hide in business logic
-- Skipping negative tests → fix may look correct but not block the attack
-- Ignoring LOW findings → they chain into critical exploits
+Skip the audit if you do any of these: checklist-only review without attack-surface mapping, fixing symptoms instead of tracing data flow, auditing only "security code" (vulns hide in business logic), skipping negative tests, or ignoring LOW findings (they chain into critical exploits).

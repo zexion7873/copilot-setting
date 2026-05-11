@@ -51,22 +51,14 @@ applyTo: '**'
 
 ## Logging
 
-- Use **SLF4J** as the logging facade with **Logback** as the implementation
-- Use appropriate log levels:
-  - `ERROR` — unexpected failures that require immediate attention
-  - `WARN` — recoverable issues or degraded functionality
-  - `INFO` — key business events and application lifecycle (startup, shutdown)
-  - `DEBUG` — detailed diagnostic information for development and troubleshooting
-- Include sufficient context in log messages (e.g., user ID, request ID, relevant parameters)
-- Never log sensitive data (passwords, tokens, PII)
-- Use parameterized logging — `log.info("User {} logged in", userId)` instead of string concatenation
+- Use **SLF4J** facade with **Logback** implementation; parameterized only — `log.info("User {} logged in", userId)`
+- Apply standard severity: `ERROR` (needs attention), `WARN` (recoverable), `INFO` (business events), `DEBUG` (diagnostics)
+- Include context (user/request IDs, params); never log secrets, tokens, or PII
 
 ## Security Basics
 
 - Never hardcode passwords, API keys, or secrets in source code
-- All user inputs must be validated and sanitized
 - SQL queries must use parameterized queries (PreparedStatement) — no string concatenation
-- Sensitive data must not appear in log output
 
 ## Performance Awareness
 
