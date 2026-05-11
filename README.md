@@ -20,6 +20,8 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── context7
 │   ├── context-engineering
 │   ├── global-copilot
+│   ├── javadoc
+│   ├── junit
 │   ├── markdown
 │   ├── no-heredoc
 │   ├── oop-design-patterns
@@ -41,29 +43,28 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │
 ├── prompts/                               ← Reusable prompt templates
 │   ├── code-review-checklist
-│   ├── context-map
 │   ├── conventional-commit
-│   ├── create-architectural-decision-record
-│   ├── create-implementation-plan
-│   ├── create-technical-spike
-│   ├── first-ask
 │   ├── java-docs
 │   ├── java-junit
 │   ├── java-refactoring-extract-method
 │   ├── java-refactoring-remove-parameter
-│   ├── performance-optimization
 │   ├── refactor-plan
 │   ├── review-and-refactor
-│   ├── sql-review
-│   └── what-context-needed
+│   └── sql-review
 │
 └── skills/                                ← Executable skills for agents
+    ├── adr/
+    ├── clarify-task/
     ├── code-review/
+    ├── context-discovery/
     ├── debug/
     ├── git-commit/
     ├── implement/
+    ├── performance/
+    ├── plan/
     ├── refactor/
     ├── security-audit/
+    ├── spike/
     ├── sql-review/
     └── test-design/
 ```
@@ -90,6 +91,8 @@ Automatically injected into the system prompt when the current file matches the 
 | `context7` | `**` | Use Context7 MCP for authoritative external docs and API references |
 | `context-engineering` | `**` | Structure code/projects to maximize Copilot effectiveness through better context |
 | `global-copilot` | `**` | Global coding standards, conventions, and guidelines |
+| `javadoc` | `**/*.java` | Javadoc conventions — required tags, summary sentence, formatting, anti-patterns |
+| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions — naming, AAA, parameterization, assertions |
 | `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
 | `no-heredoc` | `**` | Prevent terminal heredoc file corruption — enforce file editing tools |
 | `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP design patterns (GoF + SOLID) |
@@ -157,22 +160,15 @@ Reusable prompt templates. Invoke via `/prompt-name` in Copilot Chat.
 
 | Prompt | Description |
 |--------|-------------|
-| `context-map` | Generate a map of all relevant files before making changes |
-| `first-ask` | Interactive task refinement — clarify scope before acting |
-| `what-context-needed` | Ask Copilot what files it needs before answering |
-| `create-implementation-plan` | Structured implementation plan for features or refactoring |
-| `create-technical-spike` | Time-boxed technical spike document |
-| `create-architectural-decision-record` | ADR document for decision documentation |
+| `code-review-checklist` | Standards reference paired with `code-review` skill |
+| `sql-review` | Output format reference paired with `sql-review` skill |
 | `java-docs` | Generate Javadoc comments |
 | `java-junit` | JUnit 5 unit testing with data-driven tests |
 | `java-refactoring-extract-method` | Extract Method refactoring |
 | `java-refactoring-remove-parameter` | Remove Parameter refactoring |
-| `sql-review` | SQL review covering security, performance, and code quality (MySQL/PostgreSQL/SQL Server/Oracle) |
-| `review-and-refactor` | Review and refactor code per defined instructions |
 | `refactor-plan` | Plan multi-file refactors with sequencing and rollback |
+| `review-and-refactor` | Review and refactor code per defined instructions |
 | `conventional-commit` | Generate conventional commit messages |
-| `performance-optimization` | Frontend, backend, and database performance optimization |
-| `code-review-checklist` | Generic code review checklist |
 
 ---
 
@@ -182,12 +178,18 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 | Skill | Trigger | Description |
 |-------|---------|-------------|
+| `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
+| `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
 | `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
+| `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
 | `implement` | Auto + Manual | Feature implementation with pattern discovery and self-verification |
+| `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
+| `plan` | Auto + Manual | Implementation plan with phases, atomic tasks, and acceptance criteria |
 | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
+| `spike` | Auto + Manual | Time-boxed research document for a single technical question |
 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | `test-design` | Auto + Manual | Test case design with boundary identification and coverage analysis |
 

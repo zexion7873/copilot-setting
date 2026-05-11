@@ -20,6 +20,8 @@
 │   ├── context7
 │   ├── context-engineering
 │   ├── global-copilot
+│   ├── javadoc
+│   ├── junit
 │   ├── markdown
 │   ├── no-heredoc
 │   ├── oop-design-patterns
@@ -41,29 +43,28 @@
 │
 ├── prompts/                               ← 可重複使用的提示模板
 │   ├── code-review-checklist
-│   ├── context-map
 │   ├── conventional-commit
-│   ├── create-architectural-decision-record
-│   ├── create-implementation-plan
-│   ├── create-technical-spike
-│   ├── first-ask
 │   ├── java-docs
 │   ├── java-junit
 │   ├── java-refactoring-extract-method
 │   ├── java-refactoring-remove-parameter
-│   ├── performance-optimization
 │   ├── refactor-plan
 │   ├── review-and-refactor
-│   ├── sql-review
-│   └── what-context-needed
+│   └── sql-review
 │
 └── skills/                                ← Agent 可執行的技能
+    ├── adr/
+    ├── clarify-task/
     ├── code-review/
+    ├── context-discovery/
     ├── debug/
     ├── git-commit/
     ├── implement/
+    ├── performance/
+    ├── plan/
     ├── refactor/
     ├── security-audit/
+    ├── spike/
     ├── sql-review/
     └── test-design/
 ```
@@ -90,6 +91,8 @@
 | `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
 | `context-engineering` | `**` | 優化程式碼與專案結構，讓 Copilot 更有效理解上下文 |
 | `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
+| `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
+| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
 | `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP 設計模式（GoF + SOLID） |
@@ -157,22 +160,15 @@ flowchart LR
 
 | Prompt | 說明 |
 |--------|------|
-| `context-map` | 修改前產生所有相關檔案的地圖 |
-| `first-ask` | 互動式任務釐清 — 先確認範圍再行動 |
-| `what-context-needed` | 回答問題前先讓 Copilot 列出需要查看的檔案 |
-| `create-implementation-plan` | 為功能開發或重構建立結構化實作計畫 |
-| `create-technical-spike` | 建立限時技術探針文件 |
-| `create-architectural-decision-record` | 建立架構決策記錄（ADR）文件 |
+| `code-review-checklist` | 標準參考，搭配 `code-review` skill 使用 |
+| `sql-review` | 輸出格式參考，搭配 `sql-review` skill 使用 |
 | `java-docs` | 產生 Javadoc 註解 |
 | `java-junit` | JUnit 5 單元測試含資料驅動測試 |
 | `java-refactoring-extract-method` | 擷取方法（Extract Method）重構 |
 | `java-refactoring-remove-parameter` | 移除參數（Remove Parameter）重構 |
-| `sql-review` | SQL 審查（涵蓋安全、效能、程式碼品質；MySQL/PostgreSQL/SQL Server/Oracle） |
-| `review-and-refactor` | 依定義的規範審查並重構程式碼 |
 | `refactor-plan` | 規劃多檔案重構的順序與回滾步驟 |
+| `review-and-refactor` | 依定義的規範審查並重構程式碼 |
 | `conventional-commit` | 產生 Conventional Commits 規範的提交訊息 |
-| `performance-optimization` | 前端、後端、資料庫全方位效能最佳化 |
-| `code-review-checklist` | 通用程式碼審查檢查清單 |
 
 ---
 
@@ -182,12 +178,18 @@ flowchart LR
 
 | Skill | 觸發方式 | 說明 |
 |-------|----------|------|
+| `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
+| `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
 | `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
+| `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、開發、自我驗證 |
+| `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
+| `plan` | 自動 + 手動 | 結構化實作計畫 — 階段、原子任務、驗收標準 |
 | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
+| `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | `test-design` | 自動 + 手動 | 測試設計 — 邊界識別、JUnit 5 實作、覆蓋率分析 |
 
