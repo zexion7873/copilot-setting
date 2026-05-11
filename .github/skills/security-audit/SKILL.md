@@ -49,6 +49,8 @@ grep -rn 'password\s*=\s*"[^"]\+"\|apiKey\s*=\s*"[^"]\+"\|secret\s*=\s*"[^"]\+"'
 grep -rn "MessageDigest.getInstance.*\(MD5\|SHA-1\|SHA1\)" --include="*.java" src/
 grep -rn "log\.[a-z]\+.*\(password\|token\|secret\)" --include="*.java" src/
 grep -rn '"http://' --include="*.java" --include="*.properties" --include="*.xml" src/
+# Insecure Random for security-sensitive ops (use SecureRandom)
+grep -rn "new Random()\|Math.random()" --include="*.java" src/ -B 3 | grep -i "token\|session\|key\|secret\|nonce"
 ```
 
 ### A03 — Injection
@@ -67,6 +69,8 @@ grep -rn "log\.[a-z]\+.*getParameter\|log\.[a-z]\+.*getHeader" --include="*.java
 grep -rn "doPost" --include="*.java" src/ -A 30 | grep -i "login\|authenticate"
 grep -rn "failedAttempts\|lockout\|loginAttempt" --include="*.java" src/  # absence is the finding
 grep -rn "getParameter" --include="*.java" src/ | grep -v "isEmpty\|matches\|validate\|length"
+# Servlet instance variables — servlets are singletons, instance fields = shared mutable state
+grep -rn "class.*extends HttpServlet" --include="*.java" src/ -A 20 | grep "private [^s]"
 ```
 
 ### A05 — Security Misconfiguration
@@ -76,6 +80,8 @@ grep -rn "debug\s*=\s*true\|DEBUG\s*=\s*true" --include="*.properties" --include
 grep -rn "admin.*admin\|root.*root\|changeme" --include="*.properties" --include="*.xml" .
 grep -rn "e.printStackTrace\|getWriter.*getMessage" --include="*.java" src/   # leaking traces
 grep -rn "setHeader\|addHeader" --include="*.java" src/ | grep -i "X-Frame\|Content-Security\|Strict-Transport"  # absence is the finding
+# Resource leaks (Connection without try-with-resources)
+grep -rn "getConnection()" --include="*.java" src/ -A 20 | grep -v "try\s*("
 ```
 
 ### A07 — Authentication Failures
@@ -93,23 +99,7 @@ grep -rn "ObjectInputStream\|readObject()" --include="*.java" src/        # unsa
 grep -rn "DocumentBuilderFactory\|SAXParserFactory\|XMLInputFactory" --include="*.java" src/  # XXE candidates
 ```
 
-## Phase 3 — Java 8 Specific Checks
-
-```bash
-# Statement instead of PreparedStatement — must be zero in production code
-grep -rn "conn\.createStatement\(\)\|Statement [a-z]" --include="*.java" src/
-
-# Insecure Random for security-sensitive ops (use SecureRandom)
-grep -rn "new Random()\|Math.random()" --include="*.java" src/ -B 3 | grep -i "token\|session\|key\|secret\|nonce"
-
-# Resource leaks (Connection without try-with-resources)
-grep -rn "getConnection()" --include="*.java" src/ -A 20 | grep -v "try\s*("
-
-# Servlet instance variables — servlets are singletons, instance fields = shared mutable state
-grep -rn "class.*extends HttpServlet" --include="*.java" src/ -A 20 | grep "private [^s]"
-```
-
-## Phase 4 — Classify Findings
+## Phase 3 — Classify Findings
 
 Severity:
 
@@ -138,7 +128,7 @@ Finding format:
   Verification: <how to confirm fix works>
 ```
 
-## Phase 5 — Remediation Plan
+## Phase 4 — Remediation Plan
 
 Fix order: CRITICAL → HIGH → MEDIUM → LOW. Do not interleave categories.
 
@@ -157,7 +147,7 @@ mvn dependency:tree | grep -E "commons-collections|log4j|jackson-databind|xstrea
 mvn org.owasp:dependency-check-maven:check
 ```
 
-## Phase 6 — Verify Fixes
+## Phase 5 — Verify Fixes
 
 For every remediated finding:
 

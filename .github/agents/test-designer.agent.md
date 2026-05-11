@@ -60,9 +60,6 @@ Priority levels:
 - **P1** — Should test (important edge cases)
 - **P2** — Nice to test (rare scenarios)
 
-## JUnit 5 Guidelines
-- Use descriptive test method names: `test[Method]_[Scenario]_[ExpectedResult]`
-- Use `@ParameterizedTest` for data-driven tests
-- Use `@BeforeEach` for test setup
-- Assert one logical concept per test
-- Arrange-Act-Assert pattern
+## Conventions
+
+JUnit 5 + Mockito coding conventions are defined in `instructions/junit.instructions.md` (auto-applied on test files). Test design workflow lives in `skills/test-design/SKILL.md`.

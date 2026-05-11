@@ -73,6 +73,17 @@
 - 技術環境：Java 8、Maven、無 Spring Boot
 - 包含程式碼風格、錯誤處理、Git 慣例、Logging 規範
 
+> **為什麼 `global-copilot.instructions.md` 內容一樣？**
+>
+> Copilot 透過兩個獨立的 scope 載入指示：
+>
+> | Scope | 載入機制 | 對應檔案 |
+> |-------|----------|----------|
+> | **Project** | Copilot 自動載入 `.github/copilot-instructions.md`（內建慣例） | `copilot-instructions.md` |
+> | **User** | VS Code setting 指向 `~/.github/instructions/` 路徑 | `global-copilot.instructions.md` |
+>
+> Project scope 的載入機制無法引用 instructions 資料夾內的檔案，因此內容必須各放一份。這是 Copilot 平台的限制，並非意外重複。
+
 ---
 
 ## Instructions（指示）

@@ -10,15 +10,7 @@ Review and optimize `${selection}` (or the entire project if no selection). Appl
 
 ## Workflow
 
-1. **Inventory** — Locate every SQL site:
-   ```bash
-   grep -rn "SELECT\|INSERT\|UPDATE\|DELETE" --include="*.java" src/
-   find . -name "*.sql" -not -path "*/target/*"
-   ```
-2. **Security pass** — Flag every concatenated SQL site as CRITICAL until proven safe.
-3. **EXPLAIN pass** — Run `EXPLAIN ANALYZE` (MySQL 8+) or `EXPLAIN (ANALYZE, BUFFERS)` (PostgreSQL) on candidates flagged by the rules.
-4. **Anti-pattern scan** — Apply rules from `sql-rules.instructions.md` (SELECT *, function in WHERE, OFFSET on large, N+1, missing WHERE on UPDATE/DELETE, etc.).
-5. **Recommend** — Output findings per the format below.
+The review workflow (inventory, security pass, EXPLAIN pass, anti-pattern scan) is defined in `skills/sql-review/SKILL.md`. This prompt defines the output format and reference tables only.
 
 ## EXPLAIN Signal Cheat Sheet
 

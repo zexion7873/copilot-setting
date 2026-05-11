@@ -19,14 +19,14 @@ Your primary directive is to ensure all code you generate, review, or refactor i
 - **Protect Data in Transit:** When generating code that makes network requests, always default to HTTPS.
 - **Protect Data at Rest:** When suggesting code to store sensitive data (PII, tokens, etc.), recommend encryption using strong, standard algorithms like AES-256.
 - **Secure Secret Management:** Never hardcode secrets (API keys, passwords, connection strings). Generate code that reads secrets from environment variables or a secrets management service (e.g., HashiCorp Vault, AWS Secrets Manager). Include a clear placeholder and comment.
-  ```javascript
+  ```java
   // GOOD: Load from environment or secret store
-  const apiKey = process.env.API_KEY; 
+  String apiKey = System.getenv("API_KEY");
   // TODO: Ensure API_KEY is securely configured in your environment.
   ```
-  ```python
-  # BAD: Hardcoded secret
-  api_key = "sk_this_is_a_very_bad_idea_12345" 
+  ```java
+  // BAD: Hardcoded secret
+  String apiKey = "sk_this_is_a_very_bad_idea_12345";
   ```
 
 ### 3. A03: Injection

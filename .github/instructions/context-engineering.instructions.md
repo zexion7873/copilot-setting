@@ -15,9 +15,9 @@ Principles for helping GitHub Copilot understand your codebase and provide bette
 
 ## Code Patterns
 
-- **Prefer explicit types over inference**: Type annotations are context. `function getUser(id: string): Promise<User>` tells Copilot more than `function getUser(id)`.
+- **Prefer explicit types over inference**: Type annotations are context. `public User findUserById(long id)` tells Copilot more than an untyped equivalent.
 - **Use semantic names**: `activeAdultUsers` > `x`. Self-documenting code is AI-readable code.
-- **Define constants**: `MAX_RETRY_ATTEMPTS = 3` > magic number `3`. Named values carry meaning.
+- **Define constants**: `private static final int MAX_RETRY_ATTEMPTS = 3` > magic number `3`. Named values carry meaning.
 
 ## Working with Copilot
 

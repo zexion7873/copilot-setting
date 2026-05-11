@@ -20,39 +20,16 @@ For each method capture:
 
 ## Phase 2 — Identify Boundaries
 
-Run every parameter through these axes.
+Run every parameter through these axes:
 
-### Null / Empty
-- `null` — accepted or rejected?
-- `""` empty string — same as null?
-- `"   "` blank — same as empty?
-- `[]` empty collection — same as null?
-- `Optional.empty()` — for Optional params
-
-### Numeric
-- `0`, `-1`
-- `Integer.MIN_VALUE` / `MAX_VALUE` (under/overflow)
-- Domain min / max
-- One below min, one above max (invalid)
-- Doubles: precision (`0.1 + 0.2 != 0.3`)
-
-### Collection sizes
-- 0, 1, 2 (ordering boundary), N (typical), MAX (perf boundary)
-- `null` vs `[]` — distinguished?
-
-### Strings
-- `null`, `""`, `" "`, single char, max length, max+1
-- Special chars: `!@#$%^&*()`
-- Unicode: 中文, emoji, RTL
-- SQL probe: `' " ; --`
-- HTML probe: `< > & " '`
-
-### Dates / Times
-- `null`, epoch, leap year Feb 29, non-leap Feb 29 (invalid)
-- Month/year end, midnight UTC vs local, DST transition
-
-### Concurrency (if shared state)
-- Concurrent read, concurrent write, read-write interleave
+| Type | Boundary values to test |
+|---|---|
+| **Null / Empty** | `null`, `""`, `"   "` blank, `[]` empty collection, `Optional.empty()` |
+| **Numeric** | `0`, `-1`, `MIN_VALUE`, `MAX_VALUE`, domain min/max, one past each boundary, double precision (`0.1+0.2`) |
+| **Collection** | size 0, 1, 2 (ordering), N (typical), MAX (perf); `null` vs `[]` |
+| **String** | `null`, `""`, `" "`, single char, max length, max+1, special chars, Unicode (中文/emoji), SQL probe (`' " ; --`), HTML probe (`< > &`) |
+| **Date / Time** | `null`, epoch, leap year Feb 29, non-leap Feb 29, month/year end, midnight UTC vs local, DST |
+| **Concurrency** | concurrent read, concurrent write, read-write interleave (if shared state) |
 
 ## Phase 3 — Design Cases by Category
 
@@ -137,25 +114,13 @@ Make tests resilient to mutation testing:
 
 ## Test Anti-Patterns
 
-| Pattern | Why bad | Do instead |
-|---|---|---|
-| Testing implementation not behavior | Breaks on refactor | Assert returns + side effects, not call sequence |
-| 50+ lines of setup | Unreadable | Extract to `@BeforeEach` / helpers; if huge, split the class |
-| Order-dependent tests | Flaky | Each test sets up own state |
-| `@Disabled` left long-term | Hides decay | Fix or delete |
-| Test with no `assert*` | Always passes | Every test asserts at least once |
-| Testing private methods directly | Couples to internals | Test through public API |
-| Mocking the class under test | Tests the mock | Only mock dependencies |
-| `assertTrue(a.equals(b))` | Useless failure msg | `assertEquals(b, a)` |
+Anti-patterns and coding conventions for JUnit 5 + Mockito are defined in `instructions/junit.instructions.md` (auto-applied on test files). Key reminders:
+
+- Test behavior, not implementation — assert returns + side effects, not call sequence
+- Every test asserts at least once — a test with no `assert*` always passes
+- Only mock dependencies — never mock the class under test
+- `assertEquals(expected, actual)` — never `assertTrue(a.equals(b))`
 
 ## Quick Checklist (small methods)
 
-- What does it do with valid input? (happy path)
-- What with `null`?
-- What at min / max valid value?
-- What one step past the boundary?
-- What exceptions, when?
-- What dependencies, do I `verify()` them?
-- Collection return → test size 0, 1, many
-- State mutation → verify before / after
-- Security concern → test injection + unauthorized access
+Valid input? `null`? Min/max? One past boundary? Exceptions? Dependencies (`verify`)? Collection size 0/1/many? State mutation before/after? Security (injection, unauthorized)?

@@ -73,6 +73,17 @@ Global base instructions loaded in every conversation.
 - Tech stack: Java 8, Maven, no Spring Boot
 - Coding style, error handling, git conventions, logging standards
 
+> **Why does `global-copilot.instructions.md` contain the same content?**
+>
+> Copilot loads instructions through two independent scopes:
+>
+> | Scope | Mechanism | File |
+> |-------|-----------|------|
+> | **Project** | Copilot auto-loads `.github/copilot-instructions.md` by convention | `copilot-instructions.md` |
+> | **User** | VS Code setting points to `~/.github/instructions/` | `global-copilot.instructions.md` |
+>
+> Project-scope loading does not resolve references to instruction files, so the content must exist in both places. This is a Copilot platform constraint, not accidental duplication.
+
 ---
 
 ## Instructions

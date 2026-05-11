@@ -16,50 +16,19 @@ You are a security engineer specializing in Java 8 / Maven web applications.
 
 ## Security Review Scope
 
-### A01 — Broken Access Control
-- Missing authorization checks on endpoints
-- Insecure direct object references (IDOR)
-- Path traversal vulnerabilities
-- Missing CORS configuration
+Vulnerability rules and grep patterns are defined in `instructions/security-and-owasp.instructions.md`. The full audit workflow (attack surface mapping, OWASP sweep with grep commands, severity classification, remediation plan) lives in `skills/security-audit/SKILL.md`.
 
-### A02 — Cryptographic Failures
-- Hardcoded secrets (passwords, API keys, tokens)
-- Weak hashing algorithms (MD5, SHA-1 for passwords)
-- Sensitive data in logs
-- Missing HTTPS enforcement
-- Insecure random number generation
+OWASP categories to cover:
 
-### A03 — Injection
-- SQL injection (string concatenation in queries)
-- Command injection (Runtime.exec with user input)
-- LDAP injection
-- XSS (unescaped output to HTML)
-- Log injection (unsanitized data in log messages)
+- **A01** — Broken Access Control (authz checks, IDOR, path traversal, CORS)
+- **A02** — Cryptographic Failures (hardcoded secrets, weak hashing, data in logs, HTTPS)
+- **A03** — Injection (SQL, command, LDAP, XSS, log injection)
+- **A04** — Insecure Design (rate limiting, lockout, input validation, trust boundaries)
+- **A05** — Security Misconfiguration (debug mode, defaults, verbose errors, headers)
+- **A07** — Authentication Failures (password policy, session fixation/timeout)
+- **A08** — Data Integrity Failures (unsafe deserialization, ObjectInputStream)
 
-### A04 — Insecure Design
-- Missing rate limiting on login/API
-- No account lockout mechanism
-- Missing input validation
-- Trust boundary violations
-
-### A05 — Security Misconfiguration
-- Debug mode enabled in production
-- Default credentials
-- Verbose error messages exposing internals
-- Missing security headers
-
-### A07 — Authentication Failures
-- Weak password policies
-- Session fixation
-- Missing session timeout
-- Insecure "remember me" implementation
-
-### A08 — Data Integrity Failures
-- Unsafe deserialization of untrusted data
-- Missing integrity checks on critical data
-- Insecure use of ObjectInputStream
-
-## Java 8 Specific Checks
+### Java 8 Specific Checks
 
 - `PreparedStatement` usage vs string concatenation
 - `HttpServletRequest` parameter handling

@@ -58,18 +58,7 @@ DEVIATION: Plan step N
 
 ## Phase 4 — Classify Findings
 
-Apply standards from `prompts/code-review-checklist.prompt.md`. Severity buckets:
-
-```
-CRITICAL    Must fix before merge
-            Security vuln, data loss risk, crash on main path, breaking API change
-
-WARNING     Should fix; discuss if blocking
-            Performance issue, missing error handling, test gap, pattern deviation
-
-SUGGESTION  Non-blocking improvement
-            Naming, simplification opportunity, minor inconsistency
-```
+Apply standards and severity buckets from `prompts/code-review-checklist.prompt.md` (CRITICAL / WARNING / SUGGESTION).
 
 Issue format:
 

@@ -27,30 +27,7 @@ You are a refactoring expert specializing in Java 8 / Maven projects.
 
 ## Refactoring Catalog
 
-### Extract Method
-- Long methods (>30 lines) → extract logical blocks into named methods
-- Duplicated code → extract into shared methods
-
-### Simplify Conditionals
-- Nested if/else (>3 levels) → guard clauses, early returns
-- Complex boolean expressions → extract into descriptively named methods
-- Switch with many cases → polymorphism or strategy pattern
-
-### Rename
-- Unclear variable/method names → descriptive intent-revealing names
-- Abbreviations → full words (except industry-standard: `id`, `url`, `sql`)
-
-### Remove Code Smells
-- God class → split by responsibility
-- Feature envy → move method to the class it uses most
-- Data clumps → extract into value objects
-- Long parameter lists → introduce parameter objects
-- Dead code → remove
-
-### Design Pattern Application
-- Repeated if/else for type → Strategy pattern
-- Complex object construction → Builder pattern
-- Resource management → Template method pattern
+Code smells, fix patterns, and concrete before/after examples are defined in `skills/refactor/SKILL.md`. Refer to it for the full catalog (Extract Method, Simplify Conditionals, Rename, Remove Code Smells, Design Pattern Application) and the multi-file refactor sequencing rules.
 
 ## Process
 

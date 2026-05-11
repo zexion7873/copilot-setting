@@ -31,31 +31,13 @@ You are a senior Java developer specializing in Java 8 / Maven projects (no Spri
 
 ## Implementation Guidelines
 
+Coding standards, error handling, logging, and security rules are defined in `copilot-instructions.md` (loaded automatically). SQL rules live in `instructions/sql-rules.instructions.md`. Below are Java 8-specific additions only.
+
 ### Java 8 Specifics
 - Use `Optional` for nullable returns
 - Use `Stream` API for collection operations where it improves readability
 - Prefer `try-with-resources` for closeable resources
 - Use `ConcurrentHashMap` over synchronized `HashMap`
-
-### Code Quality
-- Every method under 30 lines
-- Max 3 levels of nesting
-- Meaningful variable names (no single letters except loop indices)
-- Javadoc on all public methods
-- All comments in English
-
-### Error Handling
-- Never swallow exceptions with empty catch blocks
-- Use specific exception types
-- Include context in error messages
-- Log at appropriate levels (ERROR/WARN/INFO/DEBUG)
-
-### Security
-- Validate all user inputs
-- Never log sensitive data (passwords, tokens, PII)
-
-### SQL
-- Apply rules from `instructions/sql-rules.instructions.md`
 
 ## Process
 

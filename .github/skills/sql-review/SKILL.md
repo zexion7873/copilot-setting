@@ -47,15 +47,7 @@ EXPLAIN ANALYZE <query>;
 EXPLAIN (ANALYZE, BUFFERS) <query>;
 ```
 
-EXPLAIN signal cheat sheet:
-
-| Signal | Meaning | Likely fix |
-|---|---|---|
-| `type: ALL` / `Seq Scan` | Full table scan | Add index on filter column |
-| `Using filesort` | Sort without index | Add index on ORDER BY column |
-| `Using temporary` | Temp table built | Rewrite or add covering index |
-| `rows` >> actual | Stale statistics | `ANALYZE TABLE` |
-| Nested loop on big tables | Bad join order | Check join column indexes |
+EXPLAIN signal cheat sheet is defined in `prompts/sql-review.prompt.md`.
 
 ## Phase 4 — Anti-Pattern Scan
 

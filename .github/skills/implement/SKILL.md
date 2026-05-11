@@ -72,31 +72,14 @@ Write code in this order to minimize back-and-forth:
 4. **Integration** — Wire into existing code (call sites, configuration)
 5. **Error paths** — Handle failures at system boundaries only
 
-### 2.2 Coding Checklist
+### 2.2 Keep It Minimal
 
-```
-□ Type hints on all method signatures
-□ Follows existing naming conventions in the codebase
-□ No new dependencies unless strictly necessary
-□ Error handling at system boundaries (user input, external APIs, I/O)
-□ Logging at appropriate level (not too verbose, not silent)
-□ No hardcoded values — use constants or configuration
-```
+- Solve the stated problem — no features not requested
+- Match the complexity level of surrounding code
+- Reuse existing utilities and helpers
+- No abstractions for hypothetical future needs (YAGNI)
 
-### 2.3 Keep It Minimal
-
-```
-DO:
-  - Solve the stated problem
-  - Match the complexity level of surrounding code
-  - Reuse existing utilities and helpers
-
-DO NOT:
-  - Add features not requested
-  - Build abstractions for hypothetical future needs
-  - Add defensive code for impossible internal states
-  - Create helper classes for one-time use
-```
+Coding standards (naming, error handling, logging, security) are defined in `copilot-instructions.md` — do not duplicate here.
 
 ---
 
@@ -132,31 +115,9 @@ After writing, verify before presenting.
 
 ## Phase 4 — Present the Result
 
-### 4.1 Summary Format
+Summarize: **What** was implemented, **Where** (file paths), **Pattern followed** (reference class), **Key decisions** (and why), **Not included** (and why).
 
-```
-## Implementation Summary
-
-**What**: [One sentence — what was implemented]
-**Where**: [File paths of new/modified files]
-**Pattern followed**: [Which existing class/pattern was used as reference]
-
-### Key Decisions
-- [Decision 1 and why]
-- [Decision 2 and why]
-
-### Not Included (intentionally)
-- [Anything deliberately left out and why]
-```
-
-### 4.2 Suggest Next Steps
-
-```
-□ Tests needed? → Suggest @test-designer or /test-design
-□ Review needed? → Suggest @reviewer or /code-review
-□ SQL involved? → Suggest @sql-expert or /sql-review
-□ Security-sensitive? → Suggest @security or /security-audit
-```
+Suggest next steps: `@test-designer` / `@reviewer` / `@sql-expert` / `@security` as applicable.
 
 ---
 

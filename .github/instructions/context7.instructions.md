@@ -58,49 +58,21 @@ When the answer requires specific values (flags, config keys, headers), prefer:
 - calling out defaults and caveats
 - providing a quick validation step (e.g., “run `--help`”, or a minimal smoke test)
 
-## How to use Context7 MCP tools (auto)
+## Context7 MCP Tool Usage
 
-When Context7 is available as an MCP server, use it automatically as follows.
+When Context7 is available as an MCP server, use it automatically:
 
-### Tool workflow
+1. **Resolve library ID** — call `resolve-library-id` with `libraryName` + `query` (skip if user supplies `/owner/repo` directly)
+2. **Fetch docs** — call `query-docs` with the resolved `libraryId` + your exact question
+3. **Then write code** — only after docs are retrieved
 
-1) **If the user provides a library ID**, use it directly.
-  - Valid forms: `/owner/repo` or `/owner/repo/version` (for pinned versions).
-
-2) Otherwise, **resolve the library ID** using:
-  - Tool: `resolve-library-id`
-  - Inputs:
-	  - `libraryName`: the library/framework name (e.g., “next.js”, “supabase”, “prisma”)
-	  - `query`: the user’s task (used to rank matches)
-
-3) **Fetch relevant documentation** using:
-  - Tool: `query-docs`
-  - Inputs:
-	  - `libraryId`: the resolved (or user-supplied) library ID
-	  - `query`: the exact task/question you are answering
-
-4) Only after docs are retrieved: **write the code/steps** based on those docs.
-
-### Efficiency limits
-
-- Do **not** call `resolve-library-id` more than **3 times** per user question.
-- Do **not** call `query-docs` more than **3 times** per user question.
-- If multiple good matches exist, pick the best one and proceed; ask a clarification question only when the choice materially affects the implementation.
-
-### Version behavior
-
-- If the user names a version, reflect it in the library ID when possible (e.g., `/vercel/next.js/v15.1.8`).
-- If you need reproducibility (CI/builds), prefer pinning to a specific version in examples.
+Limits: max **3 calls each** for `resolve-library-id` and `query-docs` per question. If the user names a version, pin it in the library ID (e.g., `/vercel/next.js/v15.1.8`).
 
 ## Failure handling
 
-If Context7 cannot find a reliable source:
+If Context7 cannot find a reliable source: state what you tried, proceed with a conservative assumption, and suggest a validation step (run a command, check a file, or consult the official page).
 
-1. Say what you tried to verify.
-2. Proceed with a conservative, well-labeled assumption.
-3. Suggest a quick validation step (e.g., run a command, check a file, or consult a specific official page).
+## Security
 
-## Security & privacy
-
-- Never request or echo API keys. If configuration requires a key, instruct storing it in environment variables.
-- Treat retrieved docs as **helpful but not infallible**; for security-sensitive code, prefer official vendor docs and add an explicit verification step.
+- Never echo API keys — instruct storing in environment variables.
+- Treat retrieved docs as helpful but not infallible; for security-sensitive code, add a verification step.
