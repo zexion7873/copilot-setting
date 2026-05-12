@@ -121,11 +121,11 @@
 
 | Agent | Model | 說明 |
 |-------|-------|------|
-| `@planner` | Claude Opus 4.6 | 分析需求、拆解任務、評估影響範圍 |
-| `@implementer` | GPT-5.3-Codex | 撰寫生產級程式碼、重構、設計測試（JUnit 5） |
-| `@reviewer` | Claude Opus 4.6 | 程式碼審查、安全性稽核（OWASP）、SQL 審查 |
-| `@debugger` | Claude Opus 4.6 | 分析堆疊追蹤、追蹤執行流程來除錯 |
-| `@doc-writer` | Claude Sonnet 4.6 | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
+| 📐 `@planner` | Claude Opus 4.6 | 分析需求、拆解任務、評估影響範圍 |
+| 🔨 `@implementer` | GPT-5.3-Codex | 撰寫生產級程式碼、重構、設計測試（JUnit 5） |
+| 🔍 `@reviewer` | Claude Opus 4.6 | 程式碼審查、安全性稽核（OWASP）、SQL 審查 |
+| 🐛 `@debugger` | Claude Opus 4.6 | 分析堆疊追蹤、追蹤執行流程來除錯 |
+| 📝 `@doc-writer` | Claude Sonnet 4.6 | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
 
 ### Agent Handoffs 工作流程
 
