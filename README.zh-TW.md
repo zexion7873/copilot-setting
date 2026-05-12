@@ -168,22 +168,22 @@ flowchart LR
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
 
-| Skill | 觸發方式 | 說明 |
-|-------|----------|------|
-| `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
-| `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
-| `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
-| `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
-| `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
-| `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
-| `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、開發、自我驗證 |
-| `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
-| `plan` | 自動 + 手動 | 結構化實作計畫 — 階段、原子任務、驗收標準 |
-| `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
-| `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
-| `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
-| `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
-| `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
+|   | Skill | 觸發方式 | 說明 |
+|:-:|-------|----------|------|
+| ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
+| 🗺️ | `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
+| 📐 | `plan` | 自動 + 手動 | 結構化實作計畫 — 階段、原子任務、驗收標準 |
+| 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
+| 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、開發、自我驗證 |
+| ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
+| 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
+| 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
+| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
+| 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
+| 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
+| 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
+| ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
 
 > [!WARNING]
 > `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。

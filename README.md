@@ -168,22 +168,22 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 
 Executable workflows. Auto-triggered by Copilot when relevant (unless disabled), or invoke manually via `/skill-name`.
 
-| Skill | Trigger | Description |
-|-------|---------|-------------|
-| `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
-| `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
-| `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
-| `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
-| `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
-| `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
-| `implement` | Auto + Manual | Feature implementation with pattern discovery and self-verification |
-| `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
-| `plan` | Auto + Manual | Implementation plan with phases, atomic tasks, and acceptance criteria |
-| `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
-| `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
-| `spike` | Auto + Manual | Time-boxed research document for a single technical question |
-| `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
-| `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
+|   | Skill | Trigger | Description |
+|:-:|-------|---------|-------------|
+| ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
+| 🗺️ | `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
+| 📐 | `plan` | Auto + Manual | Implementation plan with phases, atomic tasks, and acceptance criteria |
+| 📌 | `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
+| 🔬 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
+| 🔨 | `implement` | Auto + Manual | Feature implementation with pattern discovery and self-verification |
+| ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
+| 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
+| 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
+| 🔍 | `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
+| 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
+| 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
+| 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
+| ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
 
 > [!WARNING]
 > `git-commit` is marked **manual only** because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
