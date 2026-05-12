@@ -10,53 +10,6 @@
 
 Personal Copilot settings. Some files are based on [awesome-copilot](https://github.com/github/awesome-copilot), customized as needed.
 
-## How It Works
-
-You only touch **agents**. Everything else loads by itself.
-
-| Resource | When it loads | You do |
-|----------|---------------|--------|
-| **copilot-instructions.md** | Every conversation | Nothing — always there |
-| **Instructions** (`instructions/`) | Current file matches `applyTo` glob (e.g., `**/*.java`) | Nothing — injected by file type |
-| **Agents** (`agents/`) | You type `@agent-name` in chat | Pick the agent |
-| **Skills** (`skills/`) | Copilot matches your message to the skill's `description` | Nothing — fires when relevant |
-| **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
-
-
-## Typical Workflow
-
-Example: adding a new API endpoint.
-
-```
-You  →  @planner       "I need an API to query order history by customer ID"
-                        Planner scans the codebase, breaks it into phased plan
-                        ↓ click "寫成 SDD" handoff
-
-You  →  @doc-writer    Turns the plan into a System Design Document
-                        ↓ click "開始實作" handoff
-
-You  →  @implementer   Picks up the SDD, writes code following existing patterns
-                        ↓ click "Code Review" handoff
-
-You  →  @reviewer      Checks correctness, security, performance
-                        Catches SQL injection risk → CRITICAL
-                        ↓ click "修復問題" handoff
-
-You  →  @implementer   Switches to PreparedStatement
-                        ↓ click "寫測試" handoff
-
-You  →  @test-designer Designs tests (happy path, null customer, pagination boundary)
-                        Done ✓
-```
-
-Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context — you stay in the same chat window.
-
-> **Other common starting points:**
-> - Bug → `@debugger` → `@implementer`
-> - Slow SQL → `@sql-expert` → `@reviewer`
-> - Security → `@security` → `@implementer`
-> - Documentation → `@planner` → `@doc-writer`
-
 ## Directory Structure
 
 ```
@@ -202,6 +155,54 @@ flowchart LR
 
     Security -->|"Fix vulnerabilities"| Implementer
 ```
+
+---
+
+## How It Works
+
+You only touch **agents**. Everything else loads by itself.
+
+| Resource | When it loads | You do |
+|----------|---------------|--------|
+| **copilot-instructions.md** | Every conversation | Nothing — always there |
+| **Instructions** (`instructions/`) | Current file matches `applyTo` glob (e.g., `**/*.java`) | Nothing — injected by file type |
+| **Agents** (`agents/`) | You type `@agent-name` in chat | Pick the agent |
+| **Skills** (`skills/`) | Copilot matches your message to the skill's `description` | Nothing — fires when relevant |
+| **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
+
+## Typical Workflow
+
+Example: adding a new API endpoint.
+
+```
+You  →  @planner       "I need an API to query order history by customer ID"
+                        Planner scans the codebase, breaks it into phased plan
+                        ↓ click "寫成 SDD" handoff
+
+You  →  @doc-writer    Turns the plan into a System Design Document
+                        ↓ click "開始實作" handoff
+
+You  →  @implementer   Picks up the SDD, writes code following existing patterns
+                        ↓ click "Code Review" handoff
+
+You  →  @reviewer      Checks correctness, security, performance
+                        Catches SQL injection risk → CRITICAL
+                        ↓ click "修復問題" handoff
+
+You  →  @implementer   Switches to PreparedStatement
+                        ↓ click "寫測試" handoff
+
+You  →  @test-designer Designs tests (happy path, null customer, pagination boundary)
+                        Done ✓
+```
+
+Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context — you stay in the same chat window.
+
+> **Other common starting points:**
+> - Bug → `@debugger` → `@implementer`
+> - Slow SQL → `@sql-expert` → `@reviewer`
+> - Security → `@security` → `@implementer`
+> - Documentation → `@planner` → `@doc-writer`
 
 ---
 

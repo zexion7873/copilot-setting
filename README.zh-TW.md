@@ -10,53 +10,6 @@
 
 個人 Copilot 設定。部分檔案參考自 [awesome-copilot](https://github.com/github/awesome-copilot)，並依需求調整。
 
-## 運作機制
-
-你只管切 **agent**，其他的自己來。
-
-| 資源 | 何時載入 | 你要做什麼 |
-|------|----------|-----------|
-| **copilot-instructions.md** | 每次對話 | 不用動 — 永遠在 |
-| **Instructions**（`instructions/`） | 檔案符合 `applyTo` glob（如 `**/*.java`） | 不用動 — 看你開什麼檔就注入什麼 |
-| **Agents**（`agents/`） | 在 Chat 打 `@agent-name` | 選 agent |
-| **Skills**（`skills/`） | Copilot 把你說的話比對 skill 的 `description` | 不用動 — 聊到就觸發 |
-| **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
-
-
-## 典型工作流程
-
-例子：加一支新的 API endpoint。
-
-```
-你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                       Planner 掃 codebase，拆出分階段計畫
-                       ↓ 點「寫成 SDD」
-
-你  →  @doc-writer    把計畫寫成 System Design Document
-                       ↓ 點「開始實作」
-
-你  →  @implementer   照 SDD 和既有 pattern 寫 code
-                       ↓ 點「Code Review」
-
-你  →  @reviewer      查正確性、安全性、效能
-                       抓到 SQL injection → CRITICAL
-                       ↓ 點「修復問題」
-
-你  →  @implementer   改成 PreparedStatement
-                       ↓ 點「寫測試」
-
-你  →  @test-designer 設計測試（正常、null 客戶、分頁邊界）
-                       Done ✓
-```
-
-每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡，全程同一個聊天視窗。
-
-> **其他常見起手式：**
-> - Bug → `@debugger` → `@implementer`
-> - SQL 太慢 → `@sql-expert` → `@reviewer`
-> - 資安 → `@security` → `@implementer`
-> - 寫文件 → `@planner` → `@doc-writer`
-
 ## 目錄結構
 
 ```
@@ -202,6 +155,54 @@ flowchart LR
 
     Security -->|"修復漏洞"| Implementer
 ```
+
+---
+
+## 運作機制
+
+你只管切 **agent**，其他的自己來。
+
+| 資源 | 何時載入 | 你要做什麼 |
+|------|----------|-----------|
+| **copilot-instructions.md** | 每次對話 | 不用動 — 永遠在 |
+| **Instructions**（`instructions/`） | 檔案符合 `applyTo` glob（如 `**/*.java`） | 不用動 — 看你開什麼檔就注入什麼 |
+| **Agents**（`agents/`） | 在 Chat 打 `@agent-name` | 選 agent |
+| **Skills**（`skills/`） | Copilot 把你說的話比對 skill 的 `description` | 不用動 — 聊到就觸發 |
+| **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
+
+## 典型工作流程
+
+例子：加一支新的 API endpoint。
+
+```
+你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
+                       Planner 掃 codebase，拆出分階段計畫
+                       ↓ 點「寫成 SDD」
+
+你  →  @doc-writer    把計畫寫成 System Design Document
+                       ↓ 點「開始實作」
+
+你  →  @implementer   照 SDD 和既有 pattern 寫 code
+                       ↓ 點「Code Review」
+
+你  →  @reviewer      查正確性、安全性、效能
+                       抓到 SQL injection → CRITICAL
+                       ↓ 點「修復問題」
+
+你  →  @implementer   改成 PreparedStatement
+                       ↓ 點「寫測試」
+
+你  →  @test-designer 設計測試（正常、null 客戶、分頁邊界）
+                       Done ✓
+```
+
+每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡，全程同一個聊天視窗。
+
+> **其他常見起手式：**
+> - Bug → `@debugger` → `@implementer`
+> - SQL 太慢 → `@sql-expert` → `@reviewer`
+> - 資安 → `@security` → `@implementer`
+> - 寫文件 → `@planner` → `@doc-writer`
 
 ---
 
