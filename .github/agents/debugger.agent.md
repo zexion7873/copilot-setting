@@ -8,10 +8,6 @@ handoffs:
     agent: Implementer
     prompt: 請根據上面的除錯分析結果修復這個 Bug。
     send: false
-  - label: Review 修復
-    agent: Reviewer
-    prompt: 請審查上面的 Bug 修復是否正確、有無副作用。
-    send: false
 ---
 
 # Debugger — Debug & Troubleshooting Specialist
