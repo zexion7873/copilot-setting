@@ -31,7 +31,7 @@ You are a senior Java developer specializing in Java 8 / Maven projects (no Spri
 
 ## Implementation Guidelines
 
-Coding standards, error handling, logging, and security rules are defined in `copilot-instructions.md` (loaded automatically). SQL rules live in `instructions/sql-rules.instructions.md`. Below are Java 8-specific additions only.
+Coding standards, error handling, logging, and security rules are defined in `copilot-instructions.md` (loaded automatically). SQL rules live in `instructions/sql-rules.instructions.md`. Implementation workflow (pattern discovery, coding order, self-verification) lives in `skills/implement/SKILL.md`. Below are Java 8-specific additions only.
 
 ### Java 8 Specifics
 - Use `Optional` for nullable returns

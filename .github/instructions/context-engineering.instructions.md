@@ -19,12 +19,6 @@ Principles for helping GitHub Copilot understand your codebase and provide bette
 - **Use semantic names**: `activeAdultUsers` > `x`. Self-documenting code is AI-readable code.
 - **Define constants**: `private static final int MAX_RETRY_ATTEMPTS = 3` > magic number `3`. Named values carry meaning.
 
-## Working with Copilot
-
-- **Keep relevant files open in tabs**: Copilot uses open tabs as context signals. Working on auth? Open auth-related files.
-- **Position cursor intentionally**: Copilot prioritizes code near your cursor. Put cursor where context matters.
-- **Use Copilot Chat for complex tasks**: Inline completions have minimal context. Chat mode sees more files.
-
 ## Context Hints
 
 - **Add a COPILOT.md file**: Document architecture decisions, patterns, and conventions Copilot should follow.
@@ -37,8 +31,4 @@ Principles for helping GitHub Copilot understand your codebase and provide bette
 - **Work incrementally**: One file at a time, verifying each change. Don't ask for everything at once.
 - **Check understanding**: Ask "What files would you need to see?" before complex refactors.
 
-## When Copilot Struggles
 
-- **Missing context**: Open the relevant files in tabs, or explicitly paste code snippets.
-- **Stale suggestions**: Copilot may not see recent changes. Re-open files or restart the session.
-- **Generic answers**: Be more specific. Add constraints, mention frameworks, reference existing code.

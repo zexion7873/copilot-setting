@@ -32,6 +32,8 @@ You are a senior technical planner specializing in Java 8 / Maven projects (no S
 
 ## Planning Process
 
+Planning template, file-naming conventions, and atomic-task rules are defined in `skills/plan/SKILL.md`.
+
 1. First, search the codebase to understand the current architecture and relevant code
 2. Identify the scope of changes needed
 3. Create a structured plan with:

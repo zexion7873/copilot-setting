@@ -5,7 +5,7 @@ description: 'Use when user asks to review code, check a PR, audit changes, 審�
 
 # Code Review — Workflow
 
-Process for systematic code review. Standards (what to check by category) live in `prompts/code-review-checklist.prompt.md`. This file defines the order of attack, severity classification, and verdict shape.
+Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) is inlined in `agents/reviewer.agent.md`.
 
 ## Phase 1 — Scope
 
@@ -58,7 +58,13 @@ DEVIATION: Plan step N
 
 ## Phase 4 — Classify Findings
 
-Apply standards and severity buckets from `prompts/code-review-checklist.prompt.md` (CRITICAL / WARNING / SUGGESTION).
+Severity buckets:
+
+| Level | Includes |
+|---|---|
+| CRITICAL | Security vulnerability, data corruption, crash on main path, breaking API change, secrets in source |
+| WARNING | Performance issue (N+1, leak), missing error handling, test gap on changed code, pattern deviation |
+| SUGGESTION | Naming, simplification, missing WHY comment, minor style inconsistency |
 
 Issue format:
 
