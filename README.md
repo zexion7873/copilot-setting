@@ -4,16 +4,16 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat-square&labelColor=black)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ffcb47)](https://github.com/zexion7873/copilot-setting/stargazers)
-[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting/commits)
-[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ff80eb)](https://github.com/zexion7873/copilot-setting/issues)
-[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting)
+[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/commits)
+[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
+[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-A declarative prompt harness for GitHub Copilot in VS Code.
-Instructions, agents, skills, and prompts — organized as markdown, zero runtime dependency.
 
 </div>
+
+Personal Copilot settings. Some files are based on [awesome-copilot](https://github.com/github/awesome-copilot), customized as needed.
 
 ---
 
@@ -241,6 +241,7 @@ You  →  @implementer   Switches to PreparedStatement, writes tests
 
 Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context.
 
+> [!TIP]
 > **Other common starting points:**
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`

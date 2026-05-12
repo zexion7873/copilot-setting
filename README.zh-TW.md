@@ -4,16 +4,16 @@
 
 [English](README.md) | **繁體中文**
 
-[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat-square&labelColor=black)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ffcb47)](https://github.com/zexion7873/copilot-setting/stargazers)
-[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting/commits)
-[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ff80eb)](https://github.com/zexion7873/copilot-setting/issues)
-[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting)
+[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/commits)
+[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
+[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-VS Code GitHub Copilot 的宣告式提示詞工具鏈。
-Instructions、Agents、Skills、Prompts — 全部用 markdown 組織，零 runtime dependency。
 
 </div>
+
+個人 Copilot 設定。部分檔案參考自 [awesome-copilot](https://github.com/github/awesome-copilot)，並依需求調整。
 
 ---
 
@@ -241,6 +241,7 @@ flowchart LR
 
 每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡。
 
+> [!TIP]
 > **其他常見起手式：**
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
