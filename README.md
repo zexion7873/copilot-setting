@@ -119,13 +119,13 @@ Automatically injected into the system prompt when the current file matches the 
 
 Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / Maven projects.
 
-| Agent | Model | Description |
-|-------|-------|-------------|
-| 📐 `@planner` | Claude Opus 4.6 | Analyze requirements, break down tasks, estimate impact scope |
-| 🔨 `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
-| 🔍 `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
-| 🐛 `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
-| 📝 `@doc-writer` | Claude Sonnet 4.6 | Write SDD, Javadoc, API docs, migration guides |
+|   | Agent | Model | Description |
+|:-:|-------|-------|-------------|
+| 📐 | `@planner` | Claude Opus 4.6 | Analyze requirements, break down tasks, estimate impact scope |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
+| 🐛 | `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
+| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Write SDD, Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 
