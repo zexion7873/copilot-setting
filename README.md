@@ -67,15 +67,12 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
 
 ```mermaid
-flowchart TD
-    CI[copilot-instructions.md] -.->|always loaded| Conv[Every conversation]
-    Inst[Instructions] -.->|auto-injected<br/>by file type| Conv
+flowchart LR
+    CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))
+    Inst[Instructions] -.->|by file type| Chat
     Skills -->|reference rules from| Inst
-    Skills -->|reference output format from| Prompts
-    Prompts -->|reference workflow from| Skills
-    Agents -->|handoff to| Agents
+    Skills <-->|output format ↔ workflow| Prompts
     Skills -->|hand off to| Agents
-    Skills -->|hand off to| Skills
 ```
 
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
