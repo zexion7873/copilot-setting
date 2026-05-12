@@ -196,7 +196,7 @@ You  →  @test-designer Designs tests (happy path, null customer, pagination bo
                         Done ✓
 ```
 
-Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context — you stay in the same chat window.
+Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context.
 
 > **Other common starting points:**
 > - Bug → `@debugger` → `@implementer`

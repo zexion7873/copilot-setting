@@ -196,7 +196,7 @@ flowchart LR
                        Done ✓
 ```
 
-每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡，全程同一個聊天視窗。
+每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡。
 
 > **其他常見起手式：**
 > - Bug → `@debugger` → `@implementer`
