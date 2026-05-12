@@ -76,7 +76,7 @@ Global base instructions loaded in every conversation.
 - Respond in Traditional Chinese (繁體中文)
 - All comments, variable names, and class names in code must be in English
 - Tech stack: Java 8, Maven, no Spring Boot
-- Coding style, error handling, git conventions, logging standards
+- Git conventions (Conventional Commits), logging standards (SLF4J + Logback)
 
 > [!NOTE]
 > **Why does `global-copilot.instructions.md` contain the same content?**

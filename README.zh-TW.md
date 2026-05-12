@@ -76,7 +76,7 @@
 - 以繁體中文回覆
 - 程式碼中的註解、變數名稱、類別名稱一律使用英文
 - 技術環境：Java 8、Maven、無 Spring Boot
-- 包含程式碼風格、錯誤處理、Git 慣例、Logging 規範
+- Git 慣例（Conventional Commits）、Logging 規範（SLF4J + Logback）
 
 > [!NOTE]
 > **為什麼 `global-copilot.instructions.md` 內容一樣？**
