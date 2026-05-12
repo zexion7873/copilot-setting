@@ -34,12 +34,8 @@
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   ├── test-designer        (Claude Sonnet 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   ├── refactorer           (Claude Sonnet 4.6)
-│   ├── sql-expert           (Claude Sonnet 4.6)
-│   ├── doc-writer           (GPT-5 mini)
-│   └── security             (Claude Opus 4.6)
+│   └── doc-writer           (GPT-5 mini)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── code-review-checklist
@@ -114,14 +110,10 @@
 | Agent | Model | 說明 |
 |-------|-------|------|
 | `@planner` | Claude Opus 4.6 | 分析需求、拆解任務、評估影響範圍 |
-| `@implementer` | GPT-5.3-Codex | 撰寫符合規範的生產級 Java 程式碼 |
-| `@reviewer` | Claude Opus 4.6 | 程式碼審查：正確性、安全性、效能、可維護性 |
-| `@test-designer` | Claude Sonnet 4.6 | 設計完整測試案例（正常路徑、邊界、異常） |
+| `@implementer` | GPT-5.3-Codex | 撰寫生產級程式碼、重構、設計測試（JUnit 5） |
+| `@reviewer` | Claude Opus 4.6 | 程式碼審查、安全性稽核（OWASP）、SQL 審查 |
 | `@debugger` | Claude Opus 4.6 | 分析堆疊追蹤、追蹤執行流程來除錯 |
-| `@refactorer` | Claude Sonnet 4.6 | 在不改變行為的前提下改善程式碼結構 |
-| `@sql-expert` | Claude Sonnet 4.6 | SQL 撰寫、優化、審查與效能分析 |
 | `@doc-writer` | GPT-5 mini | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
-| `@security` | Claude Opus 4.6 | 基於 OWASP Top 10 的 Java Web 安全審查 |
 
 ### Agent Handoffs 工作流程
 
@@ -131,29 +123,18 @@ Agent 間可互相交接任務，形成協作工作流：
 flowchart LR
     Planner -->|"寫成 SDD"| DocWriter[Doc Writer]
     Planner -->|"開始實作"| Implementer
-    Planner -->|"安全性評估"| Security
+    Planner -->|"安全性評估"| Reviewer
 
     DocWriter -->|"開始實作"| Implementer
     DocWriter -->|"回到規劃"| Planner
 
     Implementer -->|"Code Review"| Reviewer
-    Implementer -->|"寫測試"| TestDesigner[Test Designer]
-    Implementer -->|"安全性審查"| Security
+    Implementer -->|"安全性審查"| Reviewer
 
     Reviewer -->|"修復問題"| Implementer
-    Reviewer -->|"重構程式碼"| Refactorer
-
-    TestDesigner -->|"修復失敗測試"| Implementer
-
-    Refactorer -->|"Code Review"| Reviewer
-    Refactorer -->|"補寫測試"| TestDesigner
+    Reviewer -->|"重構程式碼"| Implementer
 
     Debugger -->|"修復 Bug"| Implementer
-
-    SQLExpert[SQL Expert] -->|"Code Review"| Reviewer
-    SQLExpert -->|"整合到程式碼"| Implementer
-
-    Security -->|"修復漏洞"| Implementer
 ```
 
 ---
@@ -183,25 +164,22 @@ flowchart LR
                        ↓ 點「開始實作」
 
 你  →  @implementer   照 SDD 和既有 pattern 寫 code
-                       ↓ 點「Code Review」
+                        ↓ 點「Code Review」
 
 你  →  @reviewer      查正確性、安全性、效能
-                       抓到 SQL injection → CRITICAL
-                       ↓ 點「修復問題」
+                        抓到 SQL injection → CRITICAL
+                        ↓ 點「修復問題」
 
-你  →  @implementer   改成 PreparedStatement
-                       ↓ 點「寫測試」
-
-你  →  @test-designer 設計測試（正常、null 客戶、分頁邊界）
-                       Done ✓
+你  →  @implementer   改成 PreparedStatement，補寫測試
+                        Done ✓
 ```
 
 每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡。
 
 > **其他常見起手式：**
 > - Bug → `@debugger` → `@implementer`
-> - SQL 太慢 → `@sql-expert` → `@reviewer`
-> - 資安 → `@security` → `@implementer`
+> - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
+> - 資安 → `@reviewer`（security audit mode）→ `@implementer`
 > - 寫文件 → `@planner` → `@doc-writer`
 
 ---

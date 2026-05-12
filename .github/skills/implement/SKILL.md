@@ -37,4 +37,4 @@ Before presenting, confirm:
 
 ## Phase 4 — Present
 
-Report **What** + **Where** (file paths) + **Pattern followed** (reference class) + **Key decisions (why)** + **Not included (why)**. Suggest next: `@test-designer` / `@reviewer` / `@sql-expert` / `@security` as applicable.
+Report **What** + **Where** (file paths) + **Pattern followed** (reference class) + **Key decisions (why)** + **Not included (why)**. Suggest next: `@reviewer` for code / security / SQL review as applicable.

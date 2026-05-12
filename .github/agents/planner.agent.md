@@ -13,7 +13,7 @@ handoffs:
     prompt: 請根據上面的規劃開始實作。
     send: false
   - label: 安全性評估
-    agent: Security
+    agent: Reviewer
     prompt: 請針對上面的設計規劃進行安全性評估。
     send: false
 ---
@@ -76,6 +76,6 @@ Structure every plan with:
 - Consider backward compatibility for every change
 - Account for DB migration needs and rollback
 - Think about cache invalidation and thread safety
-- If the plan involves security-sensitive design, suggest `@security` for assessment
+- If the plan involves security-sensitive design, suggest `@reviewer` for security audit
 - Complex plan → suggest `@doc-writer` for a formal SDD
 - Plan approved → suggest `@implementer` to start execution

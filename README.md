@@ -34,12 +34,8 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   ├── test-designer        (Claude Sonnet 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   ├── refactorer           (Claude Sonnet 4.6)
-│   ├── sql-expert           (Claude Sonnet 4.6)
-│   ├── doc-writer           (GPT-5 mini)
-│   └── security             (Claude Opus 4.6)
+│   └── doc-writer           (GPT-5 mini)
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist
@@ -114,14 +110,10 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | Agent | Model | Description |
 |-------|-------|-------------|
 | `@planner` | Claude Opus 4.6 | Analyze requirements, break down tasks, estimate impact scope |
-| `@implementer` | GPT-5.3-Codex | Write production-ready Java code following established patterns |
-| `@reviewer` | Claude Opus 4.6 | Code review: correctness, security, performance, maintainability |
-| `@test-designer` | Claude Sonnet 4.6 | Design comprehensive test cases (happy path, edge cases, boundary) |
+| `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
+| `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
 | `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
-| `@refactorer` | Claude Sonnet 4.6 | Improve code structure without changing behavior |
-| `@sql-expert` | Claude Sonnet 4.6 | SQL writing, optimization, review, and performance analysis |
 | `@doc-writer` | GPT-5 mini | Write SDD, Javadoc, API docs, migration guides |
-| `@security` | Claude Opus 4.6 | Security review based on OWASP Top 10 for Java web apps |
 
 ### Agent Handoffs Workflow
 
@@ -131,29 +123,18 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 flowchart LR
     Planner -->|"Write SDD"| DocWriter[Doc Writer]
     Planner -->|"Implement"| Implementer
-    Planner -->|"Security assessment"| Security
+    Planner -->|"Security assessment"| Reviewer
 
     DocWriter -->|"Implement"| Implementer
     DocWriter -->|"Refine plan"| Planner
 
     Implementer -->|"Code review"| Reviewer
-    Implementer -->|"Write tests"| TestDesigner[Test Designer]
-    Implementer -->|"Security review"| Security
+    Implementer -->|"Security / SQL review"| Reviewer
 
     Reviewer -->|"Fix issues"| Implementer
-    Reviewer -->|"Refactor"| Refactorer
-
-    TestDesigner -->|"Fix failing tests"| Implementer
-
-    Refactorer -->|"Code review"| Reviewer
-    Refactorer -->|"Write tests"| TestDesigner
+    Reviewer -->|"Refactor"| Implementer
 
     Debugger -->|"Fix bug"| Implementer
-
-    SQLExpert[SQL Expert] -->|"Code review"| Reviewer
-    SQLExpert -->|"Integrate to code"| Implementer
-
-    Security -->|"Fix vulnerabilities"| Implementer
 ```
 
 ---
@@ -187,12 +168,9 @@ You  →  @implementer   Picks up the SDD, writes code following existing patter
 
 You  →  @reviewer      Checks correctness, security, performance
                         Catches SQL injection risk → CRITICAL
-                        ↓ click "修復問題" handoff
+                        ↓ click "Fix issues" handoff
 
-You  →  @implementer   Switches to PreparedStatement
-                        ↓ click "寫測試" handoff
-
-You  →  @test-designer Designs tests (happy path, null customer, pagination boundary)
+You  →  @implementer   Switches to PreparedStatement, writes tests
                         Done ✓
 ```
 
@@ -200,8 +178,8 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 
 > **Other common starting points:**
 > - Bug → `@debugger` → `@implementer`
-> - Slow SQL → `@sql-expert` → `@reviewer`
-> - Security → `@security` → `@implementer`
+> - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
+> - Security → `@reviewer` (security audit mode) → `@implementer`
 > - Documentation → `@planner` → `@doc-writer`
 
 ---

@@ -64,4 +64,4 @@ Project overview, setup instructions, configuration guide, usage examples.
 
 - SDD approved → suggest `@implementer` to start coding
 - Plan needs refinement → suggest `@planner`
-- Security concerns in design → suggest `@security` for assessment
+- Security concerns in design → suggest `@reviewer` for security audit
