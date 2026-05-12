@@ -62,23 +62,6 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 
 ---
 
-## How Resources Connect
-
-Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
-
-```mermaid
-flowchart LR
-    CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))
-    Inst[Instructions] -.->|by file type| Chat
-    Skills -->|reference rules from| Inst
-    Skills <-->|output format ↔ workflow| Prompts
-    Skills -->|hand off to| Agents
-```
-
-> **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
-
----
-
 ## copilot-instructions.md (Custom)
 
 Global base instructions loaded in every conversation.
@@ -160,51 +143,6 @@ flowchart LR
 
 ---
 
-## How It Works
-
-You only touch **agents**. Everything else loads by itself.
-
-| Resource | When it loads | You do |
-|----------|---------------|--------|
-| **copilot-instructions.md** | Every conversation | Nothing — always there |
-| **Instructions** (`instructions/`) | Current file matches `applyTo` glob (e.g., `**/*.java`) | Nothing — injected by file type |
-| **Agents** (`agents/`) | You type `@agent-name` in chat | Pick the agent |
-| **Skills** (`skills/`) | Copilot matches your message to the skill's `description` | Nothing — fires when relevant |
-| **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
-
-## Typical Workflow
-
-Example: adding a new API endpoint.
-
-```
-You  →  @planner       "I need an API to query order history by customer ID"
-                        Planner scans the codebase, breaks it into phased plan
-                        ↓ click "寫成 SDD" handoff
-
-You  →  @doc-writer    Turns the plan into a System Design Document
-                        ↓ click "開始實作" handoff
-
-You  →  @implementer   Picks up the SDD, writes code following existing patterns
-                        ↓ click "Code Review" handoff
-
-You  →  @reviewer      Checks correctness, security, performance
-                        Catches SQL injection risk → CRITICAL
-                        ↓ click "Fix issues" handoff
-
-You  →  @implementer   Switches to PreparedStatement, writes tests
-                        Done ✓
-```
-
-Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context.
-
-> **Other common starting points:**
-> - Bug → `@debugger` → `@implementer`
-> - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
-> - Security → `@reviewer` (security audit mode) → `@implementer`
-> - Documentation → `@planner` → `@doc-writer`
-
----
-
 ## Prompts
 
 Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
@@ -238,3 +176,63 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
 
 > `git-commit` is marked **manual only** in its description because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
+
+---
+
+## How It Works
+
+You only touch **agents**. Everything else loads by itself.
+
+| Resource | When it loads | You do |
+|----------|---------------|--------|
+| **copilot-instructions.md** | Every conversation | Nothing — always there |
+| **Instructions** (`instructions/`) | Current file matches `applyTo` glob (e.g., `**/*.java`) | Nothing — injected by file type |
+| **Agents** (`agents/`) | You type `@agent-name` in chat | Pick the agent |
+| **Skills** (`skills/`) | Copilot matches your message to the skill's `description` | Nothing — fires when relevant |
+| **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
+
+Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
+
+```mermaid
+flowchart LR
+    CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))
+    Inst[Instructions] -.->|by file type| Chat
+    Skills -->|reference rules from| Inst
+    Skills <-->|output format ↔ workflow| Prompts
+    Skills -->|hand off to| Agents
+```
+
+> **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
+
+---
+
+## Typical Workflow
+
+Example: adding a new API endpoint.
+
+```
+You  →  @planner       "I need an API to query order history by customer ID"
+                        Planner scans the codebase, breaks it into phased plan
+                        ↓ click "寫成 SDD" handoff
+
+You  →  @doc-writer    Turns the plan into a System Design Document
+                        ↓ click "開始實作" handoff
+
+You  →  @implementer   Picks up the SDD, writes code following existing patterns
+                        ↓ click "Code Review" handoff
+
+You  →  @reviewer      Checks correctness, security, performance
+                        Catches SQL injection risk → CRITICAL
+                        ↓ click "Fix issues" handoff
+
+You  →  @implementer   Switches to PreparedStatement, writes tests
+                        Done ✓
+```
+
+Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context.
+
+> **Other common starting points:**
+> - Bug → `@debugger` → `@implementer`
+> - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
+> - Security → `@reviewer` (security audit mode) → `@implementer`
+> - Documentation → `@planner` → `@doc-writer`

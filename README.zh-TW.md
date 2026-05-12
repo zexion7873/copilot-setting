@@ -62,23 +62,6 @@
 
 ---
 
-## 資源間的引用關係
-
-資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
-
-```mermaid
-flowchart LR
-    CI[copilot-instructions.md] -.->|每次對話載入| Chat((對話))
-    Inst[Instructions] -.->|依檔案類型注入| Chat
-    Skills -->|引用規則| Inst
-    Skills <-->|輸出格式 ↔ 工作流| Prompts
-    Skills -->|交接執行| Agents
-```
-
-> **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
-
----
-
 ## copilot-instructions.md（客製）
 
 每次對話都會自動載入的全域基礎指示。
@@ -160,51 +143,6 @@ flowchart LR
 
 ---
 
-## 運作機制
-
-你只管切 **agent**，其他的自己來。
-
-| 資源 | 何時載入 | 你要做什麼 |
-|------|----------|-----------|
-| **copilot-instructions.md** | 每次對話 | 不用動 — 永遠在 |
-| **Instructions**（`instructions/`） | 檔案符合 `applyTo` glob（如 `**/*.java`） | 不用動 — 看你開什麼檔就注入什麼 |
-| **Agents**（`agents/`） | 在 Chat 打 `@agent-name` | 選 agent |
-| **Skills**（`skills/`） | Copilot 把你說的話比對 skill 的 `description` | 不用動 — 聊到就觸發 |
-| **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
-
-## 典型工作流程
-
-例子：加一支新的 API endpoint。
-
-```
-你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                       Planner 掃 codebase，拆出分階段計畫
-                       ↓ 點「寫成 SDD」
-
-你  →  @doc-writer    把計畫寫成 System Design Document
-                       ↓ 點「開始實作」
-
-你  →  @implementer   照 SDD 和既有 pattern 寫 code
-                        ↓ 點「Code Review」
-
-你  →  @reviewer      查正確性、安全性、效能
-                        抓到 SQL injection → CRITICAL
-                        ↓ 點「修復問題」
-
-你  →  @implementer   改成 PreparedStatement，補寫測試
-                        Done ✓
-```
-
-每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡。
-
-> **其他常見起手式：**
-> - Bug → `@debugger` → `@implementer`
-> - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
-> - 資安 → `@reviewer`（security audit mode）→ `@implementer`
-> - 寫文件 → `@planner` → `@doc-writer`
-
----
-
 ## Prompts（提示模板）
 
 標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
@@ -238,3 +176,63 @@ flowchart LR
 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
 
 > `git-commit` 在 description 中標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
+
+---
+
+## 運作機制
+
+你只管切 **agent**，其他的自己來。
+
+| 資源 | 何時載入 | 你要做什麼 |
+|------|----------|-----------|
+| **copilot-instructions.md** | 每次對話 | 不用動 — 永遠在 |
+| **Instructions**（`instructions/`） | 檔案符合 `applyTo` glob（如 `**/*.java`） | 不用動 — 看你開什麼檔就注入什麼 |
+| **Agents**（`agents/`） | 在 Chat 打 `@agent-name` | 選 agent |
+| **Skills**（`skills/`） | Copilot 把你說的話比對 skill 的 `description` | 不用動 — 聊到就觸發 |
+| **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
+
+資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
+
+```mermaid
+flowchart LR
+    CI[copilot-instructions.md] -.->|每次對話載入| Chat((對話))
+    Inst[Instructions] -.->|依檔案類型注入| Chat
+    Skills -->|引用規則| Inst
+    Skills <-->|輸出格式 ↔ 工作流| Prompts
+    Skills -->|交接執行| Agents
+```
+
+> **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
+
+---
+
+## 典型工作流程
+
+例子：加一支新的 API endpoint。
+
+```
+你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
+                       Planner 掃 codebase，拆出分階段計畫
+                       ↓ 點「寫成 SDD」
+
+你  →  @doc-writer    把計畫寫成 System Design Document
+                       ↓ 點「開始實作」
+
+你  →  @implementer   照 SDD 和既有 pattern 寫 code
+                        ↓ 點「Code Review」
+
+你  →  @reviewer      查正確性、安全性、效能
+                        抓到 SQL injection → CRITICAL
+                        ↓ 點「修復問題」
+
+你  →  @implementer   改成 PreparedStatement，補寫測試
+                        Done ✓
+```
+
+每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡。
+
+> **其他常見起手式：**
+> - Bug → `@debugger` → `@implementer`
+> - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
+> - 資安 → `@reviewer`（security audit mode）→ `@implementer`
+> - 寫文件 → `@planner` → `@doc-writer`
