@@ -31,6 +31,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── javadoc
 │   ├── jsp
 │   ├── junit
+│   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
 │   ├── oop-design-patterns
@@ -76,7 +77,7 @@ Global base instructions loaded in every conversation.
 - Respond in Traditional Chinese (繁體中文)
 - All comments, variable names, and class names in code must be in English
 - Tech stack: Java 8, Maven, no Spring Boot
-- Git conventions (Conventional Commits), logging standards (SLF4J + Logback)
+- Other conventions (code style, logging, security, etc.) are handled by dedicated instruction files below
 
 > [!NOTE]
 > **Why does `global-copilot.instructions.md` contain the same content?**
@@ -102,6 +103,7 @@ Automatically injected into the system prompt when the current file matches the 
 | `context-engineering` | `**` | Structure code/projects to maximize Copilot effectiveness through better context |
 | `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, retry, error propagation |
 | `global-copilot` | `**` | Global coding standards, conventions, and guidelines |
+| `logging` | `**/*.java` | SLF4J + Logback conventions — severity levels, parameterized messages, context, security |
 | `javadoc` | `**/*.java` | Javadoc conventions — required tags, summary sentence, formatting, anti-patterns |
 | `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, XSS prevention |
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions — naming, AAA, parameterization, assertions |

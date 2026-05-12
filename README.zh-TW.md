@@ -31,6 +31,7 @@
 │   ├── javadoc
 │   ├── jsp
 │   ├── junit
+│   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
 │   ├── oop-design-patterns
@@ -76,7 +77,7 @@
 - 以繁體中文回覆
 - 程式碼中的註解、變數名稱、類別名稱一律使用英文
 - 技術環境：Java 8、Maven、無 Spring Boot
-- Git 慣例（Conventional Commits）、Logging 規範（SLF4J + Logback）
+- 其他慣例（程式碼風格、logging、安全性等）由下方的專屬 instruction 各自負責
 
 > [!NOTE]
 > **為什麼 `global-copilot.instructions.md` 內容一樣？**
@@ -102,6 +103,7 @@
 | `context-engineering` | `**` | 優化程式碼與專案結構，讓 Copilot 更有效理解上下文 |
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
 | `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
+| `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
 | `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
 | `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
