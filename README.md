@@ -198,7 +198,7 @@ flowchart LR
     CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))
     Inst[Instructions] -.->|by file type| Chat
     Skills -->|reference rules from| Inst
-    Skills <-->|output format ↔ workflow| Prompts
+    Skills <-->|workflow ↔ output format| Prompts
     Skills -->|hand off to| Agents
 ```
 

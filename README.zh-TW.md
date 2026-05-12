@@ -198,7 +198,7 @@ flowchart LR
     CI[copilot-instructions.md] -.->|每次對話載入| Chat((對話))
     Inst[Instructions] -.->|依檔案類型注入| Chat
     Skills -->|引用規則| Inst
-    Skills <-->|輸出格式 ↔ 工作流| Prompts
+    Skills <-->|工作流 ↔ 輸出格式| Prompts
     Skills -->|交接執行| Agents
 ```
 
