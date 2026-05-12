@@ -72,12 +72,11 @@
 
 ## 📜 copilot-instructions.md（客製）
 
-每次對話都會自動載入的全域基礎指示。
+每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
 
 - 以繁體中文回覆
 - 程式碼中的註解、變數名稱、類別名稱一律使用英文
 - 技術環境：Java 8、Maven、無 Spring Boot
-- 其他慣例（程式碼風格、logging、安全性等）由下方的專屬 instruction 各自負責
 
 > [!NOTE]
 > **為什麼 `global-copilot.instructions.md` 內容一樣？**

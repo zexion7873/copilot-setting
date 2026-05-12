@@ -72,12 +72,11 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 
 ## 📜 copilot-instructions.md (Custom)
 
-Global base instructions loaded in every conversation.
+Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
 - All comments, variable names, and class names in code must be in English
 - Tech stack: Java 8, Maven, no Spring Boot
-- Other conventions (code style, logging, security, etc.) are handled by dedicated instruction files below
 
 > [!NOTE]
 > **Why does `global-copilot.instructions.md` contain the same content?**
