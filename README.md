@@ -37,7 +37,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (Claude Opus 4.6)
+│   └── doc-writer           (Claude Sonnet 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist
@@ -117,7 +117,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
 | `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
 | `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
-| `@doc-writer` | Claude Opus 4.6 | Write SDD, Javadoc, API docs, migration guides |
+| `@doc-writer` | Claude Sonnet 4.6 | Write SDD, Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 
