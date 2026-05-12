@@ -1,16 +1,23 @@
+<div align="center">
+
 # 全域 GitHub Copilot 設定
 
 [English](README.md) | **繁體中文**
 
-[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/stargazers)
-[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/commits)
-[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
-[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
+[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat-square&labelColor=black)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ffcb47)](https://github.com/zexion7873/copilot-setting/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting/commits)
+[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ff80eb)](https://github.com/zexion7873/copilot-setting/issues)
+[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting)
 
-個人 Copilot 設定。部分檔案參考自 [awesome-copilot](https://github.com/github/awesome-copilot)，並依需求調整。
+VS Code GitHub Copilot 的宣告式提示詞工具鏈。
+Instructions、Agents、Skills、Prompts — 全部用 markdown 組織，零 runtime dependency。
 
-## 目錄結構
+</div>
+
+---
+
+## 📁 目錄結構
 
 ```
 ~/.github/
@@ -62,7 +69,7 @@
 
 ---
 
-## copilot-instructions.md（客製）
+## 📜 copilot-instructions.md（客製）
 
 每次對話都會自動載入的全域基礎指示。
 
@@ -71,6 +78,7 @@
 - 技術環境：Java 8、Maven、無 Spring Boot
 - 包含程式碼風格、錯誤處理、Git 慣例、Logging 規範
 
+> [!NOTE]
 > **為什麼 `global-copilot.instructions.md` 內容一樣？**
 >
 > Copilot 透過兩個獨立的 scope 載入指示：
@@ -84,7 +92,7 @@
 
 ---
 
-## Instructions（指示）
+## 📏 Instructions（指示）
 
 當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
 
@@ -107,7 +115,7 @@
 
 ---
 
-## Agents（代理人）
+## 🤖 Agents（代理人）
 
 在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
 
@@ -143,7 +151,7 @@ flowchart LR
 
 ---
 
-## Prompts（提示模板）
+## 📋 Prompts（提示模板）
 
 標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
 
@@ -154,7 +162,7 @@ flowchart LR
 
 ---
 
-## Skills（技能）
+## ⚡ Skills（技能）
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
 
@@ -175,11 +183,12 @@ flowchart LR
 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
 
-> `git-commit` 在 description 中標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
+> [!WARNING]
+> `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
 
 ---
 
-## 運作機制
+## ⚙️ 運作機制
 
 你只管切 **agent**，其他的自己來。
 
@@ -202,11 +211,12 @@ flowchart LR
     Skills -->|交接執行| Agents
 ```
 
+> [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
 
 ---
 
-## 典型工作流程
+## 🔄 典型工作流程
 
 例子：加一支新的 API endpoint。
 

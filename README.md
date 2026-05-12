@@ -1,16 +1,23 @@
+<div align="center">
+
 # Global GitHub Copilot Configuration
 
 **English** | [繁體中文](README.zh-TW.md)
 
-[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/stargazers)
-[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/commits)
-[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
-[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
+[![License: MIT](https://img.shields.io/github/license/zexion7873/copilot-setting?style=flat-square&labelColor=black)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ffcb47)](https://github.com/zexion7873/copilot-setting/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting/commits)
+[![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat-square&labelColor=black&color=ff80eb)](https://github.com/zexion7873/copilot-setting/issues)
+[![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat-square&labelColor=black)](https://github.com/zexion7873/copilot-setting)
 
-Personal Copilot settings. Some files are based on [awesome-copilot](https://github.com/github/awesome-copilot), customized as needed.
+A declarative prompt harness for GitHub Copilot in VS Code.
+Instructions, agents, skills, and prompts — organized as markdown, zero runtime dependency.
 
-## Directory Structure
+</div>
+
+---
+
+## 📁 Directory Structure
 
 ```
 ~/.github/
@@ -62,7 +69,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 
 ---
 
-## copilot-instructions.md (Custom)
+## 📜 copilot-instructions.md (Custom)
 
 Global base instructions loaded in every conversation.
 
@@ -71,6 +78,7 @@ Global base instructions loaded in every conversation.
 - Tech stack: Java 8, Maven, no Spring Boot
 - Coding style, error handling, git conventions, logging standards
 
+> [!NOTE]
 > **Why does `global-copilot.instructions.md` contain the same content?**
 >
 > Copilot loads instructions through two independent scopes:
@@ -84,7 +92,7 @@ Global base instructions loaded in every conversation.
 
 ---
 
-## Instructions
+## 📏 Instructions
 
 Automatically injected into the system prompt when the current file matches the `applyTo` glob.
 
@@ -107,7 +115,7 @@ Automatically injected into the system prompt when the current file matches the 
 
 ---
 
-## Agents
+## 🤖 Agents
 
 Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / Maven projects.
 
@@ -143,7 +151,7 @@ flowchart LR
 
 ---
 
-## Prompts
+## 📋 Prompts
 
 Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
 
@@ -154,7 +162,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 
 ---
 
-## Skills
+## ⚡ Skills
 
 Executable workflows. Auto-triggered by Copilot when relevant (unless disabled), or invoke manually via `/skill-name`.
 
@@ -175,11 +183,12 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
 
-> `git-commit` is marked **manual only** in its description because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
+> [!WARNING]
+> `git-commit` is marked **manual only** because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
 
 ---
 
-## How It Works
+## ⚙️ How It Works
 
 You only touch **agents**. Everything else loads by itself.
 
@@ -202,11 +211,12 @@ flowchart LR
     Skills -->|hand off to| Agents
 ```
 
+> [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
 
 ---
 
-## Typical Workflow
+## 🔄 Typical Workflow
 
 Example: adding a new API endpoint.
 
