@@ -19,8 +19,10 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
 │   ├── context7
 │   ├── context-engineering
+│   ├── error-handling
 │   ├── global-copilot
 │   ├── javadoc
+│   ├── jsp
 │   ├── junit
 │   ├── markdown
 │   ├── no-heredoc
@@ -35,7 +37,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (GPT-5 mini)
+│   └── doc-writer           (Claude Opus 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist
@@ -90,8 +92,10 @@ Automatically injected into the system prompt when the current file matches the 
 |------|---------|-------------|
 | `context7` | `**` | Use Context7 MCP for authoritative external docs and API references |
 | `context-engineering` | `**` | Structure code/projects to maximize Copilot effectiveness through better context |
+| `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, retry, error propagation |
 | `global-copilot` | `**` | Global coding standards, conventions, and guidelines |
 | `javadoc` | `**/*.java` | Javadoc conventions — required tags, summary sentence, formatting, anti-patterns |
+| `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, XSS prevention |
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions — naming, AAA, parameterization, assertions |
 | `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
 | `no-heredoc` | `**` | Prevent terminal heredoc file corruption — enforce file editing tools |
@@ -113,7 +117,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
 | `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
 | `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
-| `@doc-writer` | GPT-5 mini | Write SDD, Javadoc, API docs, migration guides |
+| `@doc-writer` | Claude Opus 4.6 | Write SDD, Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 
@@ -214,6 +218,6 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
-| `test-design` | Auto + Manual | Test case design with boundary identification and coverage analysis |
+| `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
 
 > `git-commit` is marked **manual only** in its description because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.

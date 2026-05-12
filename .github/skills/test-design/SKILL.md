@@ -1,6 +1,6 @@
 ---
 name: test-design
-description: 'Use when user asks to design tests, write test cases, plan test coverage, or identify what to test. Also triggers on: 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率. Produces JUnit 5 tests covering happy path, edge cases, error handling, and boundary conditions. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
+description: 'Use when user asks to design tests, plan test coverage, or identify what to test. Also triggers on: 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率, 該測哪些情境. Designs test cases with boundary analysis, category classification, and coverage gap audit; hand off to @implementer for coding. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
 ---
 
 # Test Design — Workflow
@@ -48,44 +48,14 @@ Categories:
 - **Integration (P2)** — One per dependency interaction (success/failure/timeout)
 - **Security (P2)** — One per attack vector (injection, auth bypass)
 
-## Phase 4 — Implement (JUnit 5 + Mockito)
+## Phase 4 — Hand Off for Implementation
 
-Naming: `test<MethodName>_should<ExpectedBehavior>_when<Condition>`
+Test case design is complete. For coding the tests:
 
-Example: `testCreateUser_shouldThrowValidation_whenNameExceedsMaxLength`
+- → `@implementer` (Test Design Mode) — writes JUnit 5 + Mockito code from the design table above
+- → `instructions/junit.instructions.md` — auto-applied conventions for test files (naming, AAA, assertions, mocking)
 
-Skeleton:
-
-```java
-@ExtendWith(MockitoExtension.class)
-class UserServiceTest {
-    @Mock private UserRepository userRepository;
-    @InjectMocks private UserService userService;
-
-    @Nested
-    class FindUser {
-        @Test
-        void testFindUser_shouldReturnUser_whenIdExists() {
-            when(userRepository.findById(42L)).thenReturn(Optional.of(new User(42L, "Alice")));
-
-            User actual = userService.findUser(42L);
-
-            assertEquals("Alice", actual.getName());
-            verify(userRepository).findById(42L);
-        }
-    }
-}
-```
-
-Use `@ParameterizedTest` with `@CsvSource` for inline data or `@MethodSource` for complex objects. Group by scenario with `@Nested`.
-
-Mockito reminders:
-
-- `verify(x, never()).method()` to assert NOT called
-- `ArgumentCaptor` for detailed argument assertions
-- Mock only dependencies, never the class under test
-
-Time-dependent tests: inject a fixed `Clock` (`Clock.fixed(Instant.parse(...), ZoneId.of("UTC"))`); never use `Instant.now()` in production code without injection.
+Do not write test code in this skill. Separation ensures the design is reviewed before implementation begins.
 
 ## Phase 5 — Coverage Gap Audit
 

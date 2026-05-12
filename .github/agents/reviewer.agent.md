@@ -1,5 +1,5 @@
 ---
-description: 'Perform code reviews, security audits, and SQL reviews. Covers correctness, OWASP Top 10 vulnerabilities, SQL injection prevention, performance, and maintainability.'
+description: 'Perform code reviews, security audits (OWASP Top 10), and SQL reviews. Say "review code" for general review, "security audit" or "OWASP" for security-focused audit, "review SQL" for SQL-specific review. Each mode follows its own checklist and severity model.'
 name: Reviewer
 model: Claude Opus 4.6
 tools: ['search', 'read', 'context7/*', 'websearch/*']

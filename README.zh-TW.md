@@ -19,8 +19,10 @@
 ├── instructions/                          ← 依 applyTo 規則自動套用
 │   ├── context7
 │   ├── context-engineering
+│   ├── error-handling
 │   ├── global-copilot
 │   ├── javadoc
+│   ├── jsp
 │   ├── junit
 │   ├── markdown
 │   ├── no-heredoc
@@ -35,7 +37,7 @@
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (GPT-5 mini)
+│   └── doc-writer           (Claude Opus 4.6)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── code-review-checklist
@@ -90,8 +92,10 @@
 |------|---------|------|
 | `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
 | `context-engineering` | `**` | 優化程式碼與專案結構，讓 Copilot 更有效理解上下文 |
+| `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
 | `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
 | `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
+| `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
@@ -113,7 +117,7 @@
 | `@implementer` | GPT-5.3-Codex | 撰寫生產級程式碼、重構、設計測試（JUnit 5） |
 | `@reviewer` | Claude Opus 4.6 | 程式碼審查、安全性稽核（OWASP）、SQL 審查 |
 | `@debugger` | Claude Opus 4.6 | 分析堆疊追蹤、追蹤執行流程來除錯 |
-| `@doc-writer` | GPT-5 mini | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
+| `@doc-writer` | Claude Opus 4.6 | 撰寫 SDD、Javadoc、API 文件、遷移指南 |
 
 ### Agent Handoffs 工作流程
 
@@ -214,6 +218,6 @@ flowchart LR
 | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
-| `test-design` | 自動 + 手動 | 測試設計 — 邊界識別、JUnit 5 實作、覆蓋率分析 |
+| `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
 
 > `git-commit` 在 description 中標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。

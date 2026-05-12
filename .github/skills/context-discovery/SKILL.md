@@ -1,6 +1,6 @@
 ---
 name: context-discovery
-description: 'Use before implementing changes when the affected files / dependencies / tests are not yet identified. Triggers on 動手前先盤點 / 影響範圍 / 哪些檔案會被改到 / context map / 我要先看哪些檔案. Produces a two-part artifact: (1) the files needed to answer / act, and (2) a context map of files-to-modify, dependencies, tests, and reference patterns. Do NOT use for trivial single-file edits or when the user has already supplied the file list.'
+description: 'Use before implementing changes when the affected files / dependencies / tests are not yet identified. Triggers on: 動手前先盤點, 影響範圍, 哪些檔案會被改到, context map, 盤點一下, 我要先看哪些檔案. Produces a two-part artifact: (1) the files needed to answer / act, and (2) a context map of files-to-modify, dependencies, tests, and reference patterns. Do NOT use for trivial single-file edits, when the user has already supplied the file list, or when the user asks to review or read existing code (prefer code-review skill).'
 ---
 
 # Context Discovery — Workflow

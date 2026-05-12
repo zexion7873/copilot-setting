@@ -1,7 +1,7 @@
 ---
 description: 'Write technical documents including SDD, architecture docs, Javadoc, API documentation, and migration guides.'
 name: 'Doc Writer'
-model: GPT-5 mini
+model: Claude Opus 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
   - label: 開始實作

@@ -91,7 +91,7 @@ Each phase ends in a green build. One commit per phase.
 
 ## Test Design Mode
 
-Activate when asked to write tests, design test cases, or improve coverage. Targets JUnit 5 + Mockito.
+Activate when asked to write tests or improve coverage. For systematic test case design (boundary analysis, case categorization, coverage gap audit), use the `test-design` skill first. This mode covers implementation: writing test code, naming, skeleton, mocking, and coverage verification. Targets JUnit 5 + Mockito.
 
 ### Boundary Analysis
 
