@@ -16,6 +16,10 @@ handoffs:
     agent: Reviewer
     prompt: 請針對上面的設計規劃進行安全性評估。
     send: false
+  - label: 先修 Bug
+    agent: Debugger
+    prompt: 規劃過程中發現現有 Bug，請先協助定位與分析。
+    send: false
 ---
 
 # Planner — Technical Planning Specialist

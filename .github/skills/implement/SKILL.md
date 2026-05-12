@@ -14,9 +14,9 @@ Defines the implementation PROCESS only. Coding standards (naming, error handlin
 **Locate related code**:
 
 ```bash
-find . -name "*.java" | head -30                                          # similar responsibility
-grep -r "related keyword" --include="*.java" -l                           # related patterns
-grep -rn "interface\|abstract class" --include="*.java" | grep -i "term"  # contracts to implement
+grep -rn "class.*ClassName\|interface.*Name" --include="*.java" src/      # similar responsibility
+grep -r "related keyword" --include="*.java" -l src/                      # related patterns
+grep -rn "interface\|abstract class" --include="*.java" src/ | grep -i "term"  # contracts to implement
 ```
 
 **Identify patterns to follow** — a similar existing class, target package/dir, naming conventions, dependency-injection style, and error-handling style of the surrounding layer. Match them exactly before writing.

@@ -128,6 +128,7 @@ flowchart LR
     Planner -->|"Write SDD"| DocWriter[Doc Writer]
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
+    Planner -->|"Fix bug first"| Debugger
 
     DocWriter -->|"Implement"| Implementer
     DocWriter -->|"Refine plan"| Planner
@@ -137,8 +138,10 @@ flowchart LR
 
     Reviewer -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
+    Reviewer -->|"Trace root cause"| Debugger
 
     Debugger -->|"Fix bug"| Implementer
+    Debugger -->|"Review fix"| Reviewer
 ```
 
 ---

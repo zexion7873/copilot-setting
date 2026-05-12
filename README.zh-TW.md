@@ -128,6 +128,7 @@ flowchart LR
     Planner -->|"寫成 SDD"| DocWriter[Doc Writer]
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
+    Planner -->|"先修 Bug"| Debugger
 
     DocWriter -->|"開始實作"| Implementer
     DocWriter -->|"回到規劃"| Planner
@@ -137,8 +138,10 @@ flowchart LR
 
     Reviewer -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
+    Reviewer -->|"追查根因"| Debugger
 
     Debugger -->|"修復 Bug"| Implementer
+    Debugger -->|"Review 修復"| Reviewer
 ```
 
 ---

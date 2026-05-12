@@ -12,6 +12,10 @@ handoffs:
     agent: Implementer
     prompt: 請根據上面的建議進行重構。
     send: false
+  - label: 追查根因
+    agent: Debugger
+    prompt: 審查中發現可疑行為，請協助追查根本原因。
+    send: false
 ---
 
 # Reviewer — Code Review & Audit Specialist
