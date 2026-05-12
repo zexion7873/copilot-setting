@@ -62,6 +62,26 @@
 
 ---
 
+## 資源間的引用關係
+
+資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
+
+```mermaid
+flowchart TD
+    CI[copilot-instructions.md] -.->|每次對話都載入| Conv[所有對話]
+    Inst[Instructions] -.->|依檔案類型<br/>自動注入| Conv
+    Skills -->|引用規則| Inst
+    Skills -->|引用輸出格式| Prompts
+    Prompts -->|引用工作流| Skills
+    Agents -->|交接給| Agents
+    Skills -->|交接給| Agents
+    Skills -->|交接給| Skills
+```
+
+> **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
+
+---
+
 ## copilot-instructions.md（客製）
 
 每次對話都會自動載入的全域基礎指示。
