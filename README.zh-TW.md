@@ -226,7 +226,7 @@ flowchart LR
                        Planner 掃 codebase，拆出分階段計畫
                        ↓ 點「寫成 SDD」
 
-你  →  @doc-writer    把計畫寫成 System Design Document
+你  →  @doc-writer    把計畫寫成 SDD（Spec-Driven Development）文件
                        ↓ 點「開始實作」
 
 你  →  @implementer   照 SDD 和既有 pattern 寫 code

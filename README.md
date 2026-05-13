@@ -226,7 +226,7 @@ You  →  @planner       "I need an API to query order history by customer ID"
                         Planner scans the codebase, breaks it into phased plan
                         ↓ click "寫成 SDD" handoff
 
-You  →  @doc-writer    Turns the plan into a System Design Document
+You  →  @doc-writer    Turns the plan into a SDD (Spec-Driven Development) document
                         ↓ click "開始實作" handoff
 
 You  →  @implementer   Picks up the SDD, writes code following existing patterns
