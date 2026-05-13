@@ -52,9 +52,8 @@ At the outermost layer (servlet, API handler), convert exceptions to a consisten
 
 ## Resource Cleanup on Error Paths
 
-- **`try-with-resources`** for all `AutoCloseable` instances — `Connection`, `PreparedStatement`, `ResultSet`, `InputStream`.
+- **`try-with-resources`** for all `AutoCloseable` instances (`InputStream`, `OutputStream`, etc.). JDBC resources (`Connection`, `PreparedStatement`, `ResultSet`) → see `instructions/sql-rules.instructions.md` §Java JDBC Resource Handling.
 - Verify cleanup happens on ALL code paths, including early returns and exceptions in the middle of a multi-resource block.
-- Connection pools: always return connections, even on error. A leaked connection under exception is the #1 cause of pool exhaustion.
 
 ## Anti-Patterns
 

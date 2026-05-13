@@ -5,17 +5,8 @@ applyTo: '**'
 
 # No Heredoc File Operations
 
-Never use terminal heredoc, redirection, or `cat` / `echo` / `printf` / `tee` to write file content. VS Code's Copilot terminal integration corrupts these — tab characters trigger shell completion, escaping fails, exit code 130 truncates output.
+Never use `cat`/`echo`/`printf`/`tee` with `>`/`>>`/`<< EOF` to write file content — VS Code terminal integration corrupts these (tab completion, escaping, exit 130).
 
-## Forbidden
-
-`cat`/`echo`/`printf`/`tee` with `>`/`>>`/`<< EOF` — all forbidden for writing file content.
-
-## Required
-
-- Create / modify files → use the file editing tool (Write / Edit)
-- Delete files → `rm` is fine
-
-## Terminal Still Allowed For
-
-Package management, builds, tests, version control, running existing code, filesystem navigation (`ls`, `cd`, `mkdir`, `pwd`, `rm`), downloads without piping content to files.
+- **Create / modify files** → use the file editing tool (Write / Edit)
+- **Delete files** → `rm` is fine
+- **Terminal still OK for** — package management, builds, tests, git, `ls`/`mkdir`/`rm`, downloads without piping to files

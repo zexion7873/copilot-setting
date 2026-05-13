@@ -5,7 +5,13 @@ description: 'Use when user asks to review SQL, optimize a query, analyze an exe
 
 # SQL Review — Workflow
 
-Process for reviewing SQL. Rules live in `instructions/sql-rules.instructions.md`. Workflow output format lives in `prompts/sql-review-output.prompt.md`. This file defines the order of attack.
+Process for reviewing SQL. Rules live in `instructions/sql-rules.instructions.md`. Workflow output format lives in `prompts/sql-review-output.prompt.md`. This file defines the order of attack. Key rules (fallback when instruction not in context):
+
+- `PreparedStatement` with `?` only — string concatenation in SQL is always CRITICAL
+- No `SELECT *` — list columns explicitly
+- No functions on indexed columns in `WHERE` — use range conditions
+- N+1 detection: SQL inside a loop → batch with `IN` or JOIN
+- `try-with-resources` for `Connection` / `PreparedStatement` / `ResultSet`
 
 ## Phase 1 — Inventory
 
@@ -81,19 +87,7 @@ Lower priority but still part of the pass:
 
 ## Output Format
 
-For each finding:
-
-```
-[SEVERITY] [Category] — Title
-  Location: <file>#<method>:<line>
-  Problem: <what + impact>
-  Fix: <specific code/index change>
-  Verify: <how to confirm (EXPLAIN diff, test case)>
-```
-
-Severity: `CRITICAL` (security / data loss) / `HIGH` (perf, >1s queries) / `MEDIUM` (perf, scaling risk) / `LOW` (style).
-
-End the report with: counts by severity, top 3 priority actions, scores (1-10) for Security / Performance / Maintainability.
+Severity buckets, finding format, and report structure defined in `prompts/sql-review-output.prompt.md` — apply them here.
 
 ## Workflow Anti-Patterns
 

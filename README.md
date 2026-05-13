@@ -25,7 +25,6 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
 │   ├── context7
-│   ├── context-engineering
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── javadoc
@@ -34,7 +33,6 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
-│   ├── oop-design-patterns
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
@@ -47,8 +45,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (Claude Sonnet 4.6)
+│   └── debugger             (Claude Opus 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── adr-template
@@ -111,7 +108,6 @@ Automatically injected into the system prompt when the current file matches the 
 | File | applyTo | Description |
 |------|---------|-------------|
 | `context7` | `**` | Use Context7 MCP for authoritative external docs and API references |
-| `context-engineering` | `**` | Structure code/projects to maximize Copilot effectiveness through better context |
 | `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, retry, error propagation |
 | `global-copilot` | `**` | Global coding standards, conventions, and guidelines |
 | `logging` | `**/*.java` | SLF4J + Logback conventions — severity levels, parameterized messages, context, security |
@@ -120,7 +116,6 @@ Automatically injected into the system prompt when the current file matches the 
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions — naming, AAA, parameterization, assertions |
 | `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
 | `no-heredoc` | `**` | Prevent terminal heredoc file corruption — enforce file editing tools |
-| `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP design patterns (GoF + SOLID) |
 | `security-and-owasp` | `**/*.{java,jsp}` | Secure coding based on OWASP Top 10 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL hard rules: injection prevention, performance, code quality (single source of truth) |
@@ -137,11 +132,10 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` skill for phased planning; hands off to `tasks` skill, @doc-writer (SDD), or @implementer |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` skills, mode-routed by "implement" / "refactor" / "design tests" |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` skills, mode-routed by review type |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Activates `sdd` skill for formal specs (with semver amendment workflow); also writes Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 
@@ -149,18 +143,19 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
 flowchart LR
-    Planner -->|"Write SDD"| DocWriter[Doc Writer]
+    Planner -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
 
-    DocWriter -->|"Implement"| Implementer
-    DocWriter -->|"Refine plan"| Planner
-
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Security / SQL review"| Reviewer
+    Implementer -->|"Debug"| Debugger
+    Implementer -->|"Re-plan"| Planner
 
     Reviewer -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
+    Reviewer -->|"Revise spec"| Planner
+    Reviewer -->|"Re-plan"| Planner
 
     Debugger -->|"Fix bug"| Implementer
 ```
@@ -233,6 +228,9 @@ You only touch **agents**. Everything else loads by itself.
 
 Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
 
+> [!NOTE]
+> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql-rules`, `error-handling`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+
 ```mermaid
 flowchart LR
     CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))
@@ -253,10 +251,8 @@ Example: adding a new API endpoint.
 
 ```
 You  →  @planner       "I need an API to query order history by customer ID"
-                        Planner scans the codebase, breaks it into phased plan
-                        ↓ click "寫成 SDD" handoff
-
-You  →  @doc-writer    Turns the plan into a SDD (Spec-Driven Development) document
+                        Planner scans the codebase, drafts a phased plan,
+                        then writes a formal SDD (spec) with acceptance criteria
                         ↓ click "開始實作" handoff
 
 You  →  @implementer   Picks up the SDD, writes code following existing patterns
@@ -277,7 +273,9 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
-> - Documentation → `@planner` → `@doc-writer`
+> - Spec review → `@reviewer` (SDD review mode) → `@planner`
+> - Research → `@planner` (spike mode) → `@planner` (plan mode)
+> - Documentation → `@planner`
 
 ### Amendment Workflow
 

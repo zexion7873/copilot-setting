@@ -31,60 +31,7 @@ Filename: `adr-NNNN-[title-slug].md` (4-digit zero-padded sequence).
 
 ## Phase 3 — Draft Using Template
 
-```md
----
-title: "ADR-NNNN: [Decision Title]"
-status: "Proposed"
-date: "YYYY-MM-DD"
-authors: "[Stakeholder Names/Roles]"
-tags: ["architecture", "decision"]
-supersedes: ""
-superseded_by: ""
----
-
-# ADR-NNNN: [Decision Title]
-
-## Status
-
-**Proposed** | Accepted | Rejected | Superseded | Deprecated
-
-## Context
-
-[Problem statement, technical constraints, business requirements, environmental factors.]
-
-## Decision
-
-[Chosen solution with clear rationale.]
-
-## Consequences
-
-### Positive
-
-- **POS-001**: [Beneficial outcome]
-- **POS-002**: [Performance / maintainability / scalability gain]
-
-### Negative
-
-- **NEG-001**: [Trade-off or limitation]
-- **NEG-002**: [Technical debt or complexity introduced]
-
-## Alternatives Considered
-
-### [Alternative 1 Name]
-
-- **ALT-001**: **Description**: [Brief technical description]
-- **ALT-002**: **Rejection Reason**: [Why not selected]
-
-## Implementation Notes
-
-- **IMP-001**: [Key implementation considerations]
-- **IMP-002**: [Migration / rollout strategy if applicable]
-
-## References
-
-- **REF-001**: [Related ADRs]
-- **REF-002**: [External documentation]
-```
+Use the template in `prompts/adr-template.prompt.md`. All coded identifiers (`POS-`, `NEG-`, `ALT-`, `IMP-`, `REF-`) must be used for cross-reference.
 
 ## Rules
 

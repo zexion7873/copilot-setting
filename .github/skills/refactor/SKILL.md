@@ -7,6 +7,14 @@ description: 'Use when user asks to refactor, clean up, simplify, or restructure
 
 Improve structure without changing external behavior. Refactoring is evolution, not rewrite.
 
+Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: never regress `PreparedStatement` to string concatenation during restructuring
+- **Exceptions**: no empty `catch` blocks; maintain layer-boundary translation when extracting methods
+- **Logging**: keep SLF4J parameterized — `log.info("x={}", x)` — never introduce `+` concatenation
+- **Resources**: preserve `try-with-resources` for all `AutoCloseable` — critical when extracting methods that handle `Connection`, `PreparedStatement`, `ResultSet`
+- **Security**: no hardcoded secrets; maintain input validation at boundaries; keep `<c:out>` in JSP
+
 ## Golden Rules
 
 1. **Behavior preserved** — change how, not what

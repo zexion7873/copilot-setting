@@ -1,6 +1,6 @@
 ---
 name: sdd-review
-description: 'Use when user asks to review an SDD, audit a spec, or verify a specification document before implementation. Triggers on: review SDD, audit spec, check the spec, is this SDD ready, 審查 SDD, 檢查規格文件, 規格審查, 這份 SDD 可以嗎, 規格夠不夠完整. Evaluates SDD completeness, testability, feasibility, and clarity. Do NOT use for code review (prefer code-review skill), implementation plan review without spec depth (prefer plan skill), writing a new SDD (prefer sdd skill), or general documentation review (prefer @doc-writer).'
+description: 'Use when user asks to review an SDD, audit a spec, or verify a specification document before implementation. Triggers on: review SDD, audit spec, check the spec, is this SDD ready, 審查 SDD, 檢查規格文件, 規格審查, 這份 SDD 可以嗎, 規格夠不夠完整. Evaluates SDD completeness, testability, feasibility, and clarity. Do NOT use for code review (prefer code-review skill), implementation plan review without spec depth (prefer plan skill), writing a new SDD (prefer sdd skill), or general documentation review.'
 ---
 
 # SDD Review — Workflow
@@ -94,7 +94,7 @@ Should fix:
 ## Handoffs
 
 - → `sdd` skill — if REVISIONS REQUIRED, author rewrites using the sdd skill
-- → `@doc-writer` — for major structural rewrites beyond targeted fixes
+- → `@planner` — for major structural rewrites beyond targeted fixes
 - → `implement` skill / `@implementer` — once verdict is APPROVED or APPROVED WITH COMMENTS
 - ← `sdd` skill — SDD creation naturally leads to review
 - ← `plan` skill — plans that became SDDs need review before implementation starts

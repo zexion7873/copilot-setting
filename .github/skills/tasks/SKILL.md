@@ -29,63 +29,7 @@ If both plan and SDD exist, SDD wins on requirements, plan wins on phasing.
 
 ## Phase 3 — Generate Tasks
 
-Use this canonical structure. Output is a complete `tasks.md` file, written next to the source plan or SDD.
-
-```md
-# Tasks: [Feature Title]
-
-**Source**: [absolute path to plan.md or spec.md]
-**Generated**: [YYYY-MM-DD]
-
-## Format
-
-`- [ ] [ID] [P?] [Story?] Description (file path)`
-
-- `[P]` — parallelizable: different files, no dependency on incomplete tasks
-- `[Story]` — maps to spec user stories (US1, US2…) or plan REQ-IDs
-- Description ends with the exact file path the task touches
-
-## Phase 1: Setup (Shared Infrastructure)
-
-- [ ] T001 Create project structure per plan §5
-- [ ] T002 [P] Configure linting / formatter
-
-## Phase 2: Foundational (Blocking Prerequisites)
-
-- [ ] T003 Setup migration framework
-- [ ] T004 [P] Implement base entities all stories depend on
-
-## Phase 3: User Story 1 — [Title] (Priority: P1) 🎯 MVP
-
-**Goal**: [What this story delivers in user terms]
-**Independent Test**: [How to verify this story works on its own]
-
-### Tests for US1 (write FIRST, ensure they FAIL)
-
-- [ ] T010 [P] [US1] Contract test for `OrderService.findByCustomerId` in `src/test/java/.../OrderServiceTest.java`
-
-### Implementation for US1
-
-- [ ] T011 [P] [US1] Implement `Order` entity in `src/main/java/.../Order.java`
-- [ ] T012 [US1] Wire `Order` to `OrderService` (depends on T011)
-
-## Phase 4: Polish & Cross-Cutting
-
-- [ ] T030 Add observability per constitution §III
-
-## Dependencies & Execution Order
-
-- Setup → Foundational → User Stories (P1 → P2 → P3) → Polish
-- Within story: failing tests → implementation → integration
-- Tasks touching the same file MUST run sequentially regardless of `[P]`
-
-## Coverage Map
-
-| Spec ID | Tasks |
-|---|---|
-| AC-001 | T010, T011 |
-| AC-002 | T012 |
-```
+Use the template in `prompts/tasks-template.prompt.md`. Output is a complete `tasks.md` file, written next to the source plan or SDD.
 
 ## Phase 4 — Validate
 

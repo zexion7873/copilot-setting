@@ -5,7 +5,13 @@ description: 'Use when user asks to implement a feature, write new code, add fun
 
 # Implement — Executable Workflow
 
-Defines the implementation PROCESS only. Coding standards (naming, error handling, logging, security) live in `copilot-instructions.md` and `instructions/` — do not restate here.
+Defines the implementation PROCESS only. Full coding standards live in `copilot-instructions.md` and `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: `PreparedStatement` with `?` only — never concatenate user input into SQL
+- **Exceptions**: no empty `catch` blocks; translate at layer boundaries; never catch `Throwable`
+- **Logging**: SLF4J parameterized — `log.info("x={}", x)` — never `+` concatenation or `e.printStackTrace()`
+- **Resources**: `try-with-resources` for all `AutoCloseable` (`Connection`, `PreparedStatement`, `ResultSet`)
+- **Security**: no hardcoded secrets; validate inputs at boundaries; output-encode in JSP
 
 ## Phase 1 — Understand Before Writing
 
@@ -14,7 +20,7 @@ Defines the implementation PROCESS only. Coding standards (naming, error handlin
 - Single-file / trivial change → proceed; note "no SDD: trivial scope" in the final report.
 - Expected to touch 2+ production files (test files paired with their production counterpart do not count) OR introduces new public behavior (new API, new entity, new flow) → **STOP**. Ask the user:
   > No SDD found. This change is expected to touch 2+ production files or introduce new behavior. Choose one:
-  > (a) Create an SDD first (recommended — use `sdd` skill or `@doc-writer`)
+  > (a) Create an SDD first (recommended — use `sdd` skill or `@planner`)
   > (b) Proceed without SDD (will be noted as exception in implementation report)
 
 Do NOT silently skip this gate. Silently skipping is the failure mode this rule exists to prevent.

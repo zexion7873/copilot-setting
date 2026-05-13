@@ -91,7 +91,7 @@ Test traceability: N/M ACs have passing tests
 ## Next actions
 
 1. Implement AC-007 — hand off to @implementer with this matrix
-2. Reconcile AC-012 — either fix code or amend SDD §3.2 (hand off to @doc-writer)
+2. Reconcile AC-012 — either fix code or amend SDD §3.2 (hand off to @planner)
 3. Justify or remove UnusedHelper.java
 ```
 
@@ -108,7 +108,7 @@ Test traceability: N/M ACs have passing tests
 
 - → `code-review` skill — for style / correctness issues found while reading code
 - → `implement` skill / `@implementer` — to fix gaps
-- → `sdd` skill / `@doc-writer` — when spec turns out to be wrong rather than the code
+- → `sdd` skill / `@planner` — when spec turns out to be wrong rather than the code
 - → `test-design` skill — when AC has no test and one needs designing
 - ← `tasks` skill — tasks.md is the preferred input
 - ← `implement` skill — implementation completion naturally triggers compliance check

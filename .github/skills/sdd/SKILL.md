@@ -1,6 +1,6 @@
 ---
 name: sdd
-description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation phasing without spec depth (prefer plan skill), atomic task breakdowns (prefer tasks skill, which runs AFTER sdd), quick bug fixes, general documentation (prefer @doc-writer directly), architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill). An SDD produces a formal SPECIFICATION with numbered acceptance criteria (AC-) and API contracts — if the user only needs phased execution steps without ACs, redirect to plan skill.'
+description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation phasing without spec depth (prefer plan skill), atomic task breakdowns (prefer tasks skill, which runs AFTER sdd), quick bug fixes, general documentation (Javadoc lives in code; API docs and migration guides are written directly), architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill). An SDD produces a formal SPECIFICATION with numbered acceptance criteria (AC-) and API contracts — if the user only needs phased execution steps without ACs, redirect to plan skill.'
 ---
 
 # SDD (Spec-Driven Development) — Workflow
@@ -75,61 +75,7 @@ git log --oneline -20 -- <relevant path>            # recent changes
 
 ## Phase 2 — Draft SDD
 
-Use this structure. Every section must be populated — no placeholders.
-
-```md
-# SDD: [Feature / Change Title]
-
-## 1. Background & Objectives
-
-Why this change is needed. Business context, user pain point, or technical driver.
-
-## 2. Current State
-
-How the system works today in the affected area. Include Mermaid diagrams for architecture if multiple components are involved.
-
-## 3. Proposed Design
-
-### 3.1 Architecture
-
-High-level design with Mermaid diagrams. Show component interactions, data flow, and boundaries.
-
-### 3.2 API Specification
-
-For each new or modified endpoint: method, path, request/response format, error codes, auth requirements.
-
-### 3.3 Data Model / Schema Changes
-
-New tables, altered columns, indexes, migration steps. Include rollback strategy.
-
-### 3.4 Key Algorithms / Business Rules
-
-Non-trivial logic that the implementer must follow exactly.
-
-## 4. Acceptance Criteria
-
-Numbered list. Each criterion is testable and unambiguous.
-
-- AC-001: ...
-- AC-002: ...
-
-## 5. Non-Functional Requirements
-
-Performance targets, security constraints, compatibility requirements.
-
-## 6. Dependencies & Risks
-
-- DEP-001: ...
-- RISK-001: ... — mitigation: ...
-
-## 7. Files to Change
-
-- FILE-001: `path/to/File.java` — what changes here
-
-## 8. Out of Scope
-
-Explicitly list what this SDD does NOT cover to prevent scope creep.
-```
+Use the template in `prompts/spec-template.prompt.md`. Every section (§1–§9) must be populated — no placeholders.
 
 ## Phase 3 — Validate
 

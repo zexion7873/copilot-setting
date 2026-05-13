@@ -25,7 +25,6 @@
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
 │   ├── context7
-│   ├── context-engineering
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── javadoc
@@ -34,7 +33,6 @@
 │   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
-│   ├── oop-design-patterns
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
@@ -47,8 +45,7 @@
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (Claude Sonnet 4.6)
+│   └── debugger             (Claude Opus 4.6)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── adr-template
@@ -111,7 +108,6 @@
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
-| `context-engineering` | `**` | 優化程式碼與專案結構，讓 Copilot 更有效理解上下文 |
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
 | `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
@@ -120,7 +116,6 @@
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
-| `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP 設計模式（GoF + SOLID） |
 | `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
@@ -137,11 +132,10 @@
 
 |   | Agent | Model | 說明 |
 |:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` skill 起草分階段計畫；轉交 `tasks` skill 做原子任務拆解、@doc-writer 寫 SDD 或 @implementer 執行 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` skill，依「實作 / 重構 / 寫測試」自動分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` skill，依「審查 / 資安 / SQL」自動分流 |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格撰寫與任務拆解一站完成 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | 觸發 `sdd` skill 寫正式規格（含 semver 修訂流程）；也寫 Javadoc、API 文件、遷移指南 |
 
 ### Agent Handoffs 工作流程
 
@@ -149,18 +143,19 @@ Agent 間可互相交接任務，形成協作工作流：
 
 ```mermaid
 flowchart LR
-    Planner -->|"寫成 SDD"| DocWriter[Doc Writer]
+    Planner -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
 
-    DocWriter -->|"開始實作"| Implementer
-    DocWriter -->|"回到規劃"| Planner
-
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
+    Implementer -->|"除錯分析"| Debugger
+    Implementer -->|"回到規劃"| Planner
 
     Reviewer -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
+    Reviewer -->|"修改規格"| Planner
+    Reviewer -->|"重新規劃"| Planner
 
     Debugger -->|"修復 Bug"| Implementer
 ```
@@ -233,6 +228,9 @@ flowchart LR
 
 資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
 
+> [!NOTE]
+> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql-rules`、`error-handling`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+
 ```mermaid
 flowchart LR
     CI[copilot-instructions.md] -.->|每次對話載入| Chat((對話))
@@ -253,11 +251,9 @@ flowchart LR
 
 ```
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                       Planner 掃 codebase，拆出分階段計畫
-                       ↓ 點「寫成 SDD」
-
-你  →  @doc-writer    把計畫寫成 SDD（Spec-Driven Development）文件
-                       ↓ 點「開始實作」
+                        Planner 掃 codebase，拆出分階段計畫，
+                        接著寫正式 SDD（含驗收條件）
+                        ↓ 點「開始實作」
 
 你  →  @implementer   照 SDD 和既有 pattern 寫 code
                         ↓ 點「Code Review」
@@ -277,7 +273,9 @@ flowchart LR
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
-> - 寫文件 → `@planner` → `@doc-writer`
+> - 審查規格 → `@reviewer`（SDD review mode）→ `@planner`
+> - 技術調研 → `@planner`（spike mode）→ `@planner`（plan mode）
+> - 寫文件 → `@planner`
 
 ### SDD 修訂工作流
 
