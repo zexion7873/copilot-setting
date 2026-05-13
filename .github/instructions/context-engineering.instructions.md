@@ -25,10 +25,5 @@ Principles for helping GitHub Copilot understand your codebase and provide bette
 - **Use strategic comments**: At the top of complex modules, briefly describe the flow or purpose.
 - **Reference patterns explicitly**: "Follow the same pattern as `src/api/users.ts`" gives Copilot a concrete example.
 
-## Multi-File Changes
-
-- **Describe scope first**: Tell Copilot all files involved before asking for changes. "I need to update the User model, API endpoint, and tests."
-- **Work incrementally**: One file at a time, verifying each change. Don't ask for everything at once.
-- **Check understanding**: Ask "What files would you need to see?" before complex refactors.
 
 

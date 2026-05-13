@@ -7,12 +7,6 @@ applyTo: '**/*Test.java, **/*IT.java, **/test/**/*.java'
 
 Hard rules for tests written with JUnit 5 (Jupiter) + Mockito. Test design workflow lives in `skills/test-design/`. This file is the static convention layer.
 
-## Project Setup
-
-- Tests live under `src/test/java`
-- Required dependencies: `junit-jupiter-api`, `junit-jupiter-engine`, `junit-jupiter-params` (parameterized), `mockito-core` + `mockito-junit-jupiter`
-- Run via `mvn test` / `mvn verify` (the latter for `*IT.java` integration tests)
-
 ## Naming & Structure
 
 - Test class: production class name + `Test` suffix (`Calculator` → `CalculatorTest`); integration tests use `IT` suffix (`PaymentFlowIT`)
@@ -21,25 +15,17 @@ Hard rules for tests written with JUnit 5 (Jupiter) + Mockito. Test design workf
 - Follow **Arrange-Act-Assert (AAA)** with blank lines between sections
 - `@DisplayName` for human-readable names — especially for parameterized tests
 
-## Lifecycle Annotations
+## Lifecycle
 
-| Annotation | Use |
-|---|---|
-| `@BeforeEach` / `@AfterEach` | Per-test setup / teardown |
-| `@BeforeAll` / `@AfterAll` | Per-class; **must be `static`** |
-| `@Nested` | Group related tests in inner classes |
-| `@Tag("fast")` / `@Tag("integration")` | Categorize for selective execution |
-| `@Disabled("reason")` | Skip with explicit reason — never skip silently |
+- `@BeforeAll` / `@AfterAll` **must be `static`**
+- `@Disabled("reason")` — always give a reason; never skip silently
+- `@Nested` for grouping related tests; `@Tag` for selective execution
 
 ## Parameterized Tests
 
-- `@ParameterizedTest` mandatory; **never** loop with `@Test` over a list
-- `@ValueSource` — single literal axis (strings, ints)
-- `@CsvSource` — inline rows of multiple columns
-- `@CsvFileSource` — large data sets from classpath CSV
-- `@MethodSource` — when arguments need construction (use `Stream<Arguments>`)
-- `@EnumSource` — exhaustive enum coverage
-- `@NullSource` / `@EmptySource` / `@NullAndEmptySource` — boundary cases
+- `@ParameterizedTest` mandatory — **never** loop with `@Test` over a list
+- Pick the right source: `@ValueSource` (single axis), `@CsvSource` (multi-column), `@MethodSource` (complex args), `@EnumSource` (exhaustive enum)
+- Use `@NullAndEmptySource` for boundary cases
 
 ## Assertions
 

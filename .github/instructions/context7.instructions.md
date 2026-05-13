@@ -14,8 +14,7 @@ Use Context7 before deciding or writing code when you need:
 - Framework/library API details (signatures, config keys, behaviors)
 - Version-sensitive guidance (breaking changes, deprecations, new defaults)
 - Security-critical patterns (auth flows, crypto, deserialization)
-- Help interpreting third-party error messages or non-trivial config (CLI flags, auth)
-- Confirmation that an API exists, was renamed, or deprecated — especially when the user names a version ("Next.js 15", "React 19")
+- Confirmation that an API exists, was renamed, or deprecated — especially when a version is named
 
 Skip for: local refactors, naming/formatting, logic derivable from the repo, language fundamentals.
 
@@ -27,8 +26,7 @@ Prefer **primary sources** (official docs, API references, release notes, securi
 
 - Translate findings into concrete code/config changes
 - **Cite sources** with title + URL when relying on external facts
-- For specific values (flags, headers, config keys): state the exact value, note defaults and caveats, suggest a validation step (`--help`, smoke test)
-- If docs conflict, present tradeoffs briefly and pick the safest default
+- State exact values, note defaults and caveats; if docs conflict, pick the safest default
 
 ## MCP tool flow
 
