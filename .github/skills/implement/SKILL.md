@@ -9,7 +9,15 @@ Defines the implementation PROCESS only. Coding standards (naming, error handlin
 
 ## Phase 1 — Understand Before Writing
 
-**Check for existing SDD / spec** — search the workspace for an SDD or plan document related to this task. If one exists, read it completely first; it defines scope, constraints, and acceptance criteria that your implementation must satisfy. If none exists and the feature is non-trivial, suggest `@doc-writer` to draft an SDD before coding.
+**SDD-first gate (NON-NEGOTIABLE)** — Search the workspace for an SDD or plan document covering this task. Look in `docs/spec/`, `/plan/`, or any path the user mentioned. If one exists, read it completely — it defines scope, constraints, and acceptance criteria your implementation MUST satisfy. If none exists, evaluate the expected change scope BEFORE writing any code:
+
+- Single-file / trivial change → proceed; note "no SDD: trivial scope" in the final report.
+- Expected to touch 2+ files OR introduces new public behavior (new API, new entity, new flow) → **STOP**. Ask the user:
+  > No SDD found. This change is expected to touch 2+ files / introduce new behavior. Choose one:
+  > (a) Create an SDD first (recommended — use `sdd` skill or `@doc-writer`)
+  > (b) Proceed without SDD (will be noted as exception in implementation report)
+
+Do NOT silently skip this gate. Silently skipping is the failure mode this rule exists to prevent.
 
 **Clarify requirements** — confirm inputs/outputs, success criteria, edge cases, and what existing functionality this interacts with. If anything is ambiguous, **ask — do not assume**. Cross-check against the SDD if one exists.
 
