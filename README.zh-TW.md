@@ -234,7 +234,7 @@ flowchart LR
 ---
 
 <details>
-<summary><strong>📁 目錄結構</strong></summary>
+<summary><h2>📁 目錄結構</h2></summary>
 
 ```
 ~/.github/

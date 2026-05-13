@@ -234,7 +234,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 ---
 
 <details>
-<summary><strong>📁 Directory Structure</strong></summary>
+<summary><h2>📁 Directory Structure</h2></summary>
 
 ```
 ~/.github/
