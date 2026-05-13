@@ -62,6 +62,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
     ├── performance/
     ├── plan/
     ├── refactor/
+    ├── sdd/
     ├── security-audit/
     ├── spike/
     ├── sql-review/
@@ -174,9 +175,10 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📐 | `plan` | Auto + Manual | Implementation plan with phases, atomic tasks, and acceptance criteria |
 | 📌 | `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
 | 🔬 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
-| 🔨 | `implement` | Auto + Manual | Feature implementation with pattern discovery and self-verification |
+| 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
+| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
 | 🔍 | `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |

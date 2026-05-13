@@ -45,17 +45,16 @@ Hard rules for logging in Java 8 projects. Uses SLF4J facade with Logback implem
 
 ## Performance
 
-- Minimize logging in hot paths (tight loops, per-request critical path).
-- Avoid logging large objects — log IDs and counts, not serialized collections.
-- Structured (JSON) logs for production aggregation; human-readable pattern for local development.
+- Minimize logging in hot paths. Log IDs and counts, not serialized collections.
+- Structured (JSON) logs in production; human-readable pattern for local dev.
 
 ## Anti-Patterns
 
-| Pattern | Problem | Fix |
-|---|---|---|
-| `System.out.println(...)` | Bypasses logging framework | `log.info(...)` |
-| `e.printStackTrace()` | Goes to stderr, no level/context | `log.error("context", e)` |
-| `log.error("Error: " + e.getMessage())` | Loses stack trace + concatenation | `log.error("context", e)` |
-| `log.info("entering method")` | Noise, no value | Log outcomes, not ceremony |
-| Logging and rethrowing same exception | Duplicate entries | Log at final handler only |
-| `catch (Exception e) { log.warn(...); }` | Swallows exception silently | Log + rethrow, or handle meaningfully |
+| Pattern | Fix |
+|---|---|
+| `System.out.println(...)` | `log.info(...)` — use the framework |
+| `e.printStackTrace()` | `log.error("context", e)` — proper level and context |
+| `log.error("Error: " + e.getMessage())` | `log.error("context", e)` — preserve stack trace, no concat |
+| `log.info("entering method")` | Log outcomes, not ceremony |
+| Log and rethrow same exception | Log at final handler only |
+| `catch (Exception e) { log.warn(...); }` | Log + rethrow, or handle meaningfully |

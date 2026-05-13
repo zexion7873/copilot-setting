@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user asks to plan a feature, design implementation steps, write a spec for upgrade / refactor / migration, or 寫實作計畫 / 規劃 / 拆 task / 升級計畫 / 遷移計畫. Produces a structured Markdown spec under /plan/ with phases, atomic tasks, acceptance criteria, and risks. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), or open-ended research (prefer spike skill).'
+description: 'Use when user asks to plan a feature, design implementation steps, write a spec for upgrade / refactor / migration, or 寫實作計畫 / 規劃 / 拆 task / 升級計畫 / 遷移計畫 / 寫規格 / 定規格. Produces a structured Markdown spec under /plan/ with phases, atomic tasks, acceptance criteria, and risks. For non-trivial plans, suggest formalizing as an SDD via @doc-writer. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), open-ended research (prefer spike skill), or full SDD creation (prefer sdd skill).'
 ---
 
 # Plan — Workflow
@@ -98,6 +98,7 @@ tags: [feature | upgrade | chore | architecture | migration | bug | ...]
 ## 8. Related Specifications
 
 - [Link to related spec / ADR / external doc]
+- SDD: [Path to SDD if exists, or "To be created via @doc-writer"]
 ```
 
 ## Rules
@@ -107,9 +108,11 @@ tags: [feature | upgrade | chore | architecture | migration | bug | ...]
 - Phases independent unless a dependency is declared
 - No placeholder text in the final output — every field populated
 - Reference real files in the **Files** section — verify they exist
+- For non-trivial features or cross-cutting changes, recommend formalizing the plan as an SDD via `@doc-writer` before implementation
 
 ## Handoffs
 
 - → `implement` skill — once plan is approved, start execution
+- → `sdd` skill / `@doc-writer` — when the plan needs a formal SDD before implementation
 - → `adr` skill — if the plan exposes a decision worth recording
 - ← `spike` skill — a spike's recommendation often becomes a plan

@@ -9,7 +9,9 @@ Defines the implementation PROCESS only. Coding standards (naming, error handlin
 
 ## Phase 1 — Understand Before Writing
 
-**Clarify requirements** — confirm inputs/outputs, success criteria, edge cases, and what existing functionality this interacts with. If anything is ambiguous, **ask — do not assume**.
+**Check for existing SDD / spec** — search the workspace for an SDD or plan document related to this task. If one exists, read it completely first; it defines scope, constraints, and acceptance criteria that your implementation must satisfy. If none exists and the feature is non-trivial, suggest `@doc-writer` to draft an SDD before coding.
+
+**Clarify requirements** — confirm inputs/outputs, success criteria, edge cases, and what existing functionality this interacts with. If anything is ambiguous, **ask — do not assume**. Cross-check against the SDD if one exists.
 
 **Locate related code**:
 

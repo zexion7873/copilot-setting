@@ -5,7 +5,7 @@ description: 'Use when user asks to review code, check a PR, audit changes, 審�
 
 # Code Review — Workflow
 
-Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) is inlined in `agents/reviewer.agent.md`.
+Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) lives in `prompts/code-review-checklist.prompt.md`.
 
 ## Phase 1 — Scope
 

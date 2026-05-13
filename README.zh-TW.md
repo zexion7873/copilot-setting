@@ -62,6 +62,7 @@
     ├── performance/
     ├── plan/
     ├── refactor/
+    ├── sdd/
     ├── security-audit/
     ├── spike/
     ├── sql-review/
@@ -174,9 +175,10 @@ flowchart LR
 | 📐 | `plan` | 自動 + 手動 | 結構化實作計畫 — 階段、原子任務、驗收標準 |
 | 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
 | 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、開發、自我驗證 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
+| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
