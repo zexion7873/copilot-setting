@@ -4,9 +4,9 @@ description: 'Analyze requirements, break down tasks, estimate impact scope, and
 model: Claude Opus 4.6
 tools: ['search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
-  - label: 寫成 SDD 文件
+  - label: 寫成 SDD（Spec-Driven Development）文件
     agent: Doc Writer
-    prompt: 請將上面的規劃整理成 SDD（System Design Document）文件。
+    prompt: 請將上面的規劃整理成 SDD（Spec-Driven Development）文件。
     send: false
   - label: 開始實作
     agent: Implementer
@@ -77,5 +77,5 @@ Structure every plan with:
 - Account for DB migration needs and rollback
 - Think about cache invalidation and thread safety
 - If the plan involves security-sensitive design, suggest `@reviewer` for security audit
-- Complex plan → suggest `@doc-writer` for a formal SDD
+- Complex plan → suggest `@doc-writer` for a formal SDD (Spec-Driven Development)
 - Plan approved → suggest `@implementer` to start execution
