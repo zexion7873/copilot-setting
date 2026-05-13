@@ -40,13 +40,7 @@ When marking non-comment intent in code:
 
 ## Public API Documentation
 
-Use Javadoc / JSDoc / docstrings on public APIs:
-
-- One-line summary
-- `@param`, `@returns`, `@throws` as applicable
-- Usage example only when non-obvious
-
-Avoid these on private helpers — the name should suffice.
+Document public APIs with Javadoc / JSDoc / docstrings. For Java-specific Javadoc conventions, see `javadoc.instructions.md`.
 
 ## Checklist
 

@@ -9,12 +9,7 @@ Never use terminal heredoc, redirection, or `cat` / `echo` / `printf` / `tee` to
 
 ## Forbidden
 
-```bash
-cat > file << EOF        cat > file << 'EOF'      cat >> file << EOF
-echo "..." > file        printf '%s\n' ... > file  tee file << EOF
-```
-
-Any `>` / `>>` redirection writing multi-line content or special characters.
+`cat`/`echo`/`printf`/`tee` with `>`/`>>`/`<< EOF` — all forbidden for writing file content.
 
 ## Required
 

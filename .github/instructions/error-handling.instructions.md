@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Exception Handling Conventions
 
-Hard rules for error handling in Java 8 projects. Scattered references in `copilot-instructions.md` (general), `instructions/security-and-owasp.instructions.md` (security), and `agents/reviewer.agent.md` (review checklist) still apply — this file is the single source of truth for exception design and propagation.
+Hard rules for error handling in Java 8 projects. Related rules in `copilot-instructions.md` (general), `instructions/security-and-owasp.instructions.md` (security), and `prompts/code-review-checklist.prompt.md` (review checklist) still apply — this file is the single source of truth for exception design and propagation.
 
 ## Exception Hierarchy
 
@@ -37,35 +37,11 @@ Hard rules for error handling in Java 8 projects. Scattered references in `copil
 
 ## Error Response Format
 
-At the outermost layer (servlet, API handler), convert exceptions to a consistent response:
-
-```java
-{
-  "error": "ORDER_NOT_FOUND",
-  "message": "Order not found for the given ID",
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
-
-- **Never expose stack traces** in responses — log them server-side at ERROR level.
-- **Never expose internal class names** — `ORDER_NOT_FOUND` not `OrderNotFoundException`.
-- **Include a machine-readable error code** — clients switch on codes, not messages.
+At the outermost layer (servlet, API handler), convert exceptions to a consistent JSON response with machine-readable `error` code, human-readable `message`, and `timestamp`. Never expose stack traces or internal class names in responses — log them server-side at ERROR level. Clients switch on error codes, not messages.
 
 ## Empty Catch Blocks
 
-**Forbidden.** No exceptions.
-
-If you genuinely need to swallow an exception, document why:
-
-```java
-try {
-    optionalCleanup();
-} catch (IOException e) {
-    // Intentionally ignored: cleanup failure does not affect the main operation.
-    // The resource will be reclaimed by the OS on process exit.
-    log.debug("Cleanup failed for resource={}", resourceId, e);
-}
-```
+**Forbidden.** If you genuinely must swallow an exception, add a comment explaining why AND log at DEBUG level. No silent swallowing.
 
 ## Retry Strategy
 

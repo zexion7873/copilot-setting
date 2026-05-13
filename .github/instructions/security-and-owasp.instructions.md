@@ -16,8 +16,8 @@ Code generated, reviewed, or refactored must be secure by default. When suggesti
 - **No hardcoded secrets** — load from env vars or secret store (Vault, AWS Secrets Manager)
 
 ### A03 Injection
-- **Parameterized queries only** — never build SQL by string concatenation
-- **Safe shell APIs** — use argument-escaping libs for OS commands (no shell concat)
+- **SQL injection** — see `sql-rules.instructions.md` for full parameterization rules
+- **OS command injection** — use argument-escaping libs; no shell concatenation
 - **XSS** — context-aware output encoding; prefer `.textContent` over `.innerHTML`; sanitize with DOMPurify when HTML is required
 
 ### A04 Insecure Design

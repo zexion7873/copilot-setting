@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Use when user asks to implement a feature, write new code, add functionality, or build something. Also triggers on: 幫我寫, 實作這個功能, 開發, 新增功能, 加一個 API, 寫一個 method. Guides implementation through pattern discovery, coding, and self-verification. Do NOT use for bug fixes (prefer debug), code cleanup (prefer refactor), or reviewing existing code (prefer code-review).'
+description: 'Use when user asks to implement a feature, write new code, add functionality, or build something. Also triggers on: 幫我寫, 實作這個功能, 開發, 新增功能, 加一個 API, 寫一個 method. Guides implementation through pattern discovery, coding, and self-verification. Do NOT use for bug fixes (prefer debug), restructuring or cleaning up existing code without adding new behavior (prefer refactor), or reviewing existing code (prefer code-review).'
 ---
 
 # Implement — Executable Workflow
@@ -9,7 +9,17 @@ Defines the implementation PROCESS only. Coding standards (naming, error handlin
 
 ## Phase 1 — Understand Before Writing
 
-**Clarify requirements** — confirm inputs/outputs, success criteria, edge cases, and what existing functionality this interacts with. If anything is ambiguous, **ask — do not assume**.
+**SDD-first gate (NON-NEGOTIABLE)** — Search the workspace for an SDD or plan document covering this task. Look in `docs/spec/`, `/plan/`, or any path the user mentioned. If one exists, read it completely — it defines scope, constraints, and acceptance criteria your implementation MUST satisfy. If none exists, evaluate the expected change scope BEFORE writing any code:
+
+- Single-file / trivial change → proceed; note "no SDD: trivial scope" in the final report.
+- Expected to touch 2+ files OR introduces new public behavior (new API, new entity, new flow) → **STOP**. Ask the user:
+  > No SDD found. This change is expected to touch 2+ files / introduce new behavior. Choose one:
+  > (a) Create an SDD first (recommended — use `sdd` skill or `@doc-writer`)
+  > (b) Proceed without SDD (will be noted as exception in implementation report)
+
+Do NOT silently skip this gate. Silently skipping is the failure mode this rule exists to prevent.
+
+**Clarify requirements** — confirm inputs/outputs, success criteria, edge cases, and what existing functionality this interacts with. If anything is ambiguous, **ask — do not assume**. Cross-check against the SDD if one exists.
 
 **Locate related code**:
 

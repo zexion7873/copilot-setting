@@ -17,15 +17,12 @@ Hard rules for any SQL written in this project. These are non-negotiable; deviat
 
 ## Performance — Query Patterns
 
-- Reject `SELECT *` in production code. List columns explicitly.
-- No functions on indexed columns in `WHERE`. Use range conditions instead:
-  - `WHERE YEAR(col) = 2024` → `WHERE col >= '2024-01-01' AND col < '2025-01-01'`
-  - `WHERE UPPER(email) = ?` → store / index `LOWER(email)`, compare with `LOWER(?)`
-- No `OFFSET` pagination on large tables. Use cursor-based:
-  - `LIMIT 20 OFFSET 10000` → `WHERE id > ? ORDER BY id LIMIT 20`
-- N+1 detection: any SQL inside a `for` / `while` loop is a red flag. Batch with `IN` clause or JOIN.
-- Convert correlated subqueries to JOINs or window functions where feasible.
-- Collapse multiple `COUNT(...)` queries into one: `COUNT(CASE WHEN ... THEN 1 END)`.
+- Reject `SELECT *`. List columns explicitly.
+- No functions on indexed columns in `WHERE` — use range conditions (`WHERE YEAR(col) = 2024` → `WHERE col >= '2024-01-01' AND col < '2025-01-01'`).
+- No `OFFSET` pagination on large tables — use cursor-based (`WHERE id > ? ORDER BY id LIMIT 20`).
+- N+1 detection: SQL inside a loop is a red flag. Batch with `IN` or JOIN.
+- Prefer JOINs or window functions over correlated subqueries.
+- Collapse multiple `COUNT(...)` into one with `CASE WHEN`.
 
 ## Performance — Indexes
 
@@ -59,7 +56,5 @@ Hard rules for any SQL written in this project. These are non-negotiable; deviat
 
 ## Database-Specific Notes
 
-- **MySQL**: InnoDB default, `utf8mb4` charset, `DATETIME` over `TIMESTAMP` for app columns.
-- **PostgreSQL**: `JSONB` over `JSON`; `GIN` index for JSONB; `TIMESTAMPTZ` over `TIMESTAMP`.
-- **SQL Server**: `DATETIME2` over `DATETIME`; `NVARCHAR` for Unicode; columnstore for analytics.
-- **Oracle**: Sequences for surrogate keys; `VARCHAR2` over `VARCHAR`; bind variables (`:name`) over literals.
+- **MySQL** (primary): InnoDB default, `utf8mb4` charset, `DATETIME` over `TIMESTAMP` for app columns.
+- Other dialects (PostgreSQL, SQL Server, Oracle): apply equivalent type/index conventions for that dialect.

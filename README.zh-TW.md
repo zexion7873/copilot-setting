@@ -38,7 +38,10 @@
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
-│   └── sql-sp-generation
+│   ├── sql-sp-generation
+│   ├── xml
+│   ├── properties
+│   └── yaml-json-config
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
 │   ├── planner              (Claude Opus 4.6)
@@ -48,13 +51,18 @@
 │   └── doc-writer           (Claude Sonnet 4.6)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
+│   ├── adr-template
 │   ├── code-review-checklist
-│   └── sql-review
+│   ├── plan-template
+│   ├── spec-template
+│   ├── sql-review-output
+│   └── tasks-template
 │
 └── skills/                                ← Agent 可執行的技能
     ├── adr/
     ├── clarify-task/
     ├── code-review/
+    ├── constitution/
     ├── context-discovery/
     ├── debug/
     ├── git-commit/
@@ -62,9 +70,13 @@
     ├── performance/
     ├── plan/
     ├── refactor/
+    ├── sdd/
+    ├── sdd-compliance/
+    ├── sdd-review/
     ├── security-audit/
     ├── spike/
     ├── sql-review/
+    ├── tasks/
     └── test-design/
 ```
 
@@ -113,6 +125,9 @@
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
 | `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
+| `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
+| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
+| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
 
 ---
 
@@ -122,7 +137,7 @@
 
 |   | Agent | Model | 說明 |
 |:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 分析需求、拆解任務、評估影響範圍 |
+| 📐 | `@planner` | Claude Opus 4.6 | 分析需求、設計實作階段、評估影響範圍（原子任務拆解交給 `tasks` skill） |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 撰寫生產級程式碼、重構、設計測試（JUnit 5） |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 程式碼審查、安全性稽核（OWASP）、SQL 審查 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 分析堆疊追蹤、追蹤執行流程來除錯 |
@@ -159,7 +174,17 @@ flowchart LR
 | Prompt | 配對 skill | 用途 |
 |--------|------------|------|
 | `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
-| `sql-review` | `sql-review` | 審查工作流的輸出格式（跨方言：MySQL/PostgreSQL/SQL Server/Oracle） |
+| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分類、EXPLAIN cheat sheet） |
+| `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 out-of-scope 共 8 個章節 |
+| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 編號 |
+| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |
+| `adr-template` | `adr` | ADR 骨架，含 Status / Context / Decision / Consequences / Alternatives |
+
+> [!NOTE]
+> **命名慣例**（後綴依內容類型）：
+> - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
+> - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
+> - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
 
 ---
 
@@ -169,16 +194,21 @@ flowchart LR
 
 |   | Skill | 觸發方式 | 說明 |
 |:-:|-------|----------|------|
+| 📜 | `constitution` | 自動 + 手動 | 專案層級的不可動原則與治理規則 — 穩定、高層級（200 行硬上限） |
 | ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
 | 🗺️ | `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
-| 📐 | `plan` | 自動 + 手動 | 結構化實作計畫 — 階段、原子任務、驗收標準 |
+| 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
 | 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
 | 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、開發、自我驗證 |
+| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
+| 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
+| ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
+| ✅ | `sdd-compliance` | 自動 + 手動 | 實作後的規格對齊矩陣 — 驗證每個 AC 都有 task、測試與程式碼證據 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
-| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
+| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式（AC 追蹤請用 `sdd-compliance`） |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |

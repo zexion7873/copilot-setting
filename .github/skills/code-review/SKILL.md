@@ -1,11 +1,11 @@
 ---
 name: code-review
-description: 'Use when user asks to review code, check a PR, audit changes, 審查程式碼, 看一下這段 code, 幫我 review, or verify code against a plan. Performs structured review with issue classification and verdict. Do NOT use for simple "what does this code do" explanations or refactoring requests.'
+description: 'Use when user asks to review code, check a PR, audit changes, 審查程式碼, 看一下這段 code, 幫我 review, or verify code against a plan. Performs structured review with issue classification and verdict focused on correctness, style, and bug patterns. Do NOT use for simple "what does this code do" explanations, refactoring requests (prefer refactor), when user request is vague and needs scope clarification (prefer clarify-task), or for spec compliance verification post-implementation (prefer sdd-compliance skill — that focuses on AC traceability and requirements coverage).'
 ---
 
 # Code Review — Workflow
 
-Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) is inlined in `agents/reviewer.agent.md`.
+Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) lives in `prompts/code-review-checklist.prompt.md`.
 
 ## Phase 1 — Scope
 

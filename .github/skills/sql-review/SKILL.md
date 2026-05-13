@@ -5,7 +5,7 @@ description: 'Use when user asks to review SQL, optimize a query, analyze an exe
 
 # SQL Review — Workflow
 
-Process for reviewing SQL. Rules live in `instructions/sql-rules.instructions.md`. Workflow output format lives in `prompts/sql-review.prompt.md`. This file defines the order of attack.
+Process for reviewing SQL. Rules live in `instructions/sql-rules.instructions.md`. Workflow output format lives in `prompts/sql-review-output.prompt.md`. This file defines the order of attack.
 
 ## Phase 1 — Inventory
 
@@ -47,7 +47,7 @@ EXPLAIN ANALYZE <query>;
 EXPLAIN (ANALYZE, BUFFERS) <query>;
 ```
 
-EXPLAIN signal cheat sheet is defined in `prompts/sql-review.prompt.md`.
+EXPLAIN signal cheat sheet is defined in `prompts/sql-review-output.prompt.md`.
 
 ## Phase 4 — Anti-Pattern Scan
 

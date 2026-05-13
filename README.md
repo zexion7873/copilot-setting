@@ -38,7 +38,10 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
-│   └── sql-sp-generation
+│   ├── sql-sp-generation
+│   ├── xml
+│   ├── properties
+│   └── yaml-json-config
 │
 ├── agents/                                ← Invoke via @agent-name in chat
 │   ├── planner              (Claude Opus 4.6)
@@ -48,13 +51,18 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   └── doc-writer           (Claude Sonnet 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
+│   ├── adr-template
 │   ├── code-review-checklist
-│   └── sql-review
+│   ├── plan-template
+│   ├── spec-template
+│   ├── sql-review-output
+│   └── tasks-template
 │
 └── skills/                                ← Executable skills for agents
     ├── adr/
     ├── clarify-task/
     ├── code-review/
+    ├── constitution/
     ├── context-discovery/
     ├── debug/
     ├── git-commit/
@@ -62,9 +70,13 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
     ├── performance/
     ├── plan/
     ├── refactor/
+    ├── sdd/
+    ├── sdd-compliance/
+    ├── sdd-review/
     ├── security-audit/
     ├── spike/
     ├── sql-review/
+    ├── tasks/
     └── test-design/
 ```
 
@@ -113,6 +125,9 @@ Automatically injected into the system prompt when the current file matches the 
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL hard rules: injection prevention, performance, code quality (single source of truth) |
 | `sql-sp-generation` | `**/*.sql` | MySQL stored procedure & schema conventions |
+| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files |
+| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, encoding, secret management |
+| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, secret management |
 
 ---
 
@@ -122,7 +137,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Analyze requirements, break down tasks, estimate impact scope |
+| 📐 | `@planner` | Claude Opus 4.6 | Analyze requirements, design implementation phases, estimate impact scope (hands off atomic tasks to `tasks` skill) |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
@@ -159,7 +174,17 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 | Prompt | Paired skill | Purpose |
 |--------|-------------|---------|
 | `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
-| `sql-review` | `sql-review` | Review workflow output format (cross-dialect: MySQL/PostgreSQL/SQL Server/Oracle) |
+| `sql-review-output` | `sql-review` | Output format reference (severity buckets, EXPLAIN cheat sheet) for the sql-review skill |
+| `spec-template` | `sdd` | SDD scaffold — 8 sections from background to out-of-scope |
+| `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
+| `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
+| `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
+
+> [!NOTE]
+> **Naming convention** (suffix indicates content type):
+> - `*-template` — fill-in scaffold for one-shot artifact creation (e.g., `spec-template`, `plan-template`)
+> - `*-checklist` — verification checklist with categorized items (e.g., `code-review-checklist`)
+> - `*-output` — output format / cheat-sheet reference cited by its paired skill (e.g., `sql-review-output`)
 
 ---
 
@@ -169,16 +194,21 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
+| 📜 | `constitution` | Auto + Manual | Project-wide non-negotiable principles and governance — stable, high-level only (200-line hard limit) |
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
 | 🗺️ | `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
-| 📐 | `plan` | Auto + Manual | Implementation plan with phases, atomic tasks, and acceptance criteria |
+| 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
 | 📌 | `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
 | 🔬 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
-| 🔨 | `implement` | Auto + Manual | Feature implementation with pattern discovery and self-verification |
+| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
+| 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
+| ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
+| 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
+| ✅ | `sdd-compliance` | Auto + Manual | Spec compliance matrix AFTER implementation — verifies every AC has tasks, tests, and code evidence |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
-| 🔍 | `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
+| 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns (use `sdd-compliance` for AC traceability) |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
