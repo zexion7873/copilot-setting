@@ -1,6 +1,6 @@
 ---
-description: 'Write technical documents including SDD, architecture docs, Javadoc, API documentation, and migration guides.'
 name: 'Doc Writer'
+description: 'Write technical documents including SDD, architecture docs, Javadoc, API documentation, and migration guides.'
 model: Claude Sonnet 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
