@@ -36,69 +36,7 @@ git log --oneline --all -- <relevant path>         # past changes, prior art
 
 ## Phase 3 — Draft Using Template
 
-```md
----
-goal: [Concise title]
-version: [e.g., 1.0]
-date_created: [YYYY-MM-DD]
-last_updated: [YYYY-MM-DD]
-owner: [Team / individual]
-status: 'Planned' | 'In progress' | 'Completed' | 'On Hold' | 'Deprecated'
-tags: [feature | upgrade | chore | architecture | migration | bug | ...]
----
-
-# Introduction
-
-[Short intro describing the plan and the goal it achieves.]
-
-## 1. Requirements & Constraints
-
-- **REQ-001**: Functional requirement
-- **SEC-001**: Security requirement
-- **CON-001**: Constraint
-- **GUD-001**: Guideline
-- **PAT-001**: Pattern to follow
-
-## 2. Implementation Approach
-
-High-level phasing only. Each phase has a goal and a brief description of what it accomplishes. Atomic task breakdown (T### IDs, dependencies, parallel markers) is generated separately by the `tasks` skill after this plan is approved.
-
-### Phase 1
-
-- GOAL-001: [What this phase achieves]
-- Approach: [How — components touched, order of attack, no per-task detail]
-
-### Phase 2
-
-- GOAL-002: ...
-- Approach: ...
-
-## 3. Alternatives
-
-- **ALT-001**: Alternative — rejected because ...
-
-## 4. Dependencies
-
-- **DEP-001**: External / internal dependency
-
-## 5. Files
-
-- **FILE-001**: Path — what changes here
-
-## 6. Testing
-
-- **TEST-001**: Test plan item
-
-## 7. Risks & Assumptions
-
-- **RISK-001**: Risk — mitigation
-- **ASSUMPTION-001**: Assumption — verification
-
-## 8. Related Specifications
-
-- [Link to related spec / ADR / external doc]
-- SDD: [Path to SDD if exists, or "To be created via @doc-writer"]
-```
+Use the template in `prompts/plan-template.prompt.md`. All identifier prefixes (`REQ-`, `SEC-`, `CON-`, `GOAL-`, `ALT-`, `DEP-`, `FILE-`, `TEST-`, `RISK-`, `ASSUMPTION-`) must be used for cross-referencing from `tasks.md` and downstream artifacts.
 
 ## Rules
 

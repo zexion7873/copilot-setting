@@ -5,7 +5,13 @@ description: 'Use when user asks to implement a feature, write new code, add fun
 
 # Implement — Executable Workflow
 
-Defines the implementation PROCESS only. Coding standards (naming, error handling, logging, security) live in `copilot-instructions.md` and `instructions/` — do not restate here.
+Defines the implementation PROCESS only. Full coding standards live in `copilot-instructions.md` and `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: `PreparedStatement` with `?` only — never concatenate user input into SQL
+- **Exceptions**: no empty `catch` blocks; translate at layer boundaries; never catch `Throwable`
+- **Logging**: SLF4J parameterized — `log.info("x={}", x)` — never `+` concatenation or `e.printStackTrace()`
+- **Resources**: `try-with-resources` for all `AutoCloseable` (`Connection`, `PreparedStatement`, `ResultSet`)
+- **Security**: no hardcoded secrets; validate inputs at boundaries; output-encode in JSP
 
 ## Phase 1 — Understand Before Writing
 

@@ -25,7 +25,6 @@
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
 │   ├── context7
-│   ├── context-engineering
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── javadoc
@@ -34,7 +33,6 @@
 │   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
-│   ├── oop-design-patterns
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
@@ -111,7 +109,6 @@
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
-| `context-engineering` | `**` | 優化程式碼與專案結構，讓 Copilot 更有效理解上下文 |
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
 | `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
@@ -120,7 +117,6 @@
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
-| `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP 設計模式（GoF + SOLID） |
 | `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
@@ -137,11 +133,11 @@
 
 |   | Agent | Model | 說明 |
 |:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` skill 起草分階段計畫；轉交 `tasks` skill 做原子任務拆解、@doc-writer 寫 SDD 或 @implementer 執行 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` skill，依「實作 / 重構 / 寫測試」自動分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` skill，依「審查 / 資安 / SQL」自動分流 |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `spike` / `adr` / `clarify-task` skill，依意圖自動分流（規劃 → 拆任務 → 調研 → 決策 → 釐清） |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | 觸發 `sdd` skill 寫正式規格（含 semver 修訂流程）；也寫 Javadoc、API 文件、遷移指南 |
+| 📝 | `@doc-writer` | Claude Sonnet 4.6 | 觸發 `sdd` / `constitution` skill 寫正式規格與專案原則；也寫 Javadoc、API 文件、遷移指南 |
 
 ### Agent Handoffs 工作流程
 
@@ -277,6 +273,8 @@ flowchart LR
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
+> - 審查規格 → `@reviewer`（SDD review mode）→ `@doc-writer`
+> - 技術調研 → `@planner`（spike mode）→ `@planner`（plan mode）
 > - 寫文件 → `@planner` → `@doc-writer`
 
 ### SDD 修訂工作流

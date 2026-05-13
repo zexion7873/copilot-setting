@@ -58,22 +58,7 @@ DEVIATION: Plan step N
 
 ## Phase 4 — Classify Findings
 
-Severity buckets:
-
-| Level | Includes |
-|---|---|
-| CRITICAL | Security vulnerability, data corruption, crash on main path, breaking API change, secrets in source |
-| WARNING | Performance issue (N+1, leak), missing error handling, test gap on changed code, pattern deviation |
-| SUGGESTION | Naming, simplification, missing WHY comment, minor style inconsistency |
-
-Issue format:
-
-```
-[SEVERITY] Category — Title
-  File: path/to/File.java#method:line
-  Problem: <what + why it matters>
-  Fix: <specific suggestion, with code if applicable>
-```
+Severity buckets and issue format defined in `prompts/code-review-checklist.prompt.md` — apply them here.
 
 ## Phase 5 — Verdict
 

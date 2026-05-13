@@ -25,7 +25,6 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
 │   ├── context7
-│   ├── context-engineering
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── javadoc
@@ -34,7 +33,6 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
-│   ├── oop-design-patterns
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
@@ -111,7 +109,6 @@ Automatically injected into the system prompt when the current file matches the 
 | File | applyTo | Description |
 |------|---------|-------------|
 | `context7` | `**` | Use Context7 MCP for authoritative external docs and API references |
-| `context-engineering` | `**` | Structure code/projects to maximize Copilot effectiveness through better context |
 | `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, retry, error propagation |
 | `global-copilot` | `**` | Global coding standards, conventions, and guidelines |
 | `logging` | `**/*.java` | SLF4J + Logback conventions — severity levels, parameterized messages, context, security |
@@ -120,7 +117,6 @@ Automatically injected into the system prompt when the current file matches the 
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions — naming, AAA, parameterization, assertions |
 | `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
 | `no-heredoc` | `**` | Prevent terminal heredoc file corruption — enforce file editing tools |
-| `oop-design-patterns` | `**/*.{py,java,ts,js,cs}` | OOP design patterns (GoF + SOLID) |
 | `security-and-owasp` | `**/*.{java,jsp}` | Secure coding based on OWASP Top 10 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL hard rules: injection prevention, performance, code quality (single source of truth) |
@@ -137,11 +133,11 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` skill for phased planning; hands off to `tasks` skill, @doc-writer (SDD), or @implementer |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` skills, mode-routed by "implement" / "refactor" / "design tests" |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` skills, mode-routed by review type |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `spike` / `adr` / `clarify-task` skills, mode-routed by intent (plan → decompose → research → decide → clarify) |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Activates `sdd` skill for formal specs (with semver amendment workflow); also writes Javadoc, API docs, migration guides |
+| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Activates `sdd` / `constitution` skills for formal specs and project principles; also writes Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 
@@ -277,6 +273,8 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
+> - Spec review → `@reviewer` (SDD review mode) → `@doc-writer`
+> - Research → `@planner` (spike mode) → `@planner` (plan mode)
 > - Documentation → `@planner` → `@doc-writer`
 
 ### Amendment Workflow

@@ -75,61 +75,7 @@ git log --oneline -20 -- <relevant path>            # recent changes
 
 ## Phase 2 — Draft SDD
 
-Use this structure. Every section must be populated — no placeholders.
-
-```md
-# SDD: [Feature / Change Title]
-
-## 1. Background & Objectives
-
-Why this change is needed. Business context, user pain point, or technical driver.
-
-## 2. Current State
-
-How the system works today in the affected area. Include Mermaid diagrams for architecture if multiple components are involved.
-
-## 3. Proposed Design
-
-### 3.1 Architecture
-
-High-level design with Mermaid diagrams. Show component interactions, data flow, and boundaries.
-
-### 3.2 API Specification
-
-For each new or modified endpoint: method, path, request/response format, error codes, auth requirements.
-
-### 3.3 Data Model / Schema Changes
-
-New tables, altered columns, indexes, migration steps. Include rollback strategy.
-
-### 3.4 Key Algorithms / Business Rules
-
-Non-trivial logic that the implementer must follow exactly.
-
-## 4. Acceptance Criteria
-
-Numbered list. Each criterion is testable and unambiguous.
-
-- AC-001: ...
-- AC-002: ...
-
-## 5. Non-Functional Requirements
-
-Performance targets, security constraints, compatibility requirements.
-
-## 6. Dependencies & Risks
-
-- DEP-001: ...
-- RISK-001: ... — mitigation: ...
-
-## 7. Files to Change
-
-- FILE-001: `path/to/File.java` — what changes here
-
-## 8. Out of Scope
-
-Explicitly list what this SDD does NOT cover to prevent scope creep.
-```
+Use the template in `prompts/spec-template.prompt.md`. Every section (§1–§9) must be populated — no placeholders.
 
 ## Phase 3 — Validate
 

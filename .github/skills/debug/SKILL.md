@@ -133,6 +133,24 @@ Test:       <regression test added>
 Related:    <other occurrences, if any>
 ```
 
+## Common Java 8 Traps
+
+| Issue | Typical cause |
+|---|---|
+| `NullPointerException` | Missing null check, `Optional` misuse |
+| `ConcurrentModificationException` | Modifying collection during iteration |
+| `ClassCastException` | Unsafe cast, generics erasure |
+| `OutOfMemoryError` | Resource leak, unbounded cache |
+| Connection pool exhaustion | Unclosed connections on error paths |
+| Deadlock | Inconsistent lock ordering |
+
+## SQL-Related Debugging
+
+- **Slow query** — `EXPLAIN`; check missing indexes or functions on indexed columns
+- **N+1** — SQL inside `for` / `while` loops
+- **Connection leak** — verify try-with-resources, especially on error paths
+- **Wrong results** — implicit type conversion in WHERE / JOIN
+
 ## Debug Anti-Patterns
 
 - Shotgun debugging (random changes) → follow binary search

@@ -1,6 +1,6 @@
 ---
 name: 'Doc Writer'
-description: 'Write technical documents including SDD (Spec-Driven Development), architecture docs, Javadoc, API documentation, and migration guides. Activates the `sdd` skill for formal spec authoring (with numbered AC-, API contracts, and amendment workflow using semver MAJOR/MINOR/PATCH). Hands off to @implementer after spec approval, or to @reviewer for `sdd-review` when the spec needs a quality audit before implementation.'
+description: 'Write technical documents including SDD (Spec-Driven Development), architecture docs, Javadoc, API documentation, and migration guides. Say "SDD" / "寫規格" / "定規格" to activate the `sdd` skill for formal spec authoring (with numbered AC-, API contracts, and amendment workflow using semver MAJOR/MINOR/PATCH), "constitution" / "寫 constitution" / "訂專案原則" for the `constitution` skill (non-negotiable project principles with semver governance). Hands off to @implementer after spec approval, or to @reviewer for `sdd-review` when the spec needs a quality audit before implementation.'
 model: Claude Sonnet 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
@@ -30,27 +30,16 @@ Use Context7 when documenting integrations with external APIs or libraries — g
 
 ## Document Types
 
-### SDD (Spec-Driven Development Document)
+| Type | Skill | Key focus |
+|---|---|---|
+| SDD | `sdd` | Formal spec with ACs, API contracts, schema changes |
+| Constitution | `constitution` | Non-negotiable project principles with semver governance |
+| Javadoc | — (direct) | Class/method-level; focus on WHY, never restate WHAT |
+| API docs | — (direct) | Endpoints, request/response, errors, auth |
+| Migration guide | — (direct) | Step-by-step with before/after, rollback procedures |
+| README | — (direct) | Overview, setup, config, usage examples |
 
-Background, objectives, current architecture analysis, proposed design with Mermaid diagrams, API specs, DB schema changes, migration plan, risk assessment.
-
-### Javadoc
-
-- Class-level: purpose, usage example, thread safety notes
-- Method-level: `@param`, `@return`, `@throws`
-- Focus on WHY and WHEN — never restate what the code already says
-
-### API Documentation
-
-Endpoint description, request / response format with examples, error codes and handling, auth requirements.
-
-### Migration Guide
-
-Step-by-step instructions, before / after code examples, breaking changes list, rollback procedures.
-
-### README
-
-Project overview, setup instructions, configuration guide, usage examples.
+For SDD and Constitution, follow the corresponding skill's workflow. For other types, use the general Workflow above.
 
 ## Writing Rules
 
@@ -62,6 +51,7 @@ Project overview, setup instructions, configuration guide, usage examples.
 
 ## Handoff Guidance
 
-- SDD (Spec-Driven Development) approved → suggest `@implementer` to start coding
+- SDD approved → suggest `@reviewer` for `sdd-review`, then `@implementer` to start coding
 - Plan needs refinement → suggest `@planner`
 - Security concerns in design → suggest `@reviewer` for security audit
+- New non-negotiable principle identified → use `constitution` skill
