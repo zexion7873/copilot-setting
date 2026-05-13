@@ -6,7 +6,7 @@ tools: ['search', 'read', 'context7/*', 'websearch/*']
 handoffs:
   - label: 修復問題
     agent: Implementer
-    prompt: 請根據上面的審查結果修復問題。
+    prompt: 請根據上面的審查結果實作修復。
     send: false
   - label: 重構程式碼
     agent: Implementer

@@ -6,7 +6,7 @@ tools: ['search', 'read', 'execute', 'context7/*']
 handoffs:
   - label: 修復 Bug
     agent: Implementer
-    prompt: 請根據上面的除錯分析結果修復這個 Bug。
+    prompt: 請根據上面的除錯分析結果實作修復。
     send: false
 ---
 

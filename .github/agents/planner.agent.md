@@ -14,7 +14,7 @@ handoffs:
     send: false
   - label: 安全性評估
     agent: Reviewer
-    prompt: 請針對上面的設計規劃進行安全性評估。
+    prompt: 請對上面的設計進行資安審查。
     send: false
 ---
 

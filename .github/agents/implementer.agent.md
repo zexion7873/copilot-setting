@@ -10,7 +10,7 @@ handoffs:
     send: false
   - label: 安全性審查
     agent: Reviewer
-    prompt: 請對上面的程式碼進行安全性與 SQL 審查。
+    prompt: 請對上面的程式碼進行資安審查。
     send: false
   - label: 除錯分析
     agent: Debugger
