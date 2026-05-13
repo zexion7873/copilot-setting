@@ -4,7 +4,7 @@ description: 'Analyze requirements, break down tasks, estimate impact scope, and
 model: Claude Opus 4.6
 tools: ['search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
-  - label: 寫成 SDD（Spec-Driven Development）文件
+  - label: 寫成 SDD 文件
     agent: Doc Writer
     prompt: 請將上面的規劃整理成 SDD（Spec-Driven Development）文件。
     send: false

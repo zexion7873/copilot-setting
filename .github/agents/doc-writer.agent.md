@@ -6,7 +6,7 @@ tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-cha
 handoffs:
   - label: 開始實作
     agent: Implementer
-    prompt: 請根據上面的 SDD（Spec-Driven Development）文件開始實作。
+    prompt: 請根據上面的 SDD 文件開始實作。
     send: false
   - label: 回到規劃
     agent: Planner
