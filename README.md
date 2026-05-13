@@ -94,10 +94,10 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 >
 > | Scope | Mechanism | File |
 > |-------|-----------|------|
-> | **Project** | Copilot auto-loads `.github/copilot-instructions.md` by convention | `copilot-instructions.md` |
-> | **User** | VS Code setting points to `~/.github/instructions/` | `global-copilot.instructions.md` |
+> | **Project** | Copilot auto-detects `.github/copilot-instructions.md` in the workspace root | `copilot-instructions.md` |
+> | **User** | VS Code `chat.instructionsFilesLocations` points to an instructions folder | `global-copilot.instructions.md` |
 >
-> Project-scope loading does not resolve references to instruction files, so the content must exist in both places. This is a Copilot platform constraint, not accidental duplication.
+> There is no user-scope equivalent of `copilot-instructions.md` — VS Code only provides `chat.instructionsFilesLocations` for the `instructions/` folder, not for `copilot-instructions.md` itself. To apply the same base rules across all workspaces, the content must also exist as an `.instructions.md` file with `applyTo: '**'` inside the instructions folder.
 
 ---
 

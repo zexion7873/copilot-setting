@@ -94,10 +94,10 @@
 >
 > | Scope | 載入機制 | 對應檔案 |
 > |-------|----------|----------|
-> | **Project** | Copilot 自動載入 `.github/copilot-instructions.md`（內建慣例） | `copilot-instructions.md` |
-> | **User** | VS Code setting 指向 `~/.github/instructions/` 路徑 | `global-copilot.instructions.md` |
+> | **Project** | Copilot 自動偵測工作區根目錄的 `.github/copilot-instructions.md` | `copilot-instructions.md` |
+> | **User** | VS Code `chat.instructionsFilesLocations` 設定指向 instructions 資料夾 | `global-copilot.instructions.md` |
 >
-> Project scope 的載入機制無法引用 instructions 資料夾內的檔案，因此內容必須各放一份。這是 Copilot 平台的限制，並非意外重複。
+> User scope 沒有 `copilot-instructions.md` 的自動載入機制 — VS Code 只提供 `chat.instructionsFilesLocations` 指向 `instructions/` 資料夾，不包含 `copilot-instructions.md`。因此同樣的內容需要以 `.instructions.md`（`applyTo: '**'`）的形式放進 instructions 資料夾，才能跨工作區生效。
 
 ---
 
