@@ -33,12 +33,14 @@ Skills, prompts, and instructions reference each other by **relative path within
 - A `skills/<x>/SKILL.md` defines the **workflow** (order of attack, phases, verdict shape)
 - A paired `instructions/<x>.instructions.md` defines the **rules** (what's allowed/forbidden, single source of truth)
 - An optional `prompts/<x>.prompt.md` defines the **output format** or **standards reference**
+- Code-touching skills include inline **fallback rules** — a compact subset of critical conventions from instructions, so they apply even when the matching file is not focused in agent chat mode
 
 Examples in the codebase:
-- `skills/code-review/` ↔ `prompts/code-review-checklist.prompt.md`
-- `skills/sql-review/` ↔ `instructions/sql-rules.instructions.md` + `prompts/sql-review-output.prompt.md`
+- `skills/code-review/` ↔ `prompts/code-review-checklist.prompt.md` + inline fallback rules
+- `skills/sql-review/` ↔ `instructions/sql-rules.instructions.md` + `prompts/sql-review-output.prompt.md` + inline fallback rules
 - `skills/security-audit/` ↔ `instructions/security-and-owasp.instructions.md`
-- `skills/refactor/` ↔ `skills/refactor/examples/{extract-method,remove-parameter}.md`
+- `skills/implement/` ↔ `instructions/` (generic) + inline fallback rules
+- `skills/refactor/` ↔ `skills/refactor/examples/{extract-method,remove-parameter}.md` + inline fallback rules
 
 **Before renaming or moving any file under `.github/`, grep for inbound references first** — broken paths in skill instructions silently degrade Copilot output:
 
@@ -80,23 +82,25 @@ The `description` is **the only mechanism Copilot uses to decide auto-trigger** 
 
 ## Coding standards Copilot enforces
 
-`.github/copilot-instructions.md` is loaded into every conversation. Key constraints (do not contradict in skill / instruction content):
+`.github/copilot-instructions.md` contains only language and tech stack (Traditional Chinese replies, English code, Java 8 + Maven, no Spring Boot). All other conventions live in dedicated instruction files:
 
-- **Stack**: Java 8 + Maven, no Spring Boot (Java SE / Jakarta EE conventions)
-- **Language split**: replies in Traditional Chinese; all code identifiers, comments, Javadoc, commit messages in English
-- **Conventional Commits** for git messages
-- **SLF4J + Logback** with parameterized logging
-- **PreparedStatement only** for SQL — never string concatenation
+- **SLF4J + Logback** with parameterized logging → `instructions/logging.instructions.md`
+- **PreparedStatement only** for SQL → `instructions/sql-rules.instructions.md`
+- **OWASP Top 10** secure coding → `instructions/security-and-owasp.instructions.md`
+- **Conventional Commits** for git messages → `skills/git-commit/SKILL.md`
 
-When writing examples in skills/instructions, target Java 8 syntax (no records, no `var`, no switch expressions).
+Do not contradict these rules in skill / instruction content. When writing examples in skills/instructions, target Java 8 syntax (no records, no `var`, no switch expressions).
 
 ## When adding a new skill
 
 1. Create `.github/skills/<name>/SKILL.md` with the frontmatter shape above
 2. The `description` MUST include both English and Traditional Chinese trigger phrases plus a "Do NOT use for" clause
 3. If the skill needs supporting examples or sub-docs, put them under `.github/skills/<name>/<file>.md` and reference from SKILL.md by relative path — they only load when SKILL.md cites them
-4. Update both `README.md` and `README.zh-TW.md` Skills tables together
-5. Decide consciously: if there's overlap with an existing skill, write a "Do NOT use" disambiguation in both descriptions
+4. **Bind to an owning agent**: add the skill to the agent's `description` field (with trigger phrases) and its skill activation table in the body. Every skill except `git-commit` must be reachable via an agent.
+5. **If the skill reads or writes code**, add inline fallback rules for critical conventions (SQL, exceptions, logging, resources, security). In agent chat mode, file-type instructions may not auto-load — fallback rules guarantee the key constraints are always present. See `skills/implement/SKILL.md` for the canonical pattern.
+6. **If the agent has a handoff button pointing to this skill**, verify the handoff `prompt:` text contains a trigger phrase that matches the skill's `description`. Mismatched prompts silently activate the wrong skill.
+7. Update both `README.md` and `README.zh-TW.md` Skills tables together
+8. Decide consciously: if there's overlap with an existing skill, write a "Do NOT use" disambiguation in both descriptions
 
 ## When adding a new instruction
 
