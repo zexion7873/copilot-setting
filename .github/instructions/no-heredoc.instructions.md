@@ -1,5 +1,4 @@
 ---
-name: 'No Heredoc File Operations'
 description: 'Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. Works around VS Code Copilot terminal corruption.'
 applyTo: '**'
 ---
