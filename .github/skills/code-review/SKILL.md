@@ -7,6 +7,15 @@ description: 'Use when user asks to review code, check a PR, audit changes, or v
 
 Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) lives in `prompts/code-review-checklist.prompt.md`.
 
+Full coding rules live in `instructions/` (auto-applied when matching files are open). When working via agent chat, check against these non-negotiable rules:
+
+- **SQL**: `PreparedStatement` with `?` only — string concatenation is always CRITICAL; no `SELECT *`; N+1 = SQL inside a loop
+- **Exceptions**: no empty `catch` blocks; no `catch (Throwable)`; no `e.printStackTrace()` — use `log.error("context", e)`
+- **Logging**: SLF4J parameterized — `log.info("x={}", x)` — never `+` concatenation; never log secrets/PII
+- **Resources**: `try-with-resources` for all `AutoCloseable` (`Connection`, `PreparedStatement`, `ResultSet`, `InputStream`)
+- **Security**: no hardcoded secrets; `<c:out>` for all dynamic output in JSP; validate inputs at boundaries
+- **Tests**: `methodName_should_when` naming; AAA pattern; `@ParameterizedTest` over loops; mock interfaces not concretions
+
 ## Phase 1 — Scope
 
 ```bash
