@@ -5,7 +5,7 @@ description: 'Use AFTER implementation to verify the code actually delivers what
 
 # SDD Compliance — Workflow
 
-Verify that implementation delivers what the spec specified. Read-only review producing a structured compliance matrix. Does NOT rewrite code, does NOT critique style. Boundary kept tight on purpose: style and bugs are `code-review`'s job; spec quality is `sdd-review`'s job; this skill only checks the contract.
+Verify that implementation delivers what the spec specified. Strictly read-only review producing a structured compliance matrix. Does NOT rewrite code, does NOT run tests / builds, does NOT critique style. Boundary kept tight on purpose: style and bugs are `code-review`'s job; spec quality is `sdd-review`'s job; running tests is the user's job. This skill only checks the contract using artifacts already on disk.
 
 ## Phase 1 — Locate Artifacts
 
@@ -34,19 +34,18 @@ Status values:
 
 Use `git diff` and `git log` to find code evidence. Cite `path/to/File.java:42` format.
 
-## Phase 3 — Test Evidence Strategy
+## Phase 3 — Test Evidence Collection (read-only)
 
-Tests are the primary compliance signal. Resolve test evidence in this order:
+Tests are the primary compliance signal. This phase is strictly read-only — it does NOT run tests, builds, or any other tooling. If evidence is absent, mark it absent.
 
-1. **Read existing reports first** — check `target/surefire-reports/*.xml` (Maven) or `target/site/jacoco/` for coverage data
-2. **If no report exists** — run `mvn test -B -q` to generate one, then read the output
-3. **If `mvn test` fails or unavailable** — mark affected ACs as `⚠️ PARTIAL` with reason `NO_TEST_EVIDENCE` and continue; do not block the review
+1. **Read existing reports** — check `target/surefire-reports/*.xml` (Maven) or `target/site/jacoco/` for coverage data
+2. **No report found** — mark affected ACs as `⚠️ PARTIAL` with reason `NO_TEST_EVIDENCE`. Note in the verdict that the user should run `mvn test` (or equivalent) and re-invoke this skill for a complete review.
 
-Never assume tests pass without evidence. Never assume tests fail without evidence either.
+Never assume tests pass without evidence. Never assume tests fail without evidence either. Never run tests yourself — that breaks the read-only contract.
 
 ## Phase 4 — Cross-Artifact Consistency
 
-Borrow from GitHub Spec Kit `/speckit.analyze` ideas:
+Inspired by Spec-Driven Development's cross-artifact analysis approach (see Spec Kit for prior art):
 
 - **Spec ↔ Tasks** — every AC has ≥1 task in tasks.md; flag uncovered
 - **Tasks ↔ Code** — every completed `[x]` task produced its expected file changes
@@ -68,7 +67,7 @@ Final report skeleton:
 
 Spec: <path>
 Implementation scope: <diff range, e.g., main...HEAD>
-Test evidence source: <surefire-reports / mvn test run / NO_TEST_EVIDENCE>
+Test evidence source: <surefire-reports / jacoco / NO_TEST_EVIDENCE — user should run tests and re-invoke>
 
 Coverage: N/M ACs covered (X%)
 Test traceability: N/M ACs have passing tests
@@ -102,7 +101,7 @@ Test traceability: N/M ACs have passing tests
 - Every gap MUST cite a Spec ID and a concrete `file:line` OR `(none)` for missing evidence.
 - Do NOT duplicate `code-review` work — style, naming, bug patterns are out of scope.
 - Do NOT duplicate `sdd-review` work — spec quality is out of scope (assume spec is good; if it's not, hand back to `sdd-review`).
-- Test evidence is mandatory — if no test report and `mvn test` fails to run, declare `NO_TEST_EVIDENCE` rather than guess.
+- Test evidence is read-only — if no test report exists, declare `NO_TEST_EVIDENCE` rather than running tests yourself. The user re-invokes this skill after generating reports.
 - ORPHANED code is a finding, not a verdict-blocker — implementation can be COMPLIANT WITH GAPS even with orphans.
 
 ## Handoffs

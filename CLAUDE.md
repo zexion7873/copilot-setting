@@ -36,7 +36,7 @@ Skills, prompts, and instructions reference each other by **relative path within
 
 Examples in the codebase:
 - `skills/code-review/` ↔ `prompts/code-review-checklist.prompt.md`
-- `skills/sql-review/` ↔ `instructions/sql-rules.instructions.md` + `prompts/sql-review.prompt.md`
+- `skills/sql-review/` ↔ `instructions/sql-rules.instructions.md` + `prompts/sql-review-output.prompt.md`
 - `skills/security-audit/` ↔ `instructions/security-and-owasp.instructions.md`
 - `skills/refactor/` ↔ `skills/refactor/examples/{extract-method,remove-parameter}.md`
 

@@ -55,7 +55,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── code-review-checklist
 │   ├── plan-template
 │   ├── spec-template
-│   ├── sql-review
+│   ├── sql-review-output
 │   └── tasks-template
 │
 └── skills/                                ← Executable skills for agents
@@ -174,7 +174,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 | Prompt | Paired skill | Purpose |
 |--------|-------------|---------|
 | `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
-| `sql-review` | `sql-review` | Review workflow output format (cross-dialect: MySQL/PostgreSQL/SQL Server/Oracle) |
+| `sql-review-output` | `sql-review` | Output format reference (severity buckets, EXPLAIN cheat sheet) for the sql-review skill |
 | `spec-template` | `sdd` | SDD scaffold — 8 sections from background to out-of-scope |
 | `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |

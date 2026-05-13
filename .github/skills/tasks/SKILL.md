@@ -9,7 +9,7 @@ Decompose an approved plan or SDD into atomic, dependency-ordered tasks ready fo
 
 ## Phase 1 — Prerequisite Gate
 
-Verify the design layer exists before generating tasks. This mirrors GitHub Spec Kit's `/speckit.tasks` prerequisite check — no design, no tasks.
+Verify the design layer exists before generating tasks. Inspired by Spec-Driven Development's prerequisite-gating pattern (Spec Kit prior art) — no design, no tasks.
 
 - Plan exists at `/plan/*.md` OR SDD exists at `/docs/spec/*.md` OR user supplies an explicit path
 - If neither exists: STOP. Redirect user to `plan` or `sdd` skill first.

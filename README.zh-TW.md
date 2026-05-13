@@ -55,7 +55,7 @@
 │   ├── code-review-checklist
 │   ├── plan-template
 │   ├── spec-template
-│   ├── sql-review
+│   ├── sql-review-output
 │   └── tasks-template
 │
 └── skills/                                ← Agent 可執行的技能
@@ -174,7 +174,7 @@ flowchart LR
 | Prompt | 配對 skill | 用途 |
 |--------|------------|------|
 | `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
-| `sql-review` | `sql-review` | 審查工作流的輸出格式（跨方言：MySQL/PostgreSQL/SQL Server/Oracle） |
+| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分類、EXPLAIN cheat sheet） |
 | `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 out-of-scope 共 8 個章節 |
 | `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 編號 |
 | `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |

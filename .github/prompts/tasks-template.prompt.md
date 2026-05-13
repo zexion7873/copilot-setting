@@ -1,11 +1,11 @@
 ---
 agent: 'agent'
-description: 'Dependency-ordered tasks.md template with T### IDs, [P] parallel markers, [US] story labels, and TDD-first ordering. Aligns with GitHub Spec Kit canonical format. Pairs with skills/tasks/SKILL.md (workflow / prerequisite gate / validation).'
+description: 'Dependency-ordered tasks.md template with T### IDs, [P] parallel markers, [US] story labels, and TDD-first ordering. Format inspired by Spec-Driven Development canonical structure (Spec Kit prior art). Pairs with skills/tasks/SKILL.md (workflow / prerequisite gate / validation).'
 ---
 
 # Tasks Template
 
-One-shot scaffold for `tasks.md`. Workflow (prerequisite gate, input inventory, validation) lives in `skills/tasks/SKILL.md`. This prompt only defines the OUTPUT FORMAT, aligned with GitHub Spec Kit canonical structure.
+One-shot scaffold for `tasks.md`. Workflow (prerequisite gate, input inventory, validation) lives in `skills/tasks/SKILL.md`. This prompt only defines the OUTPUT FORMAT, inspired by Spec-Driven Development canonical structure (Spec Kit prior art).
 
 ## Usage
 
