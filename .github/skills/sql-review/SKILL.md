@@ -1,6 +1,6 @@
 ---
 name: sql-review
-description: 'Use when user asks to review SQL, optimize a query, analyze an execution plan, check for SQL injection, or improve database performance. Also triggers on: 看一下這段 SQL, 查詢太慢, SQL 效能, 查詢優化, query 太慢, SQL 審查, 有沒有 injection. Covers injection prevention, index strategy, anti-pattern detection, and optimization. Do NOT use for writing new SQL from scratch, general Java code review that happens to contain SQL strings, or non-SQL performance issues (prefer performance skill).'
+description: 'Use when user asks to review SQL, optimize a query, analyze an execution plan, check for SQL injection, or improve database performance. Triggers on: review SQL, optimize query, EXPLAIN plan, check SQL injection, slow query, index strategy, query review, 看一下這段 SQL, 查詢太慢, SQL 效能, 查詢優化, query 太慢, SQL 審查, 有沒有 injection, 看一下這個 query. Covers injection prevention, index strategy, anti-pattern detection, and optimization. Do NOT use for writing new SQL from scratch, general Java code review that happens to contain SQL strings, or non-SQL performance issues (prefer performance skill).'
 ---
 
 # SQL Review — Workflow

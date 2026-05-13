@@ -1,6 +1,6 @@
 ---
 name: performance
-description: 'Use when user asks about performance optimization, profiling, latency / throughput / memory tuning, or 效能優化 / 跑很慢 / 記憶體炸了 / 怎麼加速 / 找瓶頸. Applies a measure-first methodology and a checklist across frontend, Java 8 backend, database (defers to sql-rules), and profiling tools. Do NOT use for SQL-only optimization (prefer sql-review skill), bug investigation (prefer debug skill), or general code review without performance focus (prefer code-review skill).'
+description: 'Use when user asks about performance optimization, profiling, latency / throughput / memory tuning, or bottleneck analysis. Triggers on: performance optimization, profile, latency, throughput, memory tuning, find bottleneck, slow response, optimize speed, 效能優化, 跑很慢, 記憶體炸了, 怎麼加速, 找瓶頸, 效能調校, 反應太慢. Applies a measure-first methodology and a checklist across frontend, Java 8 backend, database (defers to sql-rules), and profiling tools. Do NOT use for SQL-only optimization (prefer sql-review skill), bug investigation (prefer debug skill), or general code review without performance focus (prefer code-review skill).'
 ---
 
 # Performance — Workflow

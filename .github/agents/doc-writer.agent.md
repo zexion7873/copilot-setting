@@ -1,6 +1,6 @@
 ---
 name: 'Doc Writer'
-description: 'Write technical documents including SDD (Spec-Driven Development), architecture docs, Javadoc, API documentation, and migration guides.'
+description: 'Write technical documents including SDD (Spec-Driven Development), architecture docs, Javadoc, API documentation, and migration guides. Activates the `sdd` skill for formal spec authoring (with numbered AC-, API contracts, and amendment workflow using semver MAJOR/MINOR/PATCH). Hands off to @implementer after spec approval, or to @reviewer for `sdd-review` when the spec needs a quality audit before implementation.'
 model: Claude Sonnet 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:

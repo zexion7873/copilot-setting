@@ -137,11 +137,11 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Analyze requirements, design implementation phases, estimate impact scope (hands off atomic tasks to `tasks` skill) |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Write production code, refactor, and design tests (JUnit 5) |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Code review, security audit (OWASP), and SQL review |
-| 🐛 | `@debugger` | Claude Opus 4.6 | Debug by analyzing stack traces and tracing execution |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Write SDD (Spec-Driven Development), Javadoc, API docs, migration guides |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` skill for phased planning; hands off to `tasks` skill, @doc-writer (SDD), or @implementer |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` skills, mode-routed by "implement" / "refactor" / "design tests" |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` skills, mode-routed by review type |
+| 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
+| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Activates `sdd` skill for formal specs (with semver amendment workflow); also writes Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 

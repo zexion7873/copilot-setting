@@ -137,11 +137,11 @@
 
 |   | Agent | Model | 說明 |
 |:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 分析需求、設計實作階段、評估影響範圍（原子任務拆解交給 `tasks` skill） |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 撰寫生產級程式碼、重構、設計測試（JUnit 5） |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 程式碼審查、安全性稽核（OWASP）、SQL 審查 |
-| 🐛 | `@debugger` | Claude Opus 4.6 | 分析堆疊追蹤、追蹤執行流程來除錯 |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | 撰寫 SDD（Spec-Driven Development）、Javadoc、API 文件、遷移指南 |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` skill 起草分階段計畫；轉交 `tasks` skill 做原子任務拆解、@doc-writer 寫 SDD 或 @implementer 執行 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` skill，依「實作 / 重構 / 寫測試」自動分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` skill，依「審查 / 資安 / SQL」自動分流 |
+| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
+| 📝 | `@doc-writer` | Claude Sonnet 4.6 | 觸發 `sdd` skill 寫正式規格（含 semver 修訂流程）；也寫 Javadoc、API 文件、遷移指南 |
 
 ### Agent Handoffs 工作流程
 
