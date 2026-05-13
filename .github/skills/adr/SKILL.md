@@ -1,6 +1,6 @@
 ---
 name: adr
-description: 'Use when user asks to record an architectural decision, document a tech choice, write an ADR, or 寫 ADR / 記錄架構決策 / 為什麼選這個方案要存檔. Produces an ADR markdown file under /docs/adr/ using the standardized template (Status, Context, Decision, Consequences, Alternatives). Do NOT use for implementation plans (prefer plan skill), spikes / open research (prefer spike skill), or general design discussion without a final decision.'
+description: 'Use when user asks to record an architectural decision, document a tech choice, or write an ADR. Triggers on: record architectural decision, document tech choice, write ADR, capture decision rationale, ADR, 寫 ADR, 記錄架構決策, 紀錄技術選型, 為什麼選這個方案要存檔, 留個決策紀錄, 架構決策紀錄. Produces an ADR markdown file under /docs/adr/ using the standardized template (Status, Context, Decision, Consequences, Alternatives). Do NOT use for implementation plans (prefer plan skill), spikes / open research (prefer spike skill), or general design discussion without a final decision.'
 ---
 
 # ADR — Workflow

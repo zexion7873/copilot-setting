@@ -1,6 +1,6 @@
 ---
 name: test-design
-description: 'Use when user asks to design tests, plan test coverage, or identify what to test. Also triggers on: 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率, 該測哪些情境. Designs test cases with boundary analysis, category classification, and coverage gap audit; hand off to @implementer for coding. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
+description: 'Use when user asks to design tests, plan test coverage, or identify what to test. Triggers on: design tests, plan test coverage, identify what to test, test cases, boundary cases, edge cases, coverage gap, 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率, 該測哪些情境, 邊界測試. Designs test cases with boundary analysis, category classification, and coverage gap audit; hand off to @implementer for coding. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
 ---
 
 # Test Design — Workflow

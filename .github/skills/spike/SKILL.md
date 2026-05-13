@@ -1,6 +1,6 @@
 ---
 name: spike
-description: 'Use when user asks to research a technical question, evaluate options, build a PoC, time-box an investigation, or 技術調研 / 評估方案 / 試水溫 / spike. Produces a time-boxed spike document under docs/spikes/ with one focused question, investigation plan, and decision section. Do NOT use for decisions already made (prefer adr skill), full implementation plans (prefer plan skill), or production code (prefer implement skill).'
+description: 'Use when user asks to research a technical question, evaluate options, build a PoC, or time-box an investigation. Triggers on: spike, research, time-boxed investigation, PoC, evaluate options, prototype, technical question, 技術調研, 評估方案, 試水溫, 做 PoC, 時間盒研究, 先研究一下, 試試看可不可行. Produces a time-boxed spike document under docs/spikes/ with one focused question, investigation plan, and decision section. Do NOT use for decisions already made (prefer adr skill), full implementation plans (prefer plan skill), or production code (prefer implement skill).'
 ---
 
 # Spike — Workflow

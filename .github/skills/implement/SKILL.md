@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Use when user asks to implement a feature, write new code, add functionality, or build something. Also triggers on: 幫我寫, 實作這個功能, 開發, 新增功能, 加一個 API, 寫一個 method. Guides implementation through pattern discovery, coding, and self-verification. Do NOT use for bug fixes (prefer debug), restructuring or cleaning up existing code without adding new behavior (prefer refactor), or reviewing existing code (prefer code-review).'
+description: 'Use when user asks to implement a feature, write new code, add functionality, or build something. Triggers on: implement, write new code, add functionality, build feature, create endpoint, add API, write method, code this up, 幫我寫, 實作這個功能, 實作, 開發, 新增功能, 加一個 API, 寫一個 method, 把它寫出來. Guides implementation through pattern discovery, coding, and self-verification. Do NOT use for bug fixes (prefer debug), restructuring or cleaning up existing code without adding new behavior (prefer refactor), or reviewing existing code (prefer code-review).'
 ---
 
 # Implement — Executable Workflow
