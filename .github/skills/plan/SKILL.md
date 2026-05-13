@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user asks to plan a feature, design implementation steps, write a spec for upgrade / refactor / migration, or 寫實作計畫 / 規劃 / 拆 task / 升級計畫 / 遷移計畫 / 寫規格 / 定規格. Produces a structured Markdown spec under /plan/ with phases, atomic tasks, acceptance criteria, and risks. For non-trivial plans, suggest formalizing as an SDD via @doc-writer. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), open-ended research (prefer spike skill), or full SDD creation (prefer sdd skill).'
+description: 'Use when user asks to plan a feature, break down tasks, design implementation steps, or estimate impact for an upgrade / refactor / migration. Also triggers on: 寫實作計畫, 規劃, 拆 task, 拆步驟, 升級計畫, 遷移計畫, 排工作, 估影響範圍. Produces a structured Markdown plan with phases, atomic tasks, acceptance criteria, and risks. For non-trivial plans, suggest formalizing as an SDD via @doc-writer. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), open-ended research (prefer spike skill), specification documents (prefer sdd skill), or spec reviews (prefer sdd-review skill).'
 ---
 
 # Plan — Workflow

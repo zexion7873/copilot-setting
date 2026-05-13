@@ -38,7 +38,10 @@
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
-│   └── sql-sp-generation
+│   ├── sql-sp-generation
+│   ├── xml
+│   ├── properties
+│   └── yaml-json-config
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
 │   ├── planner              (Claude Opus 4.6)
@@ -63,6 +66,7 @@
     ├── plan/
     ├── refactor/
     ├── sdd/
+    ├── sdd-review/
     ├── security-audit/
     ├── spike/
     ├── sql-review/
@@ -114,6 +118,9 @@
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
 | `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
+| `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
+| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
+| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
 
 ---
 
@@ -179,6 +186,7 @@ flowchart LR
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
 | 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
+| 📋 | `sdd-review` | 自動 + 手動 | SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查，含問題分類與最終裁定 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |

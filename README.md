@@ -38,7 +38,10 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
-│   └── sql-sp-generation
+│   ├── sql-sp-generation
+│   ├── xml
+│   ├── properties
+│   └── yaml-json-config
 │
 ├── agents/                                ← Invoke via @agent-name in chat
 │   ├── planner              (Claude Opus 4.6)
@@ -63,6 +66,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
     ├── plan/
     ├── refactor/
     ├── sdd/
+    ├── sdd-review/
     ├── security-audit/
     ├── spike/
     ├── sql-review/
@@ -114,6 +118,9 @@ Automatically injected into the system prompt when the current file matches the 
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments |
 | `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL hard rules: injection prevention, performance, code quality (single source of truth) |
 | `sql-sp-generation` | `**/*.sql` | MySQL stored procedure & schema conventions |
+| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files |
+| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, encoding, secret management |
+| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, secret management |
 
 ---
 
@@ -179,6 +186,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
 | 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
+| 📋 | `sdd-review` | Auto + Manual | SDD specification review — completeness, testability, feasibility, clarity audit |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
 | 🔍 | `code-review` | Auto + Manual | Structured code review with issue classification and verdict |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |

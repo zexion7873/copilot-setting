@@ -1,6 +1,6 @@
 ---
 name: sdd
-description: 'Use when user asks to write an SDD, create a spec document, or adopt spec-driven development. Triggers on: write SDD, create spec document, Spec-Driven Development, 寫 SDD, 寫規格文件, 規格驅動開發, 先定規格再實作, 定義規格, spec before code. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation plans without spec depth (prefer plan skill), quick bug fixes, general documentation (prefer @doc-writer directly), or architectural decision records (prefer adr skill).'
+description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation plans or task breakdowns without spec depth (prefer plan skill), quick bug fixes, general documentation (prefer @doc-writer directly), architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill).'
 ---
 
 # SDD (Spec-Driven Development) — Workflow
