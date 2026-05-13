@@ -289,7 +289,7 @@ flowchart LR
     Gate --> Bump[Mark changes + rationale<br/>+ semver bump]
     Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
     Sync --> Tasks[tasks: re-scope T###]
-    Sync --> Impl[@implementer: refactor]
+    Sync --> Impl["@implementer: refactor"]
     Sync --> Comp[sdd-compliance: re-verify]
 ```
 

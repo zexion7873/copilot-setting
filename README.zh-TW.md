@@ -289,7 +289,7 @@ flowchart LR
     Gate --> Bump[標註改動 + rationale<br/>+ semver 升版]
     Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
     Sync --> Tasks[tasks: 重新規劃 T###]
-    Sync --> Impl[@implementer: 重構]
+    Sync --> Impl["@implementer: 重構"]
     Sync --> Comp[sdd-compliance: 重新驗證]
 ```
 
