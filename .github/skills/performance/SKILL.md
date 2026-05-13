@@ -31,30 +31,24 @@ Identify which layer is slow before opening checklists:
 
 ## Phase 3 — Apply the Checklist
 
-### Frontend (browser)
+### Frontend (JSP / server-rendered)
+
+**Page weight**
+- Minimize inline `<style>` and `<script>` blocks; extract to cacheable static files
+- Compress images; use appropriate formats (PNG for transparency, JPEG for photos)
+- Minify CSS / JS in the build pipeline; serve with `Cache-Control` headers for long caching
+- Remove unused CSS / JS — dead code in legacy JSP projects accumulates fast
 
 **Rendering**
-- Batch DOM mutations; build off-DOM fragments before insertion
-- Stable keys on list items; never array index for dynamic lists
-- CSS animations over JS (GPU-accelerated, off the main thread)
-- Defer non-critical work via `requestIdleCallback`
-
-**Assets**
-- Modern image formats (WebP, AVIF); compress aggressively
-- Subset fonts; `font-display: swap`
-- Minify + tree-shake JS / CSS; long-cache static assets with cache busting
+- Reduce the number of JSP includes per page — each `<jsp:include>` is a server-side dispatch
+- Avoid heavy computation in EL expressions or custom tags; pre-compute in the servlet
+- Paginate or lazy-load data-heavy tables server-side — never dump 10k rows into HTML
 
 **Network**
-- HTTP/2 or HTTP/3 for multiplexing
-- `<link rel="preload">` for critical resources; `defer` / `async` for non-critical JS
-- CDN for static assets; client-side cache (Service Worker, IndexedDB)
-- Lazy-load images (`loading="lazy"`) and route-level code splits
-
-**JavaScript hot paths**
-- Offload heavy compute to Web Workers
-- Debounce / throttle scroll, resize, input handlers
-- `Map` / `Set` for O(1) lookups; TypedArrays for numeric data
-- Avoid deep clones inside render paths
+- Enable gzip / Brotli compression on the servlet container (Tomcat `compression="on"`)
+- Set `Cache-Control` and `ETag` for static resources (CSS, JS, images)
+- Use CDN for static assets when available
+- Keep redirects to a minimum — each redirect adds a full round trip
 
 ### Backend (Java 8)
 
