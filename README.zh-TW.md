@@ -46,7 +46,6 @@
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (Claude Sonnet 4.6)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── adr-template
@@ -133,11 +132,10 @@
 
 |   | Agent | Model | 說明 |
 |:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `spike` / `adr` / `clarify-task` skill，依意圖自動分流（規劃 → 拆任務 → 調研 → 決策 → 釐清） |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格撰寫與任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | 觸發 `sdd` / `constitution` skill 寫正式規格與專案原則；也寫 Javadoc、API 文件、遷移指南 |
 
 ### Agent Handoffs 工作流程
 
@@ -145,13 +143,9 @@ Agent 間可互相交接任務，形成協作工作流：
 
 ```mermaid
 flowchart LR
-    Planner -->|"寫成 SDD"| DocWriter[Doc Writer]
+    Planner -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
-
-    DocWriter -->|"審查 SDD"| Reviewer
-    DocWriter -->|"開始實作"| Implementer
-    DocWriter -->|"回到規劃"| Planner
 
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
@@ -160,7 +154,7 @@ flowchart LR
 
     Reviewer -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
-    Reviewer -->|"修改規格"| DocWriter
+    Reviewer -->|"修改規格"| Planner
     Reviewer -->|"重新規劃"| Planner
 
     Debugger -->|"修復 Bug"| Implementer
@@ -254,11 +248,8 @@ flowchart LR
 
 ```
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                       Planner 掃 codebase，拆出分階段計畫
-                       ↓ 點「寫成 SDD」
-
-你  →  @doc-writer    把計畫寫成 SDD（Spec-Driven Development）文件
-                       ↓ 點「開始實作」
+                        Planner 掃 codebase，拆出分階段計畫
+                        ↓ 點「開始實作」
 
 你  →  @implementer   照 SDD 和既有 pattern 寫 code
                         ↓ 點「Code Review」
@@ -278,9 +269,9 @@ flowchart LR
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
-> - 審查規格 → `@reviewer`（SDD review mode）→ `@doc-writer`
+> - 審查規格 → `@reviewer`（SDD review mode）→ `@planner`
 > - 技術調研 → `@planner`（spike mode）→ `@planner`（plan mode）
-> - 寫文件 → `@planner` → `@doc-writer`
+> - 寫文件 → `@planner`
 
 ### SDD 修訂工作流
 

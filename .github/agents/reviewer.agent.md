@@ -13,7 +13,7 @@ handoffs:
     prompt: 請根據上面的建議進行重構。
     send: false
   - label: 修改規格
-    agent: Doc Writer
+    agent: Planner
     prompt: 審查發現規格有誤，請根據上面的審查結果修改 SDD。
     send: false
   - label: 重新規劃
@@ -45,5 +45,5 @@ Detailed coding rules auto-load from `instructions/` when the relevant file type
 ## Handoff Guidance
 
 - Issues or vulnerabilities found → suggest `@implementer` for fixes
-- SDD has errors or missing sections → suggest `@doc-writer` to revise the spec
+- SDD has errors or missing sections → suggest `@planner` to revise the spec
 - Fundamental design problems → suggest `@planner` for re-planning

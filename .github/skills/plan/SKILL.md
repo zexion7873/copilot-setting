@@ -45,12 +45,12 @@ Use the template in `prompts/plan-template.prompt.md`. All identifier prefixes (
 - Phases independent unless a dependency is declared
 - No placeholder text in the final output — every field populated
 - Reference real files in the **Files** section — verify they exist
-- For non-trivial features or cross-cutting changes, recommend formalizing the plan as an SDD via `@doc-writer` before implementation
+- For non-trivial features or cross-cutting changes, recommend formalizing the plan as an SDD via the `sdd` skill before implementation
 - Do NOT generate atomic `TASK-` rows here — that is the `tasks` skill's job. Plans are the design layer; tasks are the execution layer.
 
 ## Handoffs
 
 - → `tasks` skill — once the plan is approved, generate the atomic task list before implementation
-- → `sdd` skill / `@doc-writer` — when the plan needs a formal SDD before tasks / implementation
+- → `sdd` skill / `@planner` — when the plan needs a formal SDD before tasks / implementation
 - → `adr` skill — if the plan exposes a decision worth recording
 - ← `spike` skill — a spike's recommendation often becomes a plan

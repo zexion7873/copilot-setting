@@ -46,7 +46,6 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── doc-writer           (Claude Sonnet 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── adr-template
@@ -133,11 +132,10 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `spike` / `adr` / `clarify-task` skills, mode-routed by intent (plan → decompose → research → decide → clarify) |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
-| 📝 | `@doc-writer` | Claude Sonnet 4.6 | Activates `sdd` / `constitution` skills for formal specs and project principles; also writes Javadoc, API docs, migration guides |
 
 ### Agent Handoffs Workflow
 
@@ -145,13 +143,9 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
 flowchart LR
-    Planner -->|"Write SDD"| DocWriter[Doc Writer]
+    Planner -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
-
-    DocWriter -->|"Review SDD"| Reviewer
-    DocWriter -->|"Implement"| Implementer
-    DocWriter -->|"Refine plan"| Planner
 
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Security / SQL review"| Reviewer
@@ -160,7 +154,7 @@ flowchart LR
 
     Reviewer -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
-    Reviewer -->|"Revise spec"| DocWriter
+    Reviewer -->|"Revise spec"| Planner
     Reviewer -->|"Re-plan"| Planner
 
     Debugger -->|"Fix bug"| Implementer
@@ -255,9 +249,6 @@ Example: adding a new API endpoint.
 ```
 You  →  @planner       "I need an API to query order history by customer ID"
                         Planner scans the codebase, breaks it into phased plan
-                        ↓ click "寫成 SDD" handoff
-
-You  →  @doc-writer    Turns the plan into a SDD (Spec-Driven Development) document
                         ↓ click "開始實作" handoff
 
 You  →  @implementer   Picks up the SDD, writes code following existing patterns
@@ -278,9 +269,9 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
-> - Spec review → `@reviewer` (SDD review mode) → `@doc-writer`
+> - Spec review → `@reviewer` (SDD review mode) → `@planner`
 > - Research → `@planner` (spike mode) → `@planner` (plan mode)
-> - Documentation → `@planner` → `@doc-writer`
+> - Documentation → `@planner`
 
 ### Amendment Workflow
 

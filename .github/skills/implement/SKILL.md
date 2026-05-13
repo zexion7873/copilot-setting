@@ -20,7 +20,7 @@ Defines the implementation PROCESS only. Full coding standards live in `copilot-
 - Single-file / trivial change → proceed; note "no SDD: trivial scope" in the final report.
 - Expected to touch 2+ production files (test files paired with their production counterpart do not count) OR introduces new public behavior (new API, new entity, new flow) → **STOP**. Ask the user:
   > No SDD found. This change is expected to touch 2+ production files or introduce new behavior. Choose one:
-  > (a) Create an SDD first (recommended — use `sdd` skill or `@doc-writer`)
+  > (a) Create an SDD first (recommended — use `sdd` skill or `@planner`)
   > (b) Proceed without SDD (will be noted as exception in implementation report)
 
 Do NOT silently skip this gate. Silently skipping is the failure mode this rule exists to prevent.
