@@ -45,7 +45,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
+│   └── debugger             (Claude Opus 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── adr-template
@@ -248,7 +248,8 @@ Example: adding a new API endpoint.
 
 ```
 You  →  @planner       "I need an API to query order history by customer ID"
-                        Planner scans the codebase, breaks it into phased plan
+                        Planner scans the codebase, drafts a phased plan,
+                        then writes a formal SDD (spec) with acceptance criteria
                         ↓ click "開始實作" handoff
 
 You  →  @implementer   Picks up the SDD, writes code following existing patterns

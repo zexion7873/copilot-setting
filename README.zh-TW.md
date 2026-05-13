@@ -45,7 +45,7 @@
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
+│   └── debugger             (Claude Opus 4.6)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── adr-template
@@ -248,7 +248,8 @@ flowchart LR
 
 ```
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                        Planner 掃 codebase，拆出分階段計畫
+                        Planner 掃 codebase，拆出分階段計畫，
+                        接著寫正式 SDD（含驗收條件）
                         ↓ 點「開始實作」
 
 你  →  @implementer   照 SDD 和既有 pattern 寫 code
