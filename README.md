@@ -228,6 +228,9 @@ You only touch **agents**. Everything else loads by itself.
 
 Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
 
+> [!NOTE]
+> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql-rules`, `error-handling`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+
 ```mermaid
 flowchart LR
     CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))

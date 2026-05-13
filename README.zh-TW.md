@@ -228,6 +228,9 @@ flowchart LR
 
 資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
 
+> [!NOTE]
+> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql-rules`、`error-handling`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+
 ```mermaid
 flowchart LR
     CI[copilot-instructions.md] -.->|每次對話載入| Chat((對話))
