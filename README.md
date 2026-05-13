@@ -149,14 +149,19 @@ flowchart LR
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
 
+    DocWriter -->|"Review SDD"| Reviewer
     DocWriter -->|"Implement"| Implementer
     DocWriter -->|"Refine plan"| Planner
 
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Security / SQL review"| Reviewer
+    Implementer -->|"Debug"| Debugger
+    Implementer -->|"Re-plan"| Planner
 
     Reviewer -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
+    Reviewer -->|"Revise spec"| DocWriter
+    Reviewer -->|"Re-plan"| Planner
 
     Debugger -->|"Fix bug"| Implementer
 ```

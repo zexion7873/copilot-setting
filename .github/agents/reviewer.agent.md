@@ -12,6 +12,14 @@ handoffs:
     agent: Implementer
     prompt: 請根據上面的建議進行重構。
     send: false
+  - label: 修改規格
+    agent: Doc Writer
+    prompt: 審查發現規格有誤，請根據上面的審查結果修改 SDD。
+    send: false
+  - label: 重新規劃
+    agent: Planner
+    prompt: 審查發現設計需要重做，請根據上面的審查結果重新規劃。
+    send: false
 ---
 
 # Reviewer — Code Review & Audit Specialist

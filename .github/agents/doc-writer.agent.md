@@ -4,6 +4,10 @@ description: 'Write technical documents including SDD (Spec-Driven Development),
 model: Claude Sonnet 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
+  - label: 審查 SDD
+    agent: Reviewer
+    prompt: 請審查上面的 SDD 文件品質（完整性、可測試性、可行性）。
+    send: false
   - label: 開始實作
     agent: Implementer
     prompt: 請根據上面的 SDD（Spec-Driven Development）文件開始實作。

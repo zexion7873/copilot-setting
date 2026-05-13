@@ -12,6 +12,14 @@ handoffs:
     agent: Reviewer
     prompt: 請對上面的程式碼進行安全性與 SQL 審查。
     send: false
+  - label: 除錯分析
+    agent: Debugger
+    prompt: 實作過程遇到 bug，請幫忙分析根因。
+    send: false
+  - label: 回到規劃
+    agent: Planner
+    prompt: 這個變更的範圍超出預期，請重新評估與規劃。
+    send: false
 ---
 
 # Implementer — Code Implementation Specialist

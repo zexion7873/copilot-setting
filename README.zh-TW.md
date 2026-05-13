@@ -149,14 +149,19 @@ flowchart LR
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
 
+    DocWriter -->|"審查 SDD"| Reviewer
     DocWriter -->|"開始實作"| Implementer
     DocWriter -->|"回到規劃"| Planner
 
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
+    Implementer -->|"除錯分析"| Debugger
+    Implementer -->|"回到規劃"| Planner
 
     Reviewer -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
+    Reviewer -->|"修改規格"| DocWriter
+    Reviewer -->|"重新規劃"| Planner
 
     Debugger -->|"修復 Bug"| Implementer
 ```
