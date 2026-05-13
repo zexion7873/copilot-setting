@@ -1,6 +1,6 @@
 ---
 name: Planner
-description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured implementation plans for features, refactoring, or upgrades. Hands off to the tasks skill / @implementer for atomic task decomposition.'
+description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured implementation plans for features, refactoring, or upgrades. Activates the `plan` skill for drafting phased ROADMAPs (with REQ-/CON-/PAT-/FILE- identifiers). Hands off to the `tasks` skill for atomic T### decomposition, to @doc-writer for formal SDD authoring, or to @implementer to execute.'
 model: Claude Opus 4.6
 tools: ['search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
