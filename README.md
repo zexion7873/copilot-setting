@@ -79,7 +79,7 @@ Personal Copilot settings. Some files are based on [awesome-copilot](https://git
 
 ---
 
-## 📜 copilot-instructions.md (Custom)
+## 📜 copilot-instructions.md
 
 Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
 

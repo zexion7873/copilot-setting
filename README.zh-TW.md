@@ -79,7 +79,7 @@
 
 ---
 
-## 📜 copilot-instructions.md（客製）
+## 📜 copilot-instructions.md
 
 每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
 
