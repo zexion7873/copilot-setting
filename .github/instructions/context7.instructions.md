@@ -5,6 +5,8 @@ applyTo: '**'
 
 # Context7-aware development
 
+> **Prerequisite:** This instruction requires the Context7 MCP server. If Context7 tools (`resolve-library-id`, `query-docs`) are not available in the current environment, skip this entire instruction.
+
 Use Context7 proactively — without the user typing "use context7" — whenever a task depends on **authoritative, current, version-specific external docs** not present in the workspace.
 
 ## When to use
