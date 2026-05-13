@@ -1,6 +1,6 @@
 ---
-description: 'Write production-ready Java code, refactor existing code, and design tests. Covers feature implementation, behavior-preserving restructuring, and JUnit 5 test creation.'
 name: Implementer
+description: 'Write production-ready Java code, refactor existing code, and design tests. Covers feature implementation, behavior-preserving restructuring, and JUnit 5 test creation.'
 model: GPT-5.3-Codex
 tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'todo']
 handoffs:
