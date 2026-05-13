@@ -180,6 +180,12 @@ flowchart LR
 | `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |
 | `adr-template` | `adr` | ADR 骨架，含 Status / Context / Decision / Consequences / Alternatives |
 
+> [!NOTE]
+> **命名慣例**（後綴依內容類型）：
+> - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
+> - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
+> - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
+
 ---
 
 ## ⚡ Skills（技能）

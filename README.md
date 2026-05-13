@@ -180,6 +180,12 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
 | `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
 
+> [!NOTE]
+> **Naming convention** (suffix indicates content type):
+> - `*-template` — fill-in scaffold for one-shot artifact creation (e.g., `spec-template`, `plan-template`)
+> - `*-checklist` — verification checklist with categorized items (e.g., `code-review-checklist`)
+> - `*-output` — output format / cheat-sheet reference cited by its paired skill (e.g., `sql-review-output`)
+
 ---
 
 ## ⚡ Skills
