@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user asks to plan a feature, break down tasks, design implementation steps, or estimate impact for an upgrade / refactor / migration. Also triggers on: 寫實作計畫, 規劃, 拆 task, 拆步驟, 升級計畫, 遷移計畫, 排工作, 估影響範圍. Produces a structured Markdown plan with phases, atomic tasks, acceptance criteria, and risks. For non-trivial plans, suggest formalizing as an SDD via @doc-writer. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), open-ended research (prefer spike skill), specification documents (prefer sdd skill), or spec reviews (prefer sdd-review skill).'
+description: 'Use when user asks to plan a feature, design implementation phases, or estimate impact for an upgrade / refactor / migration. Also triggers on: 寫實作計畫, 規劃, 升級計畫, 遷移計畫, 估影響範圍, 設計實作步驟. Produces a structured Markdown plan with phases, requirements, files, risks, and alternatives. Hands off to the tasks skill for atomic task breakdown. For non-trivial plans, suggest formalizing as an SDD via @doc-writer. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), open-ended research (prefer spike skill), specification documents (prefer sdd skill), spec reviews (prefer sdd-review skill), or atomic task decomposition after a plan exists (prefer tasks skill).'
 ---
 
 # Plan — Workflow
@@ -59,20 +59,19 @@ tags: [feature | upgrade | chore | architecture | migration | bug | ...]
 - **GUD-001**: Guideline
 - **PAT-001**: Pattern to follow
 
-## 2. Implementation Steps
+## 2. Implementation Approach
+
+High-level phasing only. Each phase has a goal and a brief description of what it accomplishes. Atomic task breakdown (T### IDs, dependencies, parallel markers) is generated separately by the `tasks` skill after this plan is approved.
 
 ### Phase 1
 
 - GOAL-001: [What this phase achieves]
-
-| Task | Description | Completed | Date |
-|---|---|---|---|
-| TASK-001 | ... | | |
-| TASK-002 | ... | | |
+- Approach: [How — components touched, order of attack, no per-task detail]
 
 ### Phase 2
 
 - GOAL-002: ...
+- Approach: ...
 
 ## 3. Alternatives
 
@@ -103,16 +102,17 @@ tags: [feature | upgrade | chore | architecture | migration | bug | ...]
 
 ## Rules
 
-- Each task atomic and individually verifiable — "TASK-001: rename `findUser` → `findActiveUserById` across `UserService` and 3 callers" not "TASK-001: clean up code"
-- All identifiers use prefixes (`REQ-`, `TASK-`, `RISK-`, etc.) — enables cross-reference
+- Each phase has a single, verifiable goal — "GOAL-001: Replace `UserService` lookup with cached query" not "GOAL-001: improve performance"
+- All identifiers use prefixes (`REQ-`, `RISK-`, `FILE-`, etc.) — enables cross-reference from tasks.md and downstream artifacts
 - Phases independent unless a dependency is declared
 - No placeholder text in the final output — every field populated
 - Reference real files in the **Files** section — verify they exist
 - For non-trivial features or cross-cutting changes, recommend formalizing the plan as an SDD via `@doc-writer` before implementation
+- Do NOT generate atomic `TASK-` rows here — that is the `tasks` skill's job. Plans are the design layer; tasks are the execution layer.
 
 ## Handoffs
 
-- → `implement` skill — once plan is approved, start execution
-- → `sdd` skill / `@doc-writer` — when the plan needs a formal SDD before implementation
+- → `tasks` skill — once the plan is approved, generate the atomic task list before implementation
+- → `sdd` skill / `@doc-writer` — when the plan needs a formal SDD before tasks / implementation
 - → `adr` skill — if the plan exposes a decision worth recording
 - ← `spike` skill — a spike's recommendation often becomes a plan

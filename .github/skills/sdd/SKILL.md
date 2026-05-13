@@ -1,6 +1,6 @@
 ---
 name: sdd
-description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation plans or task breakdowns without spec depth (prefer plan skill), quick bug fixes, general documentation (prefer @doc-writer directly), architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill).'
+description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation phasing without spec depth (prefer plan skill), atomic task breakdowns (prefer tasks skill, which runs AFTER sdd), quick bug fixes, general documentation (prefer @doc-writer directly), architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill).'
 ---
 
 # SDD (Spec-Driven Development) — Workflow
@@ -98,7 +98,9 @@ Before presenting, verify:
 
 ## Handoffs
 
-- → `@implementer` / `implement` skill — once SDD is approved, start coding against it
-- → `@reviewer` — review implementation against SDD compliance
+- → `tasks` skill — once SDD is approved, decompose into atomic tasks before implementation
+- → `@implementer` / `implement` skill — start coding (after tasks list is generated)
+- → `sdd-compliance` skill — after implementation, verify code delivers what this SDD specified
+- → `sdd-review` skill — for spec quality review before tasks / implementation
 - ← `plan` skill — a plan often becomes the foundation for an SDD
 - ← `@planner` — planner may suggest creating an SDD for complex features
