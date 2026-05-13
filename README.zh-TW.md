@@ -175,7 +175,7 @@ flowchart LR
 |--------|------------|------|
 | `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
 | `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分類、EXPLAIN cheat sheet） |
-| `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 out-of-scope 共 8 個章節 |
+| `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 changelog 共 9 個章節 |
 | `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 編號 |
 | `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |
 | `adr-template` | `adr` | ADR 骨架，含 Status / Context / Decision / Consequences / Alternatives |
@@ -200,7 +200,7 @@ flowchart LR
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
 | 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
 | 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
-| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
+| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義（支援 semver 版本化的修訂流程） |
 | 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
@@ -278,3 +278,19 @@ flowchart LR
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
 > - 寫文件 → `@planner` → `@doc-writer`
+
+### SDD 修訂工作流
+
+當既有 SDD 在實作過程中需要修訂（新增需求、API 契約變動、schema 調整），`sdd` skill 會進入 **Phase 0 — Amendment Gate**，而不是從頭重寫：
+
+```mermaid
+flowchart LR
+    SDD[既有 SDD] --> Gate{Phase 0<br/>修訂閘門}
+    Gate --> Bump[標註改動 + rationale<br/>+ semver 升版]
+    Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
+    Sync --> Tasks[tasks: 重新規劃 T###]
+    Sync --> Impl[@implementer: 重構]
+    Sync --> Comp[sdd-compliance: 重新驗證]
+```
+
+Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容 schema）、**MINOR**（新增 AC、新增 endpoint、相容 schema 變更）、**PATCH**（澄清、措辭微調）。完整流程見 `.github/skills/sdd/SKILL.md`。

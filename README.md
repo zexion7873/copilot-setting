@@ -175,7 +175,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 |--------|-------------|---------|
 | `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
 | `sql-review-output` | `sql-review` | Output format reference (severity buckets, EXPLAIN cheat sheet) for the sql-review skill |
-| `spec-template` | `sdd` | SDD scaffold — 8 sections from background to out-of-scope |
+| `spec-template` | `sdd` | SDD scaffold — 9 sections from background to changelog |
 | `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
 | `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
@@ -200,7 +200,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
 | 📌 | `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
 | 🔬 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
-| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
+| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation (supports amendment with semver versioning) |
 | 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
@@ -278,3 +278,19 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
 > - Documentation → `@planner` → `@doc-writer`
+
+### Amendment Workflow
+
+When an existing SDD needs revision mid-implementation (new requirements, API contract changes, schema bumps), the `sdd` skill enters **Phase 0 — Amendment Gate** instead of rewriting from scratch:
+
+```mermaid
+flowchart LR
+    SDD[Existing SDD] --> Gate{Phase 0<br/>Amendment Gate}
+    Gate --> Bump[Mark changes + rationale<br/>+ semver bump]
+    Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
+    Sync --> Tasks[tasks: re-scope T###]
+    Sync --> Impl[@implementer: refactor]
+    Sync --> Comp[sdd-compliance: re-verify]
+```
+
+Semver convention: **MAJOR** for breaking changes (removed AC, API contract change, incompatible schema), **MINOR** for additive (new AC, new endpoint, backward-compatible schema), **PATCH** for clarifications. Full procedure in `.github/skills/sdd/SKILL.md`.
