@@ -12,8 +12,8 @@ Defines the implementation PROCESS only. Coding standards (naming, error handlin
 **SDD-first gate (NON-NEGOTIABLE)** — Search the workspace for an SDD or plan document covering this task. Look in `docs/spec/`, `/plan/`, or any path the user mentioned. If one exists, read it completely — it defines scope, constraints, and acceptance criteria your implementation MUST satisfy. If none exists, evaluate the expected change scope BEFORE writing any code:
 
 - Single-file / trivial change → proceed; note "no SDD: trivial scope" in the final report.
-- Expected to touch 2+ files OR introduces new public behavior (new API, new entity, new flow) → **STOP**. Ask the user:
-  > No SDD found. This change is expected to touch 2+ files / introduce new behavior. Choose one:
+- Expected to touch 2+ production files (test files paired with their production counterpart do not count) OR introduces new public behavior (new API, new entity, new flow) → **STOP**. Ask the user:
+  > No SDD found. This change is expected to touch 2+ production files or introduce new behavior. Choose one:
   > (a) Create an SDD first (recommended — use `sdd` skill or `@doc-writer`)
   > (b) Proceed without SDD (will be noted as exception in implementation report)
 
