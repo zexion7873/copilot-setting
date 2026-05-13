@@ -17,203 +17,6 @@
 
 ---
 
-## 📁 目錄結構
-
-```
-~/.github/
-├── copilot-instructions.md                ← 全域基礎指示（客製）
-│
-├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── context7
-│   ├── error-handling
-│   ├── global-copilot
-│   ├── javadoc
-│   ├── jsp
-│   ├── junit
-│   ├── logging
-│   ├── markdown
-│   ├── no-heredoc
-│   ├── security-and-owasp
-│   ├── self-explanatory-code-commenting
-│   ├── sql-rules
-│   ├── sql-sp-generation
-│   ├── xml
-│   ├── properties
-│   └── yaml-json-config
-│
-├── agents/                                ← 在聊天中以 @agent-name 呼叫
-│   ├── planner              (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
-│   ├── reviewer             (Claude Opus 4.6)
-│   └── debugger             (Claude Opus 4.6)
-│
-├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
-│   ├── adr-template
-│   ├── code-review-checklist
-│   ├── plan-template
-│   ├── spec-template
-│   ├── sql-review-output
-│   └── tasks-template
-│
-└── skills/                                ← Agent 可執行的技能
-    ├── adr/
-    ├── clarify-task/
-    ├── code-review/
-    ├── constitution/
-    ├── context-discovery/
-    ├── debug/
-    ├── git-commit/
-    ├── implement/
-    ├── performance/
-    ├── plan/
-    ├── refactor/
-    ├── sdd/
-    ├── sdd-compliance/
-    ├── sdd-review/
-    ├── security-audit/
-    ├── spike/
-    ├── sql-review/
-    ├── tasks/
-    └── test-design/
-```
-
----
-
-## 📜 copilot-instructions.md
-
-每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
-
-- 以繁體中文回覆
-- 程式碼中的註解、變數名稱、類別名稱一律使用英文
-- 技術環境：Java 8、Maven、無 Spring Boot
-
-> [!NOTE]
-> **為什麼 `global-copilot.instructions.md` 內容一樣？**
->
-> Copilot 透過兩個獨立的 scope 載入指示：
->
-> | Scope | 載入機制 | 對應檔案 |
-> |-------|----------|----------|
-> | **Project** | Copilot 自動偵測工作區根目錄的 `.github/copilot-instructions.md` | `copilot-instructions.md` |
-> | **User** | VS Code `chat.instructionsFilesLocations` 設定指向 instructions 資料夾 | `global-copilot.instructions.md` |
->
-> User scope 沒有 `copilot-instructions.md` 的自動載入機制 — VS Code 只提供 `chat.instructionsFilesLocations` 指向 `instructions/` 資料夾，不包含 `copilot-instructions.md`。因此同樣的內容需要以 `.instructions.md`（`applyTo: '**'`）的形式放進 instructions 資料夾，才能跨工作區生效。
-
----
-
-## 📏 Instructions（指示）
-
-當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
-
-| 檔案 | applyTo | 說明 |
-|------|---------|------|
-| `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
-| `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
-| `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
-| `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
-| `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
-| `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
-| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
-| `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
-| `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
-| `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
-| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
-| `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
-| `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
-| `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
-| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
-| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
-
----
-
-## 🤖 Agents（代理人）
-
-在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
-
-|   | Agent | Model | 說明 |
-|:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格撰寫與任務拆解一站完成 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
-| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-
-### Agent Handoffs 工作流程
-
-Agent 間可互相交接任務，形成協作工作流：
-
-```mermaid
-flowchart LR
-    Planner -->|"審查 SDD"| Reviewer
-    Planner -->|"開始實作"| Implementer
-    Planner -->|"安全性評估"| Reviewer
-
-    Implementer -->|"Code Review"| Reviewer
-    Implementer -->|"安全性審查"| Reviewer
-    Implementer -->|"除錯分析"| Debugger
-    Implementer -->|"回到規劃"| Planner
-
-    Reviewer -->|"修復問題"| Implementer
-    Reviewer -->|"重構程式碼"| Implementer
-    Reviewer -->|"修改規格"| Planner
-    Reviewer -->|"重新規劃"| Planner
-
-    Debugger -->|"修復 Bug"| Implementer
-```
-
----
-
-## 📋 Prompts（提示模板）
-
-標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
-
-| Prompt | 配對 skill | 用途 |
-|--------|------------|------|
-| `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
-| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分類、EXPLAIN cheat sheet） |
-| `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 changelog 共 9 個章節 |
-| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 編號 |
-| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |
-| `adr-template` | `adr` | ADR 骨架，含 Status / Context / Decision / Consequences / Alternatives |
-
-> [!NOTE]
-> **命名慣例**（後綴依內容類型）：
-> - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
-> - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
-> - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
-
----
-
-## ⚡ Skills（技能）
-
-可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
-
-|   | Skill | 觸發方式 | 說明 |
-|:-:|-------|----------|------|
-| 📜 | `constitution` | 自動 + 手動 | 專案層級的不可動原則與治理規則 — 穩定、高層級（200 行硬上限） |
-| ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
-| 🗺️ | `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
-| 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
-| 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
-| 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
-| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義（支援 semver 版本化的修訂流程） |
-| 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
-| ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
-| ✅ | `sdd-compliance` | 自動 + 手動 | 實作後的規格對齊矩陣 — 驗證每個 AC 都有 task、測試與程式碼證據 |
-| ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
-| 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
-| 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
-| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式（AC 追蹤請用 `sdd-compliance`） |
-| 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
-| 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
-| 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
-| ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
-
-> [!WARNING]
-> `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
-
----
-
 ## ⚙️ 運作機制
 
 你只管切 **agent**，其他的自己來。
@@ -292,3 +95,203 @@ flowchart LR
 ```
 
 Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容 schema）、**MINOR**（新增 AC、新增 endpoint、相容 schema 變更）、**PATCH**（澄清、措辭微調）。完整流程見 `.github/skills/sdd/SKILL.md`。
+
+---
+
+## 🤖 Agents（代理人）
+
+在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
+
+|   | Agent | Model | 說明 |
+|:-:|-------|-------|------|
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格撰寫與任務拆解一站完成 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
+| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
+
+### Agent Handoffs 工作流程
+
+Agent 間可互相交接任務，形成協作工作流：
+
+```mermaid
+flowchart LR
+    Planner -->|"審查 SDD"| Reviewer
+    Planner -->|"開始實作"| Implementer
+    Planner -->|"安全性評估"| Reviewer
+
+    Implementer -->|"Code Review"| Reviewer
+    Implementer -->|"安全性審查"| Reviewer
+    Implementer -->|"除錯分析"| Debugger
+    Implementer -->|"回到規劃"| Planner
+
+    Reviewer -->|"修復問題"| Implementer
+    Reviewer -->|"重構程式碼"| Implementer
+    Reviewer -->|"修改規格"| Planner
+    Reviewer -->|"重新規劃"| Planner
+
+    Debugger -->|"修復 Bug"| Implementer
+```
+
+---
+
+## ⚡ Skills（技能）
+
+可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
+
+|   | Skill | 觸發方式 | 說明 |
+|:-:|-------|----------|------|
+| 📜 | `constitution` | 自動 + 手動 | 專案層級的不可動原則與治理規則 — 穩定、高層級（200 行硬上限） |
+| ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
+| 🗺️ | `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
+| 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
+| 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
+| 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
+| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義（支援 semver 版本化的修訂流程） |
+| 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
+| ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
+| ✅ | `sdd-compliance` | 自動 + 手動 | 實作後的規格對齊矩陣 — 驗證每個 AC 都有 task、測試與程式碼證據 |
+| ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
+| 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
+| 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
+| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式（AC 追蹤請用 `sdd-compliance`） |
+| 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
+| 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
+| 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
+| ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
+
+> [!WARNING]
+> `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
+
+---
+
+## 📏 Instructions（指示）
+
+當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
+
+| 檔案 | applyTo | 說明 |
+|------|---------|------|
+| `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
+| `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
+| `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
+| `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
+| `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
+| `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
+| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
+| `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
+| `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
+| `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
+| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
+| `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
+| `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
+| `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
+| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
+| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
+
+---
+
+## 📋 Prompts（提示模板）
+
+標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
+
+| Prompt | 配對 skill | 用途 |
+|--------|------------|------|
+| `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
+| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分類、EXPLAIN cheat sheet） |
+| `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 changelog 共 9 個章節 |
+| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 編號 |
+| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |
+| `adr-template` | `adr` | ADR 骨架，含 Status / Context / Decision / Consequences / Alternatives |
+
+> [!NOTE]
+> **命名慣例**（後綴依內容類型）：
+> - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
+> - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
+> - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
+
+---
+
+## 📜 copilot-instructions.md
+
+每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
+
+- 以繁體中文回覆
+- 程式碼中的註解、變數名稱、類別名稱一律使用英文
+- 技術環境：Java 8、Maven、無 Spring Boot
+
+> [!NOTE]
+> **為什麼 `global-copilot.instructions.md` 內容一樣？**
+>
+> Copilot 透過兩個獨立的 scope 載入指示：
+>
+> | Scope | 載入機制 | 對應檔案 |
+> |-------|----------|----------|
+> | **Project** | Copilot 自動偵測工作區根目錄的 `.github/copilot-instructions.md` | `copilot-instructions.md` |
+> | **User** | VS Code `chat.instructionsFilesLocations` 設定指向 instructions 資料夾 | `global-copilot.instructions.md` |
+>
+> User scope 沒有 `copilot-instructions.md` 的自動載入機制 — VS Code 只提供 `chat.instructionsFilesLocations` 指向 `instructions/` 資料夾，不包含 `copilot-instructions.md`。因此同樣的內容需要以 `.instructions.md`（`applyTo: '**'`）的形式放進 instructions 資料夾，才能跨工作區生效。
+
+---
+
+<details>
+<summary><strong>📁 目錄結構</strong></summary>
+
+```
+~/.github/
+├── copilot-instructions.md                ← 全域基礎指示
+│
+├── instructions/                          ← 依 applyTo 規則自動套用
+│   ├── context7
+│   ├── error-handling
+│   ├── global-copilot
+│   ├── javadoc
+│   ├── jsp
+│   ├── junit
+│   ├── logging
+│   ├── markdown
+│   ├── no-heredoc
+│   ├── properties
+│   ├── security-and-owasp
+│   ├── self-explanatory-code-commenting
+│   ├── sql-rules
+│   ├── sql-sp-generation
+│   ├── xml
+│   └── yaml-json-config
+│
+├── agents/                                ← 在聊天中以 @agent-name 呼叫
+│   ├── debugger             (Claude Opus 4.6)
+│   ├── implementer          (GPT-5.3-Codex)
+│   ├── planner              (Claude Opus 4.6)
+│   └── reviewer             (Claude Opus 4.6)
+│
+├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
+│   ├── adr-template
+│   ├── code-review-checklist
+│   ├── plan-template
+│   ├── spec-template
+│   ├── sql-review-output
+│   └── tasks-template
+│
+└── skills/                                ← Agent 可執行的技能
+    ├── adr/
+    ├── clarify-task/
+    ├── code-review/
+    ├── constitution/
+    ├── context-discovery/
+    ├── debug/
+    ├── git-commit/
+    ├── implement/
+    ├── performance/
+    ├── plan/
+    ├── refactor/
+    ├── sdd-compliance/
+    ├── sdd-review/
+    ├── sdd/
+    ├── security-audit/
+    ├── spike/
+    ├── sql-review/
+    ├── tasks/
+    └── test-design/
+```
+
+</details>
