@@ -1,6 +1,6 @@
 ---
 name: clarify-task
-description: 'Use when user request is vague, ambiguous, or missing scope / deliverable / constraints. Triggers on first turns of complex requests, or when user says 幫我看一下 / 想做一個 / 應該怎麼開始 / 我不確定 without specifics. Iteratively refines understanding via numbered clarifying questions before any code or file is touched. Do NOT use when the task is already well-specified (just do it), for trivial single-line edits, or for direct factual questions.'
+description: 'Use when user request is vague, ambiguous, or missing scope / deliverable / constraints. Triggers when user explicitly signals uncertainty: 需求不清楚, 先釐清一下, 應該怎麼開始, 我不確定該怎麼做, 範圍是什麼. Iteratively refines understanding via numbered clarifying questions before any code or file is touched. Do NOT use when the task is already well-specified (just do it), for trivial single-line edits, for direct factual questions, or when user asks to look at / review specific code (prefer code-review).'
 ---
 
 # Clarify Task — Workflow

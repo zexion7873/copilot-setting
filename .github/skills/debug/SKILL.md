@@ -1,6 +1,6 @@
 ---
 name: debug
-description: 'Use when user reports a bug, error, exception, stack trace, or unexpected behavior and needs root cause analysis. Also triggers on: 除錯, 找 bug, 這裡怪怪的, 報錯了, 為什麼會錯. Performs systematic isolation and minimal fix. Do NOT use for general "how to" questions, feature requests, or known simple typo fixes.'
+description: 'Use when user reports a bug, error, exception, stack trace, or unexpected behavior and needs root cause analysis. Also triggers on: 除錯, 找 bug, 這裡怪怪的, 報錯了, 為什麼會錯. Performs systematic isolation and minimal fix. Do NOT use for general "how to" questions, feature requests, known simple typo fixes, or performance tuning without a concrete error (prefer performance).'
 ---
 
 # Debug — Workflow
