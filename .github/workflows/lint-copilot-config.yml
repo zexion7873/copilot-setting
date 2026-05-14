@@ -9,6 +9,8 @@ on:
       - '.github/prompts/**'
       - '.github/hooks/**'
       - 'scripts/readme-meta.json'
+      - '**/*.md'
+      - '**/*.json'
 
 jobs:
   lint:
@@ -21,3 +23,9 @@ jobs:
 
       - name: Check cross-references
         run: bash scripts/lint-copilot-config.sh
+
+      - name: Validate JSON
+        run: jq empty scripts/readme-meta.json .github/hooks/*.json
+
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v19
