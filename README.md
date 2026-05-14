@@ -181,7 +181,7 @@ Automatically injected into the system prompt when the current file matches the 
 | File | applyTo | Description |
 |------|---------|-------------|
 | `error-handling` | `**/*.java` | Exception handling and error response conventions for Java 8 — hierarchy, custom exceptions, retry, and error propagation. |
-| `global-copilot` | `**` | Global coding standards, conventions, and guidelines for all projects |
+| `global-copilot` | `**` | Language and tech stack base rules: respond in Traditional Chinese, code in English, Java 8 + Maven, no Spring Boot. |
 | `logging` | `**/*.java` | SLF4J + Logback logging conventions — severity levels, parameterized messages, context inclusion, and security. |
 | `javadoc` | `**/*.java` | Javadoc conventions for Java types and members — tags, formatting, when to document. |
 | `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention in server-rendered pages. |

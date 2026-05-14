@@ -173,7 +173,7 @@
       "summary_zh": "例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播"
     },
     "global-copilot": {
-      "summary_zh": "全域編碼標準、慣例與規範"
+      "summary_zh": "語言與技術棧基礎規則：繁中回覆、英文寫 code、Java 8 + Maven、不用 Spring Boot"
     },
     "logging": {
       "summary_zh": "SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性"

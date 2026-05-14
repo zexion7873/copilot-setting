@@ -181,7 +181,7 @@ flowchart LR
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
-| `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
+| `global-copilot` | `**` | 語言與技術棧基礎規則：繁中回覆、英文寫 code、Java 8 + Maven、不用 Spring Boot |
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
 | `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
 | `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |

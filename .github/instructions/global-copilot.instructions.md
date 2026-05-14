@@ -1,5 +1,5 @@
 ---
-description: 'Global coding standards, conventions, and guidelines for all projects'
+description: 'Language and tech stack base rules: respond in Traditional Chinese, code in English, Java 8 + Maven, no Spring Boot.'
 applyTo: '**'
 ---
 
