@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "bash .github/hooks/scripts/block-dangerous-commands.sh",
+        "timeoutSec": 5
+      }
+    ]
+  }
+}
