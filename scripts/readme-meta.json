@@ -46,8 +46,8 @@
     },
     "researcher": {
       "icon": "📚",
-      "summary": "Lightweight read-only subagent (Haiku) for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries",
-      "summary_zh": "輕量唯讀 subagent（Haiku），供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要"
+      "summary": "Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries",
+      "summary_zh": "輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要"
     }
   },
 
