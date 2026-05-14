@@ -105,9 +105,8 @@ Skip delegation when <condition>.
 2. **H1**: `<Name> — <Role Subtitle>`. Subtitle describes the specialist domain (e.g., "Technical Planning & Specification Specialist").
 3. **Opening paragraph**: role description + tech stack context + ambiguity stance.
 4. **Section order** (include only applicable sections, but maintain this order):
-   - `Skill Activation` — table of trigger → skill → output
+   - `Skill Activation` — table of trigger → skill → output (all agents that activate skills must have this)
    - `Subagent Delegation` — delegation instructions
-   - `Mode Detection` — only for multi-mode agents (e.g., reviewer)
    - `Workflow` — process description (only if not fully covered by skills)
    - `Constraints` — constraints list
    - `Handoff Guidance` — when to hand off to other agents (always last body section)

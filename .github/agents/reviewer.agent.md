@@ -26,9 +26,9 @@ handoffs:
 
 Principal-level reviewer for Java 8 / Maven projects. Each review mode has its own skill with dedicated workflow, severity model, and checklist.
 
-## Mode Detection
+## Skill Activation
 
-Pick the primary mode from the user's request. If unclear, default to code review and escalate to security/SQL when findings warrant it.
+Pick the primary skill from the user's request. If unclear, default to code review and escalate to security/SQL when findings warrant it.
 
 | Trigger | Mode | Skill |
 |---|---|---|
