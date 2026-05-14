@@ -357,41 +357,6 @@ Output format / cheat-sheet reference cited by its paired skill.
 
 ---
 
-## Delegation Architecture
-
-### Delegation Rules
-
-| From | To | What is delegated | How |
-|---|---|---|---|
-| Skill | Instruction | Coding rules and conventions | Fallback intro uses `instructions/*.instructions.md` glob when the skill depends on ALL instructions. Use a specific filename only when the skill depends on ONE particular instruction (e.g., `sql-review` → `instructions/sql-rules.instructions.md`). Never duplicate full rule sets — fallback blocks are ONE-LINE summaries per category only. |
-| Skill | Prompt | Output format and templates | Reference via cross-ref. Skills that share a template with other skills MUST use a prompt file. Skills with unique templates MAY embed them directly. |
-| Skill | Agent / Skill | Execution handoff | `## Handoffs` section with `→` / `←` markers. |
-| Agent | Skill | Workflow execution | `## Skill Activation` table maps triggers to skills. Agent body says "follow the skill's workflow" — never rewrites it. |
-| Prompt | Skill | Workflow and validation | Opening paragraph references paired skill. Prompt defines OUTPUT FORMAT only — workflow lives in the skill. |
-| Instruction | Instruction | Related conventions | Cross-ref in opening paragraph to sibling instruction files. |
-
-### Violations
-
-| Violation | Example | Fix |
-|---|---|---|
-| **Rule duplication** | Skill contains a full Anti-Patterns table copied from an instruction file | Delete from skill; add a fallback one-liner + cross-ref to the instruction |
-| **Template duplication** | Two skills embed the same output scaffold | Extract to a prompt file; both skills reference it |
-| **Workflow duplication** | Agent body describes step-by-step process that a skill already defines | Delete from agent; add "follow the `<skill>` skill workflow" |
-| **Missing delegation** | Skill produces a structured artifact but has no paired prompt or embedded template | Create a prompt file OR embed the template (if not shared) |
-| **Orphaned resource** | Prompt file exists but no skill references it; skill exists but no agent activates it | Either add the reference or delete the orphan |
-
-### Bidirectional References
-
-When resource A delegates to resource B, both sides SHOULD reference each other:
-
-- Skill references prompt → prompt references skill back (in opening paragraph)
-- Skill references instruction → instruction MAY reference skill back (optional — instructions are lower-level)
-- Agent activates skill → skill's Handoffs MAY reference agent back (via `@agent`)
-
-Bidirectional references are RECOMMENDED, not required. The critical direction is **downstream** (the delegator must reference the delegate). Upstream back-references are nice-to-have for navigation.
-
----
-
 ## Cross-Reference Format (all categories)
 
 | Reference type | Format | Example |
