@@ -363,7 +363,7 @@ Output format / cheat-sheet reference cited by its paired skill.
 
 | From | To | What is delegated | How |
 |---|---|---|---|
-| Skill | Instruction | Coding rules and conventions | Reference via cross-ref in opening paragraph or fallback rules block. Never duplicate full rule sets — fallback blocks are ONE-LINE summaries per category only. |
+| Skill | Instruction | Coding rules and conventions | Reference via `instructions/*.instructions.md` glob in fallback intro. Never duplicate full rule sets — fallback blocks are ONE-LINE summaries per category only. Do NOT list specific filenames (they go stale when new instructions are added). |
 | Skill | Prompt | Output format and templates | Reference via cross-ref. Skills that share a template with other skills MUST use a prompt file. Skills with unique templates MAY embed them directly. |
 | Skill | Agent / Skill | Execution handoff | `## Handoffs` section with `→` / `←` markers. |
 | Agent | Skill | Workflow execution | `## Skill Activation` table maps triggers to skills. Agent body says "follow the skill's workflow" — never rewrites it. |

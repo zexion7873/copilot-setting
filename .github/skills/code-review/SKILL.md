@@ -7,7 +7,7 @@ description: 'Use when user asks to review code, check a PR, audit changes, or v
 
 Process for systematic code review. This file defines the order of attack, severity classification, and verdict shape. Category-level checklist (correctness, security, testing, performance, architecture, documentation, clean code) lives in `prompts/code-review-checklist.prompt.md`.
 
-Full coding rules live in `instructions/error-handling.instructions.md`, `instructions/logging.instructions.md`, `instructions/sql-rules.instructions.md`, `instructions/security-and-owasp.instructions.md`, and `instructions/junit.instructions.md` (auto-applied when matching files are open). When working via agent chat, check against these non-negotiable rules:
+Full coding rules live in `instructions/*.instructions.md` (auto-applied when matching files are open). When working via agent chat, check against these non-negotiable rules:
 
 - **SQL**: `PreparedStatement` with `?` only — string concatenation is always CRITICAL; no `SELECT *`; N+1 = SQL inside a loop
 - **Exceptions**: no empty `catch` blocks; no `catch (Throwable)`; no `e.printStackTrace()` — use `log.error("context", e)`

@@ -5,7 +5,7 @@ description: 'Use when user asks to implement a feature, write new code, add fun
 
 # Implement — Workflow
 
-Defines the implementation PROCESS only. Full coding standards live in `instructions/error-handling.instructions.md`, `instructions/logging.instructions.md`, `instructions/sql-rules.instructions.md`, and `instructions/security-and-owasp.instructions.md` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+Defines the implementation PROCESS only. Full coding standards live in `instructions/*.instructions.md` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
 
 - **SQL**: `PreparedStatement` with `?` only — never concatenate user input into SQL
 - **Exceptions**: no empty `catch` blocks; translate at layer boundaries; never catch `Throwable`
