@@ -2,6 +2,23 @@
 
 Canonical format for every file type under `.github/`. All files MUST follow these skeletons. Format changes require updating this guide first.
 
+## Four Categories
+
+| Category | Role | Responsibility |
+|---|---|---|
+| **Agent** | 角色 | Who I am, which workflows I activate, who I hand off to |
+| **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
+| **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
+| **Prompt** | 模板 | Output format scaffolds — referenced by workflows |
+
+```text
+Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
+                                  │
+                                  └──rules──→ Instruction (規則)
+```
+
+Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Delegation Architecture** section for enforcement rules.
+
 ---
 
 ## Instructions (`instructions/*.instructions.md`)
@@ -337,6 +354,41 @@ Output format / cheat-sheet reference cited by its paired skill.
 4. **Validation Checklist**: required for `-template` prompts. First item is always "Every `${input:...}` placeholder replaced".
 5. **Cross-references**: every prompt MUST reference its paired skill in the opening paragraph using `` `skills/<skill>/SKILL.md` ``.
 6. **Separation of concerns**: templates define OUTPUT FORMAT only. Workflow, validation rules, and prerequisites live in the paired skill.
+
+---
+
+## Delegation Architecture
+
+### Delegation Rules
+
+| From | To | What is delegated | How |
+|---|---|---|---|
+| Skill | Instruction | Coding rules and conventions | Reference via cross-ref in opening paragraph or fallback rules block. Never duplicate full rule sets — fallback blocks are ONE-LINE summaries per category only. |
+| Skill | Prompt | Output format and templates | Reference via cross-ref. Skills that share a template with other skills MUST use a prompt file. Skills with unique templates MAY embed them directly. |
+| Skill | Agent / Skill | Execution handoff | `## Handoffs` section with `→` / `←` markers. |
+| Agent | Skill | Workflow execution | `## Skill Activation` table maps triggers to skills. Agent body says "follow the skill's workflow" — never rewrites it. |
+| Prompt | Skill | Workflow and validation | Opening paragraph references paired skill. Prompt defines OUTPUT FORMAT only — workflow lives in the skill. |
+| Instruction | Instruction | Related conventions | Cross-ref in opening paragraph to sibling instruction files. |
+
+### Violations
+
+| Violation | Example | Fix |
+|---|---|---|
+| **Rule duplication** | Skill contains a full Anti-Patterns table copied from an instruction file | Delete from skill; add a fallback one-liner + cross-ref to the instruction |
+| **Template duplication** | Two skills embed the same output scaffold | Extract to a prompt file; both skills reference it |
+| **Workflow duplication** | Agent body describes step-by-step process that a skill already defines | Delete from agent; add "follow the `<skill>` skill workflow" |
+| **Missing delegation** | Skill produces a structured artifact but has no paired prompt or embedded template | Create a prompt file OR embed the template (if not shared) |
+| **Orphaned resource** | Prompt file exists but no skill references it; skill exists but no agent activates it | Either add the reference or delete the orphan |
+
+### Bidirectional References
+
+When resource A delegates to resource B, both sides SHOULD reference each other:
+
+- Skill references prompt → prompt references skill back (in opening paragraph)
+- Skill references instruction → instruction MAY reference skill back (optional — instructions are lower-level)
+- Agent activates skill → skill's Handoffs MAY reference agent back (via `@agent`)
+
+Bidirectional references are RECOMMENDED, not required. The critical direction is **downstream** (the delegator must reference the delegate). Upstream back-references are nice-to-have for navigation.
 
 ---
 
