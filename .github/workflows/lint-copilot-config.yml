@@ -1,0 +1,23 @@
+name: Lint Copilot Config
+
+on:
+  pull_request:
+    paths:
+      - '.github/agents/**'
+      - '.github/skills/**'
+      - '.github/instructions/**'
+      - '.github/prompts/**'
+      - '.github/hooks/**'
+      - 'scripts/readme-meta.json'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate frontmatter schema
+        run: bash scripts/validate-frontmatter.sh
+
+      - name: Check cross-references
+        run: bash scripts/lint-copilot-config.sh
