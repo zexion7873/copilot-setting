@@ -35,7 +35,7 @@ grep -r "related keyword" --include="*.java" -l src/                      # rela
 grep -rn "interface\|abstract class" --include="*.java" src/ | grep -i "term"  # contracts to implement
 ```
 
-**Identify patterns to follow** — a similar existing class, target package/dir, naming conventions, dependency-injection style, and error-handling style of the surrounding layer. Match them exactly before writing.
+**Identify patterns to follow** — a similar existing class, target package/dir, naming conventions, dependency-injection style, and error-handling style of the surrounding layer. Match them exactly before writing. If the implementation involves an unfamiliar library or API, use Context7 to fetch its docs before writing code.
 
 ## Phase 2 — Implement
 

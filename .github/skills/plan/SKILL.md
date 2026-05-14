@@ -27,7 +27,7 @@ Examples: `upgrade-system-command-4.md`, `feature-auth-module-1.md`.
 
 ## Phase 2 — Gather Context
 
-Before drafting, scan related code so the plan references real files, not guesses.
+Before drafting, scan related code so the plan references real files, not guesses. For `upgrade` or `infrastructure` plans involving external dependencies, use Context7 to check migration guides, breaking changes, and new defaults.
 
 ```bash
 grep -rn "<key symbol>" --include="*.java" src/    # locate existing pattern

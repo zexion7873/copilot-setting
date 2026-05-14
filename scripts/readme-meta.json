@@ -12,7 +12,7 @@
       "debug", "performance"
     ],
     "instructions": [
-      "context7", "error-handling", "global-copilot", "logging",
+      "error-handling", "global-copilot", "logging",
       "javadoc", "jsp", "junit", "markdown", "no-heredoc",
       "security-and-owasp", "self-explanatory-code-commenting",
       "sql-rules", "sql-sp-generation", "xml", "properties", "yaml-json-config"
@@ -169,9 +169,6 @@
   },
 
   "instructions": {
-    "context7": {
-      "summary_zh": "透過 Context7 MCP 取得權威的外部文件與 API 參考"
-    },
     "error-handling": {
       "summary_zh": "例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播"
     },

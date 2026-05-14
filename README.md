@@ -180,7 +180,6 @@ Automatically injected into the system prompt when the current file matches the 
 <!-- BEGIN:INSTRUCTIONS_TABLE -->
 | File | applyTo | Description |
 |------|---------|-------------|
-| `context7` | `**` | Use Context7 for authoritative external docs and API references when local context is insufficient |
 | `error-handling` | `**/*.java` | Exception handling and error response conventions for Java 8 — hierarchy, custom exceptions, retry, and error propagation. |
 | `global-copilot` | `**` | Global coding standards, conventions, and guidelines for all projects |
 | `logging` | `**/*.java` | SLF4J + Logback logging conventions — severity levels, parameterized messages, context inclusion, and security. |
@@ -268,7 +267,6 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
 ├── copilot-instructions.md                ← Global base instructions
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
-│   ├── context7
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── logging

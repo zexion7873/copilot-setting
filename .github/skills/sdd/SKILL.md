@@ -73,6 +73,8 @@ grep -rn "<key symbol>" --include="*.java" src/    # existing patterns
 git log --oneline -20 -- <relevant path>            # recent changes
 ```
 
+If the spec involves external libraries or third-party API contracts, use Context7 to fetch authoritative docs so §3.2 API Specification and §3.4 Business Rules reference accurate signatures and behaviors.
+
 ## Phase 2 — Draft SDD
 
 Use the template in `prompts/spec-template.prompt.md`. Every section (§1–§9) must be populated — no placeholders.

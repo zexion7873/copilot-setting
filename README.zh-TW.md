@@ -180,7 +180,6 @@ flowchart LR
 <!-- BEGIN:INSTRUCTIONS_TABLE -->
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
-| `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
 | `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
@@ -268,7 +267,6 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 ├── copilot-instructions.md                ← 全域基礎指示
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── context7
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── logging

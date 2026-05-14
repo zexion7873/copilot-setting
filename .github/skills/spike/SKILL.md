@@ -20,6 +20,8 @@ A sharp question has: **a measurable answer** (yes/no, latency number, line-of-c
 
 ## Phase 2 — Collect Inputs
 
+If the research question involves an external library, framework, or API, use Context7 to fetch authoritative docs before forming hypotheses.
+
 Required:
 
 - **Title** — the focused question
