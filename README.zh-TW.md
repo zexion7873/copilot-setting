@@ -111,6 +111,7 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
+| 🔎 | `@researcher` | Claude Opus 4.6 | 唯讀研究 subagent，供 `@planner` 派遣 — 規劃前蒐集 codebase 脈絡與外部參考 |
 <!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs 工作流程
@@ -122,6 +123,7 @@ flowchart LR
     Planner -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
+    Planner -.->|"subagent"| Researcher
 
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
@@ -287,7 +289,8 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   └── debugger             (Claude Opus 4.6)
+│   ├── debugger             (Claude Opus 4.6)
+│   └── researcher           (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json
