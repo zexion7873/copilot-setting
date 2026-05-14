@@ -12,30 +12,31 @@
 
 </div>
 
-A multi-agent Copilot configuration — agents drive workflows, skills execute tasks, instructions enforce conventions, with a spec-driven development process.
+A multi-agent Copilot configuration — agents activate workflows, skills define processes, instructions enforce conventions, and prompts standardize output formats.
 
 ---
 
 ## ⚙️ How It Works
 
-You only touch **agents**. Everything else loads by itself.
+Just pick an **agent** — everything else loads automatically.
 
 | Category | Role | Responsibility | When it loads |
 |---|---|---|---|
 | **Instructions** (`instructions/`) | Rules | Single source of truth for coding conventions | File matches `applyTo` glob |
-| **Agents** (`agents/`) | Role | Who I am, which workflows I activate, who I hand off to | `@agent-name` in chat |
+| **Agents** (`agents/`) | Router | Who I am, which workflows I activate, who I hand off to | `@agent-name` in chat |
 | **Skills** (`skills/`) | Workflow | Step-by-step process — references rules and templates, never rewrites them | Copilot matches `description` |
 | **Prompts** (`prompts/`) | Template | Output format scaffolds — referenced by workflows | Agent/skill reads the file |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
-```text
-Agent (Role) ──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
-                                  │
-                                  └──rules──→ Instruction (Rules)
-Hooks ──lifecycle guard──→ Agent
-```
-
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
+
+```text
+Hooks ──lifecycle guard──→ Agent (Router)
+                             │
+                             └──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
+                                                  │
+                                                  └──rules──→ Instruction (Rules)
+```
 
 > [!NOTE]
 > **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql-rules`, `error-handling`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
