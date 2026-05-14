@@ -2,7 +2,8 @@
 name: Implementer
 description: 'Write production-ready Java code, refactor existing code, and design tests. Each mode follows its own workflow and constraints.'
 model: GPT-5.3-Codex
-tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'todo']
+tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'agent', 'todo']
+agents: ['Researcher']
 handoffs:
   - label: Code Review
     agent: Reviewer
@@ -39,6 +40,16 @@ If the request is ambiguous, ask one round of clarifying questions. If scope is 
 | "效能優化", "performance", "跑很慢" | `performance` | Measure-first profiling and optimization |
 
 Activate the matched skill and follow its workflow. Default to `implement` if the user's intent is ambiguous but clearly implementation-related.
+
+## Subagent Delegation
+
+Before writing code (Phase 1 of `implement` / `refactor`), delegate codebase research to the **Researcher** subagent:
+
+- Ask Researcher to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers
+- Only ask for search + read + summarize — never ask Researcher for design opinions or implementation advice
+- Use the returned findings to guide your implementation; do not re-search what Researcher already found
+
+Skip delegation when the task is trivial (single-file typo fix, known location).
 
 ## Handoff Guidance
 

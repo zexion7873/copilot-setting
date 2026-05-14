@@ -111,7 +111,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
-| 📚 | `@researcher` | Claude Opus 4.6 | Read-only research subagent for `@planner` — gathers codebase context and external references before planning |
+| 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
 <!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs Workflow
@@ -125,6 +125,7 @@ flowchart LR
     Planner -->|"Security assessment"| Reviewer
     Planner -.->|"subagent"| Researcher
 
+    Implementer -.->|"subagent"| Researcher
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Security / SQL review"| Reviewer
     Implementer -->|"Debug"| Debugger
@@ -289,7 +290,7 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── researcher           (Claude Opus 4.6)
+│   └── researcher           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json

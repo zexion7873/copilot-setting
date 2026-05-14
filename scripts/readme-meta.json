@@ -46,8 +46,8 @@
     },
     "researcher": {
       "icon": "📚",
-      "summary": "Read-only research subagent for `@planner` — gathers codebase context and external references before planning",
-      "summary_zh": "唯讀研究 subagent，供 `@planner` 派遣 — 規劃前蒐集 codebase 脈絡與外部參考"
+      "summary": "Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries",
+      "summary_zh": "輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要"
     }
   },
 

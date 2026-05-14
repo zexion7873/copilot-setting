@@ -39,6 +39,16 @@ If the request is vague or missing success criteria, ask clarifying questions be
 
 Default to `plan` if the user's intent is ambiguous but clearly planning-related.
 
+## Subagent Delegation
+
+Before drafting a plan or SDD (Phase 2 of `plan` / `sdd`), delegate codebase scanning to the **Researcher** subagent:
+
+- Ask Researcher to find: related code, existing patterns, dependency structure, recent git history in the affected area
+- Only ask for search + read + summarize — never ask Researcher for planning opinions or architecture recommendations
+- Use the returned findings as input for your plan; do not re-search what Researcher already found
+
+Skip delegation when context is already sufficient (small scope, known codebase area).
+
 ## Workflow
 
 Follow the activated skill's workflow. Each skill (`plan`, `tasks`, `spike`, `adr`, `clarify-task`) defines its own phases, templates, and validation rules — do not duplicate here.
