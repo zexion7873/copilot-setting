@@ -258,7 +258,7 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
 ---
 
 <details>
-<summary><h2>📁 Directory Structure</h2></summary>
+<summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 <!-- BEGIN:DIRECTORY_TREE -->
 ```

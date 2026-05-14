@@ -258,7 +258,7 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 ---
 
 <details>
-<summary><h2>📁 目錄結構</h2></summary>
+<summary><h2>📁 .github/ 目錄結構</h2></summary>
 
 <!-- BEGIN:DIRECTORY_TREE -->
 ```
