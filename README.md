@@ -33,15 +33,15 @@ You only touch **agents**. Everything else loads by itself.
 
 | Category | Role | Responsibility |
 |---|---|---|
-| **Agent** | 角色 | Who I am, which workflows I activate, who I hand off to |
-| **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
-| **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
-| **Prompt** | 模板 | Output format scaffolds — referenced by workflows |
+| **Agent** | Role | Who I am, which workflows I activate, who I hand off to |
+| **Skill** | Workflow | Step-by-step process — references Rules and Templates, never rewrites them |
+| **Instruction** | Rules | Single source of truth for coding conventions — referenced by workflows |
+| **Prompt** | Template | Output format scaffolds — referenced by workflows |
 
 ```text
-Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
+Agent (Role) ──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
                                   │
-                                  └──rules──→ Instruction (規則)
+                                  └──rules──→ Instruction (Rules)
 Hooks ──lifecycle guard──→ Agent
 ```
 
