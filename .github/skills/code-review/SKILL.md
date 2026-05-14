@@ -97,7 +97,14 @@ Should fix:
 1. <WARNING summary linking to detail>
 ```
 
-## Review Anti-Patterns
+## Handoffs
+
+- → `@implementer` — to fix issues or refactor based on review findings
+- → `@planner` — when fundamental design problems require re-planning
+- ← `implement` skill — implementation completion triggers review
+- ← `refactor` skill — refactored code needs re-review
+
+## Anti-Patterns
 
 - Rubber-stamp approval → defeats the review
 - Style-only feedback → misses real issues

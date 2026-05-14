@@ -79,6 +79,13 @@ Once the user confirms, hand off:
 - → `refactor` skill — for behavior-preserving restructuring
 - → `debug` skill — if the real task turned out to be a bug hunt
 
+## Handoffs
+
+- → `plan` skill — for multi-step / multi-file work
+- → `implement` skill — for direct execution
+- → `refactor` skill — for behavior-preserving restructuring
+- → `debug` skill — if the real task turned out to be a bug hunt
+
 ## Anti-Patterns
 
 - Asking questions that the code answers — read it first

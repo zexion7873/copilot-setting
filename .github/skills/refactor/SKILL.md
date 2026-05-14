@@ -15,7 +15,7 @@ Full coding standards live in `instructions/` (auto-applied when matching files 
 - **Resources**: preserve `try-with-resources` for all `AutoCloseable` — critical when extracting methods that handle `Connection`, `PreparedStatement`, `ResultSet`
 - **Security**: no hardcoded secrets; maintain input validation at boundaries; keep `<c:out>` in JSP
 
-## Golden Rules
+## Rules
 
 1. **Behavior preserved** — change how, not what
 2. **Small steps** — tiny change, run tests, commit, repeat

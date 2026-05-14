@@ -5,7 +5,7 @@ applyTo: '**/*.sql'
 
 # MySQL Stored Procedure & Schema Conventions
 
-Conventions specific to MySQL DDL and stored procedures. For general SQL rules (injection prevention, performance pitfalls), see `sql-rules.instructions.md`.
+Conventions specific to MySQL DDL and stored procedures. For general SQL rules (injection prevention, performance pitfalls), see `instructions/sql-rules.instructions.md`.
 
 ## Schema Generation
 

@@ -7,6 +7,13 @@ description: 'Use when user asks about performance optimization, profiling, late
 
 Practical performance tuning. Database rules live in `instructions/sql-rules.instructions.md` — defer there for SQL specifics. This skill covers methodology and the cross-stack checklist.
 
+Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: no `SELECT *`; no functions on indexed columns in `WHERE`; N+1 = SQL inside a loop; cursor pagination over `OFFSET`
+- **Logging**: SLF4J parameterized — `log.info("x={}", x)` — never `+` concatenation; minimize logging in hot paths
+- **Resources**: `try-with-resources` for all `AutoCloseable` — leaked connections cause pool exhaustion under load
+- **Security**: no hardcoded secrets; caching must not store sensitive data (auth tokens, PII, session state)
+
 ## Phase 1 — Methodology (apply before any change)
 
 1. **Measure first** — profile before optimizing. Guessing is the enemy of performance.

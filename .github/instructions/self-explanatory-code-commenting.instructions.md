@@ -5,6 +5,8 @@ applyTo: '**/*.{java,js,ts,py,cs}'
 
 # Self-Explanatory Code & Commenting
 
+Write self-explanatory code with minimal comments. Only comment WHY when non-obvious. For Java-specific Javadoc conventions, see `instructions/javadoc.instructions.md`.
+
 ## Core Principle
 
 Code should speak for itself. Comment only when **WHY** is non-obvious.
@@ -40,7 +42,7 @@ When marking non-comment intent in code:
 
 ## Public API Documentation
 
-Document public APIs with Javadoc / JSDoc / docstrings. For Java-specific Javadoc conventions, see `javadoc.instructions.md`.
+Document public APIs with Javadoc / JSDoc / docstrings. For Java-specific Javadoc conventions, see `instructions/javadoc.instructions.md`.
 
 ## Checklist
 

@@ -3,7 +3,7 @@ name: implement
 description: 'Use when user asks to implement a feature, write new code, add functionality, or build something. Triggers on: implement, write new code, add functionality, build feature, create endpoint, add API, write method, code this up, 幫我寫, 實作這個功能, 實作, 開發, 新增功能, 加一個 API, 寫一個 method, 把它寫出來. Guides implementation through pattern discovery, coding, and self-verification. Do NOT use for bug fixes (prefer debug), restructuring or cleaning up existing code without adding new behavior (prefer refactor), or reviewing existing code (prefer code-review).'
 ---
 
-# Implement — Executable Workflow
+# Implement — Workflow
 
 Defines the implementation PROCESS only. Full coding standards live in `copilot-instructions.md` and `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
 
@@ -53,4 +53,11 @@ Before presenting, confirm:
 
 ## Phase 4 — Present
 
-Report **What** + **Where** (file paths) + **Pattern followed** (reference class) + **Key decisions (why)** + **Not included (why)**. Suggest next: `@reviewer` for code / security / SQL review as applicable.
+Report **What** + **Where** (file paths) + **Pattern followed** (reference class) + **Key decisions (why)** + **Not included (why)**.
+
+## Handoffs
+
+- → `code-review` / `security-audit` / `sql-review` skill — suggest `@reviewer` after implementation
+- → `debug` skill / `@debugger` — when implementation hits unexpected bugs during self-verify
+- ← `tasks` skill — implementation follows task decomposition
+- ← `sdd` skill — SDD gates implementation scope and acceptance criteria

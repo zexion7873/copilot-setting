@@ -82,7 +82,14 @@ Make tests resilient to mutation testing:
 - Removed method call → use `verify()`
 - Arithmetic operator swap → assert exact result
 
-## Test Anti-Patterns
+## Handoffs
+
+- → `@implementer` (Test Design Mode) — writes JUnit 5 + Mockito code from the design table
+- → `instructions/junit.instructions.md` — auto-applied conventions for test files (naming, AAA, assertions, mocking)
+- ← `implement` skill — implementation may trigger test design for new functionality
+- ← `code-review` skill — review may flag coverage gaps needing test design
+
+## Anti-Patterns
 
 Anti-patterns and coding conventions for JUnit 5 + Mockito are defined in `instructions/junit.instructions.md` (auto-applied on test files). Key reminders:
 

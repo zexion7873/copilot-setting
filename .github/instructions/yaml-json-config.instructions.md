@@ -5,6 +5,8 @@ applyTo: '**/*.yml, **/*.yaml, **/*.json'
 
 # YAML & JSON Configuration Conventions
 
+Conventions for YAML and JSON configuration files in this project — formatting, structure, key naming, and secret management.
+
 ## YAML Formatting
 
 - Indentation: 2 spaces. Never tabs.
@@ -45,7 +47,7 @@ applyTo: '**/*.yml, **/*.yaml, **/*.json'
 
 ## Anti-Patterns
 
-| Anti-pattern | Why it's wrong | Fix |
+| Pattern | Problem | Fix |
 |---|---|---|
 | `password: mySecret123` | Secret in plaintext | `password: ${DB_PASSWORD}` |
 | `enabled: yes` (unquoted) | YAML 1.1 parses as boolean `true` | `enabled: 'yes'` or `enabled: true` |

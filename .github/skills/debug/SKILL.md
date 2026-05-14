@@ -7,6 +7,14 @@ description: 'Use when user reports a bug, error, exception, stack trace, or une
 
 Systematic isolation and minimal fix process. Stack-specific patterns (NPE, leaks, SQL) live in `agents/debugger.agent.md`. This file is the process.
 
+Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: `PreparedStatement` with `?` only — never introduce string concatenation while fixing
+- **Exceptions**: no empty `catch` blocks; fix the handler, don't add a new swallow point; never catch `Throwable`
+- **Logging**: SLF4J parameterized — `log.info("x={}", x)` — remove all temporary debug logging before committing
+- **Resources**: `try-with-resources` for all `AutoCloseable` — connection leaks are a common root cause, not just a style issue
+- **Security**: no hardcoded secrets; verify fix doesn't bypass input validation or auth checks
+
 ## Phase 1 — Define the Problem
 
 Capture this before touching code:
@@ -151,7 +159,7 @@ Related:    <other occurrences, if any>
 - **Connection leak** — verify try-with-resources, especially on error paths
 - **Wrong results** — implicit type conversion in WHERE / JOIN
 
-## Debug Anti-Patterns
+## Anti-Patterns
 
 - Shotgun debugging (random changes) → follow binary search
 - Fixing symptoms not root cause → bug reappears in another form
