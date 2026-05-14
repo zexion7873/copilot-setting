@@ -45,7 +45,7 @@
       "summary_zh": "觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試"
     },
     "researcher": {
-      "icon": "🔎",
+      "icon": "📚",
       "summary": "Read-only research subagent for `@planner` — gathers codebase context and external references before planning",
       "summary_zh": "唯讀研究 subagent，供 `@planner` 派遣 — 規劃前蒐集 codebase 脈絡與外部參考"
     }
