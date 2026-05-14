@@ -20,30 +20,29 @@ A multi-agent Copilot configuration — agents drive workflows, skills execute t
 
 You only touch **agents**. Everything else loads by itself.
 
-| Resource | When it loads | You do |
-|----------|---------------|--------|
-| **copilot-instructions.md** | Every conversation | Nothing — always there |
-| **Instructions** (`instructions/`) | Current file matches `applyTo` glob (e.g., `**/*.java`) | Nothing — injected by file type |
-| **Agents** (`agents/`) | You type `@agent-name` in chat | Pick the agent |
-| **Skills** (`skills/`) | Copilot matches your message to the skill's `description` | Nothing — fires when relevant |
-| **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
-| **Hooks** (`hooks/`) | Agent lifecycle events (before/after tool use, session start/end) | Nothing — runs automatically |
+| Category | Role | Responsibility | When it loads |
+|---|---|---|---|
+| **copilot-instructions.md** | Base rules | Language, tech stack | Every conversation |
+| **Instructions** (`instructions/`) | Rules | Single source of truth for coding conventions | File matches `applyTo` glob |
+| **Agents** (`agents/`) | Role | Who I am, which workflows I activate, who I hand off to | `@agent-name` in chat |
+| **Skills** (`skills/`) | Workflow | Step-by-step process — references rules and templates, never rewrites them | Copilot matches `description` |
+| **Prompts** (`prompts/`) | Template | Output format scaffolds — referenced by workflows | Agent/skill reads the file |
+| **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
-### Four Categories
+```mermaid
+flowchart LR
+    Agent["Agent (Role)"] -->|activates| Skill["Skill (Workflow)"]
+    Skill -->|output format| Prompt["Prompt (Template)"]
+    Skill -->|rules| Instruction["Instruction (Rules)"]
+    Hooks -->|lifecycle guard| Agent
+```
 
-| Category | Role | Responsibility |
-|---|---|---|
-| **Agent** | Role | Who I am, which workflows I activate, who I hand off to |
-| **Skill** | Workflow | Step-by-step process — references Rules and Templates, never rewrites them |
-| **Instruction** | Rules | Single source of truth for coding conventions — referenced by workflows |
-| **Prompt** | Template | Output format scaffolds — referenced by workflows |
-
-```text
+<!-- Raw text fallback for environments that don't render Mermaid:
 Agent (Role) ──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
                                   │
                                   └──rules──→ Instruction (Rules)
 Hooks ──lifecycle guard──→ Agent
-```
+-->
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
 

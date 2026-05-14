@@ -20,30 +20,29 @@
 
 你只管切 **agent**，其他的自己來。
 
-| 資源 | 何時載入 | 你要做什麼 |
-|------|----------|-----------|
-| **copilot-instructions.md** | 每次對話 | 不用動 — 永遠在 |
-| **Instructions**（`instructions/`） | 檔案符合 `applyTo` glob（如 `**/*.java`） | 不用動 — 看你開什麼檔就注入什麼 |
-| **Agents**（`agents/`） | 在 Chat 打 `@agent-name` | 選 agent |
-| **Skills**（`skills/`） | Copilot 把你說的話比對 skill 的 `description` | 不用動 — 聊到就觸發 |
-| **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
-| **Hooks**（`hooks/`） | Agent 生命週期事件（工具執行前後、session 開始/結束） | 不用動 — 自動執行 |
+| 類別 | 角色 | 職責邊界 | 何時載入 |
+|---|---|---|---|
+| **copilot-instructions.md** | 基礎規則 | 語言、技術棧 | 每次對話 |
+| **Instructions**（`instructions/`） | 規則 | 編碼規範的單一來源 | 檔案符合 `applyTo` glob |
+| **Agents**（`agents/`） | 角色 | 我是誰、啟動哪些工作流、交接給誰 | 在 Chat 打 `@agent-name` |
+| **Skills**（`skills/`） | 工作流程 | 做事的步驟 — 引用規則和模板，不重寫 | Copilot 比對 `description` |
+| **Prompts**（`prompts/`） | 模板 | 輸出格式骨架 — 被工作流程引用 | agent/skill 內部讀取 |
+| **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
-### 四大類別
+```mermaid
+flowchart LR
+    Agent["Agent (角色)"] -->|啟動| Skill["Skill (工作流程)"]
+    Skill -->|輸出格式| Prompt["Prompt (模板)"]
+    Skill -->|規則| Instruction["Instruction (規則)"]
+    Hooks -->|生命週期守衛| Agent
+```
 
-| 類別 | 角色 | 職責邊界 |
-|---|---|---|
-| **Agent** | 角色 | 我是誰、啟動哪些工作流、交接給誰 |
-| **Skill** | 工作流程 | 做事的步驟 — 引用規則和模板，不自己重寫 |
-| **Instruction** | 規則 | 編碼規範的單一來源 — 被工作流程引用 |
-| **Prompt** | 模板 | 輸出格式骨架 — 被工作流程引用 |
-
-```text
+<!-- 純文字備援（不支援 Mermaid 的環境）：
 Agent (角色) ──啟動──→ Skill (工作流程) ──輸出格式──→ Prompt (模板)
                                 │
                                 └──規則──→ Instruction (規則)
 Hooks ──生命週期守衛──→ Agent
-```
+-->
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
 
