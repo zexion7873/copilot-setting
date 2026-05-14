@@ -46,8 +46,8 @@
     },
     "researcher": {
       "icon": "📚",
-      "summary": "Read-only research subagent for `@implementer` — gathers codebase patterns and external references before coding",
-      "summary_zh": "唯讀研究 subagent，供 `@implementer` 派遣 — 寫 code 前蒐集 codebase pattern 與外部參考"
+      "summary": "Lightweight read-only subagent (Haiku) for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries",
+      "summary_zh": "輕量唯讀 subagent（Haiku），供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要"
     }
   },
 

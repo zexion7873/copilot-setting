@@ -111,7 +111,7 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-| 📚 | `@researcher` | Claude Opus 4.6 | 唯讀研究 subagent，供 `@implementer` 派遣 — 寫 code 前蒐集 codebase pattern 與外部參考 |
+| 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent（Haiku），供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
 <!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs 工作流程
@@ -123,9 +123,9 @@ flowchart LR
     Planner -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
+    Planner -.->|"subagent"| Researcher
 
     Implementer -.->|"subagent"| Researcher
-    Implementer -.->|"subagent"| Reviewer
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
@@ -290,7 +290,7 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
 │   ├── debugger             (Claude Opus 4.6)
-│   └── researcher           (Claude Opus 4.6)
+│   └── researcher           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json
