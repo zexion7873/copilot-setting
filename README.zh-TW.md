@@ -1,6 +1,6 @@
 <div align="center">
 
-# 全域 GitHub Copilot 設定
+# GitHub Copilot Configuration
 
 [English](README.md) | **繁體中文**
 
@@ -13,7 +13,7 @@
 
 </div>
 
-個人 Copilot 設定。部分檔案參考自 [awesome-copilot](https://github.com/github/awesome-copilot)，並依需求調整。
+多 agent 協作的 Copilot 設定——agent 驅動工作流、skill 執行任務、instruction 守規範，搭配 spec-driven 開發流程。
 
 ---
 

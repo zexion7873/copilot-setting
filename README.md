@@ -1,6 +1,6 @@
 <div align="center">
 
-# Global GitHub Copilot Configuration
+# GitHub Copilot Configuration
 
 **English** | [繁體中文](README.zh-TW.md)
 
@@ -13,7 +13,7 @@
 
 </div>
 
-Personal Copilot settings. Some files are based on [awesome-copilot](https://github.com/github/awesome-copilot), customized as needed.
+A multi-agent Copilot configuration — agents drive workflows, skills execute tasks, instructions enforce conventions, with a spec-driven development process.
 
 ---
 
