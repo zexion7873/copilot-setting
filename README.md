@@ -22,10 +22,10 @@ Just pick an **agent** — everything else loads automatically.
 
 | Category | Role | Responsibility | When it loads |
 |---|---|---|---|
-| **Instructions** (`instructions/`) | Rules | Single source of truth for coding conventions | File matches `applyTo` glob; skills cite via fallback rules |
-| **Agents** (`agents/`) | Router | Who I am, which workflows I activate, who I hand off to | `@agent-name` in chat |
-| **Skills** (`skills/`) | Workflow | Step-by-step process — references rules and templates, never rewrites them | Copilot matches `description`; agent routes via Skill Activation |
-| **Prompts** (`prompts/`) | Template | Output format scaffolds — referenced by workflows | Paired skill references via cross-ref |
+| **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
+| **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
+| **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
+| **Prompts** (`prompts/`) | Template | Output format scaffolds | Paired skill refs |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
