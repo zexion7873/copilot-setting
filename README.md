@@ -282,6 +282,11 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   └── scripts/
 │       └── block-dangerous-commands.sh
 │
+├── hooks/                                 ← Shell commands at agent lifecycle events
+│   ├── default.json
+│   └── scripts/
+│       └── block-dangerous-commands.sh
+│
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist
 │   ├── sql-review-output

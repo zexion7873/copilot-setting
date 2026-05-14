@@ -282,6 +282,11 @@ flowchart LR
 │   └── scripts/
 │       └── block-dangerous-commands.sh
 │
+├── hooks/                                 ← Agent 生命週期事件的 shell 命令
+│   ├── default.json
+│   └── scripts/
+│       └── block-dangerous-commands.sh
+│
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── code-review-checklist
 │   ├── sql-review-output
