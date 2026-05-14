@@ -18,7 +18,7 @@ Gather context from the codebase and external sources, then return a structured 
 
 1. **Clarify scope** — confirm what to search for and where (codebase, external docs, or both). If the question is clear enough, skip this step.
 2. **Internal search** — grep the codebase for relevant classes, interfaces, patterns, configurations, and tests.
-3. **External search** — use Context7 for library/framework docs, web search for broader context. Prefer primary sources (official docs, release notes, API references).
+3. **External search** — use Context7 for library/framework docs, web search for broader context. Prefer primary sources (official docs, release notes, API references). If Context7 is not available, fall back to web search.
 4. **Synthesize** — return a structured summary (see output format below).
 
 ## Output Format
