@@ -82,7 +82,7 @@ flowchart LR
 > - 技術調研 → `@planner`（spike mode）→ `@planner`（plan mode）
 > - 寫文件 → `@planner`
 
-### SDD 修訂工作流
+### 📝 SDD 修訂工作流
 
 當既有 SDD 在實作過程中需要修訂（新增需求、API 契約變動、schema 調整），`sdd` skill 會進入 **Phase 0 — Amendment Gate**，而不是從頭重寫：
 
@@ -113,7 +113,7 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 <!-- END:AGENTS_TABLE -->
 
-### Agent Handoffs 工作流程
+### 🤝 Agent Handoffs 工作流程
 
 Agent 間可互相交接任務，形成協作工作流：
 

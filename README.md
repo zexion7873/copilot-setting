@@ -82,7 +82,7 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Research → `@planner` (spike mode) → `@planner` (plan mode)
 > - Documentation → `@planner`
 
-### Amendment Workflow
+### 📝 Amendment Workflow
 
 When an existing SDD needs revision mid-implementation (new requirements, API contract changes, schema bumps), the `sdd` skill enters **Phase 0 — Amendment Gate** instead of rewriting from scratch:
 
@@ -113,7 +113,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 <!-- END:AGENTS_TABLE -->
 
-### Agent Handoffs Workflow
+### 🤝 Agent Handoffs Workflow
 
 Agents can hand off tasks to each other, forming a collaborative workflow:
 
