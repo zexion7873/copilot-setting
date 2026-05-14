@@ -199,7 +199,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
 1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required, no other fields. No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). **Exception**: `refactor` and `git-commit` are reference+process hybrids where Phase N format would damage readability — they keep their organic structure but must still use `— Workflow` in the H1.
-3. **Opening paragraph** (**REQUIRED**): what + cross-references. Must reference the paired prompt file (if any) and the relevant instruction files.
+3. **Opening paragraph** (**REQUIRED**): what + cross-references. Must reference the paired prompt file (if any) using a specific path. For instruction dependencies: use `instructions/*.instructions.md` glob when the skill depends on all instructions (e.g., fallback rules intro); use a specific filename only for one-to-one relationships (e.g., `sql-review` → `instructions/sql-rules.instructions.md`).
 4. **Fallback rules block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`). These inline the critical non-negotiable rules so they apply even when instruction files are not auto-loaded in agent chat. Format as a bullet list with bold category labels.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) may use topic-based H2 sections instead.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
@@ -363,7 +363,7 @@ Output format / cheat-sheet reference cited by its paired skill.
 
 | From | To | What is delegated | How |
 |---|---|---|---|
-| Skill | Instruction | Coding rules and conventions | Reference via `instructions/*.instructions.md` glob in fallback intro. Never duplicate full rule sets — fallback blocks are ONE-LINE summaries per category only. Do NOT list specific filenames (they go stale when new instructions are added). |
+| Skill | Instruction | Coding rules and conventions | Fallback intro uses `instructions/*.instructions.md` glob when the skill depends on ALL instructions. Use a specific filename only when the skill depends on ONE particular instruction (e.g., `sql-review` → `instructions/sql-rules.instructions.md`). Never duplicate full rule sets — fallback blocks are ONE-LINE summaries per category only. |
 | Skill | Prompt | Output format and templates | Reference via cross-ref. Skills that share a template with other skills MUST use a prompt file. Skills with unique templates MAY embed them directly. |
 | Skill | Agent / Skill | Execution handoff | `## Handoffs` section with `→` / `←` markers. |
 | Agent | Skill | Workflow execution | `## Skill Activation` table maps triggers to skills. Agent body says "follow the skill's workflow" — never rewrites it. |
@@ -397,6 +397,7 @@ Bidirectional references are RECOMMENDED, not required. The critical direction i
 | Reference type | Format | Example |
 |---|---|---|
 | Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql-rules.instructions.md` `` |
+| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Used in skill fallback intro when depending on all instructions |
 | Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` |
 | Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/plan-template.prompt.md` `` |
 | Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` |
