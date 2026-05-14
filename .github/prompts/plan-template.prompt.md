@@ -5,7 +5,7 @@ description: 'Implementation plan template with phases, REQ/CON/PAT/FILE/RISK id
 
 # Plan Template
 
-One-shot scaffold for an implementation plan. Workflow (classify, gather context, validate) lives in `skills/plan/SKILL.md`. Atomic `T###` task decomposition is the `tasks` skill's job — this template stops at the design layer.
+One-shot scaffold for an implementation plan. Workflow (classify, gather context, validate) lives in `skills/plan/SKILL.md`. Atomic `T###` task decomposition is the `tasks` skill's job (see `prompts/tasks-template.prompt.md`) — this template stops at the design layer.
 
 ## Usage
 

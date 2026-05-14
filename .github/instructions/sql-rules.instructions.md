@@ -5,7 +5,7 @@ applyTo: '**/*.java, **/*.sql, **/*.xml, **/*.jsp'
 
 # SQL Rules
 
-Hard rules for any SQL written in this project. These are non-negotiable; deviation requires an explicit comment explaining why.
+Hard rules for any SQL written in this project. These are non-negotiable; deviation requires an explicit comment explaining why. MySQL stored procedure and schema conventions live in `instructions/sql-sp-generation.instructions.md`.
 
 ## Security
 

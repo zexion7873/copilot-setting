@@ -5,7 +5,7 @@ description: 'Use when user asks to plan a feature, design implementation phases
 
 # Plan — Workflow
 
-Produce a self-contained implementation spec another developer (or AI) can execute without further clarification. **A plan is for work whose shape is known**; if the shape is still being explored, use `spike`.
+Produce a self-contained implementation spec another developer (or AI) can execute without further clarification. Output format defined in `prompts/plan-template.prompt.md`. **A plan is for work whose shape is known**; if the shape is still being explored, use `spike`.
 
 ## Phase 1 — Classify the Plan
 

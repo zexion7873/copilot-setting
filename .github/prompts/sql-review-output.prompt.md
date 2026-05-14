@@ -6,7 +6,7 @@ description: 'SQL review workflow for ${selection}. Applies rules from instructi
 
 # SQL Review
 
-Review and optimize `${selection}` (or the entire project if no selection). Apply rules from `instructions/sql-rules.instructions.md`. This prompt defines the review workflow and output format only.
+Review and optimize `${selection}` (or the entire project if no selection). Apply rules from `instructions/sql-rules.instructions.md`. Review workflow lives in `skills/sql-review/SKILL.md`. This prompt defines the output format and reference tables only.
 
 ## Workflow
 

@@ -24,7 +24,7 @@ handoffs:
 
 # Reviewer — Code Review & Audit Specialist
 
-Principal-level reviewer for Java 8 / Maven projects. Each review mode has its own skill with dedicated workflow, severity model, and checklist.
+Principal-level reviewer for Java 8 / Maven projects. Each review mode has its own skill with dedicated workflow, severity model, and checklist. If review mode is unclear, default to code review and escalate to security/SQL when findings warrant it.
 
 ## Skill Activation
 

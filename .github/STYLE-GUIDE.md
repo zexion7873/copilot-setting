@@ -43,10 +43,11 @@ applyTo: '<glob pattern>'
 1. **Frontmatter**: `description` + `applyTo` — both required, no other fields.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
 3. **Opening paragraph**: scope statement + cross-references to related instruction/prompt files (if any). Use full relative paths from `.github/` (e.g., `instructions/security-and-owasp.instructions.md`), not bare names.
-4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups.
+4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.
 5. **Anti-Patterns table**: always 3-column (`Pattern | Problem | Fix`). If the file has anti-patterns, use this exact header. Column 2 (`Problem`) must explain *why* it's wrong, not just restate the pattern.
 6. **Checklist section**: optional. Use only when the instruction benefits from a verification self-check (e.g., markdown formatting, commenting guidelines). Use `- [ ]` checkbox format.
 7. **Cross-references**: use backtick-wrapped relative paths from `.github/` — e.g., `` `instructions/sql-rules.instructions.md` ``. Never use bare names like `` `sql-rules` `` or absolute paths.
+8. **Known exceptions**: `global-copilot.instructions.md` is intentionally minimal (duplicates `copilot-instructions.md` for user-scope loading) — opening paragraph and H2 sections are not required.
 
 ---
 

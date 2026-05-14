@@ -5,7 +5,7 @@ description: 'Use when user asks to record an architectural decision, document a
 
 # ADR — Workflow
 
-Create an Architectural Decision Record. ADRs capture **a decision already made** (or being formalized) — not exploration. If the decision is still open, use `spike` instead.
+Create an Architectural Decision Record. Output format defined in `prompts/adr-template.prompt.md`. ADRs capture **a decision already made** (or being formalized) — not exploration. If the decision is still open, use `spike` instead.
 
 ## Phase 1 — Collect Inputs
 

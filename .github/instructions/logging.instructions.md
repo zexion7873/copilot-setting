@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Logging Conventions
 
-Hard rules for logging in Java 8 projects. Uses SLF4J facade with Logback implementation.
+Hard rules for logging in Java 8 projects. Uses SLF4J facade with Logback implementation. Related conventions in `instructions/error-handling.instructions.md` (exception logging) and `instructions/security-and-owasp.instructions.md` (security logging).
 
 ## Framework
 

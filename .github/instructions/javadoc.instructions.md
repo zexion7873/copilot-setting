@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Javadoc Conventions
 
-Hard rules for documenting Java code. Public / protected APIs MUST be documented; private members SHOULD be when non-trivial.
+Hard rules for documenting Java code. Public / protected APIs MUST be documented; private members SHOULD be when non-trivial. For general commenting philosophy (when to comment vs. refactor), see `instructions/self-explanatory-code-commenting.instructions.md`.
 
 ## When to Document
 

@@ -88,7 +88,7 @@ Once the user confirms, hand off:
 
 ## Anti-Patterns
 
-- Asking questions that the code answers — read it first
-- Asking 15 questions at once — bundle, prioritize, top 5
-- Proceeding without confirmation when the user's answers contradict each other — re-summarize and re-confirm
-- Using this skill for "rename this variable" — it's friction, not value
+- Asking questions that the code answers → read it first
+- Asking 15 questions at once → bundle, prioritize, top 5
+- Proceeding without confirmation when the user's answers contradict each other → re-summarize and re-confirm
+- Using this skill for "rename this variable" → it's friction, not value

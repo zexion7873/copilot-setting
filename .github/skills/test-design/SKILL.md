@@ -5,7 +5,7 @@ description: 'Use when user asks to design tests, plan test coverage, or identif
 
 # Test Design — Workflow
 
-Process for designing tests systematically. Targets JUnit 5 + Mockito. This file defines HOW to design, not coding standards.
+Process for designing tests systematically. Targets JUnit 5 + Mockito — coding conventions defined in `instructions/junit.instructions.md`. This file defines HOW to design, not coding standards.
 
 ## Phase 1 — Analyze the Code Under Test
 
@@ -93,10 +93,10 @@ Make tests resilient to mutation testing:
 
 Anti-patterns and coding conventions for JUnit 5 + Mockito are defined in `instructions/junit.instructions.md` (auto-applied on test files). Key reminders:
 
-- Test behavior, not implementation — assert returns + side effects, not call sequence
-- Every test asserts at least once — a test with no `assert*` always passes
-- Only mock dependencies — never mock the class under test
-- `assertEquals(expected, actual)` — never `assertTrue(a.equals(b))`
+- Test behavior, not implementation → assert returns + side effects, not call sequence
+- Every test asserts at least once → a test with no `assert*` always passes
+- Only mock dependencies → never mock the class under test
+- `assertEquals(expected, actual)` → never `assertTrue(a.equals(b))`
 
 ## Quick Checklist (small methods)
 
