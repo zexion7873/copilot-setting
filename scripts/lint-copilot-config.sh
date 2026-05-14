@@ -144,19 +144,12 @@ for f in "$GH"/agents/*.agent.md; do
   [[ -f "$f" ]] || continue
   aname=$(basename "$f" .agent.md)
   desc=$(get_fm "$f" "description")
-  referenced_skills=$(echo "$desc" | grep -oE '\`[a-z][a-z0-9-]+\`' | tr -d '`' | sort -u)
+  referenced_skills=$(printf '%s' "$desc" | grep -oE '[`][a-z][a-z0-9-]+[`]' | tr -d '`' | sort -u || true)
   for skill in $referenced_skills; do
-    if [[ -d "$GH/skills/$skill" ]] || [[ "$skill" == "$aname" ]]; then
-      continue
-    fi
-    known_non_skills="plan|sdd|debug|refactor"
     if [[ -d "$GH/skills/$skill" ]]; then
       continue
-    elif [[ ! -d "$GH/skills/$skill" ]] && [[ -f "$GH/skills/$skill/SKILL.md" ]]; then
-      continue
-    elif [[ ! -d "$GH/skills/$skill" ]]; then
-      err "Agent '$aname' references skill '$skill' but .github/skills/$skill/ does not exist"
     fi
+    err "Agent '$aname' references skill '$skill' but .github/skills/$skill/ does not exist"
   done
 done
 info "Agent → Skill references checked"
