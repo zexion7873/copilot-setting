@@ -1,6 +1,6 @@
 {
   "order": {
-    "agents": ["planner", "implementer", "reviewer", "debugger"],
+    "agents": ["planner", "implementer", "reviewer", "debugger", "researcher"],
     "skills": [
       "constitution", "clarify-task", "context-discovery",
       "plan", "adr", "spike",
@@ -12,7 +12,7 @@
       "debug", "performance"
     ],
     "instructions": [
-      "context7", "error-handling", "global-copilot", "logging",
+      "error-handling", "global-copilot", "logging",
       "javadoc", "jsp", "junit", "markdown", "no-heredoc",
       "security-and-owasp", "self-explanatory-code-commenting",
       "sql-rules", "sql-sp-generation", "xml", "properties", "yaml-json-config"
@@ -43,6 +43,11 @@
       "icon": "🐛",
       "summary": "Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test",
       "summary_zh": "觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試"
+    },
+    "researcher": {
+      "icon": "📚",
+      "summary": "Read-only research subagent for `@planner` — gathers codebase context and external references before planning",
+      "summary_zh": "唯讀研究 subagent，供 `@planner` 派遣 — 規劃前蒐集 codebase 脈絡與外部參考"
     }
   },
 
@@ -164,14 +169,11 @@
   },
 
   "instructions": {
-    "context7": {
-      "summary_zh": "透過 Context7 MCP 取得權威的外部文件與 API 參考"
-    },
     "error-handling": {
       "summary_zh": "例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播"
     },
     "global-copilot": {
-      "summary_zh": "全域編碼標準、慣例與規範"
+      "summary_zh": "語言與技術棧基礎規則：繁中回覆、英文寫 code、Java 8 + Maven、不用 Spring Boot"
     },
     "logging": {
       "summary_zh": "SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性"

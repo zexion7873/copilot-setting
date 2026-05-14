@@ -10,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-
 </div>
 
 多 agent 協作的 Copilot 設定——agent 驅動工作流、skill 執行任務、instruction 守規範，搭配 spec-driven 開發流程。
@@ -54,7 +53,7 @@ flowchart LR
 
 例子：加一支新的 API endpoint。
 
-```
+```text
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
                         Planner 掃 codebase，拆出分階段計畫，
                         接著寫正式 SDD（含驗收條件）
@@ -75,6 +74,7 @@ flowchart LR
 
 > [!TIP]
 > **其他常見起手式：**
+>
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
@@ -111,6 +111,7 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
+| 📚 | `@researcher` | Claude Opus 4.6 | 唯讀研究 subagent，供 `@planner` 派遣 — 規劃前蒐集 codebase 脈絡與外部參考 |
 <!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs 工作流程
@@ -122,6 +123,7 @@ flowchart LR
     Planner -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
+    Planner -.->|"subagent"| Researcher
 
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
@@ -178,9 +180,8 @@ flowchart LR
 <!-- BEGIN:INSTRUCTIONS_TABLE -->
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
-| `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
-| `global-copilot` | `**` | 全域編碼標準、慣例與規範 |
+| `global-copilot` | `**` | 語言與技術棧基礎規則：繁中回覆、英文寫 code、Java 8 + Maven、不用 Spring Boot |
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
 | `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
 | `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
@@ -215,6 +216,7 @@ flowchart LR
 
 > [!NOTE]
 > **命名慣例**（後綴依內容類型）：
+>
 > - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
 > - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
 > - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
@@ -261,12 +263,11 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 <summary><h2>📁 .github/ 目錄結構</h2></summary>
 
 <!-- BEGIN:DIRECTORY_TREE -->
-```
+```text
 ~/.github/
 ├── copilot-instructions.md                ← 全域基礎指示
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── context7
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── logging
@@ -287,7 +288,8 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   └── debugger             (Claude Opus 4.6)
+│   ├── debugger             (Claude Opus 4.6)
+│   └── researcher           (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json

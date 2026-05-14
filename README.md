@@ -10,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-
 </div>
 
 A multi-agent Copilot configuration — agents drive workflows, skills execute tasks, instructions enforce conventions, with a spec-driven development process.
@@ -54,7 +53,7 @@ flowchart LR
 
 Example: adding a new API endpoint.
 
-```
+```text
 You  →  @planner       "I need an API to query order history by customer ID"
                         Planner scans the codebase, drafts a phased plan,
                         then writes a formal SDD (spec) with acceptance criteria
@@ -75,6 +74,7 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 
 > [!TIP]
 > **Other common starting points:**
+>
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
@@ -111,6 +111,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
+| 📚 | `@researcher` | Claude Opus 4.6 | Read-only research subagent for `@planner` — gathers codebase context and external references before planning |
 <!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs Workflow
@@ -122,6 +123,7 @@ flowchart LR
     Planner -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
+    Planner -.->|"subagent"| Researcher
 
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Security / SQL review"| Reviewer
@@ -178,9 +180,8 @@ Automatically injected into the system prompt when the current file matches the 
 <!-- BEGIN:INSTRUCTIONS_TABLE -->
 | File | applyTo | Description |
 |------|---------|-------------|
-| `context7` | `**` | Use Context7 for authoritative external docs and API references when local context is insufficient |
 | `error-handling` | `**/*.java` | Exception handling and error response conventions for Java 8 — hierarchy, custom exceptions, retry, and error propagation. |
-| `global-copilot` | `**` | Global coding standards, conventions, and guidelines for all projects |
+| `global-copilot` | `**` | Language and tech stack base rules: respond in Traditional Chinese, code in English, Java 8 + Maven, no Spring Boot. |
 | `logging` | `**/*.java` | SLF4J + Logback logging conventions — severity levels, parameterized messages, context inclusion, and security. |
 | `javadoc` | `**/*.java` | Javadoc conventions for Java types and members — tags, formatting, when to document. |
 | `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention in server-rendered pages. |
@@ -215,6 +216,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 
 > [!NOTE]
 > **Naming convention** (suffix indicates content type):
+>
 > - `*-template` — fill-in scaffold for one-shot artifact creation (e.g., `spec-template`, `plan-template`)
 > - `*-checklist` — verification checklist with categorized items (e.g., `code-review-checklist`)
 > - `*-output` — output format / cheat-sheet reference cited by its paired skill (e.g., `sql-review-output`)
@@ -261,12 +263,11 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 <!-- BEGIN:DIRECTORY_TREE -->
-```
+```text
 ~/.github/
 ├── copilot-instructions.md                ← Global base instructions
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
-│   ├── context7
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── logging
@@ -287,7 +288,8 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
-│   └── debugger             (Claude Opus 4.6)
+│   ├── debugger             (Claude Opus 4.6)
+│   └── researcher           (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json

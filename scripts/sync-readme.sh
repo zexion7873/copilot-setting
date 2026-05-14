@@ -251,7 +251,7 @@ gen_directory_tree() {
 
   label() { meta_val ".directory_labels[\"$1\"].$lbl_key"; }
 
-  buf+='```'$'\n'
+  buf+='```text'$'\n'
   buf+="~/.github/"$'\n'
 
   # copilot-instructions.md
