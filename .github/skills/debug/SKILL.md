@@ -7,7 +7,7 @@ description: 'Use when user reports a bug, error, exception, stack trace, or une
 
 Systematic isolation and minimal fix process. Stack-specific patterns (NPE, leaks, SQL) live in `agents/debugger.agent.md`. This file is the process.
 
-Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+Full coding standards live in `instructions/error-handling.instructions.md`, `instructions/logging.instructions.md`, `instructions/sql-rules.instructions.md`, and `instructions/security-and-owasp.instructions.md` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
 
 - **SQL**: `PreparedStatement` with `?` only — never introduce string concatenation while fixing
 - **Exceptions**: no empty `catch` blocks; fix the handler, don't add a new swallow point; never catch `Throwable`

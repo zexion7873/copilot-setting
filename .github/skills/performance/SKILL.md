@@ -7,7 +7,7 @@ description: 'Use when user asks about performance optimization, profiling, late
 
 Practical performance tuning. Database rules live in `instructions/sql-rules.instructions.md` — defer there for SQL specifics. This skill covers methodology and the cross-stack checklist.
 
-Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+Full coding standards live in `instructions/error-handling.instructions.md`, `instructions/logging.instructions.md`, `instructions/sql-rules.instructions.md`, and `instructions/security-and-owasp.instructions.md` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
 
 - **SQL**: no `SELECT *`; no functions on indexed columns in `WHERE`; N+1 = SQL inside a loop; cursor pagination over `OFFSET`
 - **Logging**: SLF4J parameterized — `log.info("x={}", x)` — never `+` concatenation; minimize logging in hot paths

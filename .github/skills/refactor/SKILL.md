@@ -7,7 +7,7 @@ description: 'Use when user asks to refactor, clean up, simplify, or restructure
 
 Improve structure without changing external behavior. Refactoring is evolution, not rewrite.
 
-Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+Full coding standards live in `instructions/error-handling.instructions.md`, `instructions/logging.instructions.md`, `instructions/sql-rules.instructions.md`, and `instructions/security-and-owasp.instructions.md` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
 
 - **SQL**: never regress `PreparedStatement` to string concatenation during restructuring
 - **Exceptions**: no empty `catch` blocks; maintain layer-boundary translation when extracting methods

@@ -5,7 +5,7 @@ applyTo: '**/*.java, **/*.jsp'
 
 # Secure Coding and OWASP Guidelines
 
-Code generated, reviewed, or refactored must be secure by default. When suggesting security-relevant code, **state what risk is being mitigated** (e.g., "parameterized query prevents SQL injection"). SQL injection rules live in `instructions/sql-rules.instructions.md`.
+Code generated, reviewed, or refactored must be secure by default. When suggesting security-relevant code, **state what risk is being mitigated** (e.g., "parameterized query prevents SQL injection"). SQL injection rules live in `instructions/sql-rules.instructions.md`. Security logging rules also apply from `instructions/logging.instructions.md` (A09).
 
 ## A01 Broken Access Control & A10 SSRF
 

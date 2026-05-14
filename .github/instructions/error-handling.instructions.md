@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Exception Handling Conventions
 
-Hard rules for error handling in Java 8 projects. Related rules in `copilot-instructions.md` (general), `instructions/security-and-owasp.instructions.md` (security), and `prompts/code-review-checklist.prompt.md` (review checklist) still apply — this file is the single source of truth for exception design and propagation.
+Hard rules for error handling in Java 8 projects. Related rules in `copilot-instructions.md` (general), `instructions/logging.instructions.md` (exception logging), `instructions/security-and-owasp.instructions.md` (security), and `prompts/code-review-checklist.prompt.md` (review checklist) still apply — this file is the single source of truth for exception design and propagation.
 
 ## Exception Hierarchy
 
