@@ -28,6 +28,7 @@ You only touch **agents**. Everything else loads by itself.
 | **Agents** (`agents/`) | You type `@agent-name` in chat | Pick the agent |
 | **Skills** (`skills/`) | Copilot matches your message to the skill's `description` | Nothing — fires when relevant |
 | **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
+| **Hooks** (`hooks/`) | Agent lifecycle events (before/after tool use, session start/end) | Nothing — runs automatically |
 
 Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
 
@@ -41,6 +42,7 @@ flowchart LR
     Skills -->|reference rules from| Inst
     Skills <-->|workflow ↔ output format| Prompts
     Skills -->|hand off to| Agents
+    Hooks[\Hooks\] -.->|lifecycle guard| Agents
 ```
 
 > [!TIP]
@@ -274,6 +276,11 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   └── debugger             (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
+│
+├── hooks/                                 ← Shell commands at agent lifecycle events
+│   ├── default.json
+│   └── scripts/
+│       └── block-dangerous-commands.sh
 │
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist

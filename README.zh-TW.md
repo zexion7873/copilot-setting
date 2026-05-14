@@ -28,6 +28,7 @@
 | **Agents**（`agents/`） | 在 Chat 打 `@agent-name` | 選 agent |
 | **Skills**（`skills/`） | Copilot 把你說的話比對 skill 的 `description` | 不用動 — 聊到就觸發 |
 | **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
+| **Hooks**（`hooks/`） | Agent 生命週期事件（工具執行前後、session 開始/結束） | 不用動 — 自動執行 |
 
 資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
 
@@ -41,6 +42,7 @@ flowchart LR
     Skills -->|引用規則| Inst
     Skills <-->|工作流 ↔ 輸出格式| Prompts
     Skills -->|交接執行| Agents
+    Hooks[\Hooks\] -.->|生命週期守衛| Agents
 ```
 
 > [!TIP]
@@ -274,6 +276,11 @@ flowchart LR
 │   └── debugger             (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
+│
+├── hooks/                                 ← Agent 生命週期事件的 shell 命令
+│   ├── default.json
+│   └── scripts/
+│       └── block-dangerous-commands.sh
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
 │   ├── code-review-checklist
