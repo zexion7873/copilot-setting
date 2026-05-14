@@ -1,6 +1,6 @@
 ---
 name: Debugger
-description: 'Systematically debug issues by analyzing stack traces, reproducing problems, tracing execution flow, and identifying root causes. Say "debug" / "除錯" / "找 bug" / "報錯了" / "為什麼會錯" to activate the `debug` skill for hypothesis ranking, binary-search isolation, and minimal fix with regression tests. Hands off to @implementer once root cause is identified.'
+description: 'Systematically debug issues by analyzing stack traces, reproducing problems, tracing execution flow, and identifying root causes. Hands off to @implementer once root cause is identified.'
 model: Claude Opus 4.6
 tools: ['search', 'read', 'execute', 'context7/*']
 handoffs:

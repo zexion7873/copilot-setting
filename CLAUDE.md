@@ -96,7 +96,7 @@ Do not contradict these rules in skill / instruction content. When writing examp
 1. Create `.github/skills/<name>/SKILL.md` with the frontmatter shape above
 2. The `description` MUST include both English and Traditional Chinese trigger phrases plus a "Do NOT use for" clause
 3. If the skill needs supporting examples or sub-docs, put them under `.github/skills/<name>/<file>.md` and reference from SKILL.md by relative path — they only load when SKILL.md cites them
-4. **Bind to an owning agent**: add the skill to the agent's `description` field (with trigger phrases) and its skill activation table in the body. Every skill except `git-commit` must be reachable via an agent.
+4. **Bind to an owning agent**: add the skill to the agent's skill activation table in the body. The agent's `description` is for agent selection only — do not put skill trigger phrases there. Every skill except `git-commit` must be reachable via an agent.
 5. **If the skill reads or writes code**, add inline fallback rules for critical conventions (SQL, exceptions, logging, resources, security). In agent chat mode, file-type instructions may not auto-load — fallback rules guarantee the key constraints are always present. See `skills/implement/SKILL.md` for the canonical pattern.
 6. **If the agent has a handoff button pointing to this skill**, verify the handoff `prompt:` text contains a trigger phrase that matches the skill's `description`. Mismatched prompts silently activate the wrong skill.
 7. Update both `README.md` and `README.zh-TW.md` Skills tables together

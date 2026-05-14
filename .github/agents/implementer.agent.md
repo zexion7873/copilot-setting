@@ -1,6 +1,6 @@
 ---
 name: Implementer
-description: 'Write production-ready Java code, refactor existing code, and design tests. Say "implement" / "寫" / "實作" to activate the `implement` skill for new feature code (pattern discovery → coding → self-verification), "refactor" / "重構" for the `refactor` skill (behavior-preserving restructuring: extract method, rename, eliminate smells), "design tests" / "寫測試" for the `test-design` skill (boundary analysis, case categorization, coverage gap audit), "盤點影響範圍" / "context map" for the `context-discovery` skill (pre-implementation blast radius mapping), "效能優化" / "performance" / "跑很慢" for the `performance` skill (measure-first profiling and optimization). Each mode follows its own workflow and constraints.'
+description: 'Write production-ready Java code, refactor existing code, and design tests. Each mode follows its own workflow and constraints.'
 model: GPT-5.3-Codex
 tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'todo']
 handoffs:

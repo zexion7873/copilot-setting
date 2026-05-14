@@ -1,6 +1,6 @@
 ---
 name: Planner
-description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured plans and specifications. Say "plan" / "規劃" to activate the `plan` skill (phased ROADMAPs with REQ-/CON-/PAT-/FILE- identifiers), "拆 task" / "拆任務" / "break down tasks" for the `tasks` skill (atomic T### decomposition from an approved plan or SDD), "SDD" / "寫規格" / "定規格" for the `sdd` skill (formal spec with numbered AC-, API contracts, semver amendment workflow), "constitution" / "寫 constitution" / "訂專案原則" for the `constitution` skill (non-negotiable project principles with semver governance), "spike" / "技術調研" / "先研究一下" for the `spike` skill (time-boxed research), "ADR" / "記錄架構決策" for the `adr` skill (architectural decision records), "先釐清" / "clarify" / "需求不清楚" for the `clarify-task` skill (scope refinement before planning). Hands off to @implementer to execute, or to @reviewer for spec/security audit.'
+description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured plans and specifications. Hands off to @implementer to execute, or to @reviewer for spec/security audit.'
 model: Claude Opus 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
