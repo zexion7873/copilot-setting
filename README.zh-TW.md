@@ -100,7 +100,7 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 
 ---
 
-## 🤖 Agents（代理人）
+## 🤖 Agents
 
 在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
 
@@ -138,7 +138,7 @@ flowchart LR
 
 ---
 
-## ⚡ Skills（技能）
+## ⚡ Skills
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
 
@@ -171,7 +171,7 @@ flowchart LR
 
 ---
 
-## 📏 Instructions（指示）
+## 📏 Instructions
 
 當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
 
@@ -198,7 +198,7 @@ flowchart LR
 
 ---
 
-## 📋 Prompts（提示模板）
+## 📋 Prompts
 
 標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
 
