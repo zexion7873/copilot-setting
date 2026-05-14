@@ -22,10 +22,10 @@
 
 | 類別 | 角色 | 職責邊界 | 何時載入 |
 |---|---|---|---|
-| **Instructions**（`instructions/`） | 規則 | 編碼規範的單一來源 | 檔案符合 `applyTo` glob |
+| **Instructions**（`instructions/`） | 規則 | 編碼規範的單一來源 | 檔案符合 `applyTo` glob；skill 透過 fallback rules 引用 |
 | **Agents**（`agents/`） | 調度 | 我是誰、啟動哪些工作流、交接給誰 | 在 Chat 打 `@agent-name` |
-| **Skills**（`skills/`） | 工作流程 | 做事的步驟 — 引用規則和模板，不重寫 | Copilot 比對 `description` |
-| **Prompts**（`prompts/`） | 模板 | 輸出格式骨架 — 被工作流程引用 | agent/skill 內部讀取 |
+| **Skills**（`skills/`） | 工作流程 | 做事的步驟 — 引用規則和模板，不重寫 | Copilot 比對 `description`；agent 透過 Skill Activation 路由 |
+| **Prompts**（`prompts/`） | 模板 | 輸出格式骨架 — 被工作流程引用 | 配對的 skill 透過 cross-ref 引用 |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
