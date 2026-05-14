@@ -29,20 +29,26 @@
 | **Prompts**（`prompts/`） | agent/skill 內部讀取，或你打 `/prompt-name` | 幾乎不用 — agent 自己會引用 |
 | **Hooks**（`hooks/`） | Agent 生命週期事件（工具執行前後、session 開始/結束） | 不用動 — 自動執行 |
 
-資源之間互相引用以避免重複。Skill 將規則委派給 Instruction、輸出格式委派給 Prompt、執行委派給 Agent。
+### 四大類別
+
+| 類別 | 角色 | 職責邊界 |
+|---|---|---|
+| **Agent** | 角色 | 我是誰、啟動哪些工作流、交接給誰 |
+| **Skill** | 工作流程 | 做事的步驟 — 引用規則和模板，不自己重寫 |
+| **Instruction** | 規則 | 編碼規範的單一來源 — 被工作流程引用 |
+| **Prompt** | 模板 | 輸出格式骨架 — 被工作流程引用 |
+
+```text
+Agent (角色) ──啟動──→ Skill (工作流程) ──輸出格式──→ Prompt (模板)
+                                │
+                                └──規則──→ Instruction (規則)
+Hooks ──生命週期守衛──→ Agent
+```
+
+資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
 
 > [!NOTE]
 > **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql-rules`、`error-handling`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
-
-```mermaid
-flowchart LR
-    CI[copilot-instructions.md] -.->|每次對話載入| Chat((對話))
-    Inst[Instructions] -.->|依檔案類型注入| Chat
-    Skills -->|引用規則| Inst
-    Skills <-->|工作流 ↔ 輸出格式| Prompts
-    Skills -->|交接執行| Agents
-    Hooks[\Hooks\] -.->|生命週期守衛| Agents
-```
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。

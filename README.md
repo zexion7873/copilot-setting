@@ -29,20 +29,26 @@ You only touch **agents**. Everything else loads by itself.
 | **Prompts** (`prompts/`) | Agent/skill reads the file, or you type `/prompt-name` | Rarely — agents handle it |
 | **Hooks** (`hooks/`) | Agent lifecycle events (before/after tool use, session start/end) | Nothing — runs automatically |
 
-Resources reference each other to avoid duplication. Skills delegate rules to Instructions, output formats to Prompts, and execution to Agents.
+### Four Categories
+
+| Category | Role | Responsibility |
+|---|---|---|
+| **Agent** | 角色 | Who I am, which workflows I activate, who I hand off to |
+| **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
+| **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
+| **Prompt** | 模板 | Output format scaffolds — referenced by workflows |
+
+```text
+Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
+                                  │
+                                  └──rules──→ Instruction (規則)
+Hooks ──lifecycle guard──→ Agent
+```
+
+Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
 
 > [!NOTE]
 > **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql-rules`, `error-handling`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
-
-```mermaid
-flowchart LR
-    CI[copilot-instructions.md] -.->|every conversation| Chat((Chat))
-    Inst[Instructions] -.->|by file type| Chat
-    Skills -->|reference rules from| Inst
-    Skills <-->|workflow ↔ output format| Prompts
-    Skills -->|hand off to| Agents
-    Hooks[\Hooks\] -.->|lifecycle guard| Agents
-```
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
