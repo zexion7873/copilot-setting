@@ -111,7 +111,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
-| 📚 | `@researcher` | Claude Opus 4.6 | Read-only research subagent for `@planner` — gathers codebase context and external references before planning |
+| 📚 | `@researcher` | Claude Opus 4.6 | Read-only research subagent for `@implementer` — gathers codebase patterns and external references before coding |
 <!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs Workflow
@@ -123,8 +123,9 @@ flowchart LR
     Planner -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
-    Planner -.->|"subagent"| Researcher
 
+    Implementer -.->|"subagent"| Researcher
+    Implementer -.->|"subagent"| Reviewer
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Security / SQL review"| Reviewer
     Implementer -->|"Debug"| Debugger

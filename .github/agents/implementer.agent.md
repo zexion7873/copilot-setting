@@ -2,7 +2,8 @@
 name: Implementer
 description: 'Write production-ready Java code, refactor existing code, and design tests. Each mode follows its own workflow and constraints.'
 model: GPT-5.3-Codex
-tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'todo']
+tools: ['edit', 'search', 'read', 'execute', 'context7/*', 'agent', 'todo']
+agents: ['Researcher', 'Reviewer']
 handoffs:
   - label: Code Review
     agent: Reviewer

@@ -2,8 +2,7 @@
 name: Planner
 description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured plans and specifications. Hands off to @implementer to execute, or to @reviewer for spec/security audit.'
 model: Claude Opus 4.6
-tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
-agents: ['Researcher']
+tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 handoffs:
   - label: 審查 SDD
     agent: Reviewer
