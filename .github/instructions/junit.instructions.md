@@ -5,7 +5,7 @@ applyTo: '**/*Test.java, **/*IT.java, **/test/**/*.java'
 
 # JUnit 5 Conventions
 
-Hard rules for tests written with JUnit 5 (Jupiter) + Mockito. Test design workflow lives in `skills/test-design/`. This file is the static convention layer.
+Hard rules for tests written with JUnit 5 (Jupiter) + Mockito. Test design workflow lives in `skills/test-design/SKILL.md`. This file is the static convention layer.
 
 ## Naming & Structure
 
@@ -51,8 +51,10 @@ Hard rules for tests written with JUnit 5 (Jupiter) + Mockito. Test design workf
 
 ## Anti-Patterns
 
-- Asserting against multiple unrelated behaviors in one test
-- Using `Thread.sleep` for async — use `Awaitility` or test-controlled clocks
-- Reaching into private state via reflection — refactor for testability instead
-- Catching exceptions in test body just to call `fail(...)` — use `assertThrows`
-- Test names like `test1`, `testFoo`, `shouldWork` — failure log becomes useless
+| Pattern | Problem | Fix |
+|---|---|---|
+| Asserting multiple unrelated behaviors in one test | First failure hides the rest; unclear what broke | One behavior per test method |
+| `Thread.sleep` for async | Flaky, slow, non-deterministic | Use `Awaitility` or test-controlled clocks |
+| Reflection into private state | Brittle; breaks on refactor | Refactor for testability instead |
+| Catching exceptions to call `fail(...)` | Verbose, hides the actual assertion | Use `assertThrows` |
+| Names like `test1`, `testFoo`, `shouldWork` | Failure log is useless | `methodName_should_expectedBehavior_when_scenario` |

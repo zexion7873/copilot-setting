@@ -5,7 +5,7 @@ description: 'Use when user asks to break work into atomic, executable tasks AFT
 
 # Tasks — Workflow
 
-Decompose an approved plan or SDD into atomic, dependency-ordered tasks ready for execution. This skill activates AFTER plan / SDD are approved. It does NOT design — it only sequences. If the design is wrong, hand back to `plan` or `sdd`, do not patch it here.
+Decompose an approved plan or SDD into atomic, dependency-ordered tasks ready for execution. Output format defined in `prompts/tasks-template.prompt.md`. This skill activates AFTER plan / SDD are approved. It does NOT design — it only sequences. If the design is wrong, hand back to `plan` or `sdd`, do not patch it here.
 
 ## Phase 1 — Prerequisite Gate
 

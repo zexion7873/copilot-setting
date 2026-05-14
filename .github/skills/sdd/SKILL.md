@@ -1,11 +1,11 @@
 ---
 name: sdd
-description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation phasing without spec depth (prefer plan skill), atomic task breakdowns (prefer tasks skill, which runs AFTER sdd), quick bug fixes, general documentation (Javadoc lives in code; API docs and migration guides are written directly), architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill). An SDD produces a formal SPECIFICATION with numbered acceptance criteria (AC-) and API contracts — if the user only needs phased execution steps without ACs, redirect to plan skill.'
+description: 'Use when user asks to write an SDD, create a spec document, define a specification, or adopt spec-driven development. Triggers on: write SDD, create spec document, write specification, define spec, Spec-Driven Development, spec before code, 寫 SDD, 寫規格, 定規格, 寫規格文件, 定義規格, 規格驅動開發, 先定規格再實作. Produces a formal SDD covering design, API specs, schema changes, and acceptance criteria. Do NOT use for implementation phasing without spec depth (prefer plan skill), atomic task breakdowns (prefer tasks skill), quick bug fixes, general documentation, architectural decision records (prefer adr skill), or reviewing an existing SDD (prefer sdd-review skill).'
 ---
 
-# SDD (Spec-Driven Development) — Workflow
+# SDD — Workflow
 
-Create a formal specification document BEFORE implementation begins. The SDD is the contract between planning and coding — implementation must comply with it.
+Create a formal Spec-Driven Development (SDD) document BEFORE implementation begins. The SDD is the contract between planning and coding — implementation must comply with it. Output format defined in `prompts/spec-template.prompt.md`.
 
 ## Phase 0 — Amendment Gate
 

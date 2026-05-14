@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: 'Use when user asks to refactor, clean up, simplify, or restructure code without changing behavior. Triggers on: refactor, clean up, simplify, restructure, extract method, rename, eliminate code smell, decompose, 重構, 整理一下, 這段太亂了, 簡化, 拆開這個 method, 抽出方法, 重新命名. Covers extract method, rename, decompose large functions, and eliminate code smells. Do NOT use for bug fixes (prefer debug), writing new features or adding new endpoints (prefer implement), or formatting-only changes. Prefer code-review skill when the goal is to review rather than modify.'
+description: 'Use when user asks to refactor, clean up, simplify, or restructure code without changing behavior. Triggers on: refactor, clean up, simplify, restructure, extract method, rename, eliminate code smell, decompose, 重構, 整理一下, 這段太亂了, 簡化, 拆開這個 method, 抽出方法, 重新命名. Covers extract method, rename, decompose large functions, and eliminate code smells. Do NOT use for bug fixes (prefer debug), writing new features or adding new endpoints (prefer implement), formatting-only changes, or when the goal is to review rather than modify (prefer code-review).'
 ---
 
 # Refactor — Workflow
@@ -15,7 +15,7 @@ Full coding standards live in `instructions/` (auto-applied when matching files 
 - **Resources**: preserve `try-with-resources` for all `AutoCloseable` — critical when extracting methods that handle `Connection`, `PreparedStatement`, `ResultSet`
 - **Security**: no hardcoded secrets; maintain input validation at boundaries; keep `<c:out>` in JSP
 
-## Golden Rules
+## Rules
 
 1. **Behavior preserved** — change how, not what
 2. **Small steps** — tiny change, run tests, commit, repeat

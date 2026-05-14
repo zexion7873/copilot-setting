@@ -1,11 +1,11 @@
 ---
 name: test-design
-description: 'Use when user asks to design tests, plan test coverage, or identify what to test. Triggers on: design tests, plan test coverage, identify what to test, test cases, boundary cases, edge cases, coverage gap, 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率, 該測哪些情境, 邊界測試. Designs test cases with boundary analysis, category classification, and coverage gap audit; hand off to @implementer for coding. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures — prefer debug skill for that.'
+description: 'Use when user asks to design tests, plan test coverage, or identify what to test. Triggers on: design tests, plan test coverage, identify what to test, test cases, boundary cases, edge cases, coverage gap, 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率, 該測哪些情境, 邊界測試. Designs test cases with boundary analysis, category classification, and coverage gap audit. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures (prefer debug skill).'
 ---
 
 # Test Design — Workflow
 
-Process for designing tests systematically. Targets JUnit 5 + Mockito. This file defines HOW to design, not coding standards.
+Process for designing tests systematically. Targets JUnit 5 + Mockito — coding conventions defined in `instructions/junit.instructions.md`. This file defines HOW to design, not coding standards.
 
 ## Phase 1 — Analyze the Code Under Test
 
@@ -82,14 +82,21 @@ Make tests resilient to mutation testing:
 - Removed method call → use `verify()`
 - Arithmetic operator swap → assert exact result
 
-## Test Anti-Patterns
+## Handoffs
+
+- → `@implementer` (Test Design Mode) — writes JUnit 5 + Mockito code from the design table
+- → `instructions/junit.instructions.md` — auto-applied conventions for test files (naming, AAA, assertions, mocking)
+- ← `implement` skill — implementation may trigger test design for new functionality
+- ← `code-review` skill — review may flag coverage gaps needing test design
+
+## Anti-Patterns
 
 Anti-patterns and coding conventions for JUnit 5 + Mockito are defined in `instructions/junit.instructions.md` (auto-applied on test files). Key reminders:
 
-- Test behavior, not implementation — assert returns + side effects, not call sequence
-- Every test asserts at least once — a test with no `assert*` always passes
-- Only mock dependencies — never mock the class under test
-- `assertEquals(expected, actual)` — never `assertTrue(a.equals(b))`
+- Test behavior, not implementation → assert returns + side effects, not call sequence
+- Every test asserts at least once → a test with no `assert*` always passes
+- Only mock dependencies → never mock the class under test
+- `assertEquals(expected, actual)` → never `assertTrue(a.equals(b))`
 
 ## Quick Checklist (small methods)
 

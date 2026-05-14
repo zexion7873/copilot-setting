@@ -1,11 +1,18 @@
 ---
 name: performance
-description: 'Use when user asks about performance optimization, profiling, latency / throughput / memory tuning, or bottleneck analysis. Triggers on: performance optimization, profile, latency, throughput, memory tuning, find bottleneck, slow response, optimize speed, 效能優化, 跑很慢, 記憶體炸了, 怎麼加速, 找瓶頸, 效能調校, 反應太慢. Applies a measure-first methodology and a checklist across frontend, Java 8 backend, database (defers to sql-rules), and profiling tools. Do NOT use for SQL-only optimization (prefer sql-review skill), bug investigation (prefer debug skill), or general code review without performance focus (prefer code-review skill).'
+description: 'Use when user asks about performance optimization, profiling, latency / throughput / memory tuning, or bottleneck analysis. Triggers on: performance optimization, profile, latency, throughput, memory tuning, find bottleneck, slow response, optimize speed, 效能優化, 跑很慢, 記憶體炸了, 怎麼加速, 找瓶頸, 效能調校, 反應太慢. Applies a measure-first methodology across frontend, Java 8 backend, and database layers. Do NOT use for SQL-only optimization (prefer sql-review skill), bug investigation (prefer debug skill), or general code review without performance focus (prefer code-review skill).'
 ---
 
 # Performance — Workflow
 
 Practical performance tuning. Database rules live in `instructions/sql-rules.instructions.md` — defer there for SQL specifics. This skill covers methodology and the cross-stack checklist.
+
+Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: no `SELECT *`; no functions on indexed columns in `WHERE`; N+1 = SQL inside a loop; cursor pagination over `OFFSET`
+- **Logging**: SLF4J parameterized — `log.info("x={}", x)` — never `+` concatenation; minimize logging in hot paths
+- **Resources**: `try-with-resources` for all `AutoCloseable` — leaked connections cause pool exhaustion under load
+- **Security**: no hardcoded secrets; caching must not store sensitive data (auth tokens, PII, session state)
 
 ## Phase 1 — Methodology (apply before any change)
 

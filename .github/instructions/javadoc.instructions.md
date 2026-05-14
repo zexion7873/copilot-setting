@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Javadoc Conventions
 
-Hard rules for documenting Java code. Public / protected APIs MUST be documented; private members SHOULD be when non-trivial.
+Hard rules for documenting Java code. Public / protected APIs MUST be documented; private members SHOULD be when non-trivial. For general commenting philosophy (when to comment vs. refactor), see `instructions/self-explanatory-code-commenting.instructions.md`.
 
 ## When to Document
 
@@ -40,8 +40,10 @@ Hard rules for documenting Java code. Public / protected APIs MUST be documented
 
 ## Anti-Patterns
 
-- Restating the method signature in prose (`// Gets the user` above `getUser()`)
-- Empty `@param` / `@return` lines
-- Capitalized `@param` description ending in a period (style mismatch)
-- `@author` / `@version` on every file — git already tracks this; reserve for stable public APIs
-- Documenting `{@inheritDoc}` cases where behavior is identical (the inherited doc is enough)
+| Pattern | Problem | Fix |
+|---|---|---|
+| Restating method signature in prose (`// Gets the user` above `getUser()`) | Noise; says WHAT, not WHY | Delete or replace with meaningful context |
+| Empty `@param` / `@return` lines | Adds visual clutter without information | Fill in or remove the tag |
+| Capitalized `@param` description ending in period | Style inconsistency with Javadoc conventions | Lowercase start, no trailing period |
+| `@author` / `@version` on every file | Git already tracks this | Reserve for stable public APIs only |
+| Documenting `{@inheritDoc}` with identical behavior | Duplicates inherited doc for no gain | Omit; the inherited doc is enough |

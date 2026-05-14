@@ -7,6 +7,14 @@ description: 'Use when user asks for security review, vulnerability scan, penetr
 
 Process for systematic Java web app security audit. Vulnerability rules live in `instructions/security-and-owasp.instructions.md`. This file defines the order of attack.
 
+Full coding standards live in `instructions/` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+
+- **SQL**: `PreparedStatement` with `?` only — string concatenation is always CRITICAL (A03 Injection)
+- **Exceptions**: no empty `catch` blocks; no stack trace exposure to clients; no `e.getMessage()` in HTTP responses
+- **Logging**: never log secrets, tokens, PII, or session IDs; SLF4J parameterized only
+- **Resources**: `try-with-resources` for all `AutoCloseable` — unclosed resources are a misconfiguration finding (A05)
+- **Security**: no hardcoded secrets; `<c:out>` for all dynamic output in JSP; validate inputs at boundaries; cookies must be `HttpOnly` + `Secure` + `SameSite=Strict`
+
 ## Phase 1 — Map the Attack Surface
 
 Inventory entry points before checking any vulnerability category.
@@ -138,6 +146,10 @@ XSS:              <script>alert(1)</script>
 Auth bypass:      access /api/user/999 as user with ID 1
 ```
 
-## Workflow Anti-Patterns
+## Anti-Patterns
 
-Skip the audit if you do any of these: checklist-only review without attack-surface mapping, fixing symptoms instead of tracing data flow, auditing only "security code" (vulns hide in business logic), skipping negative tests, or ignoring LOW findings (they chain into critical exploits).
+- Checklist-only review without attack-surface mapping → miss context-dependent vulns
+- Fixing symptoms instead of tracing data flow → incomplete remediation
+- Auditing only "security code" — vulns hide in business logic
+- Skipping negative tests → can't confirm fix works
+- Ignoring LOW findings → they chain into critical exploits

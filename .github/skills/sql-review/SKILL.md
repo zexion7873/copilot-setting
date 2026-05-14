@@ -89,7 +89,14 @@ Lower priority but still part of the pass:
 
 Severity buckets, finding format, and report structure defined in `prompts/sql-review-output.prompt.md` — apply them here.
 
-## Workflow Anti-Patterns
+## Handoffs
+
+- → `@implementer` — to fix SQL issues flagged in the review
+- → `performance` skill — when slow queries need deeper profiling beyond EXPLAIN
+- ← `code-review` skill — code review escalates SQL concerns here
+- ← `performance` skill — performance tuning defers deep SQL analysis here
+
+## Anti-Patterns
 
 - Reviewing without EXPLAIN → always pull a plan first
 - Adding indexes without checking write cost → confirm write frequency

@@ -63,7 +63,10 @@ Use Context7 for external API / library docs when the plan involves unfamiliar d
 - Vague or ambiguous request → use `clarify-task` skill before planning
 - Technical question blocking progress → use `spike` skill for time-boxed research
 - Design decision worth recording → use `adr` skill after the decision is made
-- If the plan involves security-sensitive design, suggest `@reviewer` for security audit
+
+## Handoff Guidance
+
+- If the plan involves security-sensitive design → suggest `@reviewer` for security audit
 - Plan ready for formalization → use `sdd` skill to write the spec directly
 - SDD complete → suggest `@reviewer` for `sdd-review`, then `@implementer` to execute
 - Plan approved → use `tasks` skill for atomic task decomposition, then suggest `@implementer` to execute

@@ -1,11 +1,9 @@
 ---
 name: git-commit
-description: '⚠️ MANUAL ONLY — invoke ONLY via /git-commit. NEVER auto-trigger. Use when user explicitly asks to commit, stage changes, or generate a commit message (幫我 commit, 提交, 寫 commit message). This skill writes git history — a destructive side effect requiring explicit user intent. NEVER activate from conversational mentions of commits, diffs, or git status. Do NOT use for git log, branch operations, push/pull, or any read-only git inspection.'
+description: '⚠️ MANUAL ONLY — invoke ONLY via /git-commit. NEVER auto-trigger. Use when user explicitly asks to commit, stage changes, or generate a commit message (幫我 commit, 提交, 寫 commit message). Generates conventional commit messages with intelligent staging. Do NOT use for git log, branch operations, push/pull, or any read-only git inspection.'
 ---
 
-# Git Commit with Conventional Commits
-
-## Overview
+# Git Commit — Workflow
 
 Create standardized, semantic git commits using the Conventional Commits specification. Analyze the actual diff to determine appropriate type, scope, and message.
 

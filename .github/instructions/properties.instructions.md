@@ -5,6 +5,8 @@ applyTo: '**/*.properties'
 
 # Java Properties File Conventions
 
+Conventions for `.properties` files in Java projects — key naming, organization, encoding, and secret management.
+
 ## Key Naming
 
 - Dot-separated, all lowercase: `db.connection.url`, `mail.smtp.host`, `cache.ttl.seconds`
@@ -63,7 +65,7 @@ mail.smtp.port=587
 
 ## Anti-Patterns
 
-| Anti-pattern | Why it's wrong | Fix |
+| Pattern | Problem | Fix |
 |---|---|---|
 | `DB_URL=jdbc:...` | Uppercase breaks naming convention | `db.url=jdbc:...` |
 | `db.password=s3cr3t` | Secret committed in plaintext | `db.password=${DB_PASSWORD}` |

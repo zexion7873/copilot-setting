@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 'Use when user asks to review code, check a PR, audit changes, or verify code against a plan. Triggers on: review code, check PR, audit changes, code review, verify against plan, 審查程式碼, 看一下這段 code, 幫我 review, 程式碼審查, 檢查 PR. Performs structured review with issue classification and verdict focused on correctness, style, and bug patterns. Do NOT use for simple "what does this code do" explanations, refactoring requests (prefer refactor), when user request is vague and needs scope clarification (prefer clarify-task), or for spec compliance verification post-implementation (prefer sdd-compliance skill — that focuses on AC traceability and requirements coverage).'
+description: 'Use when user asks to review code, check a PR, audit changes, or verify code against a plan. Triggers on: review code, check PR, audit changes, code review, verify against plan, 審查程式碼, 看一下這段 code, 幫我 review, 程式碼審查, 檢查 PR. Performs structured review with issue classification and verdict focused on correctness, style, and bug patterns. Do NOT use for simple "what does this code do" explanations, refactoring requests (prefer refactor), when user request is vague and needs scope clarification (prefer clarify-task), or for spec compliance verification post-implementation (prefer sdd-compliance).'
 ---
 
 # Code Review — Workflow
@@ -97,7 +97,14 @@ Should fix:
 1. <WARNING summary linking to detail>
 ```
 
-## Review Anti-Patterns
+## Handoffs
+
+- → `@implementer` — to fix issues or refactor based on review findings
+- → `@planner` — when fundamental design problems require re-planning
+- ← `implement` skill — implementation completion triggers review
+- ← `refactor` skill — refactored code needs re-review
+
+## Anti-Patterns
 
 - Rubber-stamp approval → defeats the review
 - Style-only feedback → misses real issues

@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Logging Conventions
 
-Hard rules for logging in Java 8 projects. Uses SLF4J facade with Logback implementation.
+Hard rules for logging in Java 8 projects. Uses SLF4J facade with Logback implementation. Related conventions in `instructions/error-handling.instructions.md` (exception logging) and `instructions/security-and-owasp.instructions.md` (security logging).
 
 ## Framework
 
@@ -50,11 +50,11 @@ Hard rules for logging in Java 8 projects. Uses SLF4J facade with Logback implem
 
 ## Anti-Patterns
 
-| Pattern | Fix |
-|---|---|
-| `System.out.println(...)` | `log.info(...)` — use the framework |
-| `e.printStackTrace()` | `log.error("context", e)` — proper level and context |
-| `log.error("Error: " + e.getMessage())` | `log.error("context", e)` — preserve stack trace, no concat |
-| `log.info("entering method")` | Log outcomes, not ceremony |
-| Log and rethrow same exception | Log at final handler only |
-| `catch (Exception e) { log.warn(...); }` | Log + rethrow, or handle meaningfully |
+| Pattern | Problem | Fix |
+|---|---|---|
+| `System.out.println(...)` | Bypasses logging framework, no level/context | `log.info(...)` — use the framework |
+| `e.printStackTrace()` | Writes to stderr, loses context and level | `log.error("context", e)` — proper level and context |
+| `log.error("Error: " + e.getMessage())` | Concatenation wastes allocation; loses stack trace | `log.error("context", e)` — preserve stack trace, no concat |
+| `log.info("entering method")` | Noise; provides no diagnostic value | Log outcomes, not ceremony |
+| Log and rethrow same exception | Duplicate log entries across layers | Log at final handler only |
+| `catch (Exception e) { log.warn(...); }` | Swallows exception silently | Log + rethrow, or handle meaningfully |
