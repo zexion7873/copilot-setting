@@ -273,6 +273,8 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   ├── reviewer             (Claude Opus 4.6)
 │   └── debugger             (Claude Opus 4.6)
 │
+├── hooks/                                 ← Shell commands at agent lifecycle events
+│
 ├── prompts/                               ← Standards/format references paired with skills
 │   ├── code-review-checklist
 │   ├── sql-review-output
