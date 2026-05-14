@@ -7,7 +7,7 @@ GH="$ROOT/.github"
 META="$SCRIPT_DIR/readme-meta.json"
 
 errors=0
-err() { echo "ERROR: $*" >&2; ((errors++)); }
+err() { echo "ERROR: $*" >&2; errors=$((errors + 1)); }
 info() { echo "  ✓ $*"; }
 
 if ! command -v jq &> /dev/null; then
@@ -114,13 +114,14 @@ done
 info "Prompts ↔ meta sync checked"
 
 # ---------------------------------------------------------------
-#  5. Every skill must be referenced by at least one agent description
+#  5. Every skill must be referenced by at least one agent body
+#     (skill activation tables live in the body, not frontmatter)
 # ---------------------------------------------------------------
 echo "[5] Skill → Agent binding"
-all_agent_descs=""
+all_agent_bodies=""
 for f in "$GH"/agents/*.agent.md; do
   [[ -f "$f" ]] || continue
-  all_agent_descs+=" $(get_fm "$f" "description")"
+  all_agent_bodies+=" $(awk '/^---[[:space:]]*$/{fm++; next} fm>=2' "$f")"
 done
 
 for f in "$GH"/skills/*/SKILL.md; do
@@ -130,8 +131,8 @@ for f in "$GH"/skills/*/SKILL.md; do
   if [[ "$trigger" == "manual" ]]; then
     continue
   fi
-  if ! echo "$all_agent_descs" | grep -qF "\`$sname\`"; then
-    err "Skill '$sname' is not referenced in any agent's description"
+  if ! echo "$all_agent_bodies" | grep -qF "\`$sname\`"; then
+    err "Skill '$sname' is not referenced in any agent body"
   fi
 done
 info "Skill → Agent bindings checked"
