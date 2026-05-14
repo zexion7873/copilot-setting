@@ -10,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-
 </div>
 
 多 agent 協作的 Copilot 設定——agent 驅動工作流、skill 執行任務、instruction 守規範，搭配 spec-driven 開發流程。
@@ -54,7 +53,7 @@ flowchart LR
 
 例子：加一支新的 API endpoint。
 
-```
+```text
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
                         Planner 掃 codebase，拆出分階段計畫，
                         接著寫正式 SDD（含驗收條件）
@@ -75,6 +74,7 @@ flowchart LR
 
 > [!TIP]
 > **其他常見起手式：**
+>
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
@@ -216,6 +216,7 @@ flowchart LR
 
 > [!NOTE]
 > **命名慣例**（後綴依內容類型）：
+>
 > - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
 > - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
 > - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
@@ -262,7 +263,7 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
 <summary><h2>📁 .github/ 目錄結構</h2></summary>
 
 <!-- BEGIN:DIRECTORY_TREE -->
-```
+```text
 ~/.github/
 ├── copilot-instructions.md                ← 全域基礎指示
 │

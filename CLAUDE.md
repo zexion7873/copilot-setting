@@ -21,6 +21,7 @@ Four resource types under `.github/`, each with distinct loading semantics. **Pi
 | `skills/<name>/SKILL.md` | `.github/skills/` | Auto-trigger on description match, OR `/skill-name` | Auto + Manual | Multi-step workflows |
 
 **Decision rule when adding new content:**
+
 - File-type rule → `instructions/` (auto-applies, no friction)
 - Multi-step procedure → `skills/` (auto-triggers when relevant)
 - One-shot template needing variables → `prompts/`
@@ -36,6 +37,7 @@ Skills, prompts, and instructions reference each other by **relative path within
 - Code-touching skills include inline **fallback rules** — a compact subset of critical conventions from instructions, so they apply even when the matching file is not focused in agent chat mode
 
 Examples in the codebase:
+
 - `skills/code-review/` ↔ `prompts/code-review-checklist.prompt.md` + inline fallback rules
 - `skills/sql-review/` ↔ `instructions/sql-rules.instructions.md` + `prompts/sql-review-output.prompt.md` + inline fallback rules
 - `skills/security-audit/` ↔ `instructions/security-and-owasp.instructions.md`
@@ -62,6 +64,7 @@ To prevent auto-invocation in Copilot (e.g., for `git-commit` which writes histo
 ## Frontmatter conventions per resource type
 
 **`instructions/*.instructions.md`:**
+
 ```yaml
 ---
 description: '...'
@@ -70,12 +73,14 @@ applyTo: '**/*.java, **/*.sql'   # comma-separated globs
 ```
 
 **`skills/<name>/SKILL.md`:**
+
 ```yaml
 ---
 name: <skill-name>
 description: 'Use when ... Triggers on: <English phrases>, <繁中觸發詞>. Does X. Do NOT use for ...'
 ---
 ```
+
 The `description` is **the only mechanism Copilot uses to decide auto-trigger** — every skill description in this repo includes English triggers, Traditional Chinese triggers, and explicit "Do NOT use for" anti-cases. Match this pattern when adding skills.
 
 **`agents/*.agent.md` and `prompts/*.prompt.md`:** see existing files for shape; both are manual-trigger so frontmatter is less load-bearing.

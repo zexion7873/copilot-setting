@@ -11,5 +11,7 @@ config:
   MD034: false
   # Allow emphasis as heading
   MD036: false
+  # Allow first line to be HTML (centered div with badges)
+  MD041: false
   # Allow inline HTML images
   MD045: false

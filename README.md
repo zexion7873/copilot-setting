@@ -10,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting/issues)
 [![Repo size](https://img.shields.io/github/repo-size/zexion7873/copilot-setting?style=flat)](https://github.com/zexion7873/copilot-setting)
 
-
 </div>
 
 A multi-agent Copilot configuration — agents drive workflows, skills execute tasks, instructions enforce conventions, with a spec-driven development process.
@@ -54,7 +53,7 @@ flowchart LR
 
 Example: adding a new API endpoint.
 
-```
+```text
 You  →  @planner       "I need an API to query order history by customer ID"
                         Planner scans the codebase, drafts a phased plan,
                         then writes a formal SDD (spec) with acceptance criteria
@@ -75,6 +74,7 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 
 > [!TIP]
 > **Other common starting points:**
+>
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
@@ -216,6 +216,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 
 > [!NOTE]
 > **Naming convention** (suffix indicates content type):
+>
 > - `*-template` — fill-in scaffold for one-shot artifact creation (e.g., `spec-template`, `plan-template`)
 > - `*-checklist` — verification checklist with categorized items (e.g., `code-review-checklist`)
 > - `*-output` — output format / cheat-sheet reference cited by its paired skill (e.g., `sql-review-output`)
@@ -262,7 +263,7 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 <!-- BEGIN:DIRECTORY_TREE -->
-```
+```text
 ~/.github/
 ├── copilot-instructions.md                ← Global base instructions
 │
