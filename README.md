@@ -276,13 +276,6 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   └── debugger             (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
-│
-├── hooks/                                 ← Shell commands at agent lifecycle events
-│   ├── default.json
-│   └── scripts/
-│       └── block-dangerous-commands.sh
-│
-├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json
 │   └── scripts/
 │       └── block-dangerous-commands.sh

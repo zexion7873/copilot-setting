@@ -276,13 +276,6 @@ flowchart LR
 │   └── debugger             (Claude Opus 4.6)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
-│
-├── hooks/                                 ← Agent 生命週期事件的 shell 命令
-│   ├── default.json
-│   └── scripts/
-│       └── block-dangerous-commands.sh
-│
-├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json
 │   └── scripts/
 │       └── block-dangerous-commands.sh
