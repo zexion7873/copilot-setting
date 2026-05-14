@@ -102,12 +102,14 @@ Semver convention: **MAJOR** for breaking changes (removed AC, API contract chan
 
 Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / Maven projects.
 
+<!-- BEGIN:AGENTS_TABLE -->
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
+<!-- END:AGENTS_TABLE -->
 
 ### Agent Handoffs Workflow
 
@@ -138,6 +140,7 @@ flowchart LR
 
 Executable workflows. Auto-triggered by Copilot when relevant (unless disabled), or invoke manually via `/skill-name`.
 
+<!-- BEGIN:SKILLS_TABLE -->
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
 | 📜 | `constitution` | Auto + Manual | Project-wide non-negotiable principles and governance — stable, high-level only (200-line hard limit) |
@@ -159,6 +162,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
+<!-- END:SKILLS_TABLE -->
 
 > [!WARNING]
 > `git-commit` is marked **manual only** because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
@@ -169,24 +173,26 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 Automatically injected into the system prompt when the current file matches the `applyTo` glob.
 
+<!-- BEGIN:INSTRUCTIONS_TABLE -->
 | File | applyTo | Description |
 |------|---------|-------------|
-| `context7` | `**` | Use Context7 MCP for authoritative external docs and API references |
-| `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, retry, error propagation |
-| `global-copilot` | `**` | Global coding standards, conventions, and guidelines |
-| `logging` | `**/*.java` | SLF4J + Logback conventions — severity levels, parameterized messages, context, security |
-| `javadoc` | `**/*.java` | Javadoc conventions — required tags, summary sentence, formatting, anti-patterns |
-| `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, XSS prevention |
-| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions — naming, AAA, parameterization, assertions |
-| `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
-| `no-heredoc` | `**` | Prevent terminal heredoc file corruption — enforce file editing tools |
-| `security-and-owasp` | `**/*.{java,jsp}` | Secure coding based on OWASP Top 10 |
-| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments |
-| `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL hard rules: injection prevention, performance, code quality (single source of truth) |
-| `sql-sp-generation` | `**/*.sql` | MySQL stored procedure & schema conventions |
-| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files |
-| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, encoding, secret management |
-| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, secret management |
+| `context7` | `**` | Use Context7 for authoritative external docs and API references when local context is insufficient |
+| `error-handling` | `**/*.java` | Exception handling and error response conventions for Java 8 — hierarchy, custom exceptions, retry, and error propagation. |
+| `global-copilot` | `**` | Global coding standards, conventions, and guidelines for all projects |
+| `logging` | `**/*.java` | SLF4J + Logback logging conventions — severity levels, parameterized messages, context inclusion, and security. |
+| `javadoc` | `**/*.java` | Javadoc conventions for Java types and members — tags, formatting, when to document. |
+| `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention in server-rendered pages. |
+| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions for Java tests — naming, structure, parameterization, assertions. |
+| `markdown` | `**/*.md` | Markdown formatting aligned to the CommonMark specification (0.31.2) |
+| `no-heredoc` | `**` | Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. Works around VS Code Copilot terminal corruption. |
+| `security-and-owasp` | `**/*.java, **/*.jsp` | Secure coding rules for Java web applications based on OWASP Top 10 and industry best practices. |
+| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments. Only comment WHY when non-obvious. Applies to any language with comments. |
+| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL hard rules covering injection prevention, performance pitfalls, indexing, pagination, and code quality. Single source of truth for SQL across all file types that may contain it. |
+| `sql-sp-generation` | `**/*.sql` | MySQL stored procedure and schema generation conventions. General SQL rules live in sql-rules.instructions.md. |
+| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files — structure, formatting, and common pitfalls. |
+| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, encoding, and secret management. |
+| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, and secret management. |
+<!-- END:INSTRUCTIONS_TABLE -->
 
 ---
 
@@ -194,6 +200,7 @@ Automatically injected into the system prompt when the current file matches the 
 
 Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
 
+<!-- BEGIN:PROMPTS_TABLE -->
 | Prompt | Paired skill | Purpose |
 |--------|-------------|---------|
 | `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
@@ -202,6 +209,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 | `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
 | `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
+<!-- END:PROMPTS_TABLE -->
 
 > [!NOTE]
 > **Naming convention** (suffix indicates content type):
@@ -236,6 +244,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 <details>
 <summary><h2>📁 Directory Structure</h2></summary>
 
+<!-- BEGIN:DIRECTORY_TREE -->
 ```
 ~/.github/
 ├── copilot-instructions.md                ← Global base instructions
@@ -244,54 +253,55 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   ├── context7
 │   ├── error-handling
 │   ├── global-copilot
+│   ├── logging
 │   ├── javadoc
 │   ├── jsp
 │   ├── junit
-│   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
-│   ├── properties
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
 │   ├── sql-sp-generation
 │   ├── xml
+│   ├── properties
 │   └── yaml-json-config
 │
 ├── agents/                                ← Invoke via @agent-name in chat
-│   ├── debugger             (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
 │   ├── planner              (Claude Opus 4.6)
-│   └── reviewer             (Claude Opus 4.6)
+│   ├── implementer          (GPT-5.3-Codex)
+│   ├── reviewer             (Claude Opus 4.6)
+│   └── debugger             (Claude Opus 4.6)
 │
 ├── prompts/                               ← Standards/format references paired with skills
-│   ├── adr-template
 │   ├── code-review-checklist
-│   ├── plan-template
-│   ├── spec-template
 │   ├── sql-review-output
-│   └── tasks-template
+│   ├── spec-template
+│   ├── plan-template
+│   ├── tasks-template
+│   └── adr-template
 │
 └── skills/                                ← Executable skills for agents
-    ├── adr/
-    ├── clarify-task/
-    ├── code-review/
     ├── constitution/
+    ├── clarify-task/
     ├── context-discovery/
-    ├── debug/
-    ├── git-commit/
-    ├── implement/
-    ├── performance/
     ├── plan/
-    ├── refactor/
-    ├── sdd-compliance/
-    ├── sdd-review/
-    ├── sdd/
-    ├── security-audit/
+    ├── adr/
     ├── spike/
-    ├── sql-review/
+    ├── sdd/
+    ├── sdd-review/
     ├── tasks/
-    └── test-design/
+    ├── implement/
+    ├── sdd-compliance/
+    ├── refactor/
+    ├── test-design/
+    ├── git-commit/
+    ├── code-review/
+    ├── security-audit/
+    ├── sql-review/
+    ├── debug/
+    └── performance/
 ```
+<!-- END:DIRECTORY_TREE -->
 
 </details>

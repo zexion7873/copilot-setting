@@ -102,12 +102,14 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 
 在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
 
-|   | Agent | Model | 說明 |
-|:-:|-------|-------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格撰寫與任務拆解一站完成 |
+<!-- BEGIN:AGENTS_TABLE -->
+|   | Agent | 模型 | 說明 |
+|:-:|-------|------|------|
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
+<!-- END:AGENTS_TABLE -->
 
 ### Agent Handoffs 工作流程
 
@@ -138,6 +140,7 @@ flowchart LR
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
 
+<!-- BEGIN:SKILLS_TABLE -->
 |   | Skill | 觸發方式 | 說明 |
 |:-:|-------|----------|------|
 | 📜 | `constitution` | 自動 + 手動 | 專案層級的不可動原則與治理規則 — 穩定、高層級（200 行硬上限） |
@@ -159,6 +162,7 @@ flowchart LR
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
+<!-- END:SKILLS_TABLE -->
 
 > [!WARNING]
 > `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
@@ -169,6 +173,7 @@ flowchart LR
 
 當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
 
+<!-- BEGIN:INSTRUCTIONS_TABLE -->
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `context7` | `**` | 透過 Context7 MCP 取得權威的外部文件與 API 參考 |
@@ -180,13 +185,14 @@ flowchart LR
 | `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
-| `security-and-owasp` | `**/*.{java,jsp}` | 基於 OWASP Top 10 的安全編碼 |
+| `security-and-owasp` | `**/*.java, **/*.jsp` | 基於 OWASP Top 10 的安全編碼 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
-| `sql-rules` | `**/*.{java,sql,xml,jsp}` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
+| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
 | `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
 | `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
 | `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
 | `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
+<!-- END:INSTRUCTIONS_TABLE -->
 
 ---
 
@@ -194,14 +200,16 @@ flowchart LR
 
 標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
 
+<!-- BEGIN:PROMPTS_TABLE -->
 | Prompt | 配對 skill | 用途 |
-|--------|------------|------|
-| `code-review-checklist` | `code-review` | 嚴重度分類與各類別檢查項目 |
-| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分類、EXPLAIN cheat sheet） |
-| `spec-template` | `sdd` | SDD 文件骨架 — 從背景目標到 changelog 共 9 個章節 |
-| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 編號 |
-| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### IDs 與 `[P]` 平行標記 |
-| `adr-template` | `adr` | ADR 骨架，含 Status / Context / Decision / Consequences / Alternatives |
+|--------|-----------|------|
+| `code-review-checklist` | `code-review` | 嚴重度分級與各類別檢查項目 |
+| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分級、EXPLAIN 速查表） |
+| `spec-template` | `sdd` | SDD 骨架 — 從背景到變更記錄共 9 個章節 |
+| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 識別碼 |
+| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### ID 及 `[P]` 平行標記 |
+| `adr-template` | `adr` | ADR 骨架，含狀態 / 背景 / 決策 / 後果 / 替代方案 |
+<!-- END:PROMPTS_TABLE -->
 
 > [!NOTE]
 > **命名慣例**（後綴依內容類型）：
@@ -236,6 +244,7 @@ flowchart LR
 <details>
 <summary><h2>📁 目錄結構</h2></summary>
 
+<!-- BEGIN:DIRECTORY_TREE -->
 ```
 ~/.github/
 ├── copilot-instructions.md                ← 全域基礎指示
@@ -244,54 +253,55 @@ flowchart LR
 │   ├── context7
 │   ├── error-handling
 │   ├── global-copilot
+│   ├── logging
 │   ├── javadoc
 │   ├── jsp
 │   ├── junit
-│   ├── logging
 │   ├── markdown
 │   ├── no-heredoc
-│   ├── properties
 │   ├── security-and-owasp
 │   ├── self-explanatory-code-commenting
 │   ├── sql-rules
 │   ├── sql-sp-generation
 │   ├── xml
+│   ├── properties
 │   └── yaml-json-config
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
-│   ├── debugger             (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
 │   ├── planner              (Claude Opus 4.6)
-│   └── reviewer             (Claude Opus 4.6)
+│   ├── implementer          (GPT-5.3-Codex)
+│   ├── reviewer             (Claude Opus 4.6)
+│   └── debugger             (Claude Opus 4.6)
 │
 ├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
-│   ├── adr-template
 │   ├── code-review-checklist
-│   ├── plan-template
-│   ├── spec-template
 │   ├── sql-review-output
-│   └── tasks-template
+│   ├── spec-template
+│   ├── plan-template
+│   ├── tasks-template
+│   └── adr-template
 │
 └── skills/                                ← Agent 可執行的技能
-    ├── adr/
-    ├── clarify-task/
-    ├── code-review/
     ├── constitution/
+    ├── clarify-task/
     ├── context-discovery/
-    ├── debug/
-    ├── git-commit/
-    ├── implement/
-    ├── performance/
     ├── plan/
-    ├── refactor/
-    ├── sdd-compliance/
-    ├── sdd-review/
-    ├── sdd/
-    ├── security-audit/
+    ├── adr/
     ├── spike/
-    ├── sql-review/
+    ├── sdd/
+    ├── sdd-review/
     ├── tasks/
-    └── test-design/
+    ├── implement/
+    ├── sdd-compliance/
+    ├── refactor/
+    ├── test-design/
+    ├── git-commit/
+    ├── code-review/
+    ├── security-audit/
+    ├── sql-review/
+    ├── debug/
+    └── performance/
 ```
+<!-- END:DIRECTORY_TREE -->
 
 </details>
