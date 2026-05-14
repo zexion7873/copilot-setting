@@ -243,6 +243,20 @@ flowchart LR
 
 ---
 
+## 🔧 維護腳本
+
+用來保持設定檔與 README 同步的腳本。需要 `bash` + `jq`。
+
+| 指令 | 做什麼 |
+|------|--------|
+| `bash scripts/sync-readme.sh` | 從 frontmatter + `readme-meta.json` 重新產生 README 表格與目錄樹 |
+| `bash scripts/lint-copilot-config.sh` | 驗證交叉引用（skill ↔ agent 綁定、檔案 ↔ meta 同步） |
+| `bash scripts/validate-frontmatter.sh` | 檢查 frontmatter 必填欄位（name、description、觸發詞等） |
+
+CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 PR 時跑。
+
+---
+
 <details>
 <summary><h2>📁 目錄結構</h2></summary>
 

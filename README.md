@@ -243,6 +243,20 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 
 ---
 
+## 🔧 Maintenance Scripts
+
+Scripts to keep configuration files and README in sync. Requires `bash` + `jq`.
+
+| Command | What it does |
+|---------|-------------|
+| `bash scripts/sync-readme.sh` | Regenerate README tables and directory tree from frontmatter + `readme-meta.json` |
+| `bash scripts/lint-copilot-config.sh` | Validate cross-references (skill ↔ agent binding, file ↔ meta sync) |
+| `bash scripts/validate-frontmatter.sh` | Check required frontmatter fields (name, description, triggers, etc.) |
+
+CI runs these automatically — `sync-readme` on push to main, lint + validate on PRs.
+
+---
+
 <details>
 <summary><h2>📁 Directory Structure</h2></summary>
 
