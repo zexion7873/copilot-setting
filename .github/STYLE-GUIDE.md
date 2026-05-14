@@ -189,6 +189,52 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
 9. **Internal templates** (**CONDITIONAL**): skills that produce artifacts (spike, constitution) MAY embed the template directly. Skills that share a template with other skills MUST reference a prompt file instead (e.g., `prompts/plan-template.prompt.md`).
+10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
+
+### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
+
+Supporting files referenced by a skill's body (e.g., before/after code examples, reference tables). These are NOT standalone skills — they are supplementary material loaded on demand.
+
+```markdown
+# <Operation or Topic> — <Context> Examples
+
+<One-sentence scope statement.>
+
+## When to Trigger
+
+<Criteria for applying this operation — thresholds, heuristics, or conditions.>
+
+## Rules
+
+- Rule items specific to this operation
+
+---
+
+## Example N — <Short Title>
+
+### Before
+
+\`\`\`java
+<original code>
+\`\`\`
+
+### After
+
+\`\`\`java
+<refactored code>
+\`\`\`
+
+**What changed**: <one-sentence explanation of the transformation and why it improves the code.>
+```
+
+Rules for subfiles:
+
+1. **No frontmatter** — subfiles are not auto-triggered or indexed. No `name`, `description`, or `applyTo`.
+2. **H1**: `<Operation> — <Context> Examples` (e.g., `Extract Method — Java Examples`).
+3. **Consistent structure across sibling files** — all examples in the same `examples/` directory must follow the same skeleton (When to Trigger → Rules → Example sections).
+4. **Each example**: `## Example N — <Short Title>` with `### Before`, `### After`, and a bold `**What changed**` summary.
+5. **Horizontal rules** (`---`) between examples for visual separation.
+6. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`). Relative paths within the same skill directory are acceptable.
 
 ---
 
