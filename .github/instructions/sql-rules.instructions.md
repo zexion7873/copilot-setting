@@ -5,7 +5,19 @@ applyTo: '**/*.java, **/*.sql, **/*.xml, **/*.jsp'
 
 # SQL Rules
 
-Non-negotiable rules for any SQL in this project. MySQL stored procedure conventions live in `instructions/sql-sp-generation.instructions.md`.
+Non-negotiable rules for any SQL in this project. MySQL stored procedure conventions live in `instructions/sql-sp-generation.instructions.md`. Hibernate-specific conventions live in `instructions/hibernate.instructions.md` — this file covers raw JDBC paths and the rules that apply to any SQL (including HQL / native queries through Hibernate).
+
+## When to Use Hibernate vs Raw JDBC
+
+| Use case | Choice |
+|---|---|
+| CRUD on a single entity / aggregate | Hibernate |
+| Loading entity with associations | Hibernate (with appropriate fetch strategy) |
+| Complex aggregation / reporting query | Raw JDBC `PreparedStatement` |
+| Batch insert / update / delete of 1000+ rows | Hibernate `StatelessSession` OR raw JDBC batch |
+| Bulk `DELETE` / `UPDATE` by criteria | Raw JDBC OR HQL `DELETE` (note: bypasses Hibernate cache) |
+| DDL / schema migration | Raw JDBC; never run from application code in production |
+| One-off ad hoc queries | Raw JDBC |
 
 ## Security
 
