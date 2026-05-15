@@ -101,7 +101,6 @@ Semver convention: **MAJOR** for breaking changes (removed AC, API contract chan
 
 Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / Maven projects.
 
-<!-- BEGIN:AGENTS_TABLE -->
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
@@ -109,7 +108,6 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
-<!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -142,7 +140,6 @@ flowchart LR
 
 Executable workflows. Auto-triggered by Copilot when relevant (unless disabled), or invoke manually via `/skill-name`.
 
-<!-- BEGIN:SKILLS_TABLE -->
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
 | 📜 | `constitution` | Auto + Manual | Project-wide non-negotiable principles and governance — stable, high-level only (200-line hard limit) |
@@ -164,7 +161,6 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
-<!-- END:SKILLS_TABLE -->
 
 > [!WARNING]
 > `git-commit` is marked **manual only** because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
@@ -175,7 +171,6 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 Automatically injected into the system prompt when the current file matches the `applyTo` glob.
 
-<!-- BEGIN:INSTRUCTIONS_TABLE -->
 | File | applyTo | Description |
 |------|---------|-------------|
 | `error-handling` | `**/*.java` | Exception handling and error response conventions for Java 8 — hierarchy, custom exceptions, retry, and error propagation. |
@@ -193,7 +188,6 @@ Automatically injected into the system prompt when the current file matches the 
 | `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files — structure, formatting, and common pitfalls. |
 | `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, encoding, and secret management. |
 | `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, and secret management. |
-<!-- END:INSTRUCTIONS_TABLE -->
 
 ---
 
@@ -201,7 +195,6 @@ Automatically injected into the system prompt when the current file matches the 
 
 Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
 
-<!-- BEGIN:PROMPTS_TABLE -->
 | Prompt | Paired skill | Purpose |
 |--------|-------------|---------|
 | `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
@@ -210,7 +203,6 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 | `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
 | `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
-<!-- END:PROMPTS_TABLE -->
 
 > [!NOTE]
 > **Naming convention** (suffix indicates content type):
@@ -243,24 +235,9 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 
 ---
 
-## 🔧 Maintenance Scripts
-
-Scripts to keep configuration files and README in sync. Requires `bash` + `jq`.
-
-| Command | What it does |
-|---------|-------------|
-| `bash scripts/sync-readme.sh` | Regenerate README tables and directory tree from frontmatter + `readme-meta.json` |
-| `bash scripts/lint-copilot-config.sh` | Validate cross-references (skill ↔ agent binding, file ↔ meta sync) |
-| `bash scripts/validate-frontmatter.sh` | Check required frontmatter fields (name, description, triggers, etc.) |
-
-CI runs these automatically — `sync-readme` on push to main, lint + validate on PRs.
-
----
-
 <details>
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
-<!-- BEGIN:DIRECTORY_TREE -->
 ```text
 ~/.github/
 ├── copilot-instructions.md                ← Global base instructions
@@ -323,6 +300,5 @@ CI runs these automatically — `sync-readme` on push to main, lint + validate o
     ├── debug/
     └── performance/
 ```
-<!-- END:DIRECTORY_TREE -->
 
 </details>

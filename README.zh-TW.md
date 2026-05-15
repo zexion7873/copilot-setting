@@ -101,7 +101,6 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 
 在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
 
-<!-- BEGIN:AGENTS_TABLE -->
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
@@ -109,7 +108,6 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
-<!-- END:AGENTS_TABLE -->
 
 ### 🤝 Agent Handoffs 工作流程
 
@@ -142,7 +140,6 @@ flowchart LR
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
 
-<!-- BEGIN:SKILLS_TABLE -->
 |   | Skill | 觸發方式 | 說明 |
 |:-:|-------|----------|------|
 | 📜 | `constitution` | 自動 + 手動 | 專案層級的不可動原則與治理規則 — 穩定、高層級（200 行硬上限） |
@@ -164,7 +161,6 @@ flowchart LR
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
-<!-- END:SKILLS_TABLE -->
 
 > [!WARNING]
 > `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
@@ -175,7 +171,6 @@ flowchart LR
 
 當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
 
-<!-- BEGIN:INSTRUCTIONS_TABLE -->
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
@@ -193,7 +188,6 @@ flowchart LR
 | `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
 | `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
 | `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
-<!-- END:INSTRUCTIONS_TABLE -->
 
 ---
 
@@ -201,7 +195,6 @@ flowchart LR
 
 標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
 
-<!-- BEGIN:PROMPTS_TABLE -->
 | Prompt | 配對 skill | 用途 |
 |--------|-----------|------|
 | `code-review-checklist` | `code-review` | 嚴重度分級與各類別檢查項目 |
@@ -210,7 +203,6 @@ flowchart LR
 | `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 識別碼 |
 | `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### ID 及 `[P]` 平行標記 |
 | `adr-template` | `adr` | ADR 骨架，含狀態 / 背景 / 決策 / 後果 / 替代方案 |
-<!-- END:PROMPTS_TABLE -->
 
 > [!NOTE]
 > **命名慣例**（後綴依內容類型）：
@@ -243,24 +235,9 @@ flowchart LR
 
 ---
 
-## 🔧 維護腳本
-
-用來保持設定檔與 README 同步的腳本。需要 `bash` + `jq`。
-
-| 指令 | 做什麼 |
-|------|--------|
-| `bash scripts/sync-readme.sh` | 從 frontmatter + `readme-meta.json` 重新產生 README 表格與目錄樹 |
-| `bash scripts/lint-copilot-config.sh` | 驗證交叉引用（skill ↔ agent 綁定、檔案 ↔ meta 同步） |
-| `bash scripts/validate-frontmatter.sh` | 檢查 frontmatter 必填欄位（name、description、觸發詞等） |
-
-CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 PR 時跑。
-
----
-
 <details>
 <summary><h2>📁 .github/ 目錄結構</h2></summary>
 
-<!-- BEGIN:DIRECTORY_TREE -->
 ```text
 ~/.github/
 ├── copilot-instructions.md                ← 全域基礎指示
@@ -323,6 +300,5 @@ CI 自動執行 — `sync-readme` 在 push to main 時跑，lint + validate 在 
     ├── debug/
     └── performance/
 ```
-<!-- END:DIRECTORY_TREE -->
 
 </details>
