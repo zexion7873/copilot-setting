@@ -8,7 +8,7 @@ Always reply to the user in **Traditional Chinese (繁體中文)**. File content
 
 ## Repository Purpose
 
-This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Hibernate 4.x projects (no Spring Boot). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
+This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
 
 The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
