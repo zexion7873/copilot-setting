@@ -63,7 +63,7 @@ Hooks ──生命週期守衛──→ Agent (調度)
                         抓到 SQL injection → CRITICAL
                         ↓ 點「修復問題」
 
-你  →  @implementer   改成 PreparedStatement，補寫測試
+你  →  @implementer   改成 PreparedStatement，驗證修復
                         Done ✓
 ```
 
@@ -76,7 +76,6 @@ Hooks ──生命週期守衛──→ Agent (調度)
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
 > - 審查規格 → `@reviewer`（SDD review mode）→ `@planner`
-
 > - 寫文件 → `@planner`
 
 ---
@@ -126,18 +125,14 @@ flowchart LR
 
 |   | Skill | 觸發方式 | 說明 |
 |:-:|-------|----------|------|
-
 | ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
-
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
-
-| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義（支援 semver 版本化的修訂流程） |
+| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
 | 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
-
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
-| 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
+| 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析 |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
@@ -146,7 +141,7 @@ flowchart LR
 | ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
 
 > [!WARNING]
-> `git-commit` 標記為**僅手動**，因為它會修改 git history。Copilot 靠 description 文字抑制自動觸發；請一律以 `/git-commit` 顯式呼叫。
+> `git-commit` 使用 `disable-model-invocation: true` 防止自動觸發，請一律以 `/git-commit` 顯式呼叫。
 
 ---
 
@@ -156,20 +151,18 @@ flowchart LR
 
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
-| `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、重試策略、錯誤傳播 |
+| `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、錯誤傳播 |
 | `global-copilot` | `**` | 語言與技術棧基礎規則：繁中回覆、英文寫 code、Java 8 + Maven、不用 Spring Boot |
-| `logging` | `**/*.java` | SLF4J + Logback 慣例 — 嚴重度、參數化訊息、上下文、安全性 |
-| `javadoc` | `**/*.java` | Javadoc 規範 — 必要標籤、摘要句、格式與反模式 |
+| `logging` | `**/*.java` | SLF4J + Logback 慣例 — 參數化訊息、嚴重度、安全性 |
 | `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
-| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito 規範 — 命名、AAA、參數化測試、斷言 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
 | `security-and-owasp` | `**/*.java, **/*.jsp` | 基於 OWASP Top 10 的安全編碼 |
 | `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
-| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL 硬規則：injection 防護、效能、程式碼品質（單一來源） |
+| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL 硬規則 — injection 防護、效能、JDBC resource handling |
 | `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
 | `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
-| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、編碼、機敏資訊管理 |
+| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、機敏資訊管理 |
 | `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
 
 ---
@@ -182,7 +175,7 @@ flowchart LR
 |--------|-----------|------|
 | `code-review-checklist` | `code-review` | 嚴重度分級與各類別檢查項目 |
 | `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分級、EXPLAIN 速查表） |
-| `spec-template` | `sdd` | SDD 骨架 — 從背景到變更記錄共 9 個章節 |
+| `spec-template` | `sdd` | SDD 骨架 — 從背景到 Out of Scope 共 8 個章節 |
 | `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 識別碼 |
 | `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### ID 及 `[P]` 平行標記 |
 
@@ -229,9 +222,7 @@ flowchart LR
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── logging
-│   ├── javadoc
 │   ├── jsp
-│   ├── junit
 │   ├── markdown
 │   ├── no-heredoc
 │   ├── security-and-owasp
@@ -264,12 +255,10 @@ flowchart LR
 └── skills/                                ← Agent 可執行的技能
     ├── clarify-task/
     ├── plan/
-
     ├── sdd/
     ├── sdd-review/
     ├── tasks/
     ├── implement/
-
     ├── refactor/
     ├── test-design/
     ├── git-commit/
