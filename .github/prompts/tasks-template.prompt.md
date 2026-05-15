@@ -53,7 +53,7 @@ Invoke via `/tasks-template`. Requires an approved plan or SDD already in the wo
 
 ## Phase Final: Polish & Cross-Cutting
 
-- [ ] T030 Add observability per `docs/constitution.md` §III
+- [ ] T030 Add observability and logging
 - [ ] T031 [P] Update documentation and comments
 
 ## Dependencies & Execution Order

@@ -205,7 +205,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
-9. **Internal templates** (**CONDITIONAL**): skills that produce artifacts (constitution) MAY embed the template directly. Skills that share a template with other skills MUST reference a prompt file instead (e.g., `prompts/plan-template.prompt.md`).
+9. **Internal templates** (**CONDITIONAL**): skills that produce self-contained artifacts MAY embed the template directly. Skills that share a template with other skills MUST reference a prompt file instead (e.g., `prompts/plan-template.prompt.md`).
 10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)

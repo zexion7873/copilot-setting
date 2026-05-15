@@ -32,7 +32,7 @@ If the request is vague or missing success criteria, ask clarifying questions be
 | "plan", "規劃", "設計實作步驟", "排階段" | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers |
 | "SDD", "寫規格", "定規格", "寫 spec" | `sdd` | Formal spec with ACs, API contracts, schema changes |
 | "拆 task", "拆任務", "break down tasks", "排執行順序" | `tasks` | Dependency-ordered tasks.md with T### IDs (requires approved plan/SDD) |
-| "constitution", "寫 constitution", "訂專案原則" | `constitution` | Non-negotiable project principles with semver governance |
+
 
 | "先釐清", "clarify", "需求不清楚", "範圍是什麼" | `clarify-task` | Numbered clarifying questions → confirmed scope |
 

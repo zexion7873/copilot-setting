@@ -20,9 +20,8 @@ Verify the design layer exists before generating tasks. Inspired by Spec-Driven 
 
 Read in this order, accumulating constraints:
 
-1. **Constitution** (if exists at `docs/constitution.md`) — non-negotiable quality rules
-2. **SDD** (if exists) — `FR-` / `AC-` / `SC-`, files to change (§7), schema changes (§3.3)
-3. **Plan** — phases, `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers
+1. **SDD** (if exists) — `FR-` / `AC-` / `SC-`, files to change (§7), schema changes (§3.3)
+2. **Plan** — phases, `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers
 
 If both plan and SDD exist, SDD wins on requirements, plan wins on phasing.
 

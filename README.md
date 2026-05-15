@@ -87,8 +87,8 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
@@ -126,9 +126,9 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
-| 📜 | `constitution` | Auto + Manual | Project-wide non-negotiable principles and governance — stable, high-level only (200-line hard limit) |
+
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
-| 🗺️ | `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
+
 | 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
 
 | 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation (supports amendment with semver versioning) |
@@ -262,9 +262,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   └── tasks-template
 │
 └── skills/                                ← Executable skills for agents
-    ├── constitution/
     ├── clarify-task/
-    ├── context-discovery/
     ├── plan/
 
     ├── sdd/

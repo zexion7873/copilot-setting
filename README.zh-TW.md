@@ -87,8 +87,8 @@ Hooks ──生命週期守衛──→ Agent (調度)
 
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
@@ -126,9 +126,9 @@ flowchart LR
 
 |   | Skill | 觸發方式 | 說明 |
 |:-:|-------|----------|------|
-| 📜 | `constitution` | 自動 + 手動 | 專案層級的不可動原則與治理規則 — 穩定、高層級（200 行硬上限） |
+
 | ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
-| 🗺️ | `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
+
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
 
 | 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義（支援 semver 版本化的修訂流程） |
@@ -262,9 +262,7 @@ flowchart LR
 │   └── tasks-template
 │
 └── skills/                                ← Agent 可執行的技能
-    ├── constitution/
     ├── clarify-task/
-    ├── context-discovery/
     ├── plan/
 
     ├── sdd/
