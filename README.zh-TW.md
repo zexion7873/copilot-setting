@@ -39,7 +39,7 @@ Hooks ──生命週期守衛──→ Agent (調度)
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql-rules`、`error-handling`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
@@ -132,7 +132,7 @@ flowchart LR
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
-| 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析 |
+| 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
@@ -151,20 +151,13 @@ flowchart LR
 
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
-| `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、錯誤傳播 |
-| `hibernate` | `**/*.java, **/*.hbm.xml` | Hibernate 4.x 慣例 — native Session API、hbm.xml mapping、`getCurrentSession()` 生命週期與 Spring `<tx:advice>` transaction 模式 |
-| `java` | `**/*.java` | Java 8 語言慣例 — 禁用的 Java 9+ 語法、Optional 用法、java.time、Stream 陷阱與 lambda capture 規則 |
-| `logging` | `**/*.java` | SLF4J + Logback 慣例 — 參數化訊息、嚴重度、安全性 |
-| `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
-| `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
+| `java` | `**/*.java` | Java 8 語言邊界、例外處理、SLF4J logging、程式碼風格 — 聚焦在 AI 模型預設會搞錯的部分 |
+| `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core + Hibernate 4.x — native Session API、hbm.xml mapping、`getCurrentSession()` 生命週期、XML `<tx:advice>` transaction。**最關鍵的一份** |
+| `sql` | `**/*.java, **/*.sql, **/*.xml` | SQL injection 防護、效能陷阱、JDBC resource handling、MySQL 預存程序慣例 |
+| `security` | `**/*.java, **/*.jsp` | OWASP Top 10 精華版，針對 Java web 應用 |
+| `jsp` | `**/*.jsp` | JSP 慣例 — 透過 `<c:out>` 防 XSS、JSTL-only 政策、輸出編碼 |
+| `xml-config` | `**/*.xml` | Spring XML config、Hibernate hbm.xml、Maven POM 慣例 |
 | `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
-| `security-and-owasp` | `**/*.java, **/*.jsp` | 基於 OWASP Top 10 的安全編碼 |
-| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | 撰寫自解釋程式碼，減少冗餘註解 |
-| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL 硬規則 — injection 防護、效能、JDBC resource handling |
-| `sql-sp-generation` | `**/*.sql` | MySQL 預存程序與 schema 慣例 |
-| `xml` | `**/*.xml` | Maven POM、web.xml 及 XML 設定檔慣例 |
-| `properties` | `**/*.properties` | Java properties 檔慣例 — 命名、組織、機敏資訊管理 |
-| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML / JSON 設定檔慣例 — 格式、結構、機敏資訊管理 |
 
 ---
 
@@ -208,20 +201,13 @@ flowchart LR
 ├── copilot-instructions.md                ← 全域基礎指示
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── error-handling
-│   ├── hibernate
 │   ├── java
-│   ├── logging
+│   ├── spring-hibernate
+│   ├── sql
+│   ├── security
 │   ├── jsp
-│   ├── markdown
-│   ├── no-heredoc
-│   ├── security-and-owasp
-│   ├── self-explanatory-code-commenting
-│   ├── sql-rules
-│   ├── sql-sp-generation
-│   ├── xml
-│   ├── properties
-│   └── yaml-json-config
+│   ├── xml-config
+│   └── no-heredoc
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
 │   ├── planner              (Claude Opus 4.6)
