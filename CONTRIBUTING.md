@@ -1,32 +1,35 @@
 # Contributing
 
-Thanks for your interest in contributing to this project!
-
 ## How to Contribute
 
-1. **Fork** this repository
-2. **Create a branch** for your changes (`git checkout -b feature/your-feature`)
-3. **Commit** your changes with clear messages following [Conventional Commits](https://www.conventionalcommits.org/)
-4. **Push** to your fork and **open a Pull Request**
+1. Fork this repository
+2. Create a branch (`git checkout -b feature/your-feature`)
+3. Follow the [STYLE-GUIDE.md](.github/STYLE-GUIDE.md) for file format and structure
+4. Verify cross-references: `grep -rn "<filename>" .github/` before renaming or moving files
+5. Commit with [Conventional Commits](https://www.conventionalcommits.org/) messages
+6. Open a Pull Request
 
-## What You Can Contribute
+## Architecture
 
-- New Copilot instructions, agents, prompts, or skills
-- Improvements to existing configurations
-- Bug fixes or typo corrections
-- Documentation updates
+Each category has one job. Content that belongs elsewhere must be delegated, not copied.
 
-## Guidelines
+| Category | Path | Responsibility |
+|---|---|---|
+| Instructions | `instructions/*.instructions.md` | Coding conventions (auto-applied by `applyTo` glob) |
+| Agents | `agents/*.agent.md` | Routing and handoffs |
+| Skills | `skills/*/SKILL.md` | Workflow execution |
+| Prompts | `prompts/*.prompt.md` | Output format templates |
 
-- Keep instructions focused and actionable
-- Follow the existing directory structure under `~/.github/`
-- Test your configurations before submitting
-- Write clear commit messages in English
+Canonical format for each category is defined in [STYLE-GUIDE.md](.github/STYLE-GUIDE.md).
 
-## Code of Conduct
+## Rules
 
-Be respectful and constructive in all interactions.
+- Instructions must not duplicate skill workflow content (and vice versa)
+- Skills reference prompts for output format — never embed shared templates inline
+- Cross-references use relative paths from `.github/` (e.g., `instructions/sql-rules.instructions.md`)
+- Skill `name` field must match its parent directory name
+- Skill `description` max 1024 characters
 
 ## Questions?
 
-Open an [issue](https://github.com/zexion7873/copilot-setting/issues) if you have any questions.
+Open an [issue](https://github.com/zexion7873/copilot-setting/issues).
