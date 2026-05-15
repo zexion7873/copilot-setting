@@ -75,3 +75,9 @@ Blast radius: <what else might be affected>
 - **N+1** — SQL inside loops
 - **Connection leak** — verify try-with-resources on error paths
 - **Wrong results** — implicit type conversion in WHERE / JOIN
+
+## Handoffs
+
+- → `@implementer` — to implement the fix after root cause is confirmed
+- ← `@implementer` — when implementation reveals a deeper bug requiring systematic isolation
+- ← `performance` skill — when a performance issue turns out to be a bug

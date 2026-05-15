@@ -1,6 +1,6 @@
 ---
 agent: 'agent'
-description: 'Implementation plan template with phases, REQ/CON/PAT/FILE/RISK identifiers, alternatives, and dependencies. Pairs with skills/plan/SKILL.md (workflow / classification / validation). For atomic task decomposition, use tasks-template.prompt.md.'
+description: 'Implementation plan template with phases, REQ/CON/PAT/FILE/RISK identifiers, alternatives, and dependencies. Pairs with skills/plan/SKILL.md (workflow / classification / validation). For atomic task decomposition, use prompts/tasks-template.prompt.md.'
 ---
 
 # Plan Template

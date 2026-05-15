@@ -59,3 +59,15 @@ Conventions specific to MySQL DDL and stored procedures. For general SQL rules (
 - Avoid long-running transactions
 - Use `SELECT ... FOR UPDATE` only when locking is required for the update
 - For bulk work, batch with `LIMIT` to bound transaction size
+
+## Anti-Patterns
+
+| Pattern | Problem | Fix |
+|---|---|---|
+| `CREATE TABLE Order (...) ENGINE=MyISAM` | No transactional support; no FK constraints; data loss on crash | `ENGINE=InnoDB` — always |
+| `VARCHAR(255) CHARACTER SET utf8` | `utf8` is 3-byte MySQL alias; cannot store 4-byte emoji or CJK supplementary | `CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci` |
+| `CREATE PROCEDURE GetOrders(customer_id INT)` | Missing `IN`/`OUT` mode; no naming convention; no prefix | `CREATE PROCEDURE sp_get_orders(IN p_customer_id INT UNSIGNED)` |
+| Procedure body without `DECLARE EXIT HANDLER` | Unhandled SQL errors leave transaction in unknown state | Add `DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;` |
+| Table missing `created_at` / `updated_at` columns | No audit trail; cannot trace when records were created or modified | Add `created_at DATETIME DEFAULT CURRENT_TIMESTAMP`, `updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` |
+| `ON DELETE CASCADE` on every foreign key | Accidental parent deletion silently wipes child data | Use `RESTRICT` by default; `CASCADE` only when child has no meaning without parent |
+| Local variable without `v_` prefix | Collides with column names in queries; silent wrong results | Prefix all locals: `DECLARE v_total DECIMAL(10,2)` |

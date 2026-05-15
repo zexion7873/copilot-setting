@@ -39,7 +39,7 @@ Pick the primary skill from the user's request. If unclear, default to code revi
 
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
 
-Detailed coding rules auto-load from `instructions/` when the relevant file type is open — do not restate them here.
+Detailed coding rules auto-load from `instructions/*.instructions.md` when the relevant file type is open — do not restate them here.
 
 ## Handoff Guidance
 

@@ -39,3 +39,14 @@ At the outermost layer, convert exceptions to a consistent JSON response with ma
 ## Empty Catch Blocks
 
 **Forbidden.** If you genuinely must swallow an exception, add a comment explaining why AND log at DEBUG level.
+
+## Anti-Patterns
+
+| Pattern | Problem | Fix |
+|---|---|---|
+| `catch (Throwable t) { ... }` | Catches unrecoverable `Error`s (`OutOfMemoryError`, `StackOverflowError`) | Catch specific exception: `catch (IOException e)` or at most `catch (Exception e)` |
+| `catch (Exception e) { }` (empty body) | Silently swallows errors; caller has no idea something failed | Handle, rethrow, or log at DEBUG with a comment explaining why |
+| `throw new RuntimeException("error")` without cause | Loses original stack trace; debugging becomes guesswork | `throw new RuntimeException("context message", originalException)` |
+| DAO throws raw `SQLException` to service layer | Leaks implementation detail across layer boundary | Translate: `throw new DataAccessException("msg", e)` at DAO boundary |
+| Stack trace in HTTP error response | Exposes class names and internal paths to attackers | Return machine-readable `error` code + human-readable `message` only |
+| `catch (Exception e) { return null; }` | Converts exception into a `NullPointerException` elsewhere — harder to debug | Rethrow as a meaningful exception or return `Optional.empty()` |
