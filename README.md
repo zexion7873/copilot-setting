@@ -153,6 +153,7 @@ Automatically injected into the system prompt when the current file matches the 
 |------|---------|-------------|
 | `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, and error propagation. |
 | `hibernate` | `**/*.java, **/*.hbm.xml` | Hibernate 4.x conventions — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, and Spring `<tx:advice>` transaction patterns. |
+| `java` | `**/*.java` | Java 8 language conventions — forbidden Java 9+ syntax, Optional usage, java.time, Stream pitfalls, and lambda capture rules. |
 | `logging` | `**/*.java` | SLF4J + Logback conventions — parameterized messages, severity levels, and security. |
 | `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention. |
 | `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
@@ -209,6 +210,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
 │   ├── error-handling
 │   ├── hibernate
+│   ├── java
 │   ├── logging
 │   ├── jsp
 │   ├── markdown
