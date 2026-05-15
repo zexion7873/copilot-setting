@@ -1,6 +1,6 @@
 ---
 name: constitution
-description: 'Use when user asks to define or update the project constitution — the non-negotiable principles and governance rules that supersede other practices. Triggers on: 寫 constitution, 定義原則, 訂專案原則, 更新治理規則, 修改 constitution, write constitution, define core principles, update governance, amend constitution, project principles. Produces or updates docs/constitution.md with non-negotiable principles, governance rules, and a Sync Impact Report. Do NOT use for coding standards or file-type rules (prefer creating an instructions file), for architecture decisions on a single feature (prefer adr skill), for transient policies (constitution is for stable rules only), or for general documentation.'
+description: 'Use when user asks to define or update the project constitution — the non-negotiable principles and governance rules that supersede other practices. Triggers on: 寫 constitution, 定義原則, 訂專案原則, 更新治理規則, 修改 constitution, write constitution, define core principles, update governance, amend constitution, project principles. Produces or updates docs/constitution.md with non-negotiable principles, governance rules, and a Sync Impact Report. Do NOT use for coding standards or file-type rules (prefer creating an instructions file), for transient policies (constitution is for stable rules only), or for general documentation.'
 ---
 
 # Constitution — Workflow
@@ -15,7 +15,7 @@ Before writing, confirm the rule belongs in constitution vs elsewhere. This gate
 |---|---|
 | `docs/constitution.md` | "All financial calculations MUST use BigDecimal", "TDD is non-negotiable", "No hand-rolled crypto" |
 | `instructions/*.instructions.md` | "Use `<c:out>` in JSP", "Log via SLF4J parameterized messages", "ATX headings only" |
-| `skills/adr/` (ADR) | "We chose PostgreSQL over MySQL for OLTP — see ADR-0007" |
+
 | commit-time decision | "Rename `getCwd` to `getCurrentWorkingDirectory` across 8 callers" |
 
 If the rule is feature-scoped, file-type specific, transient, or just a coding convention: REDIRECT. Do not put it in constitution.
@@ -108,6 +108,6 @@ For each principle added / removed / modified:
 ## Handoffs
 
 - → instructions update — when a new principle implies file-type rules; create or amend the matching `instructions/X.instructions.md`
-- → `adr` skill — when a principle is challenged and the rationale needs its own record
+
 
 - ← all skills — constitution is upstream of every other workflow

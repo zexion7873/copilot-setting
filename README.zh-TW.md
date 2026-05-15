@@ -76,7 +76,7 @@ Hooks ──生命週期守衛──→ Agent (調度)
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
 > - 審查規格 → `@reviewer`（SDD review mode）→ `@planner`
-> - 技術調研 → `@planner`（spike mode）→ `@planner`（plan mode）
+
 > - 寫文件 → `@planner`
 
 ---
@@ -87,7 +87,7 @@ Hooks ──生命週期守衛──→ Agent (調度)
 
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
@@ -130,8 +130,7 @@ flowchart LR
 | ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
 | 🗺️ | `context-discovery` | 自動 + 手動 | 動手前的 context map — 待修改檔案、相依、測試、參考模式 |
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
-| 📌 | `adr` | 自動 + 手動 | 架構決策記錄 — 包含狀態、替代方案、後果分析 |
-| 🔬 | `spike` | 自動 + 手動 | 限時技術探針文件，針對單一問題的研究 |
+
 | 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義（支援 semver 版本化的修訂流程） |
 | 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
@@ -186,7 +185,7 @@ flowchart LR
 | `spec-template` | `sdd` | SDD 骨架 — 從背景到變更記錄共 9 個章節 |
 | `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 識別碼 |
 | `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### ID 及 `[P]` 平行標記 |
-| `adr-template` | `adr` | ADR 骨架，含狀態 / 背景 / 決策 / 後果 / 替代方案 |
+
 
 > [!NOTE]
 > **命名慣例**（後綴依內容類型）：
@@ -260,16 +259,14 @@ flowchart LR
 │   ├── sql-review-output
 │   ├── spec-template
 │   ├── plan-template
-│   ├── tasks-template
-│   └── adr-template
+│   └── tasks-template
 │
 └── skills/                                ← Agent 可執行的技能
     ├── constitution/
     ├── clarify-task/
     ├── context-discovery/
     ├── plan/
-    ├── adr/
-    ├── spike/
+
     ├── sdd/
     ├── sdd-review/
     ├── tasks/

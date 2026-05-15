@@ -76,7 +76,7 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
 > - Spec review → `@reviewer` (SDD review mode) → `@planner`
-> - Research → `@planner` (spike mode) → `@planner` (plan mode)
+
 > - Documentation → `@planner`
 
 ---
@@ -87,7 +87,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
@@ -130,8 +130,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
 | 🗺️ | `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
 | 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
-| 📌 | `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
-| 🔬 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
+
 | 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation (supports amendment with semver versioning) |
 | 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
@@ -186,7 +185,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 | `spec-template` | `sdd` | SDD scaffold — 9 sections from background to changelog |
 | `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
-| `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
+
 
 > [!NOTE]
 > **Naming convention** (suffix indicates content type):
@@ -260,16 +259,14 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   ├── sql-review-output
 │   ├── spec-template
 │   ├── plan-template
-│   ├── tasks-template
-│   └── adr-template
+│   └── tasks-template
 │
 └── skills/                                ← Executable skills for agents
     ├── constitution/
     ├── clarify-task/
     ├── context-discovery/
     ├── plan/
-    ├── adr/
-    ├── spike/
+
     ├── sdd/
     ├── sdd-review/
     ├── tasks/
