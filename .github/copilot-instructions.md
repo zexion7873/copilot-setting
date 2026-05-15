@@ -10,4 +10,5 @@
 
 - Primary language: **Java 8** (planned upgrade to Java 21 in the future)
 - Build tool: **Maven**
+- ORM: **Hibernate 4.x** — native Session API (not JPA EntityManager), `hbm.xml` mapping files (not annotations)
 - No Spring Boot — follows Java SE and Jakarta EE conventions

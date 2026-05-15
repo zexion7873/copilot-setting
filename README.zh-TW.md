@@ -152,6 +152,7 @@ flowchart LR
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、錯誤傳播 |
+| `hibernate` | `**/*.java, **/*.hbm.xml` | Hibernate 4.x 慣例 — native Session API、hbm.xml mapping、Session 生命週期與 transaction 模式 |
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 參數化訊息、嚴重度、安全性 |
 | `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
@@ -207,7 +208,7 @@ flowchart LR
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
 │   ├── error-handling
-
+│   ├── hibernate
 │   ├── logging
 │   ├── jsp
 │   ├── markdown
