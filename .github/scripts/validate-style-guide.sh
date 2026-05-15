@@ -82,8 +82,31 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
     error "skills/$dir_name/SKILL.md: 'tools' field not allowed in skills (belongs on agents)"
   fi
 
-  if [ "$skill_name" = "$dir_name" ] && [ "$desc_len" -le 1024 ] && ! fm_has_key "$file" "tools"; then
-    pass "skills/$dir_name/SKILL.md ($desc_len chars)"
+  manual_only=false
+  if fm_has_key "$file" "disable-model-invocation"; then
+    if [ "$(fm_value "$file" "disable-model-invocation")" = "true" ]; then
+      manual_only=true
+    fi
+  fi
+
+  format_ok=true
+  if [ "$manual_only" = "false" ]; then
+    missing_markers=""
+    echo "$desc" | grep -q "Use when " || missing_markers="$missing_markers 'Use when'"
+    echo "$desc" | grep -q "Triggers on:" || missing_markers="$missing_markers 'Triggers on:'"
+    echo "$desc" | grep -q "Do NOT use" || missing_markers="$missing_markers 'Do NOT use'"
+    if [ -n "$missing_markers" ]; then
+      error "skills/$dir_name/SKILL.md: description missing required markers:$missing_markers"
+      format_ok=false
+    fi
+  fi
+
+  if [ "$skill_name" = "$dir_name" ] && [ "$desc_len" -le 1024 ] && ! fm_has_key "$file" "tools" && [ "$format_ok" = "true" ]; then
+    if [ "$manual_only" = "true" ]; then
+      pass "skills/$dir_name/SKILL.md ($desc_len chars, manual-only)"
+    else
+      pass "skills/$dir_name/SKILL.md ($desc_len chars)"
+    fi
   fi
 done
 echo ""
@@ -125,6 +148,32 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
     pass "$name"
   fi
 done
+echo ""
+
+echo "🔗 Cross-References"
+# Canonical reference patterns checked here:
+#   `instructions/<name>.instructions.md`
+#   `skills/<name>/SKILL.md`
+#   `prompts/<name>.prompt.md`
+#   `agents/<name>.agent.md`
+# Paths containing * (glob) or < > (illustrative placeholders) are skipped.
+xref_errors_start=$ERRORS
+while IFS= read -r file; do
+  rel_file="${file#$REPO_ROOT/}"
+  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|prompts/[^`*<>]+\.prompt\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
+  [ -z "$refs" ] && continue
+  while IFS= read -r ref; do
+    [ -z "$ref" ] && continue
+    target="$GITHUB_DIR/$ref"
+    if [ ! -f "$target" ]; then
+      error "$rel_file: references '$ref' but file does not exist"
+    fi
+  done <<< "$refs"
+done < <(find "$GITHUB_DIR" -name "*.md" -type f)
+
+if [ "$ERRORS" -eq "$xref_errors_start" ]; then
+  pass "all canonical references resolve to existing files"
+fi
 echo ""
 
 echo "========================================="
