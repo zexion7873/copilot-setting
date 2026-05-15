@@ -1,6 +1,7 @@
 ---
 name: git-commit
-description: '⚠️ MANUAL ONLY — invoke ONLY via /git-commit. NEVER auto-trigger. Use when user explicitly asks to commit, stage changes, or generate a commit message (幫我 commit, 提交, 寫 commit message). Generates conventional commit messages with intelligent staging. Do NOT use for git log, branch operations, push/pull, or any read-only git inspection.'
+description: 'Generate conventional commit messages with intelligent staging.'
+disable-model-invocation: true
 ---
 
 # Git Commit — Workflow

@@ -109,5 +109,5 @@ For each principle added / removed / modified:
 
 - → instructions update — when a new principle implies file-type rules; create or amend the matching `instructions/X.instructions.md`
 - → `adr` skill — when a principle is challenged and the rationale needs its own record
-- → `sdd-compliance` skill — implementation reviews can cite specific constitution sections
+
 - ← all skills — constitution is upstream of every other workflow

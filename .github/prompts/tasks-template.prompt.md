@@ -40,19 +40,12 @@ Invoke via `/tasks-template`. Requires an approved plan or SDD already in the wo
 ## Phase 3: User Story 1 — ${input:us1Title} (Priority: P1) 🎯 MVP
 
 **Goal**: [What this story delivers in user terms]
-**Independent Test**: [How to verify this story works on its own]
+**Verification**: [How to verify this story works]
 
-### Tests for US1 (write FIRST, ensure they FAIL)
-
-- [ ] T010 [P] [US1] Contract test for `Service.method` in `src/test/java/.../Test.java`
-- [ ] T011 [P] [US1] Integration test for user journey in `src/test/java/.../IT.java`
-
-### Implementation for US1
-
-- [ ] T012 [P] [US1] Implement `Entity` in `src/main/java/.../Entity.java`
-- [ ] T013 [US1] Wire `Entity` to `Service` (depends on T012)
-- [ ] T014 [US1] Add validation and error handling
-- [ ] T015 [US1] Add logging per `instructions/logging.instructions.md`
+- [ ] T010 [P] [US1] Implement `Entity` in `src/main/java/.../Entity.java`
+- [ ] T011 [US1] Wire `Entity` to `Service` (depends on T010)
+- [ ] T012 [US1] Add validation and error handling
+- [ ] T013 [US1] Add logging per `instructions/logging.instructions.md`
 
 ## Phase N: User Story 2 — [Title] (Priority: P2)
 
@@ -61,12 +54,11 @@ Invoke via `/tasks-template`. Requires an approved plan or SDD already in the wo
 ## Phase Final: Polish & Cross-Cutting
 
 - [ ] T030 Add observability per `docs/constitution.md` §III
-- [ ] T031 [P] Update Javadoc per `instructions/javadoc.instructions.md`
+- [ ] T031 [P] Update documentation and comments
 
 ## Dependencies & Execution Order
 
 - Setup → Foundational → User Stories (P1 → P2 → P3) → Polish
-- Within story: failing tests → implementation → integration
 - Tasks touching the same file MUST run sequentially regardless of `[P]`
 
 ## Coverage Map
@@ -82,7 +74,6 @@ Invoke via `/tasks-template`. Requires an approved plan or SDD already in the wo
 - [ ] Every `${input:...}` placeholder replaced
 - [ ] Task IDs sequential from `T001`, no gaps
 - [ ] Every spec `AC-` appears in the Coverage Map at least once
-- [ ] Test tasks precede their corresponding implementation tasks (TDD default)
 - [ ] No `[P]` marker on tasks touching the same file
 - [ ] Setup and Foundational phases have NO `[Story]` label
 - [ ] Every user-story phase task HAS a `[USx]` label

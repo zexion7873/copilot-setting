@@ -5,7 +5,7 @@ description: 'Use when user asks to design tests, plan test coverage, or identif
 
 # Test Design — Workflow
 
-Process for designing tests systematically. Targets JUnit 5 + Mockito — coding conventions defined in `instructions/junit.instructions.md`. This file defines HOW to design, not coding standards.
+Process for designing tests systematically. Targets JUnit 5 + Mockito. This file defines HOW to design, not coding standards.
 
 ## Phase 1 — Analyze the Code Under Test
 
@@ -48,14 +48,9 @@ Categories:
 - **Integration (P2)** — One per dependency interaction (success/failure/timeout)
 - **Security (P2)** — One per attack vector (injection, auth bypass)
 
-## Phase 4 — Hand Off for Implementation
+## Phase 4 — Output Test Document
 
-Test case design is complete. For coding the tests:
-
-- → `@implementer` (Test Design Mode) — writes JUnit 5 + Mockito code from the design table above
-- → `instructions/junit.instructions.md` — auto-applied conventions for test files (naming, AAA, assertions, mocking)
-
-Do not write test code in this skill. Separation ensures the design is reviewed before implementation begins.
+Test case design is complete. Output as a structured test case document (markdown table or checklist) for manual verification or QA handoff.
 
 ## Phase 5 — Coverage Gap Audit
 
@@ -84,19 +79,15 @@ Make tests resilient to mutation testing:
 
 ## Handoffs
 
-- → `@implementer` (Test Design Mode) — writes JUnit 5 + Mockito code from the design table
-- → `instructions/junit.instructions.md` — auto-applied conventions for test files (naming, AAA, assertions, mocking)
 - ← `implement` skill — implementation may trigger test design for new functionality
 - ← `code-review` skill — review may flag coverage gaps needing test design
 
 ## Anti-Patterns
 
-Anti-patterns and coding conventions for JUnit 5 + Mockito are defined in `instructions/junit.instructions.md` (auto-applied on test files). Key reminders:
+Key reminders:
 
-- Test behavior, not implementation → assert returns + side effects, not call sequence
-- Every test asserts at least once → a test with no `assert*` always passes
-- Only mock dependencies → never mock the class under test
-- `assertEquals(expected, actual)` → never `assertTrue(a.equals(b))`
+- Test behavior, not implementation — verify outcomes and side effects, not internal call sequence
+- One assertion focus per case — each test case validates one specific behavior
 
 ## Quick Checklist (small methods)
 

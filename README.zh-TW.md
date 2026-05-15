@@ -79,22 +79,6 @@ Hooks ──生命週期守衛──→ Agent (調度)
 > - 技術調研 → `@planner`（spike mode）→ `@planner`（plan mode）
 > - 寫文件 → `@planner`
 
-### 📝 SDD 修訂工作流
-
-當既有 SDD 在實作過程中需要修訂（新增需求、API 契約變動、schema 調整），`sdd` skill 會進入 **Phase 0 — Amendment Gate**，而不是從頭重寫：
-
-```mermaid
-flowchart LR
-    SDD[既有 SDD] --> Gate{Phase 0<br/>修訂閘門}
-    Gate --> Bump[標註改動 + rationale<br/>+ semver 升版]
-    Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
-    Sync --> Tasks[tasks: 重新規劃 T###]
-    Sync --> Impl["@implementer: 重構"]
-    Sync --> Comp[sdd-compliance: 重新驗證]
-```
-
-Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容 schema）、**MINOR**（新增 AC、新增 endpoint、相容 schema 變更）、**PATCH**（澄清、措辭微調）。完整流程見 `.github/skills/sdd/SKILL.md`。
-
 ---
 
 ## 🤖 Agents
@@ -105,7 +89,7 @@ Semver 慣例：**MAJOR**（破壞性：移除 AC、API 契約變更、不相容
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skill，依審查類型分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
 
@@ -152,11 +136,11 @@ flowchart LR
 | 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
-| ✅ | `sdd-compliance` | 自動 + 手動 | 實作後的規格對齊矩陣 — 驗證每個 AC 都有 task、測試與程式碼證據 |
+
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例設計 — 邊界識別、分類、覆蓋率缺口分析；交接 @implementer 實作 |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
-| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式（AC 追蹤請用 `sdd-compliance`） |
+| 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
@@ -290,7 +274,7 @@ flowchart LR
     ├── sdd-review/
     ├── tasks/
     ├── implement/
-    ├── sdd-compliance/
+
     ├── refactor/
     ├── test-design/
     ├── git-commit/

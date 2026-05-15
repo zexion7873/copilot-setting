@@ -79,22 +79,6 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Research → `@planner` (spike mode) → `@planner` (plan mode)
 > - Documentation → `@planner`
 
-### 📝 Amendment Workflow
-
-When an existing SDD needs revision mid-implementation (new requirements, API contract changes, schema bumps), the `sdd` skill enters **Phase 0 — Amendment Gate** instead of rewriting from scratch:
-
-```mermaid
-flowchart LR
-    SDD[Existing SDD] --> Gate{Phase 0<br/>Amendment Gate}
-    Gate --> Bump[Mark changes + rationale<br/>+ semver bump]
-    Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
-    Sync --> Tasks[tasks: re-scope T###]
-    Sync --> Impl["@implementer: refactor"]
-    Sync --> Comp[sdd-compliance: re-verify]
-```
-
-Semver convention: **MAJOR** for breaking changes (removed AC, API contract change, incompatible schema), **MINOR** for additive (new AC, new endpoint, backward-compatible schema), **PATCH** for clarifications. Full procedure in `.github/skills/sdd/SKILL.md`.
-
 ---
 
 ## 🤖 Agents
@@ -105,7 +89,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
 
@@ -152,11 +136,11 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
-| ✅ | `sdd-compliance` | Auto + Manual | Spec compliance matrix AFTER implementation — verifies every AC has tasks, tests, and code evidence |
+
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
-| 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns (use `sdd-compliance` for AC traceability) |
+| 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
@@ -290,7 +274,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
     ├── sdd-review/
     ├── tasks/
     ├── implement/
-    ├── sdd-compliance/
+
     ├── refactor/
     ├── test-design/
     ├── git-commit/
