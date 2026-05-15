@@ -46,8 +46,18 @@ for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
     error "$name: missing 'applyTo' in frontmatter"
   fi
 
+  if fm_has_key "$file" "applyTo"; then
+    apply_to="$(fm_value "$file" "applyTo")"
+    if [ -z "$apply_to" ]; then
+      error "$name: 'applyTo' is empty (instruction will never load)"
+    fi
+  fi
+
   if fm_has_key "$file" "description" && fm_has_key "$file" "applyTo"; then
-    pass "$name"
+    apply_to="$(fm_value "$file" "applyTo")"
+    if [ -n "$apply_to" ]; then
+      pass "$name"
+    fi
   fi
 done
 echo ""
@@ -147,7 +157,45 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
   else
     pass "$name"
   fi
+
+  handoff_agents=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^\s+agent:' | sed 's/.*agent:[[:space:]]*//' | sed "s/^['\"]//;s/['\"]$//" || true)
+  if [ -n "$handoff_agents" ]; then
+    while IFS= read -r target_agent; do
+      [ -z "$target_agent" ] && continue
+      target_lower=$(echo "$target_agent" | tr '[:upper:]' '[:lower:]')
+      found=false
+      for agent_file in "$GITHUB_DIR"/agents/*.agent.md; do
+        [ -f "$agent_file" ] || continue
+        agent_name="$(fm_value "$agent_file" "name")"
+        agent_lower=$(echo "$agent_name" | tr '[:upper:]' '[:lower:]')
+        if [ "$target_lower" = "$agent_lower" ]; then
+          found=true
+          break
+        fi
+      done
+      if [ "$found" = "false" ]; then
+        error "$name: handoff references agent '$target_agent' but no matching agent file found"
+      fi
+    done <<< "$handoff_agents"
+  fi
 done
+echo ""
+
+echo "📊 Anti-Patterns Tables (instructions only)"
+ap_errors_start=$ERRORS
+for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
+  [ -f "$file" ] || continue
+  name="$(basename "$file")"
+  if grep -q "^## Anti-Patterns" "$file"; then
+    if ! grep -qE '^\|\s*Pattern\s*\|\s*Problem\s*\|\s*Fix\s*\|' "$file"; then
+      error "$name: has '## Anti-Patterns' section but missing 3-column header (Pattern | Problem | Fix)"
+    fi
+  fi
+done
+
+if [ "$ERRORS" -eq "$ap_errors_start" ]; then
+  pass "all instruction Anti-Patterns tables use 3-column format"
+fi
 echo ""
 
 echo "🔗 Cross-References"

@@ -114,7 +114,7 @@ applyTo: '<glob pattern>'
 
 ### Rules
 
-1. **Frontmatter**: `description` + `applyTo` — both required, no other fields.
+1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
 3. **Opening paragraph**: scope statement + cross-references to related instruction/prompt files (if any). Use full relative paths from `.github/` (e.g., `instructions/security-and-owasp.instructions.md`), not bare names.
 4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.
@@ -186,7 +186,8 @@ Skip delegation when <condition>.
    - `Constraints` — constraints list
    - `Handoff Guidance` — when to hand off to other agents (always last body section)
 5. **Lightweight agents** (subagents like `researcher`): may use a minimal structure (`Rules` + `Output Format`) instead of the full skeleton. Frontmatter must still be complete.
-6. **Handoff format** (when `handoffs` is present in frontmatter):
+6. **Handoff target validation**: every `handoffs[].agent` value must match an existing agent `name` (case-sensitive). A typo silently breaks the VS Code handoff button — there is no runtime error.
+7. **Handoff format** (when `handoffs` is present in frontmatter):
    - `label`: short imperative phrase (≤ 10 characters). Chinese preferred for consistency with `copilot-instructions.md` response language; English acceptable for widely recognized terms (e.g., `Code Review`).
    - `agent`: must reference an existing agent `name` (case-sensitive).
    - `prompt`: one sentence in Chinese, starts with `請`. Provides context for the receiving agent.
@@ -233,6 +234,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 - Include common **variations and synonyms**: `"寫 SDD"` and `"寫規格"` for the same skill.
 - **No overlap with sibling skills** on the same agent. If a phrase could activate 2 skills, the agent's Skill Activation section must specify a default (e.g., "Default to `implement` if ambiguous").
 - Overlap between skills on **different agents** is acceptable — the user's `@agent-name` choice disambiguates.
+- **Before adding or changing triggers**, grep sibling skills on the same agent to confirm no overlap: `grep -i "<new-trigger>" .github/skills/*/SKILL.md`.
 
 ### Body Skeleton
 
@@ -285,144 +287,62 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
 Supporting files referenced by a skill's body (e.g., before/after code examples, reference tables). These are NOT standalone skills — they are supplementary material loaded on demand.
 
-```markdown
-# <Operation or Topic> — <Context> Examples
+1. **No frontmatter** — subfiles are not auto-triggered or indexed.
+2. **H1**: `<Operation> — <Context> Examples`.
+3. **Consistent structure across sibling files** — all files in the same subdirectory must follow the same skeleton.
+4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`).
 
-<One-sentence scope statement.>
-
-## When to Trigger
-
-<Criteria for applying this operation — thresholds, heuristics, or conditions.>
-
-## Rules
-
-- Rule items specific to this operation
-
----
-
-## Example N — <Short Title>
-
-### Before
-
-\`\`\`java
-<original code>
-\`\`\`
-
-### After
-
-\`\`\`java
-<refactored code>
-\`\`\`
-
-**What changed**: <one-sentence explanation of the transformation and why it improves the code.>
-```
-
-Rules for subfiles:
-
-1. **No frontmatter** — subfiles are not auto-triggered or indexed. No `name`, `description`, or `applyTo`.
-2. **H1**: `<Operation> — <Context> Examples` (e.g., `Extract Method — Java Examples`).
-3. **Consistent structure across sibling files** — all examples in the same `examples/` directory must follow the same skeleton (When to Trigger → Rules → Example sections).
-4. **Each example**: `## Example N — <Short Title>` with `### Before`, `### After`, and a bold `**What changed**` summary.
-5. **Horizontal rules** (`---`) between examples for visual separation.
-6. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`). Relative paths within the same skill directory are acceptable.
+See `skills/refactor/examples/` for the current reference implementation.
 
 ---
 
 ## Prompts (`prompts/*.prompt.md`)
 
-Three subtypes, each with its own skeleton. Subtype is determined by the filename suffix.
-
-### Common Frontmatter
+### Frontmatter (required fields)
 
 ```yaml
 ---
-agent: 'agent'
+agent: '<agent mode>'
 description: '<Description. Pairs with skills/<skill>/SKILL.md (what the paired skill provides vs what this prompt provides).>'
 ---
 ```
 
-Avoid `tools` field in prompt frontmatter — tools generally belong on agents. Exception: `-output` prompts that function as active review workflows may declare tools if they need them at invocation time.
+#### `agent` field
 
-### Subtype 1: Template (`*-template.prompt.md`)
+Controls which agent context this prompt is available in when invoked via `/<prompt-name>`.
 
-One-shot scaffold for artifact creation.
-
-```markdown
-# <Name> Template
-
-<One-sentence description: "One-shot scaffold for <artifact>."> Workflow (phases, validation, prerequisites) lives in `skills/<skill>/SKILL.md`. This prompt only defines the OUTPUT FORMAT.
-
-## Usage
-
-Invoke via `/<prompt-name>`. <Preconditions, filename convention, placeholder rules.>
-
-## Template
-
-\`\`\`md
-<The scaffold with ${input:field:default} placeholders>
-\`\`\`
-
-## Validation Checklist
-
-- [ ] Every `${input:...}` placeholder replaced
-- [ ] <Domain-specific validation items>
-```
-
-### Subtype 2: Checklist (`*-checklist.prompt.md`)
-
-Verification checklist with categorized items.
-
-```markdown
-# <Name> Standards
-
-<What to check + cross-reference to paired skill for workflow/verdict.>
-
-## Severity Mapping
-
-| Severity | Includes |
+| Value | Effect |
 |---|---|
-| CRITICAL | ... |
-| WARNING | ... |
-| SUGGESTION | ... |
+| `agent` | Available in all agent contexts — the built-in Agent mode. Custom agents (e.g., `@planner`) run on top of Agent mode, so they can access these prompts too. |
+| `ask` | Available in Ask mode only (read-only, no file edits). |
+| `plan` | Available in VS Code's built-in Plan mode only. |
+| `<CustomAgent>` | Available only when that custom agent is active (e.g., `agent: 'Planner'` → only in `@planner` context). |
 
-## <Category>
+**Current convention**: all prompts use `agent: 'agent'` because routing is handled by the agent → skill → prompt chain. Binding to a specific custom agent is valid but unnecessary when the paired skill already restricts usage.
 
-- Check items
+#### `tools` field
 
-## Comment Format
+Avoid in prompt frontmatter — tools generally belong on agents. Exception: prompts that function as active review workflows may declare tools if they need them at invocation time.
 
-\`\`\`
-[SEVERITY] Category — Title
-  File: path/to/File.java#method:line
-  Problem: <what + why>
-  Fix: <recommendation>
-\`\`\`
-```
+### Subtype Naming
 
-### Subtype 3: Output (`*-output.prompt.md`)
+Filename suffix determines the prompt's content focus:
 
-Output format / cheat-sheet reference cited by its paired skill.
-
-```markdown
-# <Name>
-
-<What this prompt defines + cross-reference to paired skill for workflow.>
-
-## <Reference Table / Cheat Sheet>
-
-| Column | Column | Column |
+| Suffix | Purpose | Key sections |
 |---|---|---|
-| ... | ... | ... |
+| `-template` | Fill-in scaffold for one-shot artifact creation | `## Usage`, `## Template` (with `${input:field:default}` placeholders), `## Validation Checklist` |
+| `-checklist` | Categorized verification list | `## Severity Mapping`, per-category check sections, `## Comment Format` |
+| `-output` | Output format / cheat-sheet reference | Reference tables, `## Output Format` |
 
-## Output Format
-
-<Format specification with code block example.>
-```
+Body structure follows the suffix's content focus. See existing prompts as reference implementations:
+- `-template`: `prompts/spec-template.prompt.md`, `prompts/plan-template.prompt.md`
+- `-checklist`: `prompts/code-review-checklist.prompt.md`
+- `-output`: `prompts/sql-review-output.prompt.md`
 
 ### Rules
 
-1. **Frontmatter**: `agent` + `description` — both required. No `tools` field.
-2. **Subtype naming**: `-template` for scaffolds, `-checklist` for verification lists, `-output` for format references. Suffix determines which skeleton to follow.
+1. **Frontmatter**: `agent` + `description` — both required.
+2. **Subtype naming**: suffix determines content focus (see table above).
 3. **Placeholder syntax**: `${input:field:default}` for user-prompted values in `-template` prompts. VS Code built-in variables (`${selection}`, `${file}`, etc.) are valid in non-template prompts and descriptions — do not replace them with `${input:...}`.
 4. **Validation Checklist**: required for `-template` prompts. First item is always "Every `${input:...}` placeholder replaced".
 5. **Cross-references**: every prompt MUST reference its paired skill in the opening paragraph using `` `skills/<skill>/SKILL.md` ``.
@@ -519,6 +439,7 @@ What is machine-checked vs. what requires human review.
 These are enforced automatically on every PR that touches `.github/**/*.md`.
 
 - Instruction frontmatter has `description` + `applyTo`
+- Instruction `applyTo` value is non-empty
 - Skill frontmatter has `name` + `description`
 - Skill `name` matches its parent directory name
 - Skill `description` ≤ 1024 characters
@@ -526,13 +447,14 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 - No `tools` field in skill frontmatter
 - Prompt frontmatter has `agent` + `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
+- Agent `handoffs[].agent` values reference existing agent names
+- Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `prompts/...` ``, `` `agents/...` ``) resolve to existing files
 
 ### Tier 2: Human-review (PR review checklist)
 
 These require manual verification. Reviewers should check:
 
-- [ ] Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - [ ] H1 follows category naming convention
 - [ ] Fallback rules block present on code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`)
 - [ ] Phase sections use imperative verb phrases
@@ -541,25 +463,19 @@ These require manual verification. Reviewers should check:
 - [ ] Agent Skill Activation table matches the skills that reference that agent
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
+- [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
 
 ---
 
-## Deprecation & File Lifecycle
+## File Lifecycle
 
 ### Renaming or Moving Files
 
-1. **Before renaming**: scan for inbound references — `grep -rn "<old-filename>" .github/`
-2. **Update all references** in the same PR. Broken paths silently degrade Copilot output — they do not error.
-3. **Update README** tables if the file appears there.
-4. **Run validator**: `bash .github/scripts/validate-style-guide.sh` — catches broken canonical references.
+1. Scan for inbound references: `grep -rn "<old-filename>" .github/`
+2. Update all references + README tables in the same PR.
+3. Run validator: `bash .github/scripts/validate-style-guide.sh`
 
-### Deprecating a File
-
-1. Prepend `⚠️ DEPRECATED` to the file's H1: `# ⚠️ DEPRECATED — <Original Title>`
-2. Add a redirect line immediately after H1: `Replaced by <backtick-wrapped path to new file>.`
-3. Remove the file from its parent agent's Skill Activation table (for skills) or from README tables.
-4. Keep the deprecated file for at least one release cycle so existing users see the redirect.
-5. Delete the file and remove all remaining references in a follow-up PR.
+Broken paths silently degrade Copilot output — they do not error.
 
 ### STYLE-GUIDE Changes
 
