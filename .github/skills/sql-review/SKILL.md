@@ -1,105 +1,47 @@
 ---
 name: sql-review
-description: 'Use when user asks to review SQL, optimize a query, analyze an execution plan, check for SQL injection, or improve database performance. Triggers on: review SQL, optimize query, EXPLAIN plan, check SQL injection, slow query, index strategy, query review, 看一下這段 SQL, 查詢太慢, SQL 效能, 查詢優化, query 太慢, SQL 審查, 有沒有 injection, 看一下這個 query. Covers injection prevention, index strategy, anti-pattern detection, and optimization. Do NOT use for writing new SQL from scratch, general Java code review that happens to contain SQL strings, or non-SQL performance issues (prefer performance skill).'
+description: 'Use when user needs SQL reviewed for injection risks, performance issues, index strategy, or anti-pattern detection. Triggers on: review SQL, SQL review, query review, slow query, check SQL, SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能. Produces severity-classified SQL findings with EXPLAIN guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or performance tuning beyond SQL (prefer performance).'
 ---
 
 # SQL Review — Workflow
 
-Process for reviewing SQL. Rules live in `instructions/sql-rules.instructions.md`. Workflow output format lives in `prompts/sql-review-output.prompt.md`. This file defines the order of attack. Key rules (fallback when instruction not in context):
+SQL-focused review. Rules: `instructions/sql.instructions.md`. Output format: `prompts/sql-review-output.prompt.md`.
 
-- `PreparedStatement` with `?` only — string concatenation in SQL is always CRITICAL
-- No `SELECT *` — list columns explicitly
-- No functions on indexed columns in `WHERE` — use range conditions
-- N+1 detection: SQL inside a loop → batch with `IN` or JOIN
-- `try-with-resources` for `Connection` / `PreparedStatement` / `ResultSet`
+Full coding rules in `instructions/*.instructions.md`. Key rules:
 
-## Phase 1 — Inventory
+- **Injection**: `PreparedStatement` with `?` only — zero concatenation
+- **Performance**: no `SELECT *`, no functions on indexed columns, cursor pagination
+- **Resources**: `try-with-resources` for JDBC — see `instructions/sql.instructions.md`
+- **Hibernate**: named params in HQL — see `instructions/spring-hibernate.instructions.md`
 
-Locate every SQL site before judging any of them.
+## Phase 1 — Collect SQL
 
-```bash
-grep -rn "SELECT\|INSERT\|UPDATE\|DELETE\|CREATE\|ALTER\|DROP" --include="*.java" src/
-find . -name "*.sql" -not -path "*/target/*"
-grep -rn "SELECT\|INSERT\|UPDATE\|DELETE" --include="*.xml" src/
-```
+Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures. Include dynamic query construction.
 
-For each query record: file:line, statement type, parameterization status, caller.
+## Phase 2 — Security Check
 
-## Phase 2 — Security First
+For each query:
+- [ ] Parameters bound via `?` or `:named` — never concatenated
+- [ ] `LIKE` wildcards sanitized
+- [ ] No sensitive columns in `SELECT *`
 
-A slow query is a problem; an injectable query is a crisis. Triage security before performance.
+## Phase 3 — Performance Check
 
-```bash
-# Injection candidates — string concatenation in SQL
-grep -rn '"SELECT.*".*+\|"WHERE.*".*+' --include="*.java" src/
-grep -rn 'String\.format.*SELECT\|String\.format.*WHERE' --include="*.java" src/
-grep -rn '\.append.*WHERE\|\.append.*AND' --include="*.java" src/
+For each query:
+- [ ] Only needed columns selected
+- [ ] WHERE/JOIN columns likely indexed
+- [ ] No functions on indexed columns
+- [ ] Large result sets paginated (cursor, not OFFSET)
+- [ ] No N+1 pattern (SQL inside loop)
 
-# Statement (not PreparedStatement) usage
-grep -rn "createStatement()\|Statement [a-z]" --include="*.java" src/
-```
+Recommend `EXPLAIN` for queries touching large tables.
 
-Flag every concatenated SQL site as CRITICAL until proven safe (e.g., constant-only).
+## Phase 4 — Report
 
-## Phase 3 — Performance
-
-Run EXPLAIN before recommending anything. Guessing is forbidden.
-
-```sql
--- MySQL 8+
-EXPLAIN ANALYZE <query>;
-
--- PostgreSQL
-EXPLAIN (ANALYZE, BUFFERS) <query>;
-```
-
-EXPLAIN signal cheat sheet is defined in `prompts/sql-review-output.prompt.md`.
-
-## Phase 4 — Anti-Pattern Scan
-
-Grep these patterns across the codebase:
-
-| Anti-pattern | Pattern | Action |
-|---|---|---|
-| SQL injection | `"SELECT.*" +` | PreparedStatement with `?` |
-| `SELECT *` | `SELECT \*` | List columns |
-| N+1 | SQL inside loop | Batch with `IN` or JOIN |
-| Unbounded write | `UPDATE`/`DELETE` without `WHERE` | Add `WHERE` |
-| DISTINCT masking | `SELECT DISTINCT` with multi-JOIN | Fix JOIN |
-| Function in WHERE | `WHERE YEAR(/UPPER(/DATE(` | Range condition |
-| OFFSET on large | `LIMIT \d+ OFFSET \d+` | Cursor pagination |
-| Correlated subquery | `WHERE x = (SELECT ... outer.col)` | JOIN or window function |
-| Unbounded SELECT | SELECT in app code without LIMIT | Add LIMIT / paginate |
-
-## Phase 5 — Code Quality
-
-Lower priority but still part of the pass:
-
-- Table aliases meaningful (`u` for users, `o` for orders)
-- One clause per line, SQL keywords UPPER
-- PK is INT/BIGINT, not VARCHAR
-- Money is DECIMAL(p,s), never FLOAT
-- NOT NULL where it should be
-- FK constraints defined (or omission justified)
-- try-with-resources for Connection/PreparedStatement/ResultSet
-- Transactions commit/rollback on every path
-- Batch size bounded (500-1000) for bulk ops
-
-## Output Format
-
-Severity buckets, finding format, and report structure defined in `prompts/sql-review-output.prompt.md` — apply them here.
+Use output format from `prompts/sql-review-output.prompt.md`. Classify each finding by severity (CRITICAL / MAJOR / MINOR / NIT).
 
 ## Handoffs
 
-- → `@implementer` — to fix SQL issues flagged in the review
-- → `performance` skill — when slow queries need deeper profiling beyond EXPLAIN
-- ← `code-review` skill — code review escalates SQL concerns here
-- ← `performance` skill — performance tuning defers deep SQL analysis here
-
-## Anti-Patterns
-
-- Reviewing without EXPLAIN → always pull a plan first
-- Adding indexes without checking write cost → confirm write frequency
-- Fixing SQL while ignoring the Java caller → trace DAO → caller
-- Treating style issues as critical → severity must reflect real impact
-- Skipping Phase 2 → injection slips through
+- → `@implementer` — to fix SQL findings
+- ← `@reviewer` — when SQL review mode is activated
+- ← `code-review` skill — when code review finds SQL issues

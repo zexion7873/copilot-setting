@@ -1,93 +1,77 @@
 ---
 agent: 'agent'
-description: 'SDD specification template covering background, design, API specs, schema changes, acceptance criteria, NFRs, and out-of-scope. Pairs with skills/sdd/SKILL.md (workflow / readiness check / validation).'
+description: 'SDD specification scaffold — background, requirements, design, API contract, data model, testing. Pairs with skills/sdd/SKILL.md (workflow).'
 ---
 
-# SDD Template
+# Spec Template (SDD)
 
-One-shot scaffold for a Spec-Driven Development document. Workflow (readiness check, drafting order, validation rules) lives in `skills/sdd/SKILL.md`. This prompt only defines the OUTPUT FORMAT.
+One-shot scaffold for a Spec-Driven Development document. Workflow: `skills/sdd/SKILL.md`.
 
 ## Usage
 
-Invoke via `/spec-template`. Fill every placeholder — placeholders left as-is fail validation. For complex multi-component features, run the `sdd` skill instead of using this template raw.
+Invoke via `/spec-template`. Fill placeholders, name file `sdd-[feature]-v[N].md`.
 
 ## Template
 
 ```md
-# SDD: ${input:featureTitle:Feature or change title}
+---
+title: ${input:title:Feature name}
+date: ${input:date:YYYY-MM-DD}
+author: ${input:author}
+status: 'Draft'
+---
 
-**Author**: ${input:author}
-**Date**: ${input:date:YYYY-MM-DD}
-**Status**: Draft | In Review | Approved
+# ${input:title}
 
-## 1. Background & Objectives
+## 1. Background
 
-Why this change is needed. Business context, user pain point, or technical driver. State the goal as a measurable outcome, not an activity.
+Why this change exists. Business context and motivation.
 
-## 2. Current State
+## 2. Requirements
 
-How the system works today in the affected area. Include a Mermaid diagram if multiple components interact.
+- REQ-001: <testable requirement with pass/fail criteria>
+- REQ-002: ...
 
-## 3. Proposed Design
+## 3. Design
 
-### 3.1 Architecture
+### Approach
 
-High-level design with a Mermaid diagram. Show component interactions, data flow, and boundaries.
+High-level approach with rationale. Why this over alternatives.
 
-### 3.2 API Specification
+### Alternatives Considered
 
-For each new or modified endpoint:
+- ALT-001: <approach> — rejected because <reason>
 
-- **Method + Path**: `GET /api/orders/{customerId}`
-- **Request**: schema, validation rules
-- **Response**: schema, status codes
-- **Errors**: error codes and messages
-- **Auth**: required role / scope
+## 4. API Contract
 
-### 3.3 Data Model / Schema Changes
+| Method | Signature | Input | Output | Errors |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
 
-New tables, altered columns, indexes. Migration steps and rollback strategy MUST be included.
+## 5. Data Model
 
-### 3.4 Key Algorithms / Business Rules
+Entity/table changes. Migration script needed: yes/no. Rollback plan.
 
-Non-trivial logic the implementer must follow exactly. Pseudocode is fine; ambiguous prose is not.
+## 6. Error Handling
 
-## 4. Acceptance Criteria
+| Failure Mode | Detection | Recovery |
+|---|---|---|
+| ... | ... | ... |
 
-Numbered, testable, binary pass/fail. No subjective language.
+## 7. Testing Strategy
 
-- AC-001: When [precondition], the system MUST [behavior].
-- AC-002: ...
-
-## 5. Non-Functional Requirements
-
-- Performance targets (e.g., p95 < 200ms)
-- Security constraints (e.g., OWASP A01 — access control on all endpoints)
-- Compatibility requirements (e.g., backward-compatible API)
-
-## 6. Dependencies & Risks
-
-- DEP-001: External library / internal service this depends on
-- RISK-001: Risk description — mitigation: ...
-
-## 7. Files to Change
-
-- FILE-001: `path/to/File.java` — what changes here
+- TEST-001: <what to verify> — <how> — maps to REQ-NNN
+- TEST-002: ...
 
 ## 8. Out of Scope
 
-Explicitly list what this SDD does NOT cover. This prevents scope creep during implementation.
-
-- Not included: ...
-- Future work: ...
-
+What is explicitly NOT included in this work.
 ```
 
 ## Validation Checklist
 
 - [ ] Every `${input:...}` placeholder replaced
-- [ ] No `TBD` / `TODO` / `...` left in the body
-- [ ] Every AC uses MUST / MUST NOT and is binary pass/fail
-- [ ] Every `FILE-NNN` references a real file in the codebase
-- [ ] §3.3 schema changes include rollback strategy
-- [ ] §8 Out of Scope is non-empty
+- [ ] Every requirement has pass/fail criteria
+- [ ] API contracts include error responses
+- [ ] Data model notes migration/rollback needs
+- [ ] Testing strategy maps to requirements
