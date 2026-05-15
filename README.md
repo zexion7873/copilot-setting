@@ -63,7 +63,7 @@ You  →  @reviewer      Checks correctness, security, performance
                         Catches SQL injection risk → CRITICAL
                         ↓ click "Fix issues" handoff
 
-You  →  @implementer   Switches to PreparedStatement, writes tests
+You  →  @implementer   Switches to PreparedStatement, verifies fix
                         Done ✓
 ```
 
@@ -76,24 +76,7 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
 > - Spec review → `@reviewer` (SDD review mode) → `@planner`
-> - Research → `@planner` (spike mode) → `@planner` (plan mode)
 > - Documentation → `@planner`
-
-### 📝 Amendment Workflow
-
-When an existing SDD needs revision mid-implementation (new requirements, API contract changes, schema bumps), the `sdd` skill enters **Phase 0 — Amendment Gate** instead of rewriting from scratch:
-
-```mermaid
-flowchart LR
-    SDD[Existing SDD] --> Gate{Phase 0<br/>Amendment Gate}
-    Gate --> Bump[Mark changes + rationale<br/>+ semver bump]
-    Bump --> Sync[Sync Impact Report<br/>+ §9 Changelog]
-    Sync --> Tasks[tasks: re-scope T###]
-    Sync --> Impl["@implementer: refactor"]
-    Sync --> Comp[sdd-compliance: re-verify]
-```
-
-Semver convention: **MAJOR** for breaking changes (removed AC, API contract change, incompatible schema), **MINOR** for additive (new AC, new endpoint, backward-compatible schema), **PATCH** for clarifications. Full procedure in `.github/skills/sdd/SKILL.md`.
 
 ---
 
@@ -103,9 +86,9 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `constitution` / `spike` / `adr` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `context-discovery` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` / `sdd-compliance` skills, mode-routed by review type |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
 
@@ -142,28 +125,23 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
-| 📜 | `constitution` | Auto + Manual | Project-wide non-negotiable principles and governance — stable, high-level only (200-line hard limit) |
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
-| 🗺️ | `context-discovery` | Auto + Manual | Pre-action context map — files needed, dependencies, tests, reference patterns |
 | 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
-| 📌 | `adr` | Auto + Manual | Architectural Decision Record — captures a decision with status, alternatives, and consequences |
-| 🔬 | `spike` | Auto + Manual | Time-boxed research document for a single technical question |
-| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation (supports amendment with semver versioning) |
+| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
 | 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
-| ✅ | `sdd-compliance` | Auto + Manual | Spec compliance matrix AFTER implementation — verifies every AC has tasks, tests, and code evidence |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
-| 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit; hand off to @implementer for coding |
+| 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
-| 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns (use `sdd-compliance` for AC traceability) |
+| 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
 
 > [!WARNING]
-> `git-commit` is marked **manual only** because it modifies git history. Copilot relies on the description text to suppress auto-invocation; always invoke it explicitly via `/git-commit`.
+> `git-commit` uses `disable-model-invocation: true` to prevent auto-triggering. Always invoke explicitly via `/git-commit`.
 
 ---
 
@@ -173,20 +151,18 @@ Automatically injected into the system prompt when the current file matches the 
 
 | File | applyTo | Description |
 |------|---------|-------------|
-| `error-handling` | `**/*.java` | Exception handling and error response conventions for Java 8 — hierarchy, custom exceptions, retry, and error propagation. |
+| `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, and error propagation. |
 | `global-copilot` | `**` | Language and tech stack base rules: respond in Traditional Chinese, code in English, Java 8 + Maven, no Spring Boot. |
-| `logging` | `**/*.java` | SLF4J + Logback logging conventions — severity levels, parameterized messages, context inclusion, and security. |
-| `javadoc` | `**/*.java` | Javadoc conventions for Java types and members — tags, formatting, when to document. |
-| `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention in server-rendered pages. |
-| `junit` | `**/*Test.java, **/*IT.java, **/test/**/*.java` | JUnit 5 + Mockito conventions for Java tests — naming, structure, parameterization, assertions. |
-| `markdown` | `**/*.md` | Markdown formatting aligned to the CommonMark specification (0.31.2) |
-| `no-heredoc` | `**` | Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. Works around VS Code Copilot terminal corruption. |
-| `security-and-owasp` | `**/*.java, **/*.jsp` | Secure coding rules for Java web applications based on OWASP Top 10 and industry best practices. |
-| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments. Only comment WHY when non-obvious. Applies to any language with comments. |
-| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL hard rules covering injection prevention, performance pitfalls, indexing, pagination, and code quality. Single source of truth for SQL across all file types that may contain it. |
-| `sql-sp-generation` | `**/*.sql` | MySQL stored procedure and schema generation conventions. General SQL rules live in sql-rules.instructions.md. |
-| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files — structure, formatting, and common pitfalls. |
-| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, encoding, and secret management. |
+| `logging` | `**/*.java` | SLF4J + Logback conventions — parameterized messages, severity levels, and security. |
+| `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention. |
+| `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
+| `no-heredoc` | `**` | Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. |
+| `security-and-owasp` | `**/*.java, **/*.jsp` | Secure coding rules based on OWASP Top 10. |
+| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments. Only comment WHY when non-obvious. |
+| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL hard rules — injection prevention, performance pitfalls, and JDBC resource handling. |
+| `sql-sp-generation` | `**/*.sql` | MySQL stored procedure and schema generation conventions. |
+| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files. |
+| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, and secret management. |
 | `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, and secret management. |
 
 ---
@@ -199,10 +175,10 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 |--------|-------------|---------|
 | `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
 | `sql-review-output` | `sql-review` | Output format reference (severity buckets, EXPLAIN cheat sheet) for the sql-review skill |
-| `spec-template` | `sdd` | SDD scaffold — 9 sections from background to changelog |
+| `spec-template` | `sdd` | SDD scaffold — 8 sections from background to out-of-scope |
 | `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
 | `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
-| `adr-template` | `adr` | ADR scaffold with Status / Context / Decision / Consequences / Alternatives |
+
 
 > [!NOTE]
 > **Naming convention** (suffix indicates content type):
@@ -246,9 +222,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   ├── error-handling
 │   ├── global-copilot
 │   ├── logging
-│   ├── javadoc
 │   ├── jsp
-│   ├── junit
 │   ├── markdown
 │   ├── no-heredoc
 │   ├── security-and-owasp
@@ -276,21 +250,15 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   ├── sql-review-output
 │   ├── spec-template
 │   ├── plan-template
-│   ├── tasks-template
-│   └── adr-template
+│   └── tasks-template
 │
 └── skills/                                ← Executable skills for agents
-    ├── constitution/
     ├── clarify-task/
-    ├── context-discovery/
     ├── plan/
-    ├── adr/
-    ├── spike/
     ├── sdd/
     ├── sdd-review/
     ├── tasks/
     ├── implement/
-    ├── sdd-compliance/
     ├── refactor/
     ├── test-design/
     ├── git-commit/

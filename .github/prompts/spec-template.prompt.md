@@ -81,13 +81,6 @@ Explicitly list what this SDD does NOT cover. This prevents scope creep during i
 - Not included: ...
 - Future work: ...
 
-## 9. Changelog
-
-Track amendments to this SDD. Update on every content change (new AC, modified API, schema bump, wording polish). Semver: MAJOR for breaking changes, MINOR for additive, PATCH for clarifications. See `skills/sdd/SKILL.md` Phase 0 for the full amendment workflow.
-
-| Version | Date | Author | Change Summary | Sync Impact |
-|---|---|---|---|---|
-| 1.0.0 | ${input:date:YYYY-MM-DD} | ${input:author} | Initial SDD | — |
 ```
 
 ## Validation Checklist
@@ -98,4 +91,3 @@ Track amendments to this SDD. Update on every content change (new AC, modified A
 - [ ] Every `FILE-NNN` references a real file in the codebase
 - [ ] §3.3 schema changes include rollback strategy
 - [ ] §8 Out of Scope is non-empty
-- [ ] §9 Changelog has at least one row (initial version `1.0.0` recorded)

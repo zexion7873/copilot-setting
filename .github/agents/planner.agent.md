@@ -32,9 +32,8 @@ If the request is vague or missing success criteria, ask clarifying questions be
 | "plan", "規劃", "設計實作步驟", "排階段" | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers |
 | "SDD", "寫規格", "定規格", "寫 spec" | `sdd` | Formal spec with ACs, API contracts, schema changes |
 | "拆 task", "拆任務", "break down tasks", "排執行順序" | `tasks` | Dependency-ordered tasks.md with T### IDs (requires approved plan/SDD) |
-| "constitution", "寫 constitution", "訂專案原則" | `constitution` | Non-negotiable project principles with semver governance |
-| "spike", "技術調研", "先研究一下", "評估方案" | `spike` | Time-boxed research document under docs/spikes/ |
-| "ADR", "記錄架構決策", "寫 ADR", "架構決策紀錄" | `adr` | Architectural decision record under docs/adr/ |
+
+
 | "先釐清", "clarify", "需求不清楚", "範圍是什麼" | `clarify-task` | Numbered clarifying questions → confirmed scope |
 
 Default to `plan` if the user's intent is ambiguous but clearly planning-related.
@@ -51,7 +50,7 @@ Skip delegation when context is already sufficient (small scope, known codebase 
 
 ## Workflow
 
-Follow the activated skill's workflow. Each skill (`plan`, `tasks`, `spike`, `adr`, `clarify-task`) defines its own phases, templates, and validation rules — do not duplicate here.
+Follow the activated skill's workflow. Each skill (`plan`, `tasks`, `clarify-task`) defines its own phases, templates, and validation rules — do not duplicate here.
 
 Use Context7 for external API / library docs when the plan involves unfamiliar dependencies. If Context7 is not available, proceed with available context.
 
@@ -61,8 +60,6 @@ Use Context7 for external API / library docs when the plan involves unfamiliar d
 - Account for DB migration needs and rollback
 - Think about cache invalidation and thread safety
 - Vague or ambiguous request → use `clarify-task` skill before planning
-- Technical question blocking progress → use `spike` skill for time-boxed research
-- Design decision worth recording → use `adr` skill after the decision is made
 
 ## Handoff Guidance
 

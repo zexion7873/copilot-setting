@@ -20,10 +20,8 @@ Verify the design layer exists before generating tasks. Inspired by Spec-Driven 
 
 Read in this order, accumulating constraints:
 
-1. **Constitution** (if exists at `docs/constitution.md`) — non-negotiable testing / quality rules (e.g., TDD mandatory, coverage thresholds)
-2. **SDD** (if exists) — `FR-` / `AC-` / `SC-`, files to change (§7), schema changes (§3.3)
-3. **Plan** — phases, `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers
-4. **Existing tests in workspace** — detect whether TDD enforcement is already established
+1. **SDD** (if exists) — `FR-` / `AC-` / `SC-`, files to change (§7), schema changes (§3.3)
+2. **Plan** — phases, `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers
 
 If both plan and SDD exist, SDD wins on requirements, plan wins on phasing.
 
@@ -37,7 +35,6 @@ Before presenting, verify:
 
 - Every spec `AC-` (or plan `REQ-`) appears in the coverage map at least once
 - Every task has a real file path OR is explicitly infrastructure setup
-- Test tasks precede their corresponding implementation tasks (TDD default)
 - No phase has circular dependencies
 - `[P]` markers are correct — no parallel tag on tasks touching the same file
 - No placeholder text — every bracket is replaced with concrete content
@@ -47,7 +44,6 @@ Before presenting, verify:
 - Task IDs: `T001` upward, sequential, no gaps
 - One task = one verifiable outcome — "T015 [US1] Implement `OrderService.findByCustomerId`" not "T015 clean up service layer"
 - File paths MUST be real OR be declared in plan §5 / SDD §7
-- Tests-first ordering is the default — override only on explicit user request, then mark `[NO-TDD]` on affected tasks
 - Output is a complete `tasks.md` file, not a fragment
 - Do NOT redesign the plan during task generation — if the plan is wrong, hand back to `plan` skill
 - Setup and Foundational tasks have NO `[Story]` label; only user-story phase tasks do
@@ -55,6 +51,6 @@ Before presenting, verify:
 ## Handoffs
 
 - → `implement` skill / `@implementer` — once tasks are generated, start execution
-- → `sdd-compliance` skill — after implementation, verify spec coverage against this task list
+
 - ← `plan` skill — plan hands off task generation here
 - ← `sdd` skill — SDD hands off task generation here

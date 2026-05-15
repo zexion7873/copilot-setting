@@ -1,6 +1,6 @@
 ---
 name: Reviewer
-description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, and specification audits. Each mode follows its own checklist and severity model.'
+description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, and SDD specification reviews. Each mode follows its own checklist and severity model.'
 model: Claude Opus 4.6
 tools: ['search', 'read', 'context7/*', 'websearch/*']
 handoffs:
@@ -36,7 +36,6 @@ Pick the primary skill from the user's request. If unclear, default to code revi
 | "security audit", "OWASP", "vulnerability check", 資安審查 | Security Audit | `security-audit` |
 | "review SQL", "SQL check", "query review", SQL 審查 | SQL Review | `sql-review` |
 | "review SDD", "audit spec", "is this SDD ready", 審查 SDD, 規格審查 | SDD Review | `sdd-review` |
-| post-implementation AC traceability | Compliance Check | `sdd-compliance` |
 
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
 

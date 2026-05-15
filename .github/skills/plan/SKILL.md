@@ -1,11 +1,11 @@
 ---
 name: plan
-description: 'Use when user asks to plan a feature, design implementation phases, or estimate impact for an upgrade / refactor / migration. Triggers on: plan a feature, design implementation phases, estimate impact, upgrade plan, migration plan, implementation roadmap, 寫實作計畫, 規劃, 升級計畫, 遷移計畫, 估影響範圍, 設計實作步驟, 排階段. Produces a phased implementation roadmap with requirements, files, risks, and alternatives. Do NOT use for one-off bug fixes (just fix), architectural decisions (prefer adr skill), open-ended research (prefer spike skill), specification documents (prefer sdd skill), spec reviews (prefer sdd-review skill), or atomic task decomposition after a plan exists (prefer tasks skill).'
+description: 'Use when user asks to plan a feature, design implementation phases, or estimate impact for an upgrade / refactor / migration. Triggers on: plan a feature, design implementation phases, estimate impact, upgrade plan, migration plan, implementation roadmap, 寫實作計畫, 規劃, 升級計畫, 遷移計畫, 估影響範圍, 設計實作步驟, 排階段. Produces a phased implementation roadmap with requirements, files, risks, and alternatives. Do NOT use for one-off bug fixes (just fix), specification documents (prefer sdd skill), spec reviews (prefer sdd-review skill), or atomic task decomposition after a plan exists (prefer tasks skill).'
 ---
 
 # Plan — Workflow
 
-Produce a self-contained implementation spec another developer (or AI) can execute without further clarification. Output format defined in `prompts/plan-template.prompt.md`. **A plan is for work whose shape is known**; if the shape is still being explored, use `spike`.
+Produce a self-contained implementation spec another developer (or AI) can execute without further clarification. Output format defined in `prompts/plan-template.prompt.md`.
 
 ## Phase 1 — Classify the Plan
 
@@ -52,5 +52,3 @@ Use the template in `prompts/plan-template.prompt.md`. All identifier prefixes (
 
 - → `tasks` skill — once the plan is approved, generate the atomic task list before implementation
 - → `sdd` skill / `@planner` — when the plan needs a formal SDD before tasks / implementation
-- → `adr` skill — if the plan exposes a decision worth recording
-- ← `spike` skill — a spike's recommendation often becomes a plan
