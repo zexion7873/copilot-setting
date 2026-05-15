@@ -152,7 +152,7 @@ flowchart LR
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `error-handling` | `**/*.java` | 例外處理慣例 — 階層設計、自訂例外、錯誤傳播 |
-| `global-copilot` | `**` | 語言與技術棧基礎規則：繁中回覆、英文寫 code、Java 8 + Maven、不用 Spring Boot |
+
 | `logging` | `**/*.java` | SLF4J + Logback 慣例 — 參數化訊息、嚴重度、安全性 |
 | `jsp` | `**/*.jsp` | JSP 模板慣例 — 輸出編碼、JSTL 使用、避免 scriptlet、XSS 防護 |
 | `markdown` | `**/*.md` | 遵循 CommonMark 規範（0.31.2）的 Markdown 格式 |
@@ -197,18 +197,6 @@ flowchart LR
 - 程式碼中的註解、變數名稱、類別名稱一律使用英文
 - 技術環境：Java 8、Maven、無 Spring Boot
 
-> [!NOTE]
-> **為什麼 `global-copilot.instructions.md` 內容一樣？**
->
-> Copilot 透過兩個獨立的 scope 載入指示：
->
-> | Scope | 載入機制 | 對應檔案 |
-> |-------|----------|----------|
-> | **Project** | Copilot 自動偵測工作區根目錄的 `.github/copilot-instructions.md` | `copilot-instructions.md` |
-> | **User** | VS Code `chat.instructionsFilesLocations` 設定指向 instructions 資料夾 | `global-copilot.instructions.md` |
->
-> User scope 沒有 `copilot-instructions.md` 的自動載入機制 — VS Code 只提供 `chat.instructionsFilesLocations` 指向 `instructions/` 資料夾，不包含 `copilot-instructions.md`。因此同樣的內容需要以 `.instructions.md`（`applyTo: '**'`）的形式放進 instructions 資料夾，才能跨工作區生效。
-
 ---
 
 <details>
@@ -220,7 +208,7 @@ flowchart LR
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
 │   ├── error-handling
-│   ├── global-copilot
+
 │   ├── logging
 │   ├── jsp
 │   ├── markdown

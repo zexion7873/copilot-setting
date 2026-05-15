@@ -152,7 +152,7 @@ Automatically injected into the system prompt when the current file matches the 
 | File | applyTo | Description |
 |------|---------|-------------|
 | `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, and error propagation. |
-| `global-copilot` | `**` | Language and tech stack base rules: respond in Traditional Chinese, code in English, Java 8 + Maven, no Spring Boot. |
+
 | `logging` | `**/*.java` | SLF4J + Logback conventions — parameterized messages, severity levels, and security. |
 | `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention. |
 | `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
@@ -197,18 +197,6 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 - All comments, variable names, and class names in code must be in English
 - Tech stack: Java 8, Maven, no Spring Boot
 
-> [!NOTE]
-> **Why does `global-copilot.instructions.md` contain the same content?**
->
-> Copilot loads instructions through two independent scopes:
->
-> | Scope | Mechanism | File |
-> |-------|-----------|------|
-> | **Project** | Copilot auto-detects `.github/copilot-instructions.md` in the workspace root | `copilot-instructions.md` |
-> | **User** | VS Code `chat.instructionsFilesLocations` points to an instructions folder | `global-copilot.instructions.md` |
->
-> There is no user-scope equivalent of `copilot-instructions.md` — VS Code only provides `chat.instructionsFilesLocations` for the `instructions/` folder, not for `copilot-instructions.md` itself. To apply the same base rules across all workspaces, the content must also exist as an `.instructions.md` file with `applyTo: '**'` inside the instructions folder.
-
 ---
 
 <details>
@@ -220,7 +208,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
 │   ├── error-handling
-│   ├── global-copilot
+
 │   ├── logging
 │   ├── jsp
 │   ├── markdown
