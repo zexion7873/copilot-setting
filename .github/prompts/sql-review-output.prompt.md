@@ -1,5 +1,7 @@
 ---
 agent: 'agent'
+# tools: sanctioned exception per STYLE-GUIDE line 271 — this -output prompt
+# functions as an active review workflow and needs tools at invocation time.
 tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'read/problems']
 description: 'SQL review workflow for ${selection}. Applies rules from instructions/sql-rules.instructions.md. Works across MySQL, PostgreSQL, SQL Server, Oracle.'
 ---

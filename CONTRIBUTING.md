@@ -6,8 +6,9 @@
 2. Create a branch (`git checkout -b feature/your-feature`)
 3. Follow the [STYLE-GUIDE.md](.github/STYLE-GUIDE.md) for file format and structure
 4. Verify cross-references: `grep -rn "<filename>" .github/` before renaming or moving files
-5. Commit with [Conventional Commits](https://www.conventionalcommits.org/) messages
-6. Open a Pull Request
+5. Enable the pre-commit hook: `git config core.hooksPath .githooks`
+6. Commit with [Conventional Commits](https://www.conventionalcommits.org/) messages
+7. Open a Pull Request
 
 ## Architecture
 

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Pre-commit hook: run STYLE-GUIDE validation when .github/ markdown changes are staged.
+
+set -euo pipefail
+
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACMR -- '.github/**/*.md' 2>/dev/null || true)
+
+if [ -z "$STAGED_MD" ]; then
+  exit 0
+fi
+
+echo "🔍 .github/ markdown changed — running STYLE-GUIDE validation..."
+
+if bash .github/scripts/validate-style-guide.sh; then
+  exit 0
+else
+  echo ""
+  echo "❌ STYLE-GUIDE validation failed. Fix the errors above before committing."
+  exit 1
+fi
