@@ -72,12 +72,7 @@ Anything to add or correct?
 
 ## Phase 5 — Proceed
 
-Once the user confirms, hand off:
-
-- → `plan` skill — for multi-step / multi-file work
-- → `implement` skill — for direct execution
-- → `refactor` skill — for behavior-preserving restructuring
-- → `debug` skill — if the real task turned out to be a bug hunt
+Once the user confirms, activate the matching downstream skill or hand off to the relevant agent — see Handoffs below for routing.
 
 ## Handoffs
 
