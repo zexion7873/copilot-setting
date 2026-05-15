@@ -188,7 +188,6 @@ flowchart LR
 每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
 
 - 以繁體中文回覆
-- 程式碼中的註解、變數名稱、文件內容一律使用英文
 - 技術環境：Java 8、Maven、Hibernate 4.x（native Session API、hbm.xml）、Spring Core（無 Spring Boot、XML `<tx:advice>`）
 
 ---

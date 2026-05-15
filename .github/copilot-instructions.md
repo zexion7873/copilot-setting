@@ -3,7 +3,6 @@
 ## Language & Communication
 
 - Always respond in **Traditional Chinese (繁體中文)**.
-- All code, comments, variable names, and documentation within code must be in **English**.
 - Keep responses concise and direct. Avoid unnecessary verbosity.
 
 ## Tech Stack
