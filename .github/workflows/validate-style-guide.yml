@@ -1,0 +1,15 @@
+name: Validate STYLE-GUIDE
+
+on:
+  pull_request:
+    paths:
+      - '.github/**/*.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run STYLE-GUIDE validation
+        run: bash .github/scripts/validate-style-guide.sh
