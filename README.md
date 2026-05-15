@@ -188,7 +188,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
-- Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, Activiti 5.17, MySQL 8.0, JSP + JSTL 1.2
+- Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, JSP + JSTL 1.2
 
 ---
 
