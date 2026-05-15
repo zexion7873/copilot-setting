@@ -188,8 +188,8 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
-- All comments, variable names, and class names in code must be in English
-- Tech stack: Java 8, Maven, no Spring Boot
+- All code, comments, variable names, and documentation within code must be in English
+- Tech stack: Java 8, Maven, Hibernate 4.x (native Session API, hbm.xml), Spring Core (no Spring Boot, XML `<tx:advice>`)
 
 ---
 
