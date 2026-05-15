@@ -2,7 +2,7 @@
 
 Canonical format for every file type under `.github/`. All files MUST follow these skeletons. Format changes require updating this guide first.
 
-## Four Categories
+## Five Categories
 
 | Category | Role | Responsibility |
 |---|---|---|
@@ -10,14 +10,71 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 | **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
 | **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
 | **Prompt** | 模板 | Output format scaffolds — referenced by workflows |
+| **Hook** | 生命週期守衛 | Block dangerous commands before agent tool execution |
 
 ```text
-Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
-                                  │
-                                  └──rules──→ Instruction (規則)
+Hook (守衛) ──lifecycle guard──→ Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
+                                                                  │
+                                                                  └──rules──→ Instruction (規則)
 ```
 
-Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Delegation Architecture** section for enforcement rules.
+Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Dependency Direction** and **Delegation Architecture** sections for enforcement rules.
+
+---
+
+## Decision Tree
+
+Use this table to determine which file to create or modify.
+
+| I want to... | Create | Where |
+|---|---|---|
+| Add a coding convention | Instruction | `instructions/<name>.instructions.md` |
+| Add a new workflow | Skill + (optional) Prompt | `skills/<name>/SKILL.md` |
+| Add a new AI agent role | Agent | `agents/<name>.agent.md` |
+| Add an output format scaffold | Prompt | `prompts/<name>.prompt.md` |
+| Block a dangerous command | Hook script | `hooks/scripts/<name>.sh` + register in `hooks/default.json` |
+| Add a review mode to @reviewer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/reviewer.agent.md` Skill Activation table |
+| Add a build mode to @implementer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/implementer.agent.md` Skill Activation table |
+
+After creating any file, verify inbound references resolve: `grep -rn "<new-filename>" .github/`.
+
+---
+
+## Dependency Direction
+
+References between categories must follow allowed directions. This prevents circular dependencies and keeps each category's scope clean.
+
+### Content dependencies (what the file NEEDS to function)
+
+```text
+Agent ──activates──→ Skill ──uses format from──→ Prompt
+                       │
+                       └──applies rules from──→ Instruction
+```
+
+| From | To | Allowed? | Example |
+|---|---|---|---|
+| Agent → Skill | ✅ | Skill Activation table: `skill-name` |
+| Skill → Prompt | ✅ | "Output format defined in `prompts/plan-template.prompt.md`" |
+| Skill → Instruction | ✅ | "Rules live in `instructions/sql-rules.instructions.md`" |
+| Skill → Skill | ✅ | Handoffs section only: `→ code-review skill` |
+| Instruction → Instruction | ✅ | Cross-reference related rules: `instructions/error-handling.instructions.md` |
+
+### Navigational back-references (pointing readers to context)
+
+| From | To | Allowed? | Purpose |
+|---|---|---|---|
+| Prompt → Skill | ✅ | Opening paragraph: "Workflow lives in `skills/sdd/SKILL.md`" |
+| Skill → Agent | ✅ | Handoffs section only: "suggest `@reviewer`" |
+
+### Forbidden directions
+
+| From | To | Why |
+|---|---|---|
+| Instruction → Skill | ❌ | Rules must not know about workflows — they are consumed, not consumers |
+| Instruction → Prompt | ❌ | Rules must not reference output formats |
+| Prompt → Agent | ❌ | Templates must not know about routing |
+| Prompt → Instruction | ❌ | Templates must not embed rules — the paired skill references both |
 
 ---
 
@@ -129,6 +186,11 @@ Skip delegation when <condition>.
    - `Constraints` — constraints list
    - `Handoff Guidance` — when to hand off to other agents (always last body section)
 5. **Lightweight agents** (subagents like `researcher`): may use a minimal structure (`Rules` + `Output Format`) instead of the full skeleton. Frontmatter must still be complete.
+6. **Handoff format** (when `handoffs` is present in frontmatter):
+   - `label`: short imperative phrase (≤ 10 characters). Chinese preferred for consistency with `copilot-instructions.md` response language; English acceptable for widely recognized terms (e.g., `Code Review`).
+   - `agent`: must reference an existing agent `name` (case-sensitive).
+   - `prompt`: one sentence in Chinese, starts with `請`. Provides context for the receiving agent.
+   - `send: false` is the default — the user confirms before handoff is sent. Use `send: true` only for fully automated handoffs (none currently exist).
 
 ---
 
@@ -160,6 +222,17 @@ For manual-only skills, replace the first line:
 ⚠️ MANUAL ONLY — invoke ONLY via /<skill-name>. NEVER auto-trigger.
 Use when <trigger scenario>.
 ```
+
+### Trigger Keyword Design
+
+Guidelines for the `Triggers on:` section in skill descriptions and the corresponding agent Skill Activation table.
+
+- Include both **English AND Chinese** triggers (bilingual user base per `copilot-instructions.md`).
+- **4–8 trigger phrases** per skill. Too few = missed intent, too many = false activation.
+- Use **verb phrases**, not bare nouns: `"review SQL"` not `"SQL"`.
+- Include common **variations and synonyms**: `"寫 SDD"` and `"寫規格"` for the same skill.
+- **No overlap with sibling skills** on the same agent. If a phrase could activate 2 skills, the agent's Skill Activation section must specify a default (e.g., "Default to `implement` if ambiguous").
+- Overlap between skills on **different agents** is acceptable — the user's `@agent-name` choice disambiguates.
 
 ### Body Skeleton
 
@@ -357,17 +430,143 @@ Output format / cheat-sheet reference cited by its paired skill.
 
 ---
 
+## Hooks (`hooks/`)
+
+Lifecycle guards that intercept agent tool calls before execution. Hooks inspect — they never modify files or produce output for the user.
+
+### Configuration (`hooks/default.json`)
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "bash .github/hooks/scripts/<script-name>.sh",
+        "timeoutSec": 5
+      }
+    ]
+  }
+}
+```
+
+### Script Skeleton (`hooks/scripts/*.sh`)
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""')
+TOOL_INPUT=$(echo "$INPUT" | jq -r '.toolInput // "" | if type == "object" then tostring else . end')
+
+# Filter by tool type — exit 0 early for irrelevant tools
+case "$TOOL_NAME" in
+  shell_command|terminal|bash|run_command) ;;
+  *) exit 0 ;;
+esac
+
+# Deny patterns (case-insensitive)
+DENY_PATTERNS="<pipe-separated regex patterns>"
+
+if echo "$TOOL_INPUT" | grep -qiE "$DENY_PATTERNS" 2>/dev/null; then
+  echo "DENY: <reason>" >&2
+  exit 2
+fi
+
+exit 0
+```
+
+### Rules
+
+1. **Shebang**: `#!/usr/bin/env bash` on line 1.
+2. **Error handling**: `set -euo pipefail` on line 2.
+3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`.
+4. **Input format**: JSON on stdin with `toolName` (string) and `toolInput` (string or object). Parse with `jq`.
+5. **Tool filtering**: always check `TOOL_NAME` first and `exit 0` for irrelevant tool types. Never inspect non-shell tools.
+6. **Timeout**: `timeoutSec` ≤ 10. Hooks must be fast — they run on every tool call.
+7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny message on stderr).
+8. **Pattern matching**: use `grep -qiE` (case-insensitive extended regex) for deny patterns. False positives are worse than false negatives — err on the side of allowing.
+
+---
+
 ## Cross-Reference Format (all categories)
 
-| Reference type | Format | Example |
-|---|---|---|
-| Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql-rules.instructions.md` `` |
-| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Used in skill fallback intro when depending on all instructions |
-| Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` |
-| Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/plan-template.prompt.md` `` |
-| Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` |
-| Agent mention | `` `@agent-name` `` | `` `@implementer` `` |
-| Skill mention (inline) | `` `skill-name` `` or `` `skill-name` skill `` | `` `plan` skill `` |
-| Global instructions | `` `copilot-instructions.md` `` | `` `copilot-instructions.md` `` |
+| Reference type | Format | Example | Validated? |
+|---|---|---|---|
+| Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql-rules.instructions.md` `` | ✅ CI |
+| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Used in skill fallback intro when depending on all instructions | ❌ |
+| Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` | ✅ CI |
+| Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/plan-template.prompt.md` `` | ✅ CI |
+| Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` | ✅ CI |
+| Agent mention | `` `@agent-name` `` | `` `@implementer` `` | ❌ |
+| Skill mention (inline) | `` `skill-name` `` or `` `skill-name` skill `` | `` `plan` skill `` | ❌ |
+| Global instructions | `` `copilot-instructions.md` `` | `` `copilot-instructions.md` `` | ❌ |
 
 All paths are relative from `.github/`. Never use bare names without context (e.g., `` `sql-rules` `` alone) — always include enough path to be unambiguous.
+
+The **Validated?** column indicates whether `validate-style-guide.sh` automatically checks that the referenced file exists. References marked ❌ require manual verification during PR review.
+
+---
+
+## Validation Tiers
+
+What is machine-checked vs. what requires human review.
+
+### Tier 1: Machine-checked (`validate-style-guide.sh` + CI)
+
+These are enforced automatically on every PR that touches `.github/**/*.md`.
+
+- Instruction frontmatter has `description` + `applyTo`
+- Skill frontmatter has `name` + `description`
+- Skill `name` matches its parent directory name
+- Skill `description` ≤ 1024 characters
+- Skill `description` contains required markers (`Use when`, `Triggers on:`, `Do NOT use`) — exempted for `disable-model-invocation: true` skills
+- No `tools` field in skill frontmatter
+- Prompt frontmatter has `agent` + `description`
+- Agent frontmatter has `name`, `description`, `model`, `tools`
+- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `prompts/...` ``, `` `agents/...` ``) resolve to existing files
+
+### Tier 2: Human-review (PR review checklist)
+
+These require manual verification. Reviewers should check:
+
+- [ ] Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
+- [ ] H1 follows category naming convention
+- [ ] Fallback rules block present on code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`)
+- [ ] Phase sections use imperative verb phrases
+- [ ] No duplicated content across categories (sanctioned fallback rules excepted)
+- [ ] Handoff sections are bidirectional (if A → B, then B ← A)
+- [ ] Agent Skill Activation table matches the skills that reference that agent
+- [ ] Dependency direction rules are respected (see **Dependency Direction** section)
+- [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
+
+---
+
+## Deprecation & File Lifecycle
+
+### Renaming or Moving Files
+
+1. **Before renaming**: scan for inbound references — `grep -rn "<old-filename>" .github/`
+2. **Update all references** in the same PR. Broken paths silently degrade Copilot output — they do not error.
+3. **Update README** tables if the file appears there.
+4. **Run validator**: `bash .github/scripts/validate-style-guide.sh` — catches broken canonical references.
+
+### Deprecating a File
+
+1. Prepend `⚠️ DEPRECATED` to the file's H1: `# ⚠️ DEPRECATED — <Original Title>`
+2. Add a redirect line immediately after H1: `Replaced by <backtick-wrapped path to new file>.`
+3. Remove the file from its parent agent's Skill Activation table (for skills) or from README tables.
+4. Keep the deprecated file for at least one release cycle so existing users see the redirect.
+5. Delete the file and remove all remaining references in a follow-up PR.
+
+### STYLE-GUIDE Changes
+
+This file is the canonical source. When updating format rules:
+
+1. Update STYLE-GUIDE.md **first**.
+2. Identify affected files: `grep -rn "<changed-pattern>" .github/`
+3. Update all affected files to comply with the new rules in the **same PR**.
+4. Update `validate-style-guide.sh` if the change introduces a new machine-checkable rule.
+5. Never change the STYLE-GUIDE without propagating — a rule that only exists here and not in the files is worse than no rule.
