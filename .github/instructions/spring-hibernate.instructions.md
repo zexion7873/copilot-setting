@@ -1,13 +1,22 @@
 ---
-description: 'Spring Core + Hibernate 4.x — native Session API, hbm.xml mappings, XML tx:advice transaction management.'
+description: 'Spring 3.2 + Hibernate 4.2 — native Session API, hbm.xml mappings, XML tx:advice, and Spring 3.2 API boundary.'
 applyTo: '**/*.java, **/*.hbm.xml'
 ---
 
-# Spring Core + Hibernate 4.x Conventions
+# Spring 3.2 + Hibernate 4.2 Conventions
 
-No Spring Boot. No JPA annotations. AI models default to both — correct that here. SQL rules: `instructions/sql.instructions.md`.
+No Spring Boot. No Spring 4+. No JPA annotations. AI models default to all three — correct that here. SQL rules: `instructions/sql.instructions.md`.
 
-## Hibernate API
+## Spring 3.2 Boundary (Spring 4+ Forbidden)
+
+- `@RestController` — use `@Controller` + `@ResponseBody`
+- `@Conditional`, `@Profile` with complex conditions
+- `AsyncRestTemplate`, `ListenableFuture`
+- `AbstractAnnotationConfigDispatcherServletInitializer` — this project uses `web.xml`
+- `RestTemplate.exchange()` with `ParameterizedTypeReference` (Spring 3.2 has basic `RestTemplate` only)
+- Spring 4 test annotations (`@Sql`, `@SqlGroup`)
+
+## Hibernate 4.2 API
 
 - **Native Session** only — `SessionFactory.getCurrentSession()`, not JPA `EntityManager`
 - **hbm.xml mappings** — one per entity, alongside POJO. No `@Entity` / `@Column` / `@OneToMany`
@@ -15,6 +24,7 @@ No Spring Boot. No JPA annotations. AI models default to both — correct that h
 - Always named parameters (`:param`) — never concatenation, even in HQL
 - `session.get()` over `session.load()` unless you need a lazy proxy
 - `StatelessSession` for batch >1000 rows
+- No `Session.byId()`, `Session.byNaturalId()` — those are Hibernate 5+
 
 ## Session Lifecycle
 
@@ -45,6 +55,7 @@ No Spring Boot. No JPA annotations. AI models default to both — correct that h
 | Pattern | Problem | Fix |
 |---|---|---|
 | `@Entity` / `@Column` on POJO | This project is hbm.xml only | Remove; metadata in hbm.xml |
+| `@RestController` | Spring 4+ — does not exist in 3.2 | `@Controller` + `@ResponseBody` |
 | `@Transactional` on service | Conflicts with XML `<tx:advice>` | Remove; use `<tx:method>` entry |
 | `sessionFactory.openSession()` in DAO | Session outside tx boundary | `getCurrentSession()` |
 | `session.beginTransaction()` in advised code | Fights Spring tx sync | Let `<tx:advice>` handle it |

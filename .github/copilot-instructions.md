@@ -7,8 +7,12 @@
 
 ## Tech Stack
 
-- Primary language: **Java 8** (planned upgrade to Java 21 in the future)
-- Build tool: **Maven**
-- ORM: **Hibernate 4.x** — native Session API (not JPA EntityManager), `hbm.xml` mapping files (not annotations)
-- DI / AOP / Tx: **Spring Core** (no Spring Boot) — XML-configured `transactionManager` + `<tx:advice>` for declarative transactions; service layer wrapped by AOP pointcut
-- Follows Java SE and Jakarta EE conventions
+- **Java 8** — WAR packaging, deployed to servlet container (not embedded server)
+- **Maven**
+- **Spring Framework 3.2** — not 4.x/5.x. No `@RestController`, no `@Conditional`. XML config + `<tx:advice>` for transactions
+- **Spring Security 3.2** — XML namespace config
+- **Hibernate 4.2** — native Session API (not JPA), `hbm.xml` mappings (not annotations), `getCurrentSession()`
+- **Activiti 5.17** — BPM workflow engine
+- **MySQL 8.0** — InnoDB, utf8mb4
+- **SLF4J 1.7** + Logback
+- **JSP + JSTL 1.2** — view layer
