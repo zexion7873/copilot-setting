@@ -5,21 +5,17 @@ description: 'Use when a plan or SDD needs to be broken into dependency-ordered 
 
 # Tasks — Workflow
 
-Atomic task decomposition. Output format: `prompts/tasks-template.prompt.md`.
+Atomic task decomposition from an approved plan or SDD.
 
 ## Phase 1 — Parse Source
 
-Read the plan or SDD that was approved. Extract:
-- Implementation phases / goals
-- File list with expected changes
-- Dependencies between components
-- Constraints that affect ordering
+Read the plan or SDD. Extract: phases/goals, file list, dependencies, constraints.
 
 ## Phase 2 — Decompose
 
 Break each phase into atomic tasks. Each task must be:
-- **One action**: a single file change or a closely related set of changes
-- **Verifiable**: has a clear done-when condition
+- **One action**: a single file change or closely related set
+- **Verifiable**: clear done-when condition
 - **Estimated**: S (< 30 min) / M (30–120 min) / L (> 2 hours)
 
 ## Phase 3 — Order by Dependency
@@ -29,12 +25,49 @@ Break each phase into atomic tasks. Each task must be:
 3. Mark tasks requiring user sign-off with `[US]`
 4. Number sequentially: `T001`, `T002`, ...
 
-## Phase 4 — Format Output
+## Phase 4 — Validate
 
-Fill `prompts/tasks-template.prompt.md`:
-- Dependency table: which task blocks which
-- Coverage matrix: every requirement from source mapped to ≥1 task
-- No orphan tasks (every task traces to a requirement)
+- [ ] Every task maps to ≥1 requirement
+- [ ] Every requirement maps to ≥1 task
+- [ ] No circular dependencies
+- [ ] Size estimates on every task
+
+## Output Template
+
+```md
+---
+source: <Path to plan or SDD>
+date: <YYYY-MM-DD>
+---
+
+# Task Breakdown
+
+## Tasks
+
+| ID | Task | Size | Depends On | Markers | Done When |
+|---|---|---|---|---|---|
+| T001 | <action on specific file/module> | S/M/L | — | | <verifiable condition> |
+| T002 | ... | S | T001 | | ... |
+| T003 | ... | M | T001 | [P] | ... |
+| T004 | ... | S | T002, T003 | [US] | ... |
+
+### Markers
+
+- `[P]` — parallel-safe at same dependency level
+- `[US]` — requires user sign-off
+
+## Dependency Graph
+
+T001 → T002 → T004
+T001 → T003 ──┘
+
+## Coverage Matrix
+
+| Requirement | Tasks |
+|---|---|
+| REQ-001 | T001, T002 |
+| REQ-002 | T003 |
+```
 
 ## Handoffs
 

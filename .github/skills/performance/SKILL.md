@@ -7,11 +7,14 @@ description: 'Use when user reports slow response, high memory, or needs bottlen
 
 Measure-first performance tuning. SQL performance rules: `instructions/sql.instructions.md`.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules:
+Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
 
-- **SQL**: no `SELECT *`; no functions on indexed columns; cursor pagination; N+1 = SQL in loop
-- **Resources**: `try-with-resources` — leaked connections cause pool exhaustion under load
-- **Security**: caching must not store sensitive data
+- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
+- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
+- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
+- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
+- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
 
 ## Phase 1 — Measure First
 

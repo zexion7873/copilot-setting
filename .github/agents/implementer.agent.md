@@ -50,6 +50,14 @@ Before writing code (Phase 1 of `implement` / `refactor`), delegate codebase res
 
 Skip delegation when the task is trivial (single-file typo fix, known location).
 
+## Constraints
+
+- Java 8 syntax only — no features from later versions
+- Follow existing project patterns: Spring XML config, hbm.xml mappings, `getCurrentSession()`
+- No new dependencies without explicit user approval
+- All code must compile before declaring implementation complete
+- Match existing naming conventions and package structure
+
 ## Handoff Guidance
 
 - Code / refactor / tests complete → suggest `@reviewer` for review

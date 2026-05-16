@@ -9,13 +9,15 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 | **Agent** | 角色 | Who I am, which workflows I activate, who I hand off to |
 | **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
 | **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
-| **Prompt** | 模板 | Output format scaffolds — referenced by workflows |
+| **Prompt** | 快捷指令 | Lightweight single-task shortcuts invoked via `/prompt-name` |
 | **Hook** | 生命週期守衛 | Block dangerous commands before agent tool execution |
 
 ```text
-Hook (守衛) ──lifecycle guard──→ Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
-                                                                  │
-                                                                  └──rules──→ Instruction (規則)
+Hook (守衛) ──lifecycle guard──→ Agent (角色) ──activates──→ Skill (工作流程 + 輸出模板)
+                                                                   │
+                                                                   └──rules──→ Instruction (規則)
+
+Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 ```
 
 Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Dependency Direction** and **Delegation Architecture** sections for enforcement rules.
@@ -29,9 +31,9 @@ Use this table to determine which file to create or modify.
 | I want to... | Create | Where |
 |---|---|---|
 | Add a coding convention | Instruction | `instructions/<name>.instructions.md` |
-| Add a new workflow | Skill + (optional) Prompt | `skills/<name>/SKILL.md` |
+| Add a new workflow | Skill | `skills/<name>/SKILL.md` (embed output template if needed) |
 | Add a new AI agent role | Agent | `agents/<name>.agent.md` |
-| Add an output format scaffold | Prompt | `prompts/<name>.prompt.md` |
+| Add a lightweight shortcut | Prompt | `prompts/<verb>-<object>.prompt.md` |
 | Block a dangerous command | Hook script | `hooks/scripts/<name>.sh` + register in `hooks/default.json` |
 | Add a review mode to @reviewer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/reviewer.agent.md` Skill Activation table |
 | Add a build mode to @implementer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/implementer.agent.md` Skill Activation table |
@@ -47,7 +49,7 @@ References between categories must follow allowed directions. This prevents circ
 ### Content dependencies (what the file NEEDS to function)
 
 ```text
-Agent ──activates──→ Skill ──uses format from──→ Prompt
+Agent ──activates──→ Skill (embeds output template)
                        │
                        └──applies rules from──→ Instruction
 ```
@@ -55,7 +57,6 @@ Agent ──activates──→ Skill ──uses format from──→ Prompt
 | From | To | Allowed? | Example |
 |---|---|---|---|
 | Agent → Skill | ✅ | Skill Activation table: `skill-name` |
-| Skill → Prompt | ✅ | "Output format defined in `prompts/plan-template.prompt.md`" |
 | Skill → Instruction | ✅ | "Rules live in `instructions/sql.instructions.md`" |
 | Skill → Skill | ✅ | Handoffs section only: `→ code-review skill` |
 | Instruction → Instruction | ✅ | Cross-reference related rules: `instructions/java.instructions.md` |
@@ -64,7 +65,6 @@ Agent ──activates──→ Skill ──uses format from──→ Prompt
 
 | From | To | Allowed? | Purpose |
 |---|---|---|---|
-| Prompt → Skill | ✅ | Opening paragraph: "Workflow lives in `skills/sdd/SKILL.md`" |
 | Skill → Agent | ✅ | Handoffs section only: "suggest `@reviewer`" |
 
 ### Forbidden directions
@@ -72,9 +72,6 @@ Agent ──activates──→ Skill ──uses format from──→ Prompt
 | From | To | Why |
 |---|---|---|
 | Instruction → Skill | ❌ | Rules must not know about workflows — they are consumed, not consumers |
-| Instruction → Prompt | ❌ | Rules must not reference output formats |
-| Prompt → Agent | ❌ | Templates must not know about routing |
-| Prompt → Instruction | ❌ | Templates must not embed rules — the paired skill references both |
 
 ---
 
@@ -94,7 +91,7 @@ applyTo: '<glob pattern>'
 ```markdown
 # <Descriptive Title>
 
-<Scope statement (1–2 sentences). Use "Hard rules for..." when the file defines non-negotiable conventions; otherwise, start with a direct statement of what this file covers.> Cross-reference related files using relative paths from `.github/`: e.g., `instructions/sql.instructions.md`, `prompts/code-review-checklist.prompt.md`.
+<Scope statement (1–2 sentences). Use "Hard rules for..." when the file defines non-negotiable conventions; otherwise, start with a direct statement of what this file covers.> Cross-reference related files using relative paths from `.github/`: e.g., `instructions/sql.instructions.md`.
 
 ## <Topic Section>
 
@@ -116,12 +113,11 @@ applyTo: '<glob pattern>'
 
 1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
-3. **Opening paragraph**: scope statement + cross-references to related instruction/prompt files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
+3. **Opening paragraph**: scope statement + cross-references to related instruction files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
 4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.
 5. **Anti-Patterns table**: always 3-column (`Pattern | Problem | Fix`). If the file has anti-patterns, use this exact header. Column 2 (`Problem`) must explain *why* it's wrong, not just restate the pattern.
 6. **Checklist section**: optional. Use only when the instruction benefits from a verification self-check (e.g., markdown formatting, commenting guidelines). Use `- [ ]` checkbox format.
 7. **Cross-references**: use backtick-wrapped relative paths from `.github/` — e.g., `` `instructions/sql.instructions.md` ``. Never use bare names like `` `sql` `` or absolute paths.
-8. **Known exceptions**: `global-copilot.instructions.md` is intentionally minimal (duplicates `copilot-instructions.md` for user-scope loading) — opening paragraph and H2 sections are not required.
 
 ---
 
@@ -241,7 +237,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 ```markdown
 # <Skill Name> — Workflow
 
-<What this skill does (1–2 sentences). Cross-reference to instruction/prompt files that define rules or output format.> Key rules (fallback for agent chat context when instructions are not auto-loaded):
+<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> Key rules (fallback for agent chat context when instructions are not auto-loaded):
 
 - **<Category>**: <inline rule summary>
 - **<Category>**: <inline rule summary>
@@ -274,13 +270,13 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
 1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required, no other fields. No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). **Exception**: `refactor` and `git-commit` are reference+process hybrids where Phase N format would damage readability — they keep their organic structure but must still use `— Workflow` in the H1.
-3. **Opening paragraph** (**REQUIRED**): what + cross-references. Must reference the paired prompt file (if any) using a specific path. For instruction dependencies: use `instructions/*.instructions.md` glob when the skill depends on all instructions (e.g., fallback rules intro); use a specific filename only for one-to-one relationships (e.g., `sql-review` → `instructions/sql.instructions.md`).
+3. **Opening paragraph** (**REQUIRED**): what + cross-references. For instruction dependencies: use `instructions/*.instructions.md` glob when the skill depends on all instructions (e.g., fallback rules intro); use a specific filename only for one-to-one relationships (e.g., `sql-review` → `instructions/sql.instructions.md`).
 4. **Fallback rules block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`). These inline the critical non-negotiable rules so they apply even when instruction files are not auto-loaded in agent chat. Format as a bullet list with bold category labels.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) may use topic-based H2 sections instead.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
-9. **Internal templates** (**CONDITIONAL**): skills that produce self-contained artifacts MAY embed the template directly. Skills that share a template with other skills MUST reference a prompt file instead (e.g., `prompts/plan-template.prompt.md`).
+9. **Output Template section** (**CONDITIONAL**): skills that produce structured artifacts (plans, SDDs, task lists, review reports) must embed the output format in an `## Output Template` H2 section. Skills that produce free-form output (debug, refactor, security-audit) do not need this section.
 10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
@@ -292,61 +288,27 @@ Supporting files referenced by a skill's body (e.g., before/after code examples,
 3. **Consistent structure across sibling files** — all files in the same subdirectory must follow the same skeleton.
 4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`).
 
-See `skills/refactor/examples/` for the current reference implementation.
-
 ---
 
 ## Prompts (`prompts/*.prompt.md`)
+
+Standalone single-task shortcuts the user invokes via `/<prompt-name>`. NOT referenced by skills — prompts are independent of the agent/skill graph.
 
 ### Frontmatter (required fields)
 
 ```yaml
 ---
-agent: '<agent mode>'
-description: '<Description. Pairs with skills/<skill>/SKILL.md (what the paired skill provides vs what this prompt provides).>'
+agent: 'agent'
+description: '<One-sentence task description starting with an imperative verb.>'
 ---
 ```
 
-#### `agent` field
-
-Controls which agent context this prompt is available in when invoked via `/<prompt-name>`.
-
-| Value | Effect |
-|---|---|
-| `agent` | Available in all agent contexts — the built-in Agent mode. Custom agents (e.g., `@planner`) run on top of Agent mode, so they can access these prompts too. |
-| `ask` | Available in Ask mode only (read-only, no file edits). |
-| `plan` | Available in VS Code's built-in Plan mode only. |
-| `<CustomAgent>` | Available only when that custom agent is active (e.g., `agent: 'Planner'` → only in `@planner` context). |
-
-**Current convention**: all prompts use `agent: 'agent'` because routing is handled by the agent → skill → prompt chain. Binding to a specific custom agent is valid but unnecessary when the paired skill already restricts usage.
-
-#### `tools` field
-
-Avoid in prompt frontmatter — tools generally belong on agents. Exception: prompts that function as active review workflows may declare tools if they need them at invocation time.
-
-### Subtype Naming
-
-Filename suffix determines the prompt's content focus:
-
-| Suffix | Purpose | Key sections |
-|---|---|---|
-| `-template` | Fill-in scaffold for one-shot artifact creation | `## Usage`, `## Template` (with `${input:field:default}` placeholders), `## Validation Checklist` |
-| `-checklist` | Categorized verification list | `## Severity Mapping`, per-category check sections, `## Comment Format` |
-| `-output` | Output format / cheat-sheet reference | Reference tables, `## Output Format` |
-
-Body structure follows the suffix's content focus. See existing prompts as reference implementations:
-- `-template`: `prompts/spec-template.prompt.md`, `prompts/plan-template.prompt.md`
-- `-checklist`: `prompts/code-review-checklist.prompt.md`
-- `-output`: `prompts/sql-review-output.prompt.md`
-
 ### Rules
 
-1. **Frontmatter**: `agent` + `description` — both required.
-2. **Subtype naming**: suffix determines content focus (see table above).
-3. **Placeholder syntax**: `${input:field:default}` for user-prompted values in `-template` prompts. VS Code built-in variables (`${selection}`, `${file}`, etc.) are valid in non-template prompts and descriptions — do not replace them with `${input:...}`.
-4. **Validation Checklist**: required for `-template` prompts. First item is always "Every `${input:...}` placeholder replaced".
-5. **Cross-references**: every prompt MUST reference its paired skill in the opening paragraph using `` `skills/<skill>/SKILL.md` ``.
-6. **Separation of concerns**: templates define OUTPUT FORMAT only. Workflow, validation rules, and prerequisites live in the paired skill.
+1. **Filename pattern** (**REQUIRED**): `<verb>-<object>.prompt.md`. Verb first, lowercase, hyphen-separated. Examples: `check-tx`, `explain-this`, `generate-migration-sql`. Reject noun-first or noun-only names.
+2. **No skill references** (**REQUIRED**): prompts must not link to `skills/*/SKILL.md`. If output overlaps with a skill, invoke the skill instead — do not duplicate.
+3. **Body language** (**REQUIRED**): English. Per `copilot-instructions.md`, prompts may be injected into any user's context.
+4. **Length** (**OPTIONAL**): keep prompt body under 20 lines. Longer workflows belong in a skill.
 
 ---
 
@@ -418,7 +380,6 @@ exit 0
 | Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql.instructions.md` `` | ✅ CI |
 | Instruction glob (all) | `` `instructions/*.instructions.md` `` | Used in skill fallback intro when depending on all instructions | ❌ |
 | Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` | ✅ CI |
-| Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/plan-template.prompt.md` `` | ✅ CI |
 | Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` | ✅ CI |
 | Agent mention | `` `@agent-name` `` | `` `@implementer` `` | ❌ |
 | Skill mention (inline) | `` `skill-name` `` or `` `skill-name` skill `` | `` `plan` skill `` | ❌ |
@@ -464,6 +425,7 @@ These require manual verification. Reviewers should check:
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
+- [ ] Skills producing structured artifacts have `## Output Template` section (plan, sdd, tasks, code-review, sql-review)
 
 ---
 

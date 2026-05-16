@@ -7,12 +7,14 @@ description: 'Use when user reports a bug, error, exception, or unexpected behav
 
 Systematic isolation and minimal fix.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules:
+Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
 
-- **SQL**: never introduce concatenation while fixing — see `instructions/sql.instructions.md`
-- **Exceptions**: no empty catch blocks; don't add new swallow points — see `instructions/java.instructions.md`
-- **Resources**: connection leaks are a common root cause, not just style — see `instructions/java.instructions.md`
-- **Hibernate**: session lifecycle issues cause subtle bugs — see `instructions/spring-hibernate.instructions.md`
+- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
+- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
+- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
+- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
+- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
 
 ## Phase 1 — Define the Problem
 

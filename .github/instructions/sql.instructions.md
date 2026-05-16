@@ -9,7 +9,8 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 
 ## Security
 
-- All user input via `PreparedStatement` with `?` — zero tolerance for concatenation
+- **JDBC**: all user input via `PreparedStatement` with `?` — zero tolerance for string concatenation
+- **HQL / Criteria**: use named parameters (`:paramName`) or positional parameters (`?0`) — never concatenate into query strings
 - Sanitize `LIKE` wildcards before binding
 - No `SELECT *` on tables with sensitive columns
 - Never log SQL containing credentials or PII

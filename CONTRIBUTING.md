@@ -18,15 +18,15 @@ Each category has one job. Content that belongs elsewhere must be delegated, not
 |---|---|---|
 | Instructions | `instructions/*.instructions.md` | Coding conventions (auto-applied by `applyTo` glob) |
 | Agents | `agents/*.agent.md` | Routing and handoffs |
-| Skills | `skills/*/SKILL.md` | Workflow execution |
-| Prompts | `prompts/*.prompt.md` | Output format templates |
+| Skills | `skills/*/SKILL.md` | Workflow execution (output templates embedded) |
+| Prompts | `prompts/*.prompt.md` | Lightweight single-task shortcuts |
 
 Canonical format for each category is defined in [STYLE-GUIDE.md](.github/STYLE-GUIDE.md).
 
 ## Rules
 
 - Instructions must not duplicate skill workflow content (and vice versa)
-- Skills reference prompts for output format — never embed shared templates inline
+- Skills embed output templates directly — prompts are lightweight shortcuts, not templates
 - Cross-references use relative paths from `.github/` (e.g., `instructions/sql.instructions.md`)
 - Skill `name` field must match its parent directory name
 - Skill `description` max 1024 characters

@@ -122,22 +122,26 @@ done
 echo ""
 
 echo "📋 Prompts"
-for file in "$GITHUB_DIR"/prompts/*.prompt.md; do
-  [ -f "$file" ] || continue
-  name="$(basename "$file")"
+if [ -d "$GITHUB_DIR/prompts" ]; then
+  for file in "$GITHUB_DIR"/prompts/*.prompt.md; do
+    [ -f "$file" ] || continue
+    name="$(basename "$file")"
 
-  if ! fm_has_key "$file" "agent"; then
-    error "$name: missing 'agent' in frontmatter"
-  fi
+    if ! fm_has_key "$file" "agent"; then
+      error "$name: missing 'agent' in frontmatter"
+    fi
 
-  if ! fm_has_key "$file" "description"; then
-    error "$name: missing 'description' in frontmatter"
-  fi
+    if ! fm_has_key "$file" "description"; then
+      error "$name: missing 'description' in frontmatter"
+    fi
 
-  if fm_has_key "$file" "agent" && fm_has_key "$file" "description"; then
-    pass "$name"
-  fi
-done
+    if fm_has_key "$file" "agent" && fm_has_key "$file" "description"; then
+      pass "$name"
+    fi
+  done
+else
+  pass "no prompt files"
+fi
 echo ""
 
 echo "🤖 Agents"
@@ -202,13 +206,12 @@ echo "🔗 Cross-References"
 # Canonical reference patterns checked here:
 #   `instructions/<name>.instructions.md`
 #   `skills/<name>/SKILL.md`
-#   `prompts/<name>.prompt.md`
 #   `agents/<name>.agent.md`
 # Paths containing * (glob) or < > (illustrative placeholders) are skipped.
 xref_errors_start=$ERRORS
 while IFS= read -r file; do
   rel_file="${file#$REPO_ROOT/}"
-  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|prompts/[^`*<>]+\.prompt\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
+  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
   [ -z "$refs" ] && continue
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue

@@ -12,7 +12,7 @@
 
 </div>
 
-多 agent 協作的 Copilot 設定——agent 啟動工作流、skill 定義流程、instruction 守規範、prompt 統一輸出格式。
+多 agent 協作的 Copilot 設定——agent 啟動工作流、skill 定義流程（含輸出模板）、instruction 守規範。
 
 ---
 
@@ -25,7 +25,7 @@
 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
 | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
-| **Prompts**（`prompts/`） | 模板 | 輸出格式骨架 | 配對 skill 引用 |
+| **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
@@ -33,9 +33,11 @@
 ```text
 Hooks ──生命週期守衛──→ Agent (調度)
                           │
-                          └──啟動──→ Skill (工作流程) ──輸出格式──→ Prompt (模板)
+                          └──啟動──→ Skill (工作流程 + 輸出模板)
                                           │
                                           └──規則──→ Instruction (規則)
+
+Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 ```
 
 > [!NOTE]
@@ -145,6 +147,20 @@ flowchart LR
 
 ---
 
+## 📋 Prompts
+
+輕量快捷指令。在 Copilot Chat 中以 `/prompt-name` 呼叫。
+
+| Prompt | 說明 |
+|--------|------|
+| `/explain-this` | 用繁中解釋選取的程式碼 — 角色、設計決策、注意事項 |
+| `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
+| `/check-n-plus-1` | 檢查 service method 有沒有 N+1 query 問題 |
+| `/generate-migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
+| `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
+
+---
+
 ## 📏 Instructions
 
 當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
@@ -161,34 +177,13 @@ flowchart LR
 
 ---
 
-## 📋 Prompts
-
-標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
-
-| Prompt | 配對 skill | 用途 |
-|--------|-----------|------|
-| `code-review-checklist` | `code-review` | 嚴重度分級與各類別檢查項目 |
-| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分級、EXPLAIN 速查表） |
-| `spec-template` | `sdd` | SDD 骨架 — 從背景到 Out of Scope 共 8 個章節 |
-| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 識別碼 |
-| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### ID 及 `[P]` 平行標記 |
-
-
-> [!NOTE]
-> **命名慣例**（後綴依內容類型）：
->
-> - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
-> - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
-> - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
-
----
-
 ## 📜 copilot-instructions.md
 
-每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
+每次對話都載入的全域最小規範。只定義語言、技術環境和編碼哲學 — 其他慣例由專屬 instruction 各自負責。
 
 - 以繁體中文回覆
 - 技術環境：Java 8、Maven、Spring 3.2、Spring Security 3.2、Hibernate 4.2、MySQL 8.0、JSP + JSTL 1.2
+- 編碼哲學：用最少的 code 解決問題、不做預測性抽象、不確定就問
 
 ---
 
@@ -220,14 +215,14 @@ flowchart LR
 │   └── scripts/
 │       └── block-dangerous-commands.sh
 │
-├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
-│   ├── code-review-checklist
-│   ├── sql-review-output
-│   ├── spec-template
-│   ├── plan-template
-│   └── tasks-template
+├── prompts/                               ← 輕量快捷指令（/prompt-name）
+│   ├── explain-this
+│   ├── find-impact
+│   ├── check-n-plus-1
+│   ├── generate-migration-sql
+│   └── check-tx
 │
-└── skills/                                ← Agent 可執行的技能
+└── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/
     ├── plan/
     ├── sdd/

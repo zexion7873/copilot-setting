@@ -10,7 +10,7 @@ Instead, please email the maintainer directly or use [GitHub's private vulnerabi
 
 ## Scope
 
-This repository contains GitHub Copilot configuration files (instructions, agents, prompts, skills). While these are not executable software, misconfigurations could potentially:
+This repository contains GitHub Copilot configuration files (instructions, agents, skills). While these are not executable software, misconfigurations could potentially:
 
 - Expose sensitive patterns or credentials through Copilot suggestions
 - Introduce insecure coding practices via instruction files

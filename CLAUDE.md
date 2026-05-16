@@ -20,40 +20,50 @@ The only executable workflow is style-guide validation. Run before committing ch
 bash .github/scripts/validate-style-guide.sh
 ```
 
-This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / prompts / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, and that skill frontmatter has no `tools` field (tools belong on agents).
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, that skill frontmatter has no `tools` field (tools belong on agents), that agent `handoffs[].agent` references resolve, and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
 
-## Architecture — Five Categories, One Job Each
+One-time local setup so the validator also runs on `git commit`:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+`.githooks/pre-commit` runs the validator only when staged paths match `.github/**/*.md`, so unrelated commits aren't slowed down.
+
+## Architecture
 
 ```text
 Hooks ──lifecycle guard──→ Agent (Router)
                              │
-                             └──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
+                             └──activates──→ Skill (Workflow + Output Template)
                                                   │
                                                   └──rules──→ Instruction (Rules)
+
+Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
 | Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | File matching `applyTo` glob is focused |
 | Agents | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
-| Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process | Description matches user intent, or `/skill-name` |
-| Prompts | `.github/prompts/*.prompt.md` | Output-format scaffolds | Paired skill cites them; or `/prompt-name` |
+| Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
+| Prompts | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
-**Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills must not embed shared templates inline — they reference prompt files. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
+**Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
 **Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
-`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction / prompt, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
+`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
 
 Per-category key constraints (full rules in STYLE-GUIDE.md):
 
 - **Instructions** — frontmatter is exactly `description` + `applyTo`. H1 is a descriptive title (no filename suffix). Anti-Patterns table is always 3-column `Pattern | Problem | Fix`.
 - **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Body section order is fixed: `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
 - **Skills** — frontmatter is exactly `name` + `description`. **No `tools` field on skills** (tools belong on agents — validator enforces this). `description` is ≤ 1024 chars and follows the strict three-part format: `Use when …. Triggers on: …. <one-sentence summary>. Do NOT use for …`. H1 is always `<Name> — Workflow`. Skill `name` must match its directory name.
-- **Prompts** — frontmatter is `agent` + `description`. Subtype is determined by filename suffix: `-template` (one-shot scaffold), `-checklist` (verification list), `-output` (cheat-sheet reference). Each subtype has its own skeleton.
+- **Prompts** — frontmatter is `agent` + `description`. Lightweight single-task shortcuts invoked via `/prompt-name`. Not output templates (those are embedded in skills).
 
 ## Cross-Reference Format
 
@@ -63,7 +73,7 @@ All cross-references use backtick-wrapped **relative paths from `.github/`**, ne
 |---|---|
 | Instruction | `` `instructions/sql.instructions.md` `` |
 | Skill | `` `skills/plan/SKILL.md` `` |
-| Prompt | `` `prompts/plan-template.prompt.md` `` |
+| Output template | Embedded in the paired `skills/<name>/SKILL.md` |
 | Agent file | `` `agents/planner.agent.md` `` |
 | Agent mention (in chat) | `` `@implementer` `` |
 | Skill mention (inline) | `` `plan` skill `` |
@@ -82,13 +92,13 @@ Broken paths silently degrade Copilot output — they don't error, they just sto
 
 This repo intentionally mixes languages. Respect the split:
 
-- **All `.github/` content** (instructions, agents, skills, prompts) — English, because Copilot may inject it into any user's prompt context.
+- **All `.github/` content** (instructions, agents, skills) — English, because Copilot may inject it into any user's prompt context.
 - **README has two versions**: `README.md` (English) and `README.zh-TW.md` (Traditional Chinese). Keep them in sync when changing either.
 - **`.github/copilot-instructions.md`** declares the downstream-user contract: respond in Traditional Chinese, but code/comments/identifiers in English. Do not mistake this for guidance on how to edit this repo.
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /`, `sudo `, `DROP DATABASE`, `DROP SCHEMA`, `TRUNCATE `, `git push --force` to `main`/`master`, `chmod -R 777`, `mkfs.`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /`, `rm -rf .`, `rm -rf *`, `--no-preserve-root`, `sudo `, `DROP DATABASE`, `DROP SCHEMA`, `TRUNCATE `, `git push --force` (any branch), `git reset --hard`, `git clean -fd`, `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
 ## Commit & PR Process
 

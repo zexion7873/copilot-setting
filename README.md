@@ -12,7 +12,7 @@
 
 </div>
 
-A multi-agent Copilot configuration — agents activate workflows, skills define processes, instructions enforce conventions, and prompts standardize output formats.
+A multi-agent Copilot configuration — agents activate workflows, skills define processes with embedded output templates, and instructions enforce conventions.
 
 ---
 
@@ -25,7 +25,7 @@ Just pick an **agent** — everything else loads automatically.
 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
 | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
-| **Prompts** (`prompts/`) | Template | Output format scaffolds | Paired skill refs |
+| **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
@@ -33,9 +33,11 @@ Resources reference each other to avoid duplication — each category has one jo
 ```text
 Hooks ──lifecycle guard──→ Agent (Router)
                              │
-                             └──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
+                             └──activates──→ Skill (Workflow + Output Template)
                                                   │
                                                   └──rules──→ Instruction (Rules)
+
+Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 > [!NOTE]
@@ -145,6 +147,20 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 ---
 
+## 📋 Prompts
+
+Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
+
+| Prompt | Description |
+|--------|-------------|
+| `/explain-this` | Explain selected code in Traditional Chinese — role, design decisions, gotchas |
+| `/find-impact` | List all callers and dependents of the selected method/class |
+| `/check-n-plus-1` | Check a service method for N+1 query problems |
+| `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
+| `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
+
+---
+
 ## 📏 Instructions
 
 Automatically injected into the system prompt when the current file matches the `applyTo` glob.
@@ -161,34 +177,13 @@ Automatically injected into the system prompt when the current file matches the 
 
 ---
 
-## 📋 Prompts
-
-Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
-
-| Prompt | Paired skill | Purpose |
-|--------|-------------|---------|
-| `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
-| `sql-review-output` | `sql-review` | Output format reference (severity buckets, EXPLAIN cheat sheet) for the sql-review skill |
-| `spec-template` | `sdd` | SDD scaffold — 8 sections from background to out-of-scope |
-| `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
-| `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
-
-
-> [!NOTE]
-> **Naming convention** (suffix indicates content type):
->
-> - `*-template` — fill-in scaffold for one-shot artifact creation (e.g., `spec-template`, `plan-template`)
-> - `*-checklist` — verification checklist with categorized items (e.g., `code-review-checklist`)
-> - `*-output` — output format / cheat-sheet reference cited by its paired skill (e.g., `sql-review-output`)
-
----
-
 ## 📜 copilot-instructions.md
 
-Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
+Minimal global rules loaded in every conversation. Only language, tech stack, and coding philosophy — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
 - Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, JSP + JSTL 1.2
+- Coding philosophy: minimum code, no speculative abstractions, ask when uncertain
 
 ---
 
@@ -220,14 +215,14 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   └── scripts/
 │       └── block-dangerous-commands.sh
 │
-├── prompts/                               ← Standards/format references paired with skills
-│   ├── code-review-checklist
-│   ├── sql-review-output
-│   ├── spec-template
-│   ├── plan-template
-│   └── tasks-template
+├── prompts/                               ← Lightweight single-task shortcuts (/prompt-name)
+│   ├── explain-this
+│   ├── find-impact
+│   ├── check-n-plus-1
+│   ├── generate-migration-sql
+│   └── check-tx
 │
-└── skills/                                ← Executable skills for agents
+└── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
     ├── plan/
     ├── sdd/

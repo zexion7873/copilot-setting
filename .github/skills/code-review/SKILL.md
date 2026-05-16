@@ -5,14 +5,16 @@ description: 'Use when user wants code reviewed for correctness, style, bugs, an
 
 # Code Review — Workflow
 
-Structured code review. Severity model and checklist: `prompts/code-review-checklist.prompt.md`.
+Structured code review.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules:
+Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
 
-- **Java 8 only**: no 9+ syntax — see `instructions/java.instructions.md`
-- **Hibernate/Spring**: `getCurrentSession()`, `<tx:advice>`, no annotations — see `instructions/spring-hibernate.instructions.md`
-- **SQL**: parameterized only — see `instructions/sql.instructions.md`
-- **Security**: OWASP essentials — see `instructions/security.instructions.md`
+- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
+- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
+- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
+- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
+- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
 
 ## Phase 1 — Understand the Change
 
@@ -22,33 +24,42 @@ Full coding rules in `instructions/*.instructions.md`. Key rules:
 
 ## Phase 2 — Review by Category
 
-Check each category from `prompts/code-review-checklist.prompt.md`:
-- **Correctness**: logic errors, edge cases, null handling
-- **Security**: injection, auth, data exposure
-- **Performance**: N+1, missing indexes, unbounded queries
-- **Maintainability**: naming, duplication, complexity
-- **Convention compliance**: Java 8 rules, Spring/Hibernate patterns
+**Correctness**: logic errors, off-by-one, null handling, edge cases (empty collections, zero values), concurrency (shared mutable state), resource leaks (unclosed connections)
+
+**Security**: SQL injection (all queries parameterized?), XSS (all JSP output encoded?), auth (access control on every endpoint?), secrets (no hardcoded credentials?)
+
+**Performance**: N+1 queries (SQL inside loops)? `SELECT *` or missing indexes? Unbounded result sets? Expensive ops in hot paths?
+
+**Convention Compliance**: Java 8 only? `getCurrentSession()` + hbm.xml + no JPA? `<tx:advice>` only, no `@Transactional`? SLF4J parameterized? Proper exception hierarchy?
+
+**Maintainability**: clear naming? No duplication? Methods ≤30 lines? Comments explain WHY?
 
 ## Phase 3 — Classify Findings
 
 | Severity | Definition | Action |
 |---|---|---|
-| 🔴 CRITICAL | Security vulnerability, data loss, crash | Must fix before merge |
-| 🟠 MAJOR | Bug, performance issue, convention violation | Should fix |
+| 🔴 CRITICAL | Security vuln, data loss, crash | Must fix before merge |
+| 🟠 MAJOR | Bug, perf issue, convention violation | Should fix |
 | 🟡 MINOR | Style, naming, minor improvement | Nice to fix |
 | ⚪ NIT | Preference, trivial | Optional |
 
 ## Phase 4 — Verdict
 
+Classify all findings, then format using the Output Template below.
+
+## Output Template
+
+Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
+
 ```
 ## Verdict: APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
 Findings: N critical, N major, N minor, N nit
-Summary: <one-sentence overall assessment>
+Summary: <one-sentence assessment>
 ```
 
 ## Handoffs
 
 - → `@implementer` — to fix findings
-- → `security-audit` skill — if security concerns warrant deeper audit
-- → `sql-review` skill — if SQL issues warrant dedicated review
+- → `security-audit` skill — security concerns warrant deeper audit
+- → `sql-review` skill — SQL issues warrant dedicated review
 - ← `@reviewer` — default activation

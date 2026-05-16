@@ -5,7 +5,7 @@ description: 'Use when a formal specification document is needed before implemen
 
 # SDD — Workflow
 
-Spec-Driven Development document. Output format: `prompts/spec-template.prompt.md`.
+Spec-Driven Development document.
 
 ## Phase 1 — Gather Requirements
 
@@ -17,23 +17,72 @@ If requirements are unclear, hand off to `clarify-task` first.
 
 ## Phase 2 — Draft Specification
 
-Fill `prompts/spec-template.prompt.md`:
-- **Background**: why this change exists
-- **Requirements**: numbered, testable
-- **Design**: approach with rationale
-- **API Contract**: method signatures, input/output, error cases
-- **Data Model**: entity changes, migration needs
-- **Error Handling**: failure modes and recovery
-- **Testing Strategy**: what to verify and how
-- **Out of Scope**: explicit exclusions
+Fill the template below — every section must be concrete.
 
 ## Phase 3 — Self-Review
 
-Before presenting:
 - [ ] Every requirement is testable (has clear pass/fail)
 - [ ] API contracts include error responses
 - [ ] Data model changes note migration/rollback
 - [ ] No `TBD` or vague sections
+
+## Output Template
+
+Name file `sdd-[feature]-v[N].md`.
+
+```md
+---
+title: <Feature name>
+date: <YYYY-MM-DD>
+author: <author>
+status: 'Draft'
+---
+
+# <title>
+
+## 1. Background
+
+Why this change exists. Business context and motivation.
+
+## 2. Requirements
+
+- REQ-001: <testable requirement with pass/fail criteria>
+- REQ-002: ...
+
+## 3. Design
+
+### Approach
+
+High-level approach with rationale. Why this over alternatives.
+
+### Alternatives Considered
+
+- ALT-001: <approach> — rejected because <reason>
+
+## 4. API Contract
+
+| Method | Signature | Input | Output | Errors |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
+
+## 5. Data Model
+
+Entity/table changes. Migration script needed: yes/no. Rollback plan.
+
+## 6. Error Handling
+
+| Failure Mode | Detection | Recovery |
+|---|---|---|
+| ... | ... | ... |
+
+## 7. Testing Strategy
+
+- TEST-001: <what to verify> — <how> — maps to REQ-NNN
+
+## 8. Out of Scope
+
+What is explicitly NOT included in this work.
+```
 
 ## Handoffs
 
