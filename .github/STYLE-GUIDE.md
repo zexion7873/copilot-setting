@@ -6,18 +6,18 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 
 | Category | Role | Responsibility |
 |---|---|---|
-| **Agent** | 角色 | Who I am, which workflows I activate, who I hand off to |
-| **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
-| **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
-| **Prompt** | 快捷指令 | Lightweight single-task shortcuts invoked via `/prompt-name` |
-| **Hook** | 生命週期守衛 | Block dangerous commands before agent tool execution |
+| **Agent** | Router | Who I am, which workflows I activate, who I hand off to |
+| **Skill** | Workflow | Step-by-step process — references Rules and Templates, never rewrites them |
+| **Instruction** | Rules | Single source of truth for coding conventions — referenced by workflows |
+| **Prompt** | Shortcut | Lightweight single-task shortcuts invoked via `/prompt-name` |
+| **Hook** | Lifecycle Guard | Block dangerous commands before agent tool execution |
 
 ```text
-Hook (守衛) ──lifecycle guard──→ Agent (角色) ──activates──→ Skill (工作流程 + 輸出模板)
-                                                                   │
-                                                                   └──rules──→ Instruction (規則)
+Hook (Guard) ──lifecycle guard──→ Agent (Router) ──activates──→ Skill (Workflow + Output Template)
+                                                                       │
+                                                                       └──rules──→ Instruction (Rules)
 
-Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
+Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Dependency Direction** and **Delegation Architecture** sections for enforcement rules.
@@ -72,6 +72,11 @@ Agent ──activates──→ Skill (embeds output template)
 | From | To | Why |
 |---|---|---|
 | Instruction → Skill | ❌ | Rules must not know about workflows — they are consumed, not consumers |
+| Instruction → Agent | ❌ | Rules must not know who executes them — they are context-free conventions |
+| Prompt → Skill | ❌ | Prompts are standalone shortcuts; if output overlaps a skill, invoke the skill instead |
+| Hook → Skill/Agent/Instruction | ❌ | Hooks inspect tool calls only — they have no knowledge of the agent/skill graph |
+
+> **Note on Prompt `agent` frontmatter:** the `agent:` field in prompt frontmatter declares execution context (which agent runs the prompt), not a content dependency. Prompt **body** must not reference skill files or agent files.
 
 ---
 
@@ -303,12 +308,25 @@ description: '<One-sentence task description starting with an imperative verb.>'
 ---
 ```
 
+### Body Skeleton
+
+```markdown
+<Imperative task statement — one sentence telling the agent what to do.>
+
+1. **<Aspect>**: <What to check/produce for this aspect>
+2. **<Aspect>**: <What to check/produce for this aspect>
+3. **<Aspect>**: <What to check/produce for this aspect>
+```
+
+Body is a flat checklist or numbered instruction list. No H1/H2 headings, no phase structure (that belongs in skills). Keep it scannable — the agent reads it as a single directive.
+
 ### Rules
 
 1. **Filename pattern** (**REQUIRED**): `<verb>-<object>.prompt.md`. Verb first, lowercase, hyphen-separated. Examples: `check-tx`, `explain-this`, `generate-migration-sql`. Reject noun-first or noun-only names.
 2. **No skill references** (**REQUIRED**): prompts must not link to `skills/*/SKILL.md`. If output overlaps with a skill, invoke the skill instead — do not duplicate.
 3. **Body language** (**REQUIRED**): English. Per `copilot-instructions.md`, prompts may be injected into any user's context.
-4. **Length** (**OPTIONAL**): keep prompt body under 20 lines. Longer workflows belong in a skill.
+4. **Body structure** (**REQUIRED**): starts with one imperative sentence, followed by a numbered list of aspects/checks. No Markdown headings (`#`, `##`). No phase-based workflow structure.
+5. **Length** (**REQUIRED**): keep prompt body under 20 lines. Longer workflows belong in a skill.
 
 ---
 
