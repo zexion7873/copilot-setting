@@ -33,7 +33,7 @@ If the request is ambiguous, ask one round of clarifying questions. If scope is 
 
 | Trigger | Skill | What it does |
 |---|---|---|
-| "implement", "寫", "實作" | `implement` | SDD-first gate → pattern discovery → coding → self-verify |
+| "implement", "寫", "實作" | `implement` | Understand context → discover patterns → implement → self-verify |
 | "refactor", "重構" | `refactor` | Behavior-preserving restructuring with code smell detection |
 | "design tests", "寫測試", "測試案例" | `test-design` | Test case design document — boundary analysis, case categorization, coverage gap audit |
 | "效能優化", "performance", "跑很慢" | `performance` | Measure-first profiling and optimization |
