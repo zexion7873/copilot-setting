@@ -8,7 +8,7 @@ Always reply to the user in **Traditional Chinese (繁體中文)**. File content
 
 ## Repository Purpose
 
-This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
+This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
 
 The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
@@ -22,22 +22,24 @@ bash .github/scripts/validate-style-guide.sh
 
 This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, and that skill frontmatter has no `tools` field (tools belong on agents).
 
-## Architecture — Five Categories, One Job Each
+## Architecture
 
 ```text
 Hooks ──lifecycle guard──→ Agent (Router)
                              │
-                             └──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
+                             └──activates──→ Skill (Workflow + Output Template)
                                                   │
                                                   └──rules──→ Instruction (Rules)
+
+Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
 | Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | File matching `applyTo` glob is focused |
 | Agents | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
-| Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process | Description matches user intent, or `/skill-name` |
-| (Output templates are embedded in skills) | | | |
+| Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
+| Prompts | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
@@ -53,7 +55,7 @@ Per-category key constraints (full rules in STYLE-GUIDE.md):
 - **Instructions** — frontmatter is exactly `description` + `applyTo`. H1 is a descriptive title (no filename suffix). Anti-Patterns table is always 3-column `Pattern | Problem | Fix`.
 - **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Body section order is fixed: `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
 - **Skills** — frontmatter is exactly `name` + `description`. **No `tools` field on skills** (tools belong on agents — validator enforces this). `description` is ≤ 1024 chars and follows the strict three-part format: `Use when …. Triggers on: …. <one-sentence summary>. Do NOT use for …`. H1 is always `<Name> — Workflow`. Skill `name` must match its directory name.
-- **Prompts** — frontmatter is `agent` + `description`. Subtype is determined by filename suffix: `-template` (one-shot scaffold), `-checklist` (verification list), `-output` (cheat-sheet reference). Each subtype has its own skeleton.
+- **Prompts** — frontmatter is `agent` + `description`. Lightweight single-task shortcuts invoked via `/prompt-name`. Not output templates (those are embedded in skills).
 
 ## Cross-Reference Format
 

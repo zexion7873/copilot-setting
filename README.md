@@ -36,6 +36,8 @@ Hooks ──lifecycle guard──→ Agent (Router)
                              └──activates──→ Skill (Workflow + Output Template)
                                                   │
                                                   └──rules──→ Instruction (Rules)
+
+Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 > [!NOTE]

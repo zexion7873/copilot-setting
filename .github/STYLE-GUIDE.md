@@ -9,13 +9,15 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 | **Agent** | 角色 | Who I am, which workflows I activate, who I hand off to |
 | **Skill** | 工作流程 | Step-by-step process — references Rules and Templates, never rewrites them |
 | **Instruction** | 規則 | Single source of truth for coding conventions — referenced by workflows |
-| **Prompt** | 模板 | Output format scaffolds — referenced by workflows |
+| **Prompt** | 快捷指令 | Lightweight single-task shortcuts invoked via `/prompt-name` |
 | **Hook** | 生命週期守衛 | Block dangerous commands before agent tool execution |
 
 ```text
-Hook (守衛) ──lifecycle guard──→ Agent (角色) ──activates──→ Skill (工作流程) ──output format──→ Prompt (模板)
-                                                                  │
-                                                                  └──rules──→ Instruction (規則)
+Hook (守衛) ──lifecycle guard──→ Agent (角色) ──activates──→ Skill (工作流程 + 輸出模板)
+                                                                   │
+                                                                   └──rules──→ Instruction (規則)
+
+Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 ```
 
 Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Dependency Direction** and **Delegation Architecture** sections for enforcement rules.
@@ -29,9 +31,9 @@ Use this table to determine which file to create or modify.
 | I want to... | Create | Where |
 |---|---|---|
 | Add a coding convention | Instruction | `instructions/<name>.instructions.md` |
-| Add a new workflow | Skill + (optional) Prompt | `skills/<name>/SKILL.md` |
+| Add a new workflow | Skill | `skills/<name>/SKILL.md` (embed output template if needed) |
 | Add a new AI agent role | Agent | `agents/<name>.agent.md` |
-| Add an output format scaffold | Prompt | `prompts/<name>.prompt.md` |
+| Add a lightweight shortcut | Prompt | `prompts/<name>.prompt.md` |
 | Block a dangerous command | Hook script | `hooks/scripts/<name>.sh` + register in `hooks/default.json` |
 | Add a review mode to @reviewer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/reviewer.agent.md` Skill Activation table |
 | Add a build mode to @implementer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/implementer.agent.md` Skill Activation table |
@@ -47,7 +49,7 @@ References between categories must follow allowed directions. This prevents circ
 ### Content dependencies (what the file NEEDS to function)
 
 ```text
-Agent ──activates──→ Skill ──uses format from──→ Prompt
+Agent ──activates──→ Skill (embeds output template)
                        │
                        └──applies rules from──→ Instruction
 ```
@@ -111,7 +113,7 @@ applyTo: '<glob pattern>'
 
 1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
-3. **Opening paragraph**: scope statement + cross-references to related instruction/prompt files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
+3. **Opening paragraph**: scope statement + cross-references to related instruction files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
 4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.
 5. **Anti-Patterns table**: always 3-column (`Pattern | Problem | Fix`). If the file has anti-patterns, use this exact header. Column 2 (`Problem`) must explain *why* it's wrong, not just restate the pattern.
 6. **Checklist section**: optional. Use only when the instruction benefits from a verification self-check (e.g., markdown formatting, commenting guidelines). Use `- [ ]` checkbox format.
@@ -236,7 +238,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 ```markdown
 # <Skill Name> — Workflow
 
-<What this skill does (1–2 sentences). Cross-reference to instruction/prompt files that define rules or output format.> Key rules (fallback for agent chat context when instructions are not auto-loaded):
+<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> Key rules (fallback for agent chat context when instructions are not auto-loaded):
 
 - **<Category>**: <inline rule summary>
 - **<Category>**: <inline rule summary>

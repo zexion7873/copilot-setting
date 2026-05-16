@@ -36,6 +36,8 @@ Hooks ──生命週期守衛──→ Agent (調度)
                           └──啟動──→ Skill (工作流程 + 輸出模板)
                                           │
                                           └──規則──→ Instruction (規則)
+
+Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 ```
 
 > [!NOTE]

@@ -26,7 +26,7 @@ Canonical format for each category is defined in [STYLE-GUIDE.md](.github/STYLE-
 ## Rules
 
 - Instructions must not duplicate skill workflow content (and vice versa)
-- Skills embed output templates directly — no separate prompt files
+- Skills embed output templates directly — prompts are lightweight shortcuts, not templates
 - Cross-references use relative paths from `.github/` (e.g., `instructions/sql.instructions.md`)
 - Skill `name` field must match its parent directory name
 - Skill `description` max 1024 characters
