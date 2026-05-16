@@ -19,6 +19,7 @@ Each category has one job. Content that belongs elsewhere must be delegated, not
 | Instructions | `instructions/*.instructions.md` | Coding conventions (auto-applied by `applyTo` glob) |
 | Agents | `agents/*.agent.md` | Routing and handoffs |
 | Skills | `skills/*/SKILL.md` | Workflow execution (output templates embedded) |
+| Prompts | `prompts/*.prompt.md` | Lightweight single-task shortcuts |
 
 Canonical format for each category is defined in [STYLE-GUIDE.md](.github/STYLE-GUIDE.md).
 

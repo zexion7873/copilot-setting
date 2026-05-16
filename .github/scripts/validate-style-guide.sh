@@ -140,7 +140,7 @@ if [ -d "$GITHUB_DIR/prompts" ]; then
     fi
   done
 else
-  pass "prompts/ not used — output templates embedded in skills"
+  pass "no prompt files"
 fi
 echo ""
 

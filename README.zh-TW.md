@@ -25,6 +25,7 @@
 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
 | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
+| **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令（`/prompt-name`） | 手動呼叫 |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
@@ -144,6 +145,21 @@ flowchart LR
 
 ---
 
+## 📋 Prompts
+
+輕量快捷指令。在 Copilot Chat 中以 `/prompt-name` 呼叫。
+
+| Prompt | 說明 |
+|--------|------|
+| `/explain-this` | 用繁中解釋選取的程式碼 — 角色、設計決策、注意事項 |
+| `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
+| `/check-n-plus-1` | 檢查 service method 有沒有 N+1 query 問題 |
+| `/migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
+| `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
+| `/write-javadoc` | 為 class/method 產生 Javadoc |
+
+---
+
 ## 📏 Instructions
 
 當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
@@ -196,6 +212,14 @@ flowchart LR
 │   ├── default.json
 │   └── scripts/
 │       └── block-dangerous-commands.sh
+│
+├── prompts/                               ← 輕量快捷指令（/prompt-name）
+│   ├── explain-this
+│   ├── find-impact
+│   ├── check-n-plus-1
+│   ├── migration-sql
+│   ├── check-tx
+│   └── write-javadoc
 │
 └── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/

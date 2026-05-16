@@ -25,6 +25,7 @@ Just pick an **agent** — everything else loads automatically.
 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
 | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
+| **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands (`/prompt-name`) | Manual invocation |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
@@ -144,6 +145,21 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 
 ---
 
+## 📋 Prompts
+
+Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
+
+| Prompt | Description |
+|--------|-------------|
+| `/explain-this` | Explain selected code in Traditional Chinese — role, design decisions, gotchas |
+| `/find-impact` | List all callers and dependents of the selected method/class |
+| `/check-n-plus-1` | Check a service method for N+1 query problems |
+| `/migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
+| `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
+| `/write-javadoc` | Generate Javadoc for the selected class or method |
+
+---
+
 ## 📏 Instructions
 
 Automatically injected into the system prompt when the current file matches the `applyTo` glob.
@@ -196,6 +212,14 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   ├── default.json
 │   └── scripts/
 │       └── block-dangerous-commands.sh
+│
+├── prompts/                               ← Lightweight single-task shortcuts (/prompt-name)
+│   ├── explain-this
+│   ├── find-impact
+│   ├── check-n-plus-1
+│   ├── migration-sql
+│   ├── check-tx
+│   └── write-javadoc
 │
 └── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
