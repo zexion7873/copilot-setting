@@ -184,7 +184,7 @@ flowchart LR
 
 - 以繁體中文回覆
 - 技術環境：Java 8、Maven、Spring 3.2、Spring Security 3.2、Hibernate 4.2、MySQL 8.0、JSP + JSTL 1.2
-- 編碼哲學：用最少的 code 解決問題 — 不做預測性抽象
+- 編碼哲學：最少 code、不做預測性抽象、不確定就問
 
 ---
 

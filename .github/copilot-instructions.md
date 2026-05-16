@@ -19,3 +19,4 @@
 ## Coding Philosophy
 
 - Minimum code that solves the problem. No speculative abstractions, no features beyond what was asked.
+- When uncertain, ask — don't assume. One round of clarifying questions before acting.

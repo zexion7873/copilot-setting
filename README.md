@@ -184,7 +184,7 @@ Minimal global rules loaded in every conversation. Only language, tech stack, an
 
 - Respond in Traditional Chinese (繁體中文)
 - Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, JSP + JSTL 1.2
-- Coding philosophy: minimum code that solves the problem — no speculative abstractions
+- Coding philosophy: minimum code, no speculative abstractions, ask when uncertain
 
 ---
 
