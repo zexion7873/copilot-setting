@@ -36,6 +36,10 @@ Recommend `EXPLAIN` for queries touching large tables.
 
 ## Phase 4 — Report
 
+Classify each finding by severity, then format using the Output Template below.
+
+## Output Template
+
 Per finding:
 
 ```
@@ -53,7 +57,9 @@ Impact: <performance/security/correctness>
 | 🟡 MINOR | Suboptimal pagination; unnecessary columns |
 | ⚪ NIT | Alias naming; formatting |
 
-## EXPLAIN Cheat Sheet (MySQL)
+Summary: `Queries reviewed: N | Findings: N critical, N major, N minor, N nit | Top issue: <most impactful>`
+
+### EXPLAIN Cheat Sheet (MySQL)
 
 | Column | Watch for |
 |---|---|
@@ -61,8 +67,6 @@ Impact: <performance/security/correctness>
 | `key` | `NULL` = no index used |
 | `rows` | High number on filtered query = missing index |
 | `Extra` | `Using filesort` = ORDER BY not indexed; `Using temporary` = temp table |
-
-Summary format: `Queries reviewed: N | Findings: N critical, N major, N minor, N nit | Top issue: <most impactful>`
 
 ## Handoffs
 

@@ -277,7 +277,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
-9. **Output templates** (**CONDITIONAL**): skills that produce artifacts embed the output template directly in an `## Output Template` section.
+9. **Output Template section** (**CONDITIONAL**): skills that produce structured artifacts (plans, SDDs, task lists, review reports) must embed the output format in an `## Output Template` H2 section. Skills that produce free-form output (debug, refactor, security-audit) do not need this section.
 10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
@@ -406,6 +406,7 @@ These require manual verification. Reviewers should check:
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
+- [ ] Skills producing structured artifacts have `## Output Template` section (plan, sdd, tasks, code-review, sql-review)
 
 ---
 
