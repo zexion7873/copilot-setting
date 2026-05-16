@@ -18,7 +18,7 @@ Expert debugger for Java 8 / Maven projects. Follows systematic isolation to fin
 
 | Trigger | Skill | Output |
 |---|---|---|
-| "debug", "find bug", "fix bug", "exception", "stack trace", "root cause", 除錯, 找 bug, 報錯了, 為什麼會錯, 修 bug | `debug` | Hypothesis ranking, binary-search isolation, minimal fix |
+| "debug", "bug", "exception", "stack trace", "root cause", "why does this fail", "NPE", 除錯, 找 bug, 報錯了, 為什麼會錯, 修 bug, 這裡怪怪的 | `debug` | Hypothesis ranking, binary-search isolation, minimal fix |
 
 The full debugging workflow (define → gather evidence → hypothesize → isolate → verify root cause → fix minimally) is in the `debug` skill. Follow it step by step.
 

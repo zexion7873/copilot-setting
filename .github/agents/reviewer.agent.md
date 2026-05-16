@@ -32,10 +32,10 @@ Pick the primary skill from the user's request. If unclear, default to code revi
 
 | Trigger | Mode | Skill |
 |---|---|---|
-| "review code", "check PR", "review this", 審查程式碼 | Code Review | `code-review` |
-| "security audit", "OWASP", "vulnerability check", 資安審查 | Security Audit | `security-audit` |
-| "review SQL", "SQL check", "query review", SQL 審查 | SQL Review | `sql-review` |
-| "review SDD", "audit spec", "is this SDD ready", 審查 SDD, 規格審查 | SDD Review | `sdd-review` |
+| "review code", "code review", "check PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | Code Review | `code-review` |
+| "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | Security Audit | `security-audit` |
+| "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | SQL Review | `sql-review` |
+| "review SDD", "audit spec", "is this SDD ready", "check specification", 審查 SDD, 規格審查, SDD 可以了嗎, 看一下規格 | SDD Review | `sdd-review` |
 
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
 

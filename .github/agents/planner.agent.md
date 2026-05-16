@@ -29,10 +29,10 @@ If the request is vague or missing success criteria, ask clarifying questions be
 
 | Trigger | Skill | Output |
 |---|---|---|
-| "plan", "規劃", "設計實作步驟", "排階段" | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers |
-| "SDD", "寫規格", "定規格", "寫 spec" | `sdd` | Formal spec with ACs, API contracts, schema changes |
-| "拆 task", "拆任務", "break down tasks", "排執行順序" | `tasks` | Dependency-ordered tasks.md with T### IDs (requires approved plan/SDD) |
-| "先釐清", "clarify", "需求不清楚", "範圍是什麼" | `clarify-task` | Numbered clarifying questions → confirmed scope |
+| "plan", "design approach", "implementation strategy", 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟 | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers |
+| "write SDD", "spec", "specification", "design document", 寫 SDD, 寫規格, 規格文件, 設計文件 | `sdd` | Formal spec with ACs, API contracts, schema changes |
+| "break down tasks", "task list", "decompose", 拆任務, 拆工作, 任務拆解, 列出步驟 | `tasks` | Dependency-ordered tasks.md with T### IDs (requires approved plan/SDD) |
+| "clarify", "unclear requirements", "what do you mean", 先釐清, 需求不清楚, 這個需求是什麼意思, 幫我確認 | `clarify-task` | Numbered clarifying questions → confirmed scope |
 
 Default to `plan` if the user's intent is ambiguous but clearly planning-related.
 
