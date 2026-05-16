@@ -1,64 +1,55 @@
 ---
 name: security-audit
-description: 'Use when user asks for security review, vulnerability scan, penetration test preparation, or OWASP assessment. Triggers on: security audit, security review, vulnerability scan, penetration test, OWASP Top 10, OWASP assessment, security check, 資安審查, 有沒有漏洞, 安全性檢查, 弱點掃描, 安全審查, 資安評估. Targets Java web applications with OWASP Top 10 analysis and severity classification. Do NOT use for general code review without security focus — prefer code-review skill instead.'
+description: 'Use when user needs an OWASP-focused security audit of Java web code — injection, auth, access control, and configuration review. Triggers on: security audit, OWASP, vulnerability check, security review, 資安審查, 安全檢查, 有沒有漏洞, 資安. Produces severity-classified security findings. Do NOT use for general code review (prefer code-review), SQL-only review (prefer sql-review), or performance review (prefer performance).'
 ---
 
 # Security Audit — Workflow
 
-Systematic Java web app security audit.
+OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.md`.
 
-Full coding standards live in `instructions/*.instructions.md` (auto-applied when matching files are open). When working via agent chat, these non-negotiable rules still apply:
+Full coding rules in `instructions/*.instructions.md`. Key rules:
 
-- **SQL**: `PreparedStatement` with `?` only — string concatenation is always CRITICAL (A03 Injection)
-- **Exceptions**: no empty `catch` blocks; no stack trace exposure to clients; no `e.getMessage()` in HTTP responses
-- **Logging**: never log secrets, tokens, PII, or session IDs; SLF4J parameterized only
-- **Resources**: `try-with-resources` for all `AutoCloseable` — unclosed resources are a misconfiguration finding (A05)
-- **Security**: no hardcoded secrets; `<c:out>` for all dynamic output in JSP; validate inputs at boundaries; cookies must be `HttpOnly` + `Secure` + `SameSite=Strict`
+- **SQL**: `PreparedStatement` with `?` only — see `instructions/sql.instructions.md`
+- **XSS**: `<c:out>` for all JSP output — see `instructions/jsp.instructions.md`
+- **Auth**: session management, cookie flags — see `instructions/security.instructions.md`
 
-## Phase 1 — Map the Attack Surface
+## Phase 1 — Map Attack Surface
 
-Inventory entry points before checking any vulnerability category: HTTP entry points (Servlets, Filters, JAX-RS), input surfaces (file upload, streams), auth boundaries, and sensitive data locations.
+1. Identify entry points: servlets, controllers, API endpoints, file uploads
+2. Identify data flows: user input → processing → storage → output
+3. Identify trust boundaries: authenticated vs public, admin vs user
 
-Record as: `| Entry Point | Input Type | Auth Required | Sensitive Data | Trust Level |`
+## Phase 2 — Check by OWASP Category
 
-## Phase 2 — OWASP Top 10 Sweep
-
-Work each category in order. Do not skip.
-
-- **A01 Broken Access Control** — IDOR candidates (user-supplied IDs), path traversal
-- **A02 Cryptographic Failures** — hardcoded secrets, weak hashing (MD5/SHA-1), `Math.random()` for security
-- **A03 Injection** — SQL concatenation, non-prepared statements, shell injection, XSS surfaces
-- **A04 Insecure Design** — missing rate limiting, missing lockout, shared mutable servlet state
-- **A05 Security Misconfiguration** — debug enabled, default credentials, stack trace exposure, resource leaks
-- **A07 Authentication Failures** — session fixation, missing HttpOnly/Secure on cookies
-- **A08 Data Integrity** — unsafe deserialization, XXE candidates
+For each entry point, check against A01–A10 from `instructions/security.instructions.md`:
+- A01: access control on every resource
+- A03: injection (SQL, OS, XSS) at every input
+- A07: session management and cookie flags
+- A05: error handling leaks, default credentials
+- A10: SSRF on any URL fetch
 
 ## Phase 3 — Classify Findings
 
-- **CRITICAL** — exploitable now: SQLi, RCE, auth bypass, hardcoded creds
-- **HIGH** — fix this sprint: XSS, session fixation, missing auth on sensitive endpoint
-- **MEDIUM** — next sprint: weak hashing, missing rate limiting, verbose errors
-- **LOW** — opportunistic: info disclosure, low-impact log injection
+| Severity | Criteria |
+|---|---|
+| 🔴 CRITICAL | Exploitable now; data breach or RCE possible |
+| 🟠 HIGH | Exploitable with moderate effort |
+| 🟡 MEDIUM | Defense-in-depth gap; not directly exploitable |
+| ⚪ LOW | Best practice deviation; minimal risk |
 
-Finding format:
+## Phase 4 — Report
 
+For each finding:
 ```
-[SEVERITY] OWASP <category> — Title
-  Location: File#method:line
-  Vulnerability: <what + why dangerous>
-  Remediation: <specific fix>
+[SEVERITY] A0N — <title>
+Location: <file:line>
+Issue: <what's wrong>
+Exploit: <how an attacker would use this>
+Fix: <specific remediation>
 ```
 
-## Phase 4 — Remediation Plan
+## Handoffs
 
-Fix order: CRITICAL → HIGH → MEDIUM → LOW.
-
-| Bucket | Examples | Effort |
-|---|---|---|
-| Quick win | Security headers, cookie flags, remove debug logging | Hours |
-| Moderate | Statement → PreparedStatement, add input validation | Days |
-| Structural | Rate limiting infra, auth redesign, replace serialization | Weeks |
-
-## Phase 5 — Verify Fixes
-
-For every remediated finding: confirm vulnerable pattern is gone, tests pass, and the original attack scenario now fails.
+- → `@implementer` — to fix security findings
+- ← `@reviewer` — when security mode is activated
+- ← `code-review` skill — when code review finds security concerns

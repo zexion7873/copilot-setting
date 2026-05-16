@@ -39,7 +39,7 @@ Hooks ──lifecycle guard──→ Agent (Router)
 ```
 
 > [!NOTE]
-> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql-rules`, `error-handling`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
@@ -132,7 +132,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
-| 🧪 | `test-design` | Auto + Manual | Test case design — boundary identification, category classification, coverage gap audit |
+| 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
 | 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
@@ -151,20 +151,13 @@ Automatically injected into the system prompt when the current file matches the 
 
 | File | applyTo | Description |
 |------|---------|-------------|
-| `error-handling` | `**/*.java` | Exception handling conventions — hierarchy, custom exceptions, and error propagation. |
-| `hibernate` | `**/*.java, **/*.hbm.xml` | Hibernate 4.x conventions — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, and Spring `<tx:advice>` transaction patterns. |
-| `java` | `**/*.java` | Java 8 language conventions — forbidden Java 9+ syntax, Optional usage, java.time, Stream pitfalls, and lambda capture rules. |
-| `logging` | `**/*.java` | SLF4J + Logback conventions — parameterized messages, severity levels, and security. |
-| `jsp` | `**/*.jsp` | JSP template conventions — output encoding, JSTL usage, scriptlet avoidance, and XSS prevention. |
-| `markdown` | `**/*.md` | Markdown formatting aligned to CommonMark spec (0.31.2) |
+| `java` | `**/*.java` | Java 8 language boundary, exception handling, SLF4J logging, and code style — focuses on what AI models get wrong by default. |
+| `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core + Hibernate 4.x — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, XML `<tx:advice>` transactions. The most critical file. |
+| `sql` | `**/*.java, **/*.sql, **/*.xml` | SQL injection prevention, performance pitfalls, JDBC resource handling, and MySQL stored procedure conventions. |
+| `security` | `**/*.java, **/*.jsp` | OWASP Top 10 essentials for Java web applications. |
+| `jsp` | `**/*.jsp` | JSP conventions — XSS prevention via `<c:out>`, JSTL-only policy, output encoding. |
+| `xml-config` | `**/*.xml` | Spring XML config, Hibernate hbm.xml, and Maven POM conventions. |
 | `no-heredoc` | `**` | Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. |
-| `security-and-owasp` | `**/*.java, **/*.jsp` | Secure coding rules based on OWASP Top 10. |
-| `self-explanatory-code-commenting` | `**/*.{java,js,ts,py,cs}` | Write self-explanatory code with minimal comments. Only comment WHY when non-obvious. |
-| `sql-rules` | `**/*.java, **/*.sql, **/*.xml, **/*.jsp` | SQL hard rules — injection prevention, performance pitfalls, and JDBC resource handling. |
-| `sql-sp-generation` | `**/*.sql` | MySQL stored procedure and schema generation conventions. |
-| `xml` | `**/*.xml` | XML conventions for Maven POM, web.xml, and configuration files. |
-| `properties` | `**/*.properties` | Java properties file conventions — key naming, organization, and secret management. |
-| `yaml-json-config` | `**/*.yml, **/*.yaml, **/*.json` | YAML and JSON configuration file conventions — formatting, structure, and secret management. |
 
 ---
 
@@ -195,8 +188,7 @@ Standards and output-format references, paired with skills. Invoke via `/prompt-
 Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
-- All comments, variable names, and class names in code must be in English
-- Tech stack: Java 8, Maven, no Spring Boot
+- Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, JSP + JSTL 1.2
 
 ---
 
@@ -208,20 +200,13 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 ├── copilot-instructions.md                ← Global base instructions
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
-│   ├── error-handling
-│   ├── hibernate
 │   ├── java
-│   ├── logging
+│   ├── spring-hibernate
+│   ├── sql
+│   ├── security
 │   ├── jsp
-│   ├── markdown
-│   ├── no-heredoc
-│   ├── security-and-owasp
-│   ├── self-explanatory-code-commenting
-│   ├── sql-rules
-│   ├── sql-sp-generation
-│   ├── xml
-│   ├── properties
-│   └── yaml-json-config
+│   ├── xml-config
+│   └── no-heredoc
 │
 ├── agents/                                ← Invoke via @agent-name in chat
 │   ├── planner              (Claude Opus 4.6)

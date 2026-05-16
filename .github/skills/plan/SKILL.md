@@ -1,54 +1,44 @@
 ---
 name: plan
-description: 'Use when user asks to plan a feature, design implementation phases, or estimate impact for an upgrade / refactor / migration. Triggers on: plan a feature, design implementation phases, estimate impact, upgrade plan, migration plan, implementation roadmap, 寫實作計畫, 規劃, 升級計畫, 遷移計畫, 估影響範圍, 設計實作步驟, 排階段. Produces a phased implementation roadmap with requirements, files, risks, and alternatives. Do NOT use for one-off bug fixes (just fix), specification documents (prefer sdd skill), spec reviews (prefer sdd-review skill), or atomic task decomposition after a plan exists (prefer tasks skill).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫. Produces a structured plan document. Do NOT use for formal specifications (prefer sdd), atomic task lists (prefer tasks), or unclear requirements (prefer clarify-task).'
 ---
 
 # Plan — Workflow
 
-Produce a self-contained implementation spec another developer (or AI) can execute without further clarification. Output format defined in `prompts/plan-template.prompt.md`.
+Structured implementation plan. Output format: `prompts/plan-template.prompt.md`.
 
-## Phase 1 — Classify the Plan
+## Phase 1 — Gather Context
 
-Pick a purpose prefix; this drives the filename and the template focus.
+1. Scan codebase for existing patterns relevant to the goal
+2. Identify affected files and modules
+3. Note constraints: tech stack (Java 8 / Maven / Spring Core / Hibernate 4.x), backward compatibility, data migration needs
 
-| Prefix | When |
-|---|---|
-| `feature` | New user-facing capability |
-| `refactor` | Restructure without behavior change |
-| `upgrade` | Library / runtime / framework version bump |
-| `data` | Schema change, backfill, migration |
-| `infrastructure` | Pipeline, deploy, observability change |
-| `architecture` | Multi-component restructuring |
-| `process` | Workflow / team / convention change |
-| `design` | UX or API contract design |
+## Phase 2 — Classify Scope
 
-Filename: `[purpose]-[component]-[version].md` (kebab-case, integer version).
-Examples: `upgrade-system-command-4.md`, `feature-auth-module-1.md`.
+| Scope | Definition | Plan depth |
+|---|---|---|
+| Small | 1–3 files, single module | Lightweight: goal + approach + files |
+| Medium | 4–10 files, cross-module | Standard: full template |
+| Large | 10+ files, schema change, or API change | Full template + risk analysis + alternatives |
 
-## Phase 2 — Gather Context
+## Phase 3 — Draft Plan
 
-Before drafting, scan related code so the plan references real files, not guesses. For `upgrade` or `infrastructure` plans involving external dependencies, use Context7 to check migration guides, breaking changes, and new defaults. If Context7 is not available, fall back to web search or proceed with available context.
+Fill `prompts/plan-template.prompt.md`. Every section must be concrete:
+- Requirements: traceable `REQ-NNN` / `CON-NNN` identifiers
+- Approach: phased, each phase has a measurable goal
+- Files: real paths from the codebase scan
+- Risks: with specific mitigation, not generic "might be hard"
 
-```bash
-grep -rn "<key symbol>" --include="*.java" src/    # locate existing pattern
-git log --oneline --all -- <relevant path>         # past changes, prior art
-```
+## Phase 4 — Validate
 
-## Phase 3 — Draft Using Template
-
-Use the template in `prompts/plan-template.prompt.md`. All identifier prefixes (`REQ-`, `SEC-`, `CON-`, `GOAL-`, `ALT-`, `DEP-`, `FILE-`, `TEST-`, `RISK-`, `ASSUMPTION-`) must be used for cross-referencing from `tasks.md` and downstream artifacts.
-
-## Rules
-
-- Each phase has a single, verifiable goal — "GOAL-001: Replace `UserService` lookup with cached query" not "GOAL-001: improve performance"
-- All identifiers use prefixes (`REQ-`, `RISK-`, `FILE-`, etc.) — enables cross-reference from tasks.md and downstream artifacts
-- Phases independent unless a dependency is declared
-- No placeholder text in the final output — every field populated
-- Reference real files in the **Files** section — verify they exist
-- For non-trivial features or cross-cutting changes, recommend formalizing the plan as an SDD via the `sdd` skill before implementation
-- Do NOT generate atomic `TASK-` rows here — that is the `tasks` skill's job. Plans are the design layer; tasks are the execution layer.
+- [ ] Every phase has one clear goal
+- [ ] File list matches codebase scan results
+- [ ] No `TBD` or placeholders left
+- [ ] Alternatives section has at least one rejected option with reason
 
 ## Handoffs
 
-- → `tasks` skill — once the plan is approved, generate the atomic task list before implementation
-- → `sdd` skill / `@planner` — when the plan needs a formal SDD before tasks / implementation
+- → `tasks` skill — to break plan into atomic task list
+- → `sdd` skill — if a formal spec is needed before implementation
+- → `clarify-task` skill — if gaps found during planning
+- ← `@planner` — default activation

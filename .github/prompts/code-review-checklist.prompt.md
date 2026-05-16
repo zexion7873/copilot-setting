@@ -1,80 +1,63 @@
 ---
 agent: 'agent'
-description: 'Code review standards covering correctness, security, testing, performance, architecture, and documentation. Pairs with skills/code-review/SKILL.md (workflow / severity / verdict).'
+description: 'Code review severity model and category checklist. Pairs with skills/code-review/SKILL.md (workflow).'
 ---
 
-# Code Review Standards
+# Code Review Checklist
 
-What to check by category during a code review. Workflow (scoping, reading order, verdict) lives in `skills/code-review/SKILL.md`.
+Severity model and per-category checks for the `code-review` skill. Workflow: `skills/code-review/SKILL.md`.
 
-## Severity Mapping
+## Severity Model
 
-| Severity | Includes |
-|---|---|
-| CRITICAL | Security vulnerability, data corruption risk, crash on main path, breaking API change, secrets in source |
-| WARNING | Performance (N+1, memory leak), missing error handling on non-critical path, test gap on changed code, deviation from established patterns |
-| SUGGESTION | Naming, simplification, missing comment where WHY is non-obvious, minor style inconsistency |
+| Severity | Definition | Action |
+|---|---|---|
+| 🔴 CRITICAL | Security vuln, data loss, crash in production | Must fix before merge |
+| 🟠 MAJOR | Bug, performance issue, convention violation | Should fix |
+| 🟡 MINOR | Style, naming, minor improvement | Nice to fix |
+| ⚪ NIT | Preference, trivial | Optional |
 
-## Correctness
+## Category Checks
 
-- Code does what it claims; no off-by-one or null risks
-- Edge cases handled (empty, boundary, error inputs)
-- Error handling at the right layer; not swallowed in low-level code
-- Fail fast — validate inputs at boundaries, trust internal calls
+### Correctness
 
-## Security
+- Logic errors, off-by-one, null handling
+- Edge cases: empty collections, zero values, null inputs
+- Concurrency: shared mutable state, thread safety
+- Resource leaks: unclosed connections, streams
 
-- No secrets, tokens, or PII in code, comments, or logs
-- All user inputs validated and sanitized
-- SQL: parameterized queries only; no string concatenation
-- Auth + authz checks before accessing protected resources
-- Crypto uses established libraries (no hand-rolled algorithms)
-- Dependencies free of known CVEs
+### Security
 
-## Testing
+- SQL injection: all queries parameterized?
+- XSS: all JSP output encoded?
+- Auth: access control on every endpoint?
+- Secrets: no hardcoded credentials?
 
-- Critical paths and new functionality have tests
-- Test names describe behavior + condition (`testX_shouldDoY_whenZ`)
-- Tests are independent — no inter-test state
-- Specific assertions (`assertEquals`, not `assertTrue(a.equals(b))`)
-- Edge cases tested (null, empty, boundary)
-- External dependencies mocked; domain logic not mocked
+### Performance
 
-## Performance
+- N+1 queries (SQL inside loops)?
+- `SELECT *` or missing indexes?
+- Unbounded result sets without pagination?
+- Expensive operations in hot paths?
 
-- Appropriate algorithm complexity for the data size
-- Caching used for expensive repeated computations
-- Resources cleaned up (try-with-resources for `AutoCloseable`)
-- Large result sets paginated or streamed
-- SQL performance: apply rules from `instructions/sql-rules.instructions.md`
+### Convention Compliance
 
-## Architecture
+- Java 8 only (no `var`, `List.of()`, records)?
+- Hibernate: `getCurrentSession()`, hbm.xml, no JPA annotations?
+- Transactions: `<tx:advice>` only, no `@Transactional`?
+- Logging: SLF4J parameterized, correct severity levels?
+- Error handling: proper exception hierarchy and translation?
 
-- Separation of concerns respected; layer boundaries clear
-- Dependencies flow in one direction; no cycles
-- Interfaces small and focused
-- Established patterns followed; deviations justified
+### Maintainability
 
-## Documentation
-
-- Public APIs have Javadoc (purpose, params, returns, exceptions)
-- Non-obvious logic has WHY comments — never WHAT comments
-- README updated if setup or behavior changed
-- Breaking changes documented
-
-## Clean Code
-
-- Names describe intent, not implementation
-- Functions under ~30 lines; max 3 levels of nesting
-- No duplication; no magic numbers / strings (use constants)
-- No commented-out code
-- No TODO without an associated ticket / owner
+- Clear naming (methods, variables, classes)?
+- No duplicated code?
+- Methods ≤30 lines of logic?
+- Comments explain WHY, not WHAT?
 
 ## Comment Format
 
 ```
-[SEVERITY] Category — Title
-  File: path/to/File.java#method:line
-  Problem: <what is wrong, why it matters>
-  Fix: <specific recommendation; show corrected code if helpful>
+[SEVERITY] Category — description
+Location: file:line
+Suggestion: <specific fix>
 ```

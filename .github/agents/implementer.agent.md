@@ -33,10 +33,10 @@ If the request is ambiguous, ask one round of clarifying questions. If scope is 
 
 | Trigger | Skill | What it does |
 |---|---|---|
-| "implement", "寫", "實作" | `implement` | SDD-first gate → pattern discovery → coding → self-verify |
-| "refactor", "重構" | `refactor` | Behavior-preserving restructuring with code smell detection |
-| "design tests", "寫測試", "測試案例" | `test-design` | Test case design document — boundary analysis, case categorization, coverage gap audit |
-| "效能優化", "performance", "跑很慢" | `performance` | Measure-first profiling and optimization |
+| "implement", "code this", "build feature", "write code", 實作, 寫程式, 開始做, 幫我寫 | `implement` | Understand context → discover patterns → implement → self-verify |
+| "refactor", "clean up", "extract method", "rename", 重構, 整理程式碼, 拆方法, 改名 | `refactor` | Behavior-preserving restructuring with code smell detection |
+| "test cases", "test plan", "design tests", 測試案例, 要測什麼, 測試規劃, 列測試項目 | `test-design` | Test case design document — boundary analysis, case categorization, coverage gap audit |
+| "performance", "slow", "memory", "bottleneck", 效能, 跑很慢, 記憶體, 怎麼加速, 找瓶頸, 效能調校 | `performance` | Measure-first profiling and optimization |
 
 Activate the matched skill and follow its workflow. Default to `implement` if the user's intent is ambiguous but clearly implementation-related.
 

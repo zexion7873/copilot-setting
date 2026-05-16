@@ -56,9 +56,9 @@ Agent ──activates──→ Skill ──uses format from──→ Prompt
 |---|---|---|---|
 | Agent → Skill | ✅ | Skill Activation table: `skill-name` |
 | Skill → Prompt | ✅ | "Output format defined in `prompts/plan-template.prompt.md`" |
-| Skill → Instruction | ✅ | "Rules live in `instructions/sql-rules.instructions.md`" |
+| Skill → Instruction | ✅ | "Rules live in `instructions/sql.instructions.md`" |
 | Skill → Skill | ✅ | Handoffs section only: `→ code-review skill` |
-| Instruction → Instruction | ✅ | Cross-reference related rules: `instructions/error-handling.instructions.md` |
+| Instruction → Instruction | ✅ | Cross-reference related rules: `instructions/java.instructions.md` |
 
 ### Navigational back-references (pointing readers to context)
 
@@ -94,7 +94,7 @@ applyTo: '<glob pattern>'
 ```markdown
 # <Descriptive Title>
 
-<Scope statement (1–2 sentences). Use "Hard rules for..." when the file defines non-negotiable conventions; otherwise, start with a direct statement of what this file covers.> Cross-reference related files using relative paths from `.github/`: e.g., `instructions/sql-rules.instructions.md`, `prompts/code-review-checklist.prompt.md`.
+<Scope statement (1–2 sentences). Use "Hard rules for..." when the file defines non-negotiable conventions; otherwise, start with a direct statement of what this file covers.> Cross-reference related files using relative paths from `.github/`: e.g., `instructions/sql.instructions.md`, `prompts/code-review-checklist.prompt.md`.
 
 ## <Topic Section>
 
@@ -116,11 +116,11 @@ applyTo: '<glob pattern>'
 
 1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
-3. **Opening paragraph**: scope statement + cross-references to related instruction/prompt files (if any). Use full relative paths from `.github/` (e.g., `instructions/security-and-owasp.instructions.md`), not bare names.
+3. **Opening paragraph**: scope statement + cross-references to related instruction/prompt files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
 4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.
 5. **Anti-Patterns table**: always 3-column (`Pattern | Problem | Fix`). If the file has anti-patterns, use this exact header. Column 2 (`Problem`) must explain *why* it's wrong, not just restate the pattern.
 6. **Checklist section**: optional. Use only when the instruction benefits from a verification self-check (e.g., markdown formatting, commenting guidelines). Use `- [ ]` checkbox format.
-7. **Cross-references**: use backtick-wrapped relative paths from `.github/` — e.g., `` `instructions/sql-rules.instructions.md` ``. Never use bare names like `` `sql-rules` `` or absolute paths.
+7. **Cross-references**: use backtick-wrapped relative paths from `.github/` — e.g., `` `instructions/sql.instructions.md` ``. Never use bare names like `` `sql` `` or absolute paths.
 8. **Known exceptions**: `global-copilot.instructions.md` is intentionally minimal (duplicates `copilot-instructions.md` for user-scope loading) — opening paragraph and H2 sections are not required.
 
 ---
@@ -274,7 +274,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
 1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required, no other fields. No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). **Exception**: `refactor` and `git-commit` are reference+process hybrids where Phase N format would damage readability — they keep their organic structure but must still use `— Workflow` in the H1.
-3. **Opening paragraph** (**REQUIRED**): what + cross-references. Must reference the paired prompt file (if any) using a specific path. For instruction dependencies: use `instructions/*.instructions.md` glob when the skill depends on all instructions (e.g., fallback rules intro); use a specific filename only for one-to-one relationships (e.g., `sql-review` → `instructions/sql-rules.instructions.md`).
+3. **Opening paragraph** (**REQUIRED**): what + cross-references. Must reference the paired prompt file (if any) using a specific path. For instruction dependencies: use `instructions/*.instructions.md` glob when the skill depends on all instructions (e.g., fallback rules intro); use a specific filename only for one-to-one relationships (e.g., `sql-review` → `instructions/sql.instructions.md`).
 4. **Fallback rules block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`). These inline the critical non-negotiable rules so they apply even when instruction files are not auto-loaded in agent chat. Format as a bullet list with bold category labels.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) may use topic-based H2 sections instead.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
@@ -415,7 +415,7 @@ exit 0
 
 | Reference type | Format | Example | Validated? |
 |---|---|---|---|
-| Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql-rules.instructions.md` `` | ✅ CI |
+| Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql.instructions.md` `` | ✅ CI |
 | Instruction glob (all) | `` `instructions/*.instructions.md` `` | Used in skill fallback intro when depending on all instructions | ❌ |
 | Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` | ✅ CI |
 | Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/plan-template.prompt.md` `` | ✅ CI |

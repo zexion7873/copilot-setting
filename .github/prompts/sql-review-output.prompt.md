@@ -1,40 +1,54 @@
 ---
 agent: 'agent'
-# tools: sanctioned exception per STYLE-GUIDE line 271 — this -output prompt
-# functions as an active review workflow and needs tools at invocation time.
-tools: ['search/changes', 'search/codebase', 'edit/editFiles', 'read/problems']
-description: 'SQL review workflow for ${selection}. Applies rules from instructions/sql-rules.instructions.md. Works across MySQL, PostgreSQL, SQL Server, Oracle.'
+description: 'SQL review output format and EXPLAIN cheat sheet. Pairs with skills/sql-review/SKILL.md (workflow).'
 ---
 
-# SQL Review
+# SQL Review Output Format
 
-Review and optimize `${selection}` (or the entire project if no selection). Apply rules from `instructions/sql-rules.instructions.md`. Review workflow lives in `skills/sql-review/SKILL.md`. This prompt defines the output format and reference tables only.
+Output format for the `sql-review` skill. Workflow: `skills/sql-review/SKILL.md`. SQL rules: `instructions/sql.instructions.md`.
 
-## Workflow
+## Finding Format
 
-The review workflow (inventory, security pass, EXPLAIN pass, anti-pattern scan) is defined in `skills/sql-review/SKILL.md`. This prompt defines the output format and reference tables only.
-
-## EXPLAIN Signal Cheat Sheet
-
-| Signal | Meaning | Likely fix |
-|---|---|---|
-| `type: ALL` / `Seq Scan` | Full table scan | Add index on filter column |
-| `Using filesort` | Sort without index | Add index on ORDER BY column |
-| `Using temporary` | Temp table built | Rewrite or add covering index |
-| `rows` >> actual | Stale statistics | `ANALYZE TABLE` |
-| Nested loop on big tables | Bad join order | Check join column indexes |
-
-## Output Format
-
-For each issue:
+For each SQL issue found:
 
 ```
-[SEVERITY] [Category] — Brief description
-  Location: <table/view/procedure>:<line>
-  Problem: <what is wrong + impact>
-  Fix: <specific recommendation with code>
+[SEVERITY] <title>
+Query: <the SQL or code location>
+Issue: <what's wrong>
+Fix: <specific remediation>
+Impact: <performance/security/correctness>
 ```
 
-Severity: `CRITICAL` (security / data loss) / `WARNING` (performance, maintainability) / `SUGGESTION` (style).
+## Severity
 
-End with: counts by severity, top 3 priority actions, and an EXPLAIN / execution-plan recommendation when performance issues are flagged.
+| Severity | Criteria |
+|---|---|
+| 🔴 CRITICAL | SQL injection; data loss; unbounded DELETE/UPDATE |
+| 🟠 MAJOR | Missing index on large table; N+1; `SELECT *` on wide table |
+| 🟡 MINOR | Suboptimal pagination; unnecessary columns; style |
+| ⚪ NIT | Alias naming; formatting |
+
+## EXPLAIN Cheat Sheet (MySQL)
+
+| Column | Watch for |
+|---|---|
+| `type` | `ALL` = full scan (bad); `ref`/`range` = index used (good) |
+| `key` | `NULL` = no index used |
+| `rows` | High number on filtered query = missing index |
+| `Extra` | `Using filesort` = ORDER BY not indexed; `Using temporary` = temp table created |
+
+### Quick interpretation
+
+- `type=ALL` + high `rows` → add index on WHERE columns
+- `Using filesort` → add index covering ORDER BY
+- `Using temporary` → simplify GROUP BY or add composite index
+- `key=NULL` on JOIN → add index on join column
+
+## Summary Format
+
+```
+## SQL Review Summary
+Queries reviewed: N
+Findings: N critical, N major, N minor, N nit
+Top issue: <most impactful finding>
+```

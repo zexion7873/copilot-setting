@@ -1,94 +1,51 @@
 ---
 name: test-design
-description: 'Use when user asks to design tests, plan test coverage, or identify what to test. Triggers on: design tests, plan test coverage, identify what to test, test cases, boundary cases, edge cases, coverage gap, 寫測試, 測試案例, 要測什麼, 補 test, 測試覆蓋率, 該測哪些情境, 邊界測試. Designs test cases with boundary analysis, category classification, and coverage gap audit. Do NOT use for running existing tests, fixing test infrastructure, or debugging test failures (prefer debug skill).'
+description: 'Use when user needs test case identification and documentation — boundary analysis, category classification, and coverage gap audit. Triggers on: test cases, what should we test, test plan, test design, 測試案例, 要測什麼, 測試規劃, 列測試項目. Produces a test case document (not test code). Do NOT use for implementation (prefer implement), code review (prefer code-review), or debugging (prefer debug).'
 ---
 
 # Test Design — Workflow
 
-Process for designing tests systematically. Targets JUnit 5 + Mockito. This file defines HOW to design, not coding standards.
+Test case identification and documentation. Produces a structured test case document, not executable test code.
 
-## Phase 1 — Analyze the Code Under Test
+## Phase 1 — Identify Boundaries
 
-For each method capture:
+From the feature/SDD/code under test, extract:
+- Input boundaries: min, max, empty, null, overflow
+- State boundaries: initial, in-progress, completed, error
+- Integration boundaries: external API calls, DB operations, file I/O
 
-- Signature: name, return type, parameters, declared exceptions, visibility
-- All branches: if/else, switch cases, try/catch, early returns, loops, Optional chains, Stream stages
-- Inputs: direct params, fields read, external reads (DB, file, cache)
-- Outputs: return values, thrown exceptions
-- Side effects: DB writes, file writes, cache puts, external calls, state mutations
-- Dependencies to mock: list each one
+## Phase 2 — Classify Categories
 
-## Phase 2 — Identify Boundaries
+| Category | What to test | Priority |
+|---|---|---|
+| Happy path | Normal flow with valid inputs | Must have |
+| Boundary | Edge values at limits | Must have |
+| Error / Exception | Invalid input, unavailable deps, timeout | Must have |
+| Security | Injection, auth bypass, privilege escalation | Must have for user-facing |
+| Concurrency | Shared state, race conditions | If multi-threaded |
+| Performance | Response time, throughput under load | If SLA exists |
 
-Run every parameter through these axes:
+## Phase 3 — Write Test Case Document
 
-| Type | Boundary values to test |
-|---|---|
-| **Null / Empty** | `null`, `""`, `"   "` blank, `[]` empty collection, `Optional.empty()` |
-| **Numeric** | `0`, `-1`, `MIN_VALUE`, `MAX_VALUE`, domain min/max, one past each boundary, double precision (`0.1+0.2`) |
-| **Collection** | size 0, 1, 2 (ordering), N (typical), MAX (perf); `null` vs `[]` |
-| **String** | `null`, `""`, `" "`, single char, max length, max+1, special chars, Unicode (中文/emoji), SQL probe (`' " ; --`), HTML probe (`< > &`) |
-| **Date / Time** | `null`, epoch, leap year Feb 29, non-leap Feb 29, month/year end, midnight UTC vs local, DST |
-| **Concurrency** | concurrent read, concurrent write, read-write interleave (if shared state) |
-
-## Phase 3 — Design Cases by Category
-
-One row per test:
+For each test case:
 
 ```
-| # | Category | Test Name | Input | Expected | Priority |
+TC-NNN: <Short description>
+Category: <Happy path | Boundary | Error | Security | Concurrency | Performance>
+Precondition: <Setup required>
+Input: <Specific values>
+Expected result: <Exact expected outcome>
+Priority: <High | Medium | Low>
 ```
 
-Categories:
+## Phase 4 — Coverage Audit
 
-- **Happy Path (P0)** — One per distinct normal scenario
-- **Alternative Paths (P0-P1)** — One per branch that changes behavior
-- **Error Paths (P1)** — One per declared exception type
-- **Boundary Values (P1)** — One per boundary identified in Phase 2
-- **Integration (P2)** — One per dependency interaction (success/failure/timeout)
-- **Security (P2)** — One per attack vector (injection, auth bypass)
-
-## Phase 4 — Output Test Document
-
-Test case design is complete. Output as a structured test case document (markdown table or checklist) for manual verification or QA handoff.
-
-## Phase 5 — Coverage Gap Audit
-
-Branch coverage:
-
-- Each `if/else`: both branches tested
-- Each `switch`: every case + default
-- Each `try/catch`: happy path + each caught exception type
-- Each guard / early return: triggered + pass-through
-
-Dependency interactions:
-
-- Success response
-- Empty / null response
-- Exception response
-- `verify()` called with correct args
-- `verify(_, never())` when it shouldn't be called
-
-Make tests resilient to mutation testing:
-
-- Boundary flip (`>` vs `>=`) → test the exact boundary
-- Return value flip → assert exact value, not truthiness
-- Condition negation → test both branches
-- Removed method call → use `verify()`
-- Arithmetic operator swap → assert exact result
+- [ ] Every requirement from SDD/feature maps to ≥1 test case
+- [ ] Every public method has at least one happy path + one error case
+- [ ] Boundary values covered for all numeric/string inputs
+- [ ] SQL operations tested for injection and empty result sets
 
 ## Handoffs
 
-- ← `implement` skill — implementation may trigger test design for new functionality
-- ← `code-review` skill — review may flag coverage gaps needing test design
-
-## Anti-Patterns
-
-Key reminders:
-
-- Test behavior, not implementation — verify outcomes and side effects, not internal call sequence
-- One assertion focus per case — each test case validates one specific behavior
-
-## Quick Checklist (small methods)
-
-Valid input? `null`? Min/max? One past boundary? Exceptions? Dependencies (`verify`)? Collection size 0/1/many? State mutation before/after? Security (injection, unauthorized)?
+- ← `@implementer` — after implementation, to verify coverage
+- ← `sdd` skill — to design tests from specification

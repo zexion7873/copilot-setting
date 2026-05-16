@@ -1,89 +1,51 @@
 ---
 name: clarify-task
-description: 'Use when user request is vague, ambiguous, or missing scope / deliverable / constraints. Triggers on: vague request, ambiguous scope, unclear requirements, need clarification, where to start, uncertain about approach, 需求不清楚, 先釐清一下, 應該怎麼開始, 我不確定該怎麼做, 範圍是什麼, 不太懂要做什麼. Iteratively refines understanding via numbered clarifying questions before any code or file is touched. Do NOT use when the task is already well-specified (just do it), for trivial single-line edits, for direct factual questions, or when user asks to look at / review specific code (prefer code-review).'
+description: 'Use when a user request is vague, ambiguous, or missing critical information and needs refinement before planning or implementation. Triggers on: clarify, unclear requirements, what do you mean, 需求不清楚, 先釐清, 這個需求是什麼意思, 幫我確認. Produces numbered clarifying questions and a confirmed understanding summary. Do NOT use for well-defined tasks ready for planning (prefer plan) or direct implementation (prefer implement).'
 ---
 
 # Clarify Task — Workflow
 
-Be properly informed before acting. Ambiguous requests produce wrong outputs faster than they save time. This skill is the gate before `implement` / `refactor` / `plan` when scope is unclear.
+Interactive task refinement. Use before planning when requirements have gaps.
 
-## When to Trigger
+## Phase 1 — Parse the Request
 
-- Request lacks a measurable success criterion ("make it better", "fix the auth")
-- Multiple plausible interpretations exist
-- Request implies large surface area but is described in one sentence
-- Stakes are high (production code, data migration, security)
+Extract from the user's message:
+- **Goal**: what they want to achieve (may be implicit)
+- **Scope**: which modules/files/features are involved
+- **Constraints**: deadlines, tech limitations, backward compatibility
 
-Skip if the user has already supplied scope, files, and acceptance criteria — going through this skill would just be friction.
+## Phase 2 — Identify Gaps
 
-## Phase 1 — Identify the Gaps
+Flag anything that would force guessing during implementation:
+- Missing acceptance criteria
+- Ambiguous scope boundaries
+- Unstated assumptions about existing behavior
+- Conflicting requirements
 
-Before asking anything, write down internally:
+## Phase 3 — Ask Numbered Questions
 
-```
-What I know:        <facts from the request + visible code>
-What I don't know:  <unknowns blocking action>
-What I assume:      <implicit assumptions worth verifying>
-```
+Present 3–7 numbered questions. Each question:
+1. States what is unclear
+2. Offers 2–3 concrete options when possible
+3. Marks a recommended default if one exists
 
-Only ask about items in **don't know** + critical items in **assume**. Do not ask about things you can resolve by reading a file.
-
-## Phase 2 — Ask in Chat (Numbered)
-
-Present clarifying questions as a numbered list, grouped by topic. Wait for the user before proceeding.
-
-```
-**Scope**
-1. Should this apply to existing records, new records only, or both?
-2. Are admin users in scope?
-
-**Deliverable**
-3. Code change only, or also docs / tests?
-4. Where should the new module live?
-
-**Constraints**
-5. Any deadline?
-6. Any backward-compat requirement for clients on v2?
-```
-
-Rules:
-- Specific, answerable questions — not "what do you want?"
-- Group related questions
-- 3–7 questions total; if you need more, the request is too big — split it first
-
-## Phase 3 — Explore the Codebase
-
-While waiting (or after answers), use search / read tools to confirm assumptions and surface details the user didn't mention. Note discoveries that might change the plan.
+Do NOT ask questions the codebase can answer — scan first, ask only what code cannot tell you.
 
 ## Phase 4 — Confirm Understanding
 
-Summarize back in 5–10 lines:
+After answers, produce a summary block:
 
 ```
-Understanding:
-- Goal: …
-- In scope: …
-- Out of scope: …
-- Acceptance: …
-- Approach (high level): …
-
-Anything to add or correct?
+## Confirmed Understanding
+- Goal: ...
+- Scope: ...
+- Constraints: ...
+- Out of scope: ...
+- Open items: ... (if any remain)
 ```
-
-## Phase 5 — Proceed
-
-Once the user confirms, activate the matching downstream skill or hand off to the relevant agent — see Handoffs below for routing.
 
 ## Handoffs
 
-- → `plan` skill — for multi-step / multi-file work
-- → `implement` skill — for direct execution
-- → `refactor` skill — for behavior-preserving restructuring
-- → `debug` skill — if the real task turned out to be a bug hunt
-
-## Anti-Patterns
-
-- Asking questions that the code answers → read it first
-- Asking 15 questions at once → bundle, prioritize, top 5
-- Proceeding without confirmation when the user's answers contradict each other → re-summarize and re-confirm
-- Using this skill for "rename this variable" → it's friction, not value
+- → `plan` skill — when requirements are clear enough to plan
+- → `implement` skill — when the task is small and fully understood
+- ← `@planner` — when planner detects ambiguity before planning
