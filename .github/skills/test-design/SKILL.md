@@ -5,45 +5,42 @@ description: 'Use when user needs test case identification and documentation —
 
 # Test Design — Workflow
 
-Test case identification and documentation. Produces a structured test case document, not executable test code.
+Test case identification and documentation. Produces a structured document, not executable code.
 
-## Phase 1 — Identify Boundaries
+## What to Identify
 
-From the feature/SDD/code under test, extract:
-- Input boundaries: min, max, empty, null, overflow
-- State boundaries: initial, in-progress, completed, error
-- Integration boundaries: external API calls, DB operations, file I/O
+- **Input boundaries**: min, max, empty, null, overflow
+- **State boundaries**: initial, in-progress, completed, error
+- **Integration boundaries**: external APIs, DB operations, file I/O
 
-## Phase 2 — Classify Categories
+## Categories & Priority
 
-| Category | What to test | Priority |
-|---|---|---|
-| Happy path | Normal flow with valid inputs | Must have |
-| Boundary | Edge values at limits | Must have |
-| Error / Exception | Invalid input, unavailable deps, timeout | Must have |
-| Security | Injection, auth bypass, privilege escalation | Must have for user-facing |
-| Concurrency | Shared state, race conditions | If multi-threaded |
-| Performance | Response time, throughput under load | If SLA exists |
+| Category | Priority |
+|---|---|
+| Happy path (normal flow, valid inputs) | Must have |
+| Boundary (edge values at limits) | Must have |
+| Error / Exception (invalid input, unavailable deps) | Must have |
+| Security (injection, auth bypass) | Must have for user-facing |
+| Concurrency (shared state, race conditions) | If multi-threaded |
+| Performance (response time, throughput) | If SLA exists |
 
-## Phase 3 — Write Test Case Document
-
-For each test case:
+## Test Case Format
 
 ```
-TC-NNN: <Short description>
-Category: <Happy path | Boundary | Error | Security | Concurrency | Performance>
-Precondition: <Setup required>
-Input: <Specific values>
-Expected result: <Exact expected outcome>
-Priority: <High | Medium | Low>
+TC-NNN: <description>
+Category: <category>
+Precondition: <setup>
+Input: <specific values>
+Expected: <exact outcome>
+Priority: High / Medium / Low
 ```
 
-## Phase 4 — Coverage Audit
+## Coverage Check
 
-- [ ] Every requirement from SDD/feature maps to ≥1 test case
-- [ ] Every public method has at least one happy path + one error case
-- [ ] Boundary values covered for all numeric/string inputs
-- [ ] SQL operations tested for injection and empty result sets
+- Every requirement maps to ≥1 test case
+- Every public method has ≥1 happy path + ≥1 error case
+- Boundary values covered for all numeric/string inputs
+- SQL operations tested for injection and empty results
 
 ## Handoffs
 

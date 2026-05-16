@@ -7,37 +7,33 @@ description: 'Use when a plan or SDD needs to be broken into dependency-ordered 
 
 Atomic task decomposition. Output format: `prompts/tasks-template.prompt.md`.
 
-## Phase 1 — Parse Source
+## Input
 
-Read the plan or SDD that was approved. Extract:
-- Implementation phases / goals
-- File list with expected changes
-- Dependencies between components
-- Constraints that affect ordering
+An approved plan or SDD. Extract: phases/goals, file list, dependencies, constraints.
 
-## Phase 2 — Decompose
+## What Makes a Good Task
 
-Break each phase into atomic tasks. Each task must be:
-- **One action**: a single file change or a closely related set of changes
-- **Verifiable**: has a clear done-when condition
+- **One action**: single file change or closely related set
+- **Verifiable**: clear done-when condition
 - **Estimated**: S (< 30 min) / M (30–120 min) / L (> 2 hours)
+- **Traceable**: maps to ≥1 requirement from source
 
-## Phase 3 — Order by Dependency
+## Ordering & Markers
 
-1. Build dependency graph (T001 must complete before T002)
-2. Mark parallel-safe tasks with `[P]`
-3. Mark tasks requiring user sign-off with `[US]`
-4. Number sequentially: `T001`, `T002`, ...
+- `T001`, `T002`, ... — sequential numbering
+- Dependency graph: which task blocks which
+- `[P]` — parallel-safe with other `[P]` tasks at same level
+- `[US]` — requires user sign-off
 
-## Phase 4 — Format Output
+## Quality Bar
 
-Fill `prompts/tasks-template.prompt.md`:
-- Dependency table: which task blocks which
-- Coverage matrix: every requirement from source mapped to ≥1 task
-- No orphan tasks (every task traces to a requirement)
+- Every task maps to ≥1 requirement
+- Every requirement maps to ≥1 task
+- No circular dependencies
+- No orphan tasks
 
 ## Handoffs
 
-- → `@implementer` — to start executing task list
-- ← `plan` skill — after plan is approved
-- ← `sdd` skill — after SDD is approved
+- → `@implementer` — start executing task list
+- ← `plan` skill — after plan approved
+- ← `sdd` skill — after SDD approved

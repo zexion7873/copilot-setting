@@ -5,7 +5,7 @@ description: 'Use when user reports slow response, high memory, or needs bottlen
 
 # Performance — Workflow
 
-Measure-first performance tuning. SQL performance rules: `instructions/sql.instructions.md`.
+Measure-first performance tuning. SQL rules: `instructions/sql.instructions.md`.
 
 Full coding rules in `instructions/*.instructions.md`. Key rules:
 
@@ -13,39 +13,32 @@ Full coding rules in `instructions/*.instructions.md`. Key rules:
 - **Resources**: `try-with-resources` — leaked connections cause pool exhaustion under load
 - **Security**: caching must not store sensitive data
 
-## Phase 1 — Measure First
+## Methodology
 
-1. **Profile before optimizing** — guessing is the enemy of performance
-2. **Set a budget** — define acceptable latency / memory / payload size
-3. **Target hot paths** — optimize common case, not rare edges
+1. **Measure first** — profile before optimizing. No measurement = no optimization.
+2. **Set a budget** — define acceptable latency / memory / payload size.
+3. **Target hot paths** — common case, not rare edges.
+4. **Compare before / after** — every change verified by benchmark.
 
 If the user has not measured yet, **stop and ask them to profile first**.
 
-## Phase 2 — Identify Layer
+## Layer → Symptom Map
 
 | Symptom | Layer | Tools |
 |---|---|---|
-| Slow page load (TTFB/FCP/LCP) | Frontend / JSP | Chrome DevTools, Lighthouse |
+| Slow page load | Frontend / JSP | Chrome DevTools, Lighthouse |
 | API latency, CPU spikes | Backend (Java) | VisualVM, async-profiler, JFR |
 | Slow queries, lock contention | Database | `EXPLAIN ANALYZE`, slow query log |
 | Memory growth, OOM | Heap | JFR, heap dumps (jmap, MAT) |
 
-## Phase 3 — Apply Fixes
+## Common Fixes
 
-**Backend**: match data structure to access pattern; reject O(n²); connection pooling; cache hot reads (TTL/LRU); bulk operations; compress responses >1KB
-
-**Database**: indexes on WHERE/JOIN/ORDER BY; no `SELECT *`; no `OFFSET`; N+1 → batch; read replicas
-
-**Frontend**: extract inline resources to cacheable files; paginate tables; gzip/Brotli; CDN for static
-
-## Phase 4 — Verify
-
-- Re-run same profile/benchmark
-- Document before/after numbers
-- If gain <10%, question whether complexity cost is worth it
+- **Backend**: match data structure to access pattern; connection pooling; cache hot reads (TTL/LRU); bulk operations; compress >1KB
+- **Database**: indexes on WHERE/JOIN/ORDER BY; no `SELECT *`; no `OFFSET`; N+1 → batch
+- **Frontend**: cacheable static files; paginate tables; gzip/Brotli; CDN
 
 ## Handoffs
 
-- → `sql-review` skill — for deep SQL / index analysis
-- → `debug` skill — if the performance problem is actually a bug
-- → `refactor` skill — if optimization requires structural change
+- → `sql-review` skill — deep SQL / index analysis
+- → `debug` skill — performance problem is actually a bug
+- → `refactor` skill — optimization requires structural change

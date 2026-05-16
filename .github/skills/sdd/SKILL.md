@@ -7,37 +7,31 @@ description: 'Use when a formal specification document is needed before implemen
 
 Spec-Driven Development document. Output format: `prompts/spec-template.prompt.md`.
 
-## Phase 1 — Gather Requirements
+## What to Include
 
-1. Extract functional and non-functional requirements from user input
-2. Scan codebase for existing contracts, data models, and patterns
-3. Identify integration points with existing modules
+Fill `prompts/spec-template.prompt.md` — every section must be concrete:
+
+- **Background**: why this change exists
+- **Requirements**: numbered, each with pass/fail criteria
+- **Design**: approach with rationale and rejected alternatives
+- **API Contract**: method signatures, input/output, error cases
+- **Data Model**: entity changes, migration needs, rollback plan
+- **Error Handling**: failure modes and recovery
+- **Testing Strategy**: what to verify, mapped to requirements
+- **Out of Scope**: explicit exclusions
+
+## Quality Bar
+
+- Every requirement is testable
+- API contracts include error responses
+- Data model changes note migration/rollback
+- No `TBD` or vague sections
 
 If requirements are unclear, hand off to `clarify-task` first.
 
-## Phase 2 — Draft Specification
-
-Fill `prompts/spec-template.prompt.md`:
-- **Background**: why this change exists
-- **Requirements**: numbered, testable
-- **Design**: approach with rationale
-- **API Contract**: method signatures, input/output, error cases
-- **Data Model**: entity changes, migration needs
-- **Error Handling**: failure modes and recovery
-- **Testing Strategy**: what to verify and how
-- **Out of Scope**: explicit exclusions
-
-## Phase 3 — Self-Review
-
-Before presenting:
-- [ ] Every requirement is testable (has clear pass/fail)
-- [ ] API contracts include error responses
-- [ ] Data model changes note migration/rollback
-- [ ] No `TBD` or vague sections
-
 ## Handoffs
 
-- → `tasks` skill — to decompose SDD into atomic tasks
-- → `@implementer` — when SDD is approved and ready
-- → `clarify-task` skill — if gaps found during drafting
+- → `tasks` skill — decompose SDD into atomic tasks
+- → `@implementer` — SDD approved and ready
+- → `clarify-task` skill — gaps found during drafting
 - ← `@planner` — default activation

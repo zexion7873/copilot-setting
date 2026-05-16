@@ -5,42 +5,28 @@ description: 'Use when user needs code written — new features, SDD implementat
 
 # Implement — Workflow
 
-Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.x projects.
+Feature implementation for Java 8 / Maven / Spring 3.2 / Hibernate 4.2 projects.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules that apply in all contexts:
+Full coding rules in `instructions/*.instructions.md`. Key rules:
 
 - **Java 8 only**: no `var`, no `List.of()`, no records — see `instructions/java.instructions.md`
 - **Hibernate**: `getCurrentSession()` only, hbm.xml mappings, no JPA annotations — see `instructions/spring-hibernate.instructions.md`
-- **Transactions**: XML `<tx:advice>` only, no `@Transactional` — see `instructions/spring-hibernate.instructions.md`
+- **Transactions**: XML `<tx:advice>` only, no `@Transactional`, no `@RestController` — see `instructions/spring-hibernate.instructions.md`
 - **SQL**: `PreparedStatement` with `?` only — see `instructions/sql.instructions.md`
 - **Security**: no hardcoded secrets; encode all JSP output — see `instructions/security.instructions.md`
 
-## Phase 1 — Understand Context
+## Before Writing Code
 
-1. Read the SDD / task / user request
-2. Scan existing code for patterns: naming, layering, error handling, logging
-3. Identify affected files and their callers/dependents
-
-## Phase 2 — Discover Patterns
-
-Before writing new code, find and follow existing patterns:
-- DAO pattern: how other DAOs use `SessionFactory`
-- Service pattern: how tx boundaries are structured
-- Error handling: project's exception hierarchy
-- Naming: existing conventions for classes, methods, variables
-
-## Phase 3 — Implement
-
+- Read the SDD / task / user request
+- Scan existing code for patterns: naming, layering, error handling, logging
+- Identify affected files and their callers/dependents
 - Match existing patterns exactly — consistency over personal preference
-- One logical change per commit scope
-- Add logging at INFO for business events, DEBUG for diagnostics
-- Handle errors at the right layer; translate at boundaries
 
-## Phase 4 — Self-Verify
+## Self-Verify Checklist
 
 - [ ] Compiles without warnings
-- [ ] Follows patterns found in Phase 2
-- [ ] No `@Transactional`, no `openSession()`, no JPA annotations
+- [ ] Follows patterns found in existing code
+- [ ] No `@Transactional`, no `openSession()`, no JPA annotations, no `@RestController`
 - [ ] SQL uses parameterized queries only
 - [ ] No hardcoded secrets or credentials
 
@@ -49,5 +35,4 @@ Before writing new code, find and follow existing patterns:
 - → `@reviewer` — for code review after implementation
 - → `debug` skill — if implementation reveals a bug
 - → `refactor` skill — if existing code needs restructuring first
-- ← `@implementer` — default activation
 - ← `tasks` skill — executing a task list

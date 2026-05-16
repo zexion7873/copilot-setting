@@ -5,50 +5,45 @@ description: 'Use when user wants code reviewed for correctness, style, bugs, an
 
 # Code Review — Workflow
 
-Structured code review. Severity model and checklist: `prompts/code-review-checklist.prompt.md`.
+Structured code review. Checklist: `prompts/code-review-checklist.prompt.md`.
 
 Full coding rules in `instructions/*.instructions.md`. Key rules:
 
 - **Java 8 only**: no 9+ syntax — see `instructions/java.instructions.md`
-- **Hibernate/Spring**: `getCurrentSession()`, `<tx:advice>`, no annotations — see `instructions/spring-hibernate.instructions.md`
+- **Hibernate/Spring**: `getCurrentSession()`, `<tx:advice>`, no annotations, no `@RestController` — see `instructions/spring-hibernate.instructions.md`
 - **SQL**: parameterized only — see `instructions/sql.instructions.md`
 - **Security**: OWASP essentials — see `instructions/security.instructions.md`
 
-## Phase 1 — Understand the Change
+## What to Check
 
-1. Read the diff / files under review
-2. Understand the intent: what problem does this solve?
-3. Check if the approach matches existing patterns
-
-## Phase 2 — Review by Category
-
-Check each category from `prompts/code-review-checklist.prompt.md`:
-- **Correctness**: logic errors, edge cases, null handling
-- **Security**: injection, auth, data exposure
+- **Correctness**: logic errors, edge cases, null handling, resource leaks
+- **Security**: injection, auth, data exposure, hardcoded secrets
 - **Performance**: N+1, missing indexes, unbounded queries
-- **Maintainability**: naming, duplication, complexity
-- **Convention compliance**: Java 8 rules, Spring/Hibernate patterns
+- **Conventions**: Java 8 rules, Spring 3.2/Hibernate 4.2 patterns, SLF4J logging
+- **Maintainability**: naming, duplication, complexity, comments explain WHY
 
-## Phase 3 — Classify Findings
+## Severity
 
-| Severity | Definition | Action |
+| Level | Definition | Action |
 |---|---|---|
-| 🔴 CRITICAL | Security vulnerability, data loss, crash | Must fix before merge |
-| 🟠 MAJOR | Bug, performance issue, convention violation | Should fix |
+| 🔴 CRITICAL | Security vuln, data loss, crash | Must fix before merge |
+| 🟠 MAJOR | Bug, perf issue, convention violation | Should fix |
 | 🟡 MINOR | Style, naming, minor improvement | Nice to fix |
 | ⚪ NIT | Preference, trivial | Optional |
 
-## Phase 4 — Verdict
+## Output
 
 ```
 ## Verdict: APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
 Findings: N critical, N major, N minor, N nit
-Summary: <one-sentence overall assessment>
+Summary: <one-sentence assessment>
 ```
+
+Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
 
 ## Handoffs
 
 - → `@implementer` — to fix findings
-- → `security-audit` skill — if security concerns warrant deeper audit
-- → `sql-review` skill — if SQL issues warrant dedicated review
+- → `security-audit` skill — security concerns warrant deeper audit
+- → `sql-review` skill — SQL issues warrant dedicated review
 - ← `@reviewer` — default activation

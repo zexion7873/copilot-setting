@@ -14,34 +14,36 @@ Full coding rules in `instructions/*.instructions.md`. Key rules:
 - **Resources**: `try-with-resources` for JDBC — see `instructions/sql.instructions.md`
 - **Hibernate**: named params in HQL — see `instructions/spring-hibernate.instructions.md`
 
-## Phase 1 — Collect SQL
+## Security Checks
 
-Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures. Include dynamic query construction.
+- Parameters bound via `?` or `:named` — never concatenated
+- `LIKE` wildcards sanitized
+- No sensitive columns in `SELECT *`
 
-## Phase 2 — Security Check
+## Performance Checks
 
-For each query:
-- [ ] Parameters bound via `?` or `:named` — never concatenated
-- [ ] `LIKE` wildcards sanitized
-- [ ] No sensitive columns in `SELECT *`
+- Only needed columns selected
+- WHERE/JOIN columns likely indexed
+- No functions on indexed columns
+- Large result sets paginated (cursor, not OFFSET)
+- No N+1 (SQL inside loop)
+- Recommend `EXPLAIN` for queries on large tables
 
-## Phase 3 — Performance Check
+## Severity
 
-For each query:
-- [ ] Only needed columns selected
-- [ ] WHERE/JOIN columns likely indexed
-- [ ] No functions on indexed columns
-- [ ] Large result sets paginated (cursor, not OFFSET)
-- [ ] No N+1 pattern (SQL inside loop)
+| Level | Criteria |
+|---|---|
+| 🔴 CRITICAL | SQL injection; data loss; unbounded DELETE/UPDATE |
+| 🟠 MAJOR | Missing index on large table; N+1; `SELECT *` on wide table |
+| 🟡 MINOR | Suboptimal pagination; unnecessary columns |
+| ⚪ NIT | Alias naming; formatting |
 
-Recommend `EXPLAIN` for queries touching large tables.
+## Output
 
-## Phase 4 — Report
-
-Use output format from `prompts/sql-review-output.prompt.md`. Classify each finding by severity (CRITICAL / MAJOR / MINOR / NIT).
+Use format from `prompts/sql-review-output.prompt.md`.
 
 ## Handoffs
 
 - → `@implementer` — to fix SQL findings
-- ← `@reviewer` — when SQL review mode is activated
-- ← `code-review` skill — when code review finds SQL issues
+- ← `@reviewer` — SQL review mode activated
+- ← `code-review` skill — code review finds SQL issues

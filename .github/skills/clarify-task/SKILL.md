@@ -5,35 +5,32 @@ description: 'Use when a user request is vague, ambiguous, or missing critical i
 
 # Clarify Task — Workflow
 
-Interactive task refinement. Use before planning when requirements have gaps.
+Interactive task refinement before planning or implementation.
 
-## Phase 1 — Parse the Request
+## What to Extract
 
-Extract from the user's message:
 - **Goal**: what they want to achieve (may be implicit)
-- **Scope**: which modules/files/features are involved
+- **Scope**: which modules / files / features
 - **Constraints**: deadlines, tech limitations, backward compatibility
+- **Acceptance criteria**: how to know it's done
 
-## Phase 2 — Identify Gaps
+## What Needs Clarification
 
-Flag anything that would force guessing during implementation:
+Flag anything that would force guessing:
 - Missing acceptance criteria
 - Ambiguous scope boundaries
 - Unstated assumptions about existing behavior
 - Conflicting requirements
 
-## Phase 3 — Ask Numbered Questions
+Do NOT ask questions the codebase can answer — scan first.
 
-Present 3–7 numbered questions. Each question:
-1. States what is unclear
-2. Offers 2–3 concrete options when possible
-3. Marks a recommended default if one exists
+## How to Ask
 
-Do NOT ask questions the codebase can answer — scan first, ask only what code cannot tell you.
+- 3–7 numbered questions
+- Each states what is unclear + offers 2–3 concrete options
+- Mark a recommended default when one exists
 
-## Phase 4 — Confirm Understanding
-
-After answers, produce a summary block:
+## Output
 
 ```
 ## Confirmed Understanding
@@ -46,6 +43,6 @@ After answers, produce a summary block:
 
 ## Handoffs
 
-- → `plan` skill — when requirements are clear enough to plan
-- → `implement` skill — when the task is small and fully understood
-- ← `@planner` — when planner detects ambiguity before planning
+- → `plan` skill — requirements clear enough to plan
+- → `implement` skill — small task, fully understood
+- ← `@planner` — planner detects ambiguity

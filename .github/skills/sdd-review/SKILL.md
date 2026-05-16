@@ -5,13 +5,9 @@ description: 'Use when user needs an SDD specification reviewed before implement
 
 # SDD Review — Workflow
 
-Pre-implementation specification review. Ensures the SDD is ready for implementation.
+Pre-implementation specification review.
 
-## Phase 1 — Read the SDD
-
-Read the entire document. Note first impressions: is the scope clear? Are there obvious gaps?
-
-## Phase 2 — Check Completeness
+## Completeness Checklist
 
 | Section | Check |
 |---|---|
@@ -24,14 +20,14 @@ Read the entire document. Note first impressions: is the scope clear? Are there 
 | Testing Strategy | Maps to requirements? |
 | Out of Scope | Explicitly excludes what's NOT included? |
 
-## Phase 3 — Check Feasibility
+## Feasibility
 
-- Is this buildable with the current stack (Java 8, Spring Core, Hibernate 4.x)?
-- Are there hidden dependencies or assumptions?
-- Does the data model change require migration scripts?
-- Are performance implications addressed for large datasets?
+- Buildable with current stack (Java 8, Spring 3.2, Hibernate 4.2)?
+- Hidden dependencies or assumptions?
+- Data model change requires migration scripts?
+- Performance implications for large datasets?
 
-## Phase 4 — Verdict
+## Output
 
 ```
 ## Verdict: READY / NEEDS REVISION / MAJOR GAPS
@@ -50,5 +46,5 @@ Read the entire document. Note first impressions: is the scope clear? Are there 
 
 ## Handoffs
 
-- → `@planner` — to revise the SDD based on review findings
-- ← `@reviewer` — when SDD review mode is activated
+- → `@planner` — revise SDD based on findings
+- ← `@reviewer` — SDD review mode activated

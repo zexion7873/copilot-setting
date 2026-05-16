@@ -5,7 +5,7 @@ description: 'Use when user needs an OWASP-focused security audit of Java web co
 
 # Security Audit — Workflow
 
-OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.md`.
+OWASP Top 10 focused audit. Rules: `instructions/security.instructions.md`.
 
 Full coding rules in `instructions/*.instructions.md`. Key rules:
 
@@ -13,43 +13,40 @@ Full coding rules in `instructions/*.instructions.md`. Key rules:
 - **XSS**: `<c:out>` for all JSP output — see `instructions/jsp.instructions.md`
 - **Auth**: session management, cookie flags — see `instructions/security.instructions.md`
 
-## Phase 1 — Map Attack Surface
+## Attack Surface
 
-1. Identify entry points: servlets, controllers, API endpoints, file uploads
-2. Identify data flows: user input → processing → storage → output
-3. Identify trust boundaries: authenticated vs public, admin vs user
+Identify: entry points (servlets, controllers, APIs, file uploads), data flows (input → processing → storage → output), trust boundaries (auth vs public, admin vs user).
 
-## Phase 2 — Check by OWASP Category
+## OWASP Checklist
 
-For each entry point, check against A01–A10 from `instructions/security.instructions.md`:
-- A01: access control on every resource
-- A03: injection (SQL, OS, XSS) at every input
-- A07: session management and cookie flags
-- A05: error handling leaks, default credentials
-- A10: SSRF on any URL fetch
+Check each entry point against `instructions/security.instructions.md`:
 
-## Phase 3 — Classify Findings
+- **A01** Access Control: rights checked per resource?
+- **A02** Crypto: passwords hashed? secrets externalized?
+- **A03** Injection: SQL parameterized? OS commands escaped? XSS encoded?
+- **A04** Insecure Design: rate limiting? server-side validation?
+- **A05** Misconfiguration: error pages generic? headers set?
+- **A06** Vulnerable Components: dependencies pinned? CVEs checked?
+- **A07** Auth Failures: new session on login? cookie flags set?
+- **A08** Integrity: no untrusted deserialization?
+- **A09** Logging Failures: auth events logged? log input sanitized?
+- **A10** SSRF: URL allow-list? private IPs blocked?
 
-| Severity | Criteria |
+## Severity
+
+| Level | Criteria |
 |---|---|
 | 🔴 CRITICAL | Exploitable now; data breach or RCE possible |
 | 🟠 HIGH | Exploitable with moderate effort |
 | 🟡 MEDIUM | Defense-in-depth gap; not directly exploitable |
 | ⚪ LOW | Best practice deviation; minimal risk |
 
-## Phase 4 — Report
+## Output
 
-For each finding:
-```
-[SEVERITY] A0N — <title>
-Location: <file:line>
-Issue: <what's wrong>
-Exploit: <how an attacker would use this>
-Fix: <specific remediation>
-```
+Per finding: `[SEVERITY] A0N — title @ file:line → issue → fix`
 
 ## Handoffs
 
 - → `@implementer` — to fix security findings
-- ← `@reviewer` — when security mode is activated
-- ← `code-review` skill — when code review finds security concerns
+- ← `@reviewer` — security mode activated
+- ← `code-review` skill — code review finds security concerns

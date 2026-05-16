@@ -7,38 +7,32 @@ description: 'Use when user needs a phased implementation plan with requirements
 
 Structured implementation plan. Output format: `prompts/plan-template.prompt.md`.
 
-## Phase 1 — Gather Context
+## What to Gather
 
-1. Scan codebase for existing patterns relevant to the goal
-2. Identify affected files and modules
-3. Note constraints: tech stack (Java 8 / Maven / Spring Core / Hibernate 4.x), backward compatibility, data migration needs
+- Existing patterns relevant to the goal (scan codebase first)
+- Affected files and modules
+- Constraints: Java 8, Maven, Spring 3.2, Hibernate 4.2, backward compatibility, migration needs
 
-## Phase 2 — Classify Scope
+## Scope Calibration
 
-| Scope | Definition | Plan depth |
+| Scope | Files | Plan depth |
 |---|---|---|
-| Small | 1–3 files, single module | Lightweight: goal + approach + files |
-| Medium | 4–10 files, cross-module | Standard: full template |
-| Large | 10+ files, schema change, or API change | Full template + risk analysis + alternatives |
+| Small | 1–3 | Lightweight: goal + approach + files |
+| Medium | 4–10 | Standard: full template |
+| Large | 10+ or schema change | Full template + risk analysis + alternatives |
 
-## Phase 3 — Draft Plan
+## What Makes a Good Plan
 
-Fill `prompts/plan-template.prompt.md`. Every section must be concrete:
-- Requirements: traceable `REQ-NNN` / `CON-NNN` identifiers
-- Approach: phased, each phase has a measurable goal
-- Files: real paths from the codebase scan
-- Risks: with specific mitigation, not generic "might be hard"
-
-## Phase 4 — Validate
-
-- [ ] Every phase has one clear goal
-- [ ] File list matches codebase scan results
-- [ ] No `TBD` or placeholders left
-- [ ] Alternatives section has at least one rejected option with reason
+- Every requirement has a traceable `REQ-NNN` / `CON-NNN` identifier
+- Every phase has one measurable goal
+- File list matches actual codebase paths
+- Risks have specific mitigations, not "might be hard"
+- At least one rejected alternative with reason
+- No `TBD` or placeholders
 
 ## Handoffs
 
-- → `tasks` skill — to break plan into atomic task list
-- → `sdd` skill — if a formal spec is needed before implementation
-- → `clarify-task` skill — if gaps found during planning
+- → `tasks` skill — break plan into atomic task list
+- → `sdd` skill — formal spec needed before implementation
+- → `clarify-task` skill — gaps found during planning
 - ← `@planner` — default activation

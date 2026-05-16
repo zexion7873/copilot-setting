@@ -14,33 +14,26 @@ Full coding rules in `instructions/*.instructions.md`. Key rules:
 - **Resources**: connection leaks are a common root cause, not just style — see `instructions/java.instructions.md`
 - **Hibernate**: session lifecycle issues cause subtle bugs — see `instructions/spring-hibernate.instructions.md`
 
-## Phase 1 — Define the Problem
+## Problem Definition
 
-```
-Expected:      <what should happen>
-Actual:        <what actually happens>
-Error/Trace:   <exact message, not paraphrased>
-Reproducible:  always / sometimes / once
-Since when:    recent change / always / unknown
-```
+Capture before touching code:
+- Expected vs actual behavior
+- Exact error message / stack trace (not paraphrased)
+- Reproducible: always / sometimes / once
+- Since when: recent change / always / unknown
 
-## Phase 2 — Gather Evidence
+## Hypothesis Approach
 
-Read stack trace bottom-up — first line in YOUR code is the entry point. Check recent git changes in the affected area.
+- List causes ranked by likelihood
+- For each: what confirms, what refutes, effort to verify
+- **Verify lowest-effort hypothesis first**
+- Binary search on execution path: narrow until divergence is one line
 
-## Phase 3 — Form Hypotheses
-
-List causes ranked by likelihood. For each: what confirms it, what refutes it, effort to verify. **Verify lowest-effort hypothesis first.**
-
-## Phase 4 — Isolate
-
-Binary search on execution path: entry → failure point → check midpoint → narrow until divergence is one line.
-
-## Phase 5 — Verify Root Cause
+## Root Cause Verification
 
 Before fixing: does the cause explain ALL symptoms? Is this the ROOT cause or a symptom? Could the same cause affect other code?
 
-## Phase 6 — Fix Minimally
+## Fix Rules
 
 - Fix only the root cause; do not refactor in a bugfix
 - Smallest possible diff
@@ -48,6 +41,6 @@ Before fixing: does the cause explain ALL symptoms? Is this the ROOT cause or a 
 
 ## Handoffs
 
-- → `@implementer` — to implement the fix after root cause confirmed
-- ← `@implementer` — when implementation reveals a deeper bug
-- ← `performance` skill — when a performance issue turns out to be a bug
+- → `@implementer` — implement the fix after root cause confirmed
+- ← `@implementer` — implementation reveals a deeper bug
+- ← `performance` skill — performance issue turns out to be a bug
