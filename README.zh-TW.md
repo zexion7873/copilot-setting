@@ -25,7 +25,7 @@
 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
 | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
-| **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令（`/prompt-name`） | 手動呼叫 |
+| **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。

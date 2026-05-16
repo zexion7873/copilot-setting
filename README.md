@@ -25,7 +25,7 @@ Just pick an **agent** — everything else loads automatically.
 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
 | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
-| **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands (`/prompt-name`) | Manual invocation |
+| **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
