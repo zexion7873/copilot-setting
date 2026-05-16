@@ -156,7 +156,7 @@ flowchart LR
 | `/explain-this` | 用繁中解釋選取的程式碼 — 角色、設計決策、注意事項 |
 | `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
 | `/check-n-plus-1` | 檢查 service method 有沒有 N+1 query 問題 |
-| `/migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
+| `/generate-migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
 | `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
 
 ---
@@ -219,7 +219,7 @@ flowchart LR
 │   ├── explain-this
 │   ├── find-impact
 │   ├── check-n-plus-1
-│   ├── migration-sql
+│   ├── generate-migration-sql
 │   └── check-tx
 │
 └── skills/                                ← Agent 可執行的技能（輸出模板內嵌）

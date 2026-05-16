@@ -156,7 +156,7 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 | `/explain-this` | Explain selected code in Traditional Chinese — role, design decisions, gotchas |
 | `/find-impact` | List all callers and dependents of the selected method/class |
 | `/check-n-plus-1` | Check a service method for N+1 query problems |
-| `/migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
+| `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
 | `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
 
 ---
@@ -219,7 +219,7 @@ Minimal global rules loaded in every conversation. Only language, tech stack, an
 │   ├── explain-this
 │   ├── find-impact
 │   ├── check-n-plus-1
-│   ├── migration-sql
+│   ├── generate-migration-sql
 │   └── check-tx
 │
 └── skills/                                ← Executable skills for agents (output templates embedded)

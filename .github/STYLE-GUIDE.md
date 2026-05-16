@@ -33,7 +33,7 @@ Use this table to determine which file to create or modify.
 | Add a coding convention | Instruction | `instructions/<name>.instructions.md` |
 | Add a new workflow | Skill | `skills/<name>/SKILL.md` (embed output template if needed) |
 | Add a new AI agent role | Agent | `agents/<name>.agent.md` |
-| Add a lightweight shortcut | Prompt | `prompts/<name>.prompt.md` |
+| Add a lightweight shortcut | Prompt | `prompts/<verb>-<object>.prompt.md` |
 | Block a dangerous command | Hook script | `hooks/scripts/<name>.sh` + register in `hooks/default.json` |
 | Add a review mode to @reviewer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/reviewer.agent.md` Skill Activation table |
 | Add a build mode to @implementer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/implementer.agent.md` Skill Activation table |
@@ -287,6 +287,28 @@ Supporting files referenced by a skill's body (e.g., before/after code examples,
 2. **H1**: `<Operation> — <Context> Examples`.
 3. **Consistent structure across sibling files** — all files in the same subdirectory must follow the same skeleton.
 4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`).
+
+---
+
+## Prompts (`prompts/*.prompt.md`)
+
+Standalone single-task shortcuts the user invokes via `/<prompt-name>`. NOT referenced by skills — prompts are independent of the agent/skill graph.
+
+### Frontmatter (required fields)
+
+```yaml
+---
+agent: 'agent'
+description: '<One-sentence task description starting with an imperative verb.>'
+---
+```
+
+### Rules
+
+1. **Filename pattern** (**REQUIRED**): `<verb>-<object>.prompt.md`. Verb first, lowercase, hyphen-separated. Examples: `check-tx`, `explain-this`, `generate-migration-sql`. Reject noun-first or noun-only names.
+2. **No skill references** (**REQUIRED**): prompts must not link to `skills/*/SKILL.md`. If output overlaps with a skill, invoke the skill instead — do not duplicate.
+3. **Body language** (**REQUIRED**): English. Per `copilot-instructions.md`, prompts may be injected into any user's context.
+4. **Length** (**OPTIONAL**): keep prompt body under 20 lines. Longer workflows belong in a skill.
 
 ---
 
