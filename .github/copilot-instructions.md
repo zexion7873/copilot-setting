@@ -15,3 +15,7 @@
 - **MySQL 8.0** — InnoDB, utf8mb4
 - **SLF4J 1.7** + Logback
 - **JSP + JSTL 1.2** — view layer
+
+## Coding Philosophy
+
+- Minimum code that solves the problem. No speculative abstractions, no features beyond what was asked.
