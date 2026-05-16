@@ -61,7 +61,7 @@ All cross-references use backtick-wrapped **relative paths from `.github/`**, ne
 
 | Type | Format |
 |---|---|
-| Instruction | `` `instructions/sql-rules.instructions.md` `` |
+| Instruction | `` `instructions/sql.instructions.md` `` |
 | Skill | `` `skills/plan/SKILL.md` `` |
 | Prompt | `` `prompts/plan-template.prompt.md` `` |
 | Agent file | `` `agents/planner.agent.md` `` |
