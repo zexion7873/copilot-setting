@@ -118,7 +118,6 @@ applyTo: '<glob pattern>'
 5. **Anti-Patterns table**: always 3-column (`Pattern | Problem | Fix`). If the file has anti-patterns, use this exact header. Column 2 (`Problem`) must explain *why* it's wrong, not just restate the pattern.
 6. **Checklist section**: optional. Use only when the instruction benefits from a verification self-check (e.g., markdown formatting, commenting guidelines). Use `- [ ]` checkbox format.
 7. **Cross-references**: use backtick-wrapped relative paths from `.github/` — e.g., `` `instructions/sql.instructions.md` ``. Never use bare names like `` `sql` `` or absolute paths.
-8. **Known exceptions**: `global-copilot.instructions.md` is intentionally minimal (duplicates `copilot-instructions.md` for user-scope loading) — opening paragraph and H2 sections are not required.
 
 ---
 
@@ -288,8 +287,6 @@ Supporting files referenced by a skill's body (e.g., before/after code examples,
 2. **H1**: `<Operation> — <Context> Examples`.
 3. **Consistent structure across sibling files** — all files in the same subdirectory must follow the same skeleton.
 4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`).
-
-See `skills/refactor/examples/` for the current reference implementation.
 
 ---
 

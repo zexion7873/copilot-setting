@@ -7,11 +7,14 @@ description: 'Use when existing code needs structural improvement without changi
 
 Surgical, behavior-preserving structural changes.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules:
+Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
 
-- **Java 8 only**: no modern syntax — see `instructions/java.instructions.md`
-- **Hibernate/Spring**: preserve tx boundaries and session lifecycle — see `instructions/spring-hibernate.instructions.md`
-- **SQL**: maintain parameterized queries — see `instructions/sql.instructions.md`
+- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
+- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
+- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
+- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
+- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
 
 ## Safe Process
 

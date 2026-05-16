@@ -3,9 +3,9 @@ agent: 'agent'
 description: 'Explain selected code in Traditional Chinese — what it does, its role in the system, and key design decisions.'
 ---
 
-用繁體中文解釋選取的程式碼：
+Explain the selected code:
 
-1. 這段 code 做了什麼（功能）
-2. 它在系統中扮演什麼角色（上下文）
-3. 為什麼這樣寫（設計決策，如果看得出來）
-4. 有沒有值得注意的陷阱或隱含假設
+1. What this code does (functionality)
+2. Its role in the system (context)
+3. Why it was written this way (design decisions, if discernible)
+4. Any gotchas or hidden assumptions worth noting

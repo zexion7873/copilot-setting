@@ -7,12 +7,14 @@ description: 'Use when user wants code reviewed for correctness, style, bugs, an
 
 Structured code review.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules:
+Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
 
-- **Java 8 only**: no 9+ syntax — see `instructions/java.instructions.md`
-- **Hibernate/Spring**: `getCurrentSession()`, `<tx:advice>`, no annotations, no `@RestController` — see `instructions/spring-hibernate.instructions.md`
-- **SQL**: parameterized only — see `instructions/sql.instructions.md`
-- **Security**: OWASP essentials — see `instructions/security.instructions.md`
+- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
+- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
+- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
+- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
+- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
 
 ## Phase 1 — Understand the Change
 
@@ -43,13 +45,17 @@ Full coding rules in `instructions/*.instructions.md`. Key rules:
 
 ## Phase 4 — Verdict
 
+Classify all findings, then format using the Output Template below.
+
+## Output Template
+
+Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
+
 ```
 ## Verdict: APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
 Findings: N critical, N major, N minor, N nit
 Summary: <one-sentence assessment>
 ```
-
-Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
 
 ## Handoffs
 

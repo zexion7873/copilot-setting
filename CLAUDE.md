@@ -90,7 +90,7 @@ This repo intentionally mixes languages. Respect the split:
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /`, `sudo `, `DROP DATABASE`, `DROP SCHEMA`, `TRUNCATE `, `git push --force` to `main`/`master`, `chmod -R 777`, `mkfs.`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /`, `rm -rf .`, `rm -rf *`, `--no-preserve-root`, `sudo `, `DROP DATABASE`, `DROP SCHEMA`, `TRUNCATE `, `git push --force` (any branch), `git reset --hard`, `git clean -fd`, `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
 ## Commit & PR Process
 

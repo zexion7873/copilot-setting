@@ -158,7 +158,6 @@ flowchart LR
 | `/check-n-plus-1` | 檢查 service method 有沒有 N+1 query 問題 |
 | `/migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
 | `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
-| `/write-javadoc` | 為 class/method 產生 Javadoc |
 
 ---
 
@@ -221,8 +220,7 @@ flowchart LR
 │   ├── find-impact
 │   ├── check-n-plus-1
 │   ├── migration-sql
-│   ├── check-tx
-│   └── write-javadoc
+│   └── check-tx
 │
 └── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/

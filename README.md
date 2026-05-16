@@ -158,7 +158,6 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 | `/check-n-plus-1` | Check a service method for N+1 query problems |
 | `/migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
 | `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
-| `/write-javadoc` | Generate Javadoc for the selected class or method |
 
 ---
 
@@ -221,8 +220,7 @@ Minimal global rules loaded in every conversation. Only language, tech stack, an
 │   ├── find-impact
 │   ├── check-n-plus-1
 │   ├── migration-sql
-│   ├── check-tx
-│   └── write-javadoc
+│   └── check-tx
 │
 └── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
