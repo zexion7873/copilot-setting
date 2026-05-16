@@ -12,7 +12,7 @@
 
 </div>
 
-A multi-agent Copilot configuration — agents activate workflows, skills define processes, instructions enforce conventions, and prompts standardize output formats.
+A multi-agent Copilot configuration — agents activate workflows, skills define processes with embedded output templates, and instructions enforce conventions.
 
 ---
 

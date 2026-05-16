@@ -12,7 +12,7 @@
 
 </div>
 
-多 agent 協作的 Copilot 設定——agent 啟動工作流、skill 定義流程、instruction 守規範、prompt 統一輸出格式。
+多 agent 協作的 Copilot 設定——agent 啟動工作流、skill 定義流程（含輸出模板）、instruction 守規範。
 
 ---
 

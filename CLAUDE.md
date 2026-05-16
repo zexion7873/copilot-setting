@@ -8,7 +8,7 @@ Always reply to the user in **Traditional Chinese (繁體中文)**. File content
 
 ## Repository Purpose
 
-This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
+This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
 
 The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
@@ -20,7 +20,7 @@ The only executable workflow is style-guide validation. Run before committing ch
 bash .github/scripts/validate-style-guide.sh
 ```
 
-This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / prompts / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, and that skill frontmatter has no `tools` field (tools belong on agents).
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, and that skill frontmatter has no `tools` field (tools belong on agents).
 
 ## Architecture — Five Categories, One Job Each
 
@@ -40,13 +40,13 @@ Hooks ──lifecycle guard──→ Agent (Router)
 | (Output templates are embedded in skills) | | | |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
-**Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills must not embed shared templates inline — they reference prompt files. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
+**Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
 **Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
-`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction / prompt, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
+`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
 
 Per-category key constraints (full rules in STYLE-GUIDE.md):
 
@@ -82,7 +82,7 @@ Broken paths silently degrade Copilot output — they don't error, they just sto
 
 This repo intentionally mixes languages. Respect the split:
 
-- **All `.github/` content** (instructions, agents, skills, prompts) — English, because Copilot may inject it into any user's prompt context.
+- **All `.github/` content** (instructions, agents, skills) — English, because Copilot may inject it into any user's prompt context.
 - **README has two versions**: `README.md` (English) and `README.zh-TW.md` (Traditional Chinese). Keep them in sync when changing either.
 - **`.github/copilot-instructions.md`** declares the downstream-user contract: respond in Traditional Chinese, but code/comments/identifiers in English. Do not mistake this for guidance on how to edit this repo.
 
