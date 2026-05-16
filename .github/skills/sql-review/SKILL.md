@@ -5,7 +5,7 @@ description: 'Use when user needs SQL reviewed for injection risks, performance 
 
 # SQL Review — Workflow
 
-SQL-focused review. Rules: `instructions/sql.instructions.md`. Output format: `prompts/sql-review-output.prompt.md`.
+SQL-focused review. Rules: `instructions/sql.instructions.md`.
 
 Full coding rules in `instructions/*.instructions.md`. Key rules:
 
@@ -20,14 +20,12 @@ Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures. Include
 
 ## Phase 2 — Security Check
 
-For each query:
 - [ ] Parameters bound via `?` or `:named` — never concatenated
 - [ ] `LIKE` wildcards sanitized
 - [ ] No sensitive columns in `SELECT *`
 
 ## Phase 3 — Performance Check
 
-For each query:
 - [ ] Only needed columns selected
 - [ ] WHERE/JOIN columns likely indexed
 - [ ] No functions on indexed columns
@@ -38,10 +36,36 @@ Recommend `EXPLAIN` for queries touching large tables.
 
 ## Phase 4 — Report
 
-Use output format from `prompts/sql-review-output.prompt.md`. Classify each finding by severity (CRITICAL / MAJOR / MINOR / NIT).
+Per finding:
+
+```
+[SEVERITY] <title>
+Query: <the SQL or code location>
+Issue: <what's wrong>
+Fix: <specific remediation>
+Impact: <performance/security/correctness>
+```
+
+| Severity | Criteria |
+|---|---|
+| 🔴 CRITICAL | SQL injection; data loss; unbounded DELETE/UPDATE |
+| 🟠 MAJOR | Missing index on large table; N+1; `SELECT *` on wide table |
+| 🟡 MINOR | Suboptimal pagination; unnecessary columns |
+| ⚪ NIT | Alias naming; formatting |
+
+## EXPLAIN Cheat Sheet (MySQL)
+
+| Column | Watch for |
+|---|---|
+| `type` | `ALL` = full scan (bad); `ref`/`range` = index used (good) |
+| `key` | `NULL` = no index used |
+| `rows` | High number on filtered query = missing index |
+| `Extra` | `Using filesort` = ORDER BY not indexed; `Using temporary` = temp table |
+
+Summary format: `Queries reviewed: N | Findings: N critical, N major, N minor, N nit | Top issue: <most impactful>`
 
 ## Handoffs
 
 - → `@implementer` — to fix SQL findings
-- ← `@reviewer` — when SQL review mode is activated
-- ← `code-review` skill — when code review finds SQL issues
+- ← `@reviewer` — SQL review mode activated
+- ← `code-review` skill — code review finds SQL issues

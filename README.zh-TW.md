@@ -25,7 +25,6 @@
 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
 | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
-| **Prompts**（`prompts/`） | 模板 | 輸出格式骨架 | 配對 skill 引用 |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
@@ -33,7 +32,7 @@
 ```text
 Hooks ──生命週期守衛──→ Agent (調度)
                           │
-                          └──啟動──→ Skill (工作流程) ──輸出格式──→ Prompt (模板)
+                          └──啟動──→ Skill (工作流程 + 輸出模板)
                                           │
                                           └──規則──→ Instruction (規則)
 ```
@@ -161,28 +160,6 @@ flowchart LR
 
 ---
 
-## 📋 Prompts
-
-標準與輸出格式參考，與 skill 配對使用。在 Copilot Chat 中以 `/prompt-name` 手動呼叫，或讓配對的 skill 自動引用。
-
-| Prompt | 配對 skill | 用途 |
-|--------|-----------|------|
-| `code-review-checklist` | `code-review` | 嚴重度分級與各類別檢查項目 |
-| `sql-review-output` | `sql-review` | sql-review skill 的輸出格式參考（嚴重度分級、EXPLAIN 速查表） |
-| `spec-template` | `sdd` | SDD 骨架 — 從背景到 Out of Scope 共 8 個章節 |
-| `plan-template` | `plan` | 實作計畫骨架，含 `REQ-` / `CON-` / `PAT-` / `FILE-` 識別碼 |
-| `tasks-template` | `tasks` | 依賴排序的 `tasks.md` 骨架，含 T### ID 及 `[P]` 平行標記 |
-
-
-> [!NOTE]
-> **命名慣例**（後綴依內容類型）：
->
-> - `*-template` — 可填空的骨架，用於一次性產出文件（如 `spec-template`、`plan-template`）
-> - `*-checklist` — 分類條列的檢查清單（如 `code-review-checklist`）
-> - `*-output` — 由配對 skill 引用的輸出格式 / cheat-sheet 參考（如 `sql-review-output`）
-
----
-
 ## 📜 copilot-instructions.md
 
 每次對話都載入的全域最小規範。只定義語言和技術環境 — 其他慣例由專屬 instruction 各自負責。
@@ -220,14 +197,7 @@ flowchart LR
 │   └── scripts/
 │       └── block-dangerous-commands.sh
 │
-├── prompts/                               ← 標準/輸出格式參考，與 skill 配對使用
-│   ├── code-review-checklist
-│   ├── sql-review-output
-│   ├── spec-template
-│   ├── plan-template
-│   └── tasks-template
-│
-└── skills/                                ← Agent 可執行的技能
+└── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/
     ├── plan/
     ├── sdd/

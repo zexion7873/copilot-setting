@@ -37,7 +37,7 @@ Hooks ──lifecycle guard──→ Agent (Router)
 | Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | File matching `applyTo` glob is focused |
 | Agents | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
 | Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process | Description matches user intent, or `/skill-name` |
-| Prompts | `.github/prompts/*.prompt.md` | Output-format scaffolds | Paired skill cites them; or `/prompt-name` |
+| (Output templates are embedded in skills) | | | |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills must not embed shared templates inline — they reference prompt files. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
@@ -63,7 +63,7 @@ All cross-references use backtick-wrapped **relative paths from `.github/`**, ne
 |---|---|
 | Instruction | `` `instructions/sql.instructions.md` `` |
 | Skill | `` `skills/plan/SKILL.md` `` |
-| Prompt | `` `prompts/plan-template.prompt.md` `` |
+| Output template | Embedded in the paired `skills/<name>/SKILL.md` |
 | Agent file | `` `agents/planner.agent.md` `` |
 | Agent mention (in chat) | `` `@implementer` `` |
 | Skill mention (inline) | `` `plan` skill `` |

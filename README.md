@@ -25,7 +25,6 @@ Just pick an **agent** — everything else loads automatically.
 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
 | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
-| **Prompts** (`prompts/`) | Template | Output format scaffolds | Paired skill refs |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
@@ -33,7 +32,7 @@ Resources reference each other to avoid duplication — each category has one jo
 ```text
 Hooks ──lifecycle guard──→ Agent (Router)
                              │
-                             └──activates──→ Skill (Workflow) ──output format──→ Prompt (Template)
+                             └──activates──→ Skill (Workflow + Output Template)
                                                   │
                                                   └──rules──→ Instruction (Rules)
 ```
@@ -161,28 +160,6 @@ Automatically injected into the system prompt when the current file matches the 
 
 ---
 
-## 📋 Prompts
-
-Standards and output-format references, paired with skills. Invoke via `/prompt-name` in Copilot Chat, or let the paired skill cite them automatically.
-
-| Prompt | Paired skill | Purpose |
-|--------|-------------|---------|
-| `code-review-checklist` | `code-review` | Severity buckets and what to check by category |
-| `sql-review-output` | `sql-review` | Output format reference (severity buckets, EXPLAIN cheat sheet) for the sql-review skill |
-| `spec-template` | `sdd` | SDD scaffold — 8 sections from background to out-of-scope |
-| `plan-template` | `plan` | Implementation plan scaffold with `REQ-` / `CON-` / `PAT-` / `FILE-` identifiers |
-| `tasks-template` | `tasks` | Dependency-ordered `tasks.md` scaffold with T### IDs and `[P]` parallel markers |
-
-
-> [!NOTE]
-> **Naming convention** (suffix indicates content type):
->
-> - `*-template` — fill-in scaffold for one-shot artifact creation (e.g., `spec-template`, `plan-template`)
-> - `*-checklist` — verification checklist with categorized items (e.g., `code-review-checklist`)
-> - `*-output` — output format / cheat-sheet reference cited by its paired skill (e.g., `sql-review-output`)
-
----
-
 ## 📜 copilot-instructions.md
 
 Minimal global rules loaded in every conversation. Only language and tech stack — all other conventions live in dedicated instruction files.
@@ -220,14 +197,7 @@ Minimal global rules loaded in every conversation. Only language and tech stack 
 │   └── scripts/
 │       └── block-dangerous-commands.sh
 │
-├── prompts/                               ← Standards/format references paired with skills
-│   ├── code-review-checklist
-│   ├── sql-review-output
-│   ├── spec-template
-│   ├── plan-template
-│   └── tasks-template
-│
-└── skills/                                ← Executable skills for agents
+└── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
     ├── plan/
     ├── sdd/
