@@ -20,7 +20,15 @@ The only executable workflow is style-guide validation. Run before committing ch
 bash .github/scripts/validate-style-guide.sh
 ```
 
-This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, and that skill frontmatter has no `tools` field (tools belong on agents).
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, that skill frontmatter has no `tools` field (tools belong on agents), that agent `handoffs[].agent` references resolve, and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
+
+One-time local setup so the validator also runs on `git commit`:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+`.githooks/pre-commit` runs the validator only when staged paths match `.github/**/*.md`, so unrelated commits aren't slowed down.
 
 ## Architecture
 
