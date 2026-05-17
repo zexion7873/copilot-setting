@@ -42,6 +42,7 @@ No Spring Boot. No Spring 4+. No JPA annotations. AI models default to all three
 - Read-only: `<tx:method>` with `read-only="true"` for `get*`, `find*`, `list*`, `count*`
 - Rollback: automatic on `RuntimeException` / `Error`; checked exceptions need `rollback-for`
 - Self-invocation (`this.method()`) bypasses proxy — call through injected bean for new tx
+- **Pragmatic exception (legacy codebase)**: if the target codebase already uses `@Transactional` consistently, sustain the existing convention rather than introducing mixed XML/annotation mode. Greenfield modules in this project still default to `<tx:advice>`. When deviating, document the reason in the module's README or top-level package-info.
 
 ## hbm.xml Patterns
 
@@ -56,7 +57,7 @@ No Spring Boot. No Spring 4+. No JPA annotations. AI models default to all three
 |---|---|---|
 | `@Entity` / `@Column` on POJO | This project is hbm.xml only | Remove; metadata in hbm.xml |
 | `@RestController` | Spring 4+ — does not exist in 3.2 | `@Controller` + `@ResponseBody` |
-| `@Transactional` on service | Conflicts with XML `<tx:advice>` | Remove; use `<tx:method>` entry |
+| `@Transactional` on service (new code) | Conflicts with XML `<tx:advice>` | Use `<tx:method>` entry — unless the legacy codebase is already `@Transactional`-based; then sustain existing convention |
 | `sessionFactory.openSession()` in DAO | Session outside tx boundary | `getCurrentSession()` |
 | `session.beginTransaction()` in advised code | Fights Spring tx sync | Let `<tx:advice>` handle it |
 | Lazy collection accessed after tx commits | `LazyInitializationException` | `JOIN FETCH` or `Hibernate.initialize()` in service |
