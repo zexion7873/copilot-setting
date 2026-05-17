@@ -90,7 +90,7 @@ Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` skill，依審查類型分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
 
@@ -139,6 +139,8 @@ flowchart LR
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
+| 🔄 | `schema-migration-review` | 自動 + 手動 | DDL/DML migration 審查 — rollback 安全性、鎖定衝擊、向後相容性 |
+| 🧱 | `pom-review` | 自動 + 手動 | Maven `pom.xml` 審查 — 依賴衛生、CVE 檢查、scope 與 SNAPSHOT 紀律 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
 

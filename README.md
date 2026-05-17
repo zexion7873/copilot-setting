@@ -90,7 +90,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `sdd-review` skills, mode-routed by review type |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
 
@@ -139,6 +139,8 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
+| 🔄 | `schema-migration-review` | Auto + Manual | DDL/DML migration review — rollback safety, lock impact, backward compatibility |
+| 🧱 | `pom-review` | Auto + Manual | Maven `pom.xml` review — dependency hygiene, CVE check, scope and SNAPSHOT discipline |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
 
