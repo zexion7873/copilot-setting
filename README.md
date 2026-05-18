@@ -16,6 +16,36 @@ A multi-agent Copilot configuration — agents activate workflows, skills define
 
 ---
 
+## 🚀 Quick Start
+
+### Option A — Single Project
+
+Copy the `.github/` directory into your project root:
+
+```text
+your-java-project/
+├── .github/          ← paste here
+├── src/
+├── pom.xml
+└── ...
+```
+
+Copilot picks it up automatically — agents, skills, instructions, hooks, all active.
+
+### Option B — Workspace-Wide
+
+Add this repository as a folder in a VS Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces). Every project in the workspace shares the configuration.
+
+```text
+my-workspace.code-workspace
+├── copilot-setting/      ← this repo
+├── project-a/
+├── project-b/
+└── ...
+```
+
+---
+
 ## ⚙️ How It Works
 
 Just pick an **agent** — everything else loads automatically.
@@ -107,7 +137,7 @@ flowchart LR
 
     Implementer -.->|"subagent"| Researcher
     Implementer -->|"Code review"| Reviewer
-    Implementer -->|"Security / SQL review"| Reviewer
+    Implementer -->|"Specialized review"| Reviewer
     Implementer -->|"Debug"| Debugger
     Implementer -->|"Re-plan"| Planner
 

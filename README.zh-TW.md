@@ -16,6 +16,36 @@
 
 ---
 
+## 🚀 快速開始
+
+### 方式 A — 單一專案
+
+將 `.github/` 目錄複製到你的專案根目錄：
+
+```text
+your-java-project/
+├── .github/          ← 放這裡
+├── src/
+├── pom.xml
+└── ...
+```
+
+Copilot 會自動載入 — agent、skill、instruction、hook 全部就位。
+
+### 方式 B — 整個 Workspace 共享
+
+將本 repository 作為資料夾加入 VS Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces)，workspace 內所有專案共享設定。
+
+```text
+my-workspace.code-workspace
+├── copilot-setting/      ← 本 repo
+├── project-a/
+├── project-b/
+└── ...
+```
+
+---
+
 ## ⚙️ 運作機制
 
 只需選擇 **agent**，其餘資源會自動載入。
@@ -107,7 +137,7 @@ flowchart LR
 
     Implementer -.->|"subagent"| Researcher
     Implementer -->|"Code Review"| Reviewer
-    Implementer -->|"安全性審查"| Reviewer
+    Implementer -->|"專項審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
