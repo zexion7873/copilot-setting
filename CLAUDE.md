@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
+**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`, `schema-migration-review`, `pom-review`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -112,7 +112,7 @@ This repo intentionally mixes languages. Respect the split:
 |---|---|---|
 | `@planner` | Claude Opus 4.6 | `plan`, `sdd`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `sdd-review` |
+| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review`, `sdd-review` |
 | `@debugger` | Claude Opus 4.6 | `debug` |
 | `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` |
 

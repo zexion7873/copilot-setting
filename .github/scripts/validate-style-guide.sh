@@ -121,6 +121,34 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
 done
 echo ""
 
+echo "🛡️  Fallback Rules Block (code-touching skills)"
+# Skills that modify or review Java code must inline a short fallback rules
+# block (see CLAUDE.md: "Fallback rules exception"). This guards against
+# accidental removal — instruction files only auto-load when a matching file
+# is focused, so the inline block is the safety net for agent chat.
+FALLBACK_REQUIRED_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review pom-review"
+fb_errors_start=$ERRORS
+for skill in $FALLBACK_REQUIRED_SKILLS; do
+  file="$GITHUB_DIR/skills/$skill/SKILL.md"
+  if [ ! -f "$file" ]; then
+    error "fallback check: skills/$skill/SKILL.md not found"
+    continue
+  fi
+  if ! grep -q "Key rules (fallback" "$file"; then
+    error "skills/$skill/SKILL.md: missing fallback rules block (expected intro 'Key rules (fallback ...')"
+    continue
+  fi
+  bullet_count=$(grep -cE '^- \*\*' "$file" || true)
+  if [ "$bullet_count" -lt 3 ]; then
+    error "skills/$skill/SKILL.md: fallback block has only $bullet_count bold-labeled bullets (expected >= 3)"
+  fi
+done
+
+if [ "$ERRORS" -eq "$fb_errors_start" ]; then
+  pass "all code-touching skills have fallback rules block"
+fi
+echo ""
+
 echo "📋 Prompts"
 if [ -d "$GITHUB_DIR/prompts" ]; then
   for file in "$GITHUB_DIR"/prompts/*.prompt.md; do
