@@ -126,7 +126,7 @@ echo "🛡️  Fallback Rules Block (code-touching skills)"
 # block (see CLAUDE.md: "Fallback rules exception"). This guards against
 # accidental removal — instruction files only auto-load when a matching file
 # is focused, so the inline block is the safety net for agent chat.
-FALLBACK_REQUIRED_SKILLS="implement refactor code-review sql-review security-audit debug performance"
+FALLBACK_REQUIRED_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review pom-review"
 fb_errors_start=$ERRORS
 for skill in $FALLBACK_REQUIRED_SKILLS; do
   file="$GITHUB_DIR/skills/$skill/SKILL.md"

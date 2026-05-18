@@ -7,6 +7,15 @@ description: 'Use when user needs Maven pom.xml reviewed for dependency hygiene,
 
 Maven `pom.xml` review. Companion rules: `instructions/xml-config.instructions.md`.
 
+Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
+
+- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
+- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
+- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
+- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
+- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
+
 Focus: dependency hygiene (versions, scopes, conflicts), known-CVE versions, build plugin pinning, SNAPSHOT discipline, and project metadata consistency.
 
 ## Phase 1 — Inventory Dependencies

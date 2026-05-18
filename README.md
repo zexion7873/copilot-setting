@@ -41,7 +41,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 > [!NOTE]
-> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `performance`, `debug`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `performance`, `debug`, `schema-migration-review`, `pom-review`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.

@@ -41,7 +41,7 @@ Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`、`schema-migration-review`、`pom-review`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。

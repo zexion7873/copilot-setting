@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
+**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`, `schema-migration-review`, `pom-review`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
