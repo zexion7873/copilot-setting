@@ -93,7 +93,7 @@ You  →  @implementer   Picks up the SDD, writes code following existing patter
 
 You  →  @reviewer      Checks correctness, security, performance
                         Catches SQL injection risk → CRITICAL
-                        ↓ click "Fix issues" handoff
+                        ↓ click "修復問題" handoff
 
 You  →  @implementer   Switches to PreparedStatement, verifies fix
                         Done ✓
