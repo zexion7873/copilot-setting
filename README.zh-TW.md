@@ -60,14 +60,12 @@ my-workspace.code-workspace
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
 
-```text
-Hooks ──生命週期守衛──→ Agent (調度)
-                          │
-                          └──啟動──→ Skill (工作流程 + 輸出模板)
-                                          │
-                                          └──規則──→ Instruction (規則)
-
-Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
+```mermaid
+flowchart LR
+    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent["🤖 Agent<br/>(調度)"]
+    Agent -->|啟動| Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"]
+    Skill -->|規則| Instruction["📏 Instruction<br/>(規則)"]
+    Prompt["📋 Prompt<br/>(快捷指令)"] -->|"手動 /prompt-name"| Standalone["獨立執行"]
 ```
 
 > [!NOTE]

@@ -60,14 +60,12 @@ Just pick an **agent** — everything else loads automatically.
 
 Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
 
-```text
-Hooks ──lifecycle guard──→ Agent (Router)
-                             │
-                             └──activates──→ Skill (Workflow + Output Template)
-                                                  │
-                                                  └──rules──→ Instruction (Rules)
-
-Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
+```mermaid
+flowchart LR
+    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent["🤖 Agent<br/>(Router)"]
+    Agent -->|activates| Skill["⚡ Skill<br/>(Workflow + Output Template)"]
+    Skill -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
+    Prompt["📋 Prompt<br/>(Shortcut)"] -->|"manual /prompt-name"| Standalone["Standalone execution"]
 ```
 
 > [!NOTE]
