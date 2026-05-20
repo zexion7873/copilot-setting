@@ -7,14 +7,16 @@ description: 'Use when user needs Maven pom.xml reviewed for dependency hygiene,
 
 Maven `pom.xml` review. Companion rules: `instructions/xml-config.instructions.md`.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
+**Canonical rules — open the instruction files** (agent mode can read them directly):
 
-- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
-- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
-- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
+- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM conventions
+- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+If you cannot open files, Key rules (fallback for agent chat):
+
+- **XML / Maven**: pin every `<plugin>` version; centralize versions in `<dependencyManagement>`; no `LATEST` / `RELEASE` / release-build `SNAPSHOT`
+- **Java 8 target**: `maven-compiler-plugin` source/target = `1.8`
+- **No-heredoc**: edit `pom.xml` with file tools, never terminal heredoc / redirection
 
 Focus: dependency hygiene (versions, scopes, conflicts), known-CVE versions, build plugin pinning, SNAPSHOT discipline, and project metadata consistency.
 

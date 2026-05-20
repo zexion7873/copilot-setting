@@ -7,14 +7,17 @@ description: 'Use when user needs an OWASP-focused security audit of Java web co
 
 OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.md`.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
+**Canonical rules — open the instruction files** (agent mode can read them directly):
 
-- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
-- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
-- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
+- `instructions/security.instructions.md` — OWASP Top 10 for Java web
+- `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
+- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+If you cannot open files, Key rules (fallback for agent chat):
+
+- **Injection**: `PreparedStatement` / `:named` params; `<c:out>` for all JSP output
+- **Auth & session**: new session ID on login; `HttpOnly` + `Secure` + `SameSite=Strict` cookies
+- **Exposure**: no stack traces in responses; deny-by-default access control
 
 ## Phase 1 — Map Attack Surface
 

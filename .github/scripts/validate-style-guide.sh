@@ -122,10 +122,13 @@ done
 echo ""
 
 echo "🛡️  Fallback Rules Block (code-touching skills)"
-# Skills that modify or review Java code must inline a short fallback rules
-# block (see CLAUDE.md: "Fallback rules exception"). This guards against
-# accidental removal — instruction files only auto-load when a matching file
-# is focused, so the inline block is the safety net for agent chat.
+# Skills that modify or review Java code carry a two-layer fallback (see
+# CLAUDE.md: "Fallback rules exception"). Instruction files only auto-load when
+# a matching file is focused, so the block is the safety net for agent chat:
+#   (1) a named list of the canonical instruction file(s) the skill maps to, so
+#       an agent with file access can open them directly; and
+#   (2) an inline condensed floor of critical rules for when files can't open.
+# This guards against accidental removal of either layer.
 FALLBACK_REQUIRED_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review pom-review"
 fb_errors_start=$ERRORS
 for skill in $FALLBACK_REQUIRED_SKILLS; do
@@ -135,12 +138,16 @@ for skill in $FALLBACK_REQUIRED_SKILLS; do
     continue
   fi
   if ! grep -q "Key rules (fallback" "$file"; then
-    error "skills/$skill/SKILL.md: missing fallback rules block (expected intro 'Key rules (fallback ...')"
+    error "skills/$skill/SKILL.md: missing condensed floor (expected intro 'Key rules (fallback ...')"
     continue
   fi
   bullet_count=$(grep -cE '^- \*\*' "$file" || true)
   if [ "$bullet_count" -lt 3 ]; then
-    error "skills/$skill/SKILL.md: fallback block has only $bullet_count bold-labeled bullets (expected >= 3)"
+    error "skills/$skill/SKILL.md: condensed floor has only $bullet_count bold-labeled bullets (expected >= 3)"
+  fi
+  # Layer 1: must name at least one specific instruction file (not just the *.glob)
+  if ! grep -qE '`instructions/[a-z][a-z-]*\.instructions\.md`' "$file"; then
+    error "skills/$skill/SKILL.md: fallback must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`), not only the glob"
   fi
 done
 

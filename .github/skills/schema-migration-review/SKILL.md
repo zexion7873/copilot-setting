@@ -7,14 +7,16 @@ description: 'Use when user needs SQL migration scripts (DDL/DML schema changes)
 
 DDL/DML migration review for relational schemas. Companion rules: `instructions/sql.instructions.md`.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
+**Canonical rules — open the instruction files** (agent mode can read them directly):
 
-- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
-- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
-- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
+- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL conventions
+- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+If you cannot open files, Key rules (fallback for agent chat):
+
+- **SQL (DML safety)**: parameterize with `?` / `:named`; batch large `UPDATE` / `DELETE`; never unbounded writes
+- **SQL (DDL safety)**: online schema change on large tables; new columns nullable or DB-default
+- **SQL (JDBC/HQL)**: `?` placeholders or named parameters — zero string concatenation
 
 Focus: rollback safety, data-loss risk, lock duration on production-sized tables, FK and index consistency, and backward compatibility with running app instances during deploy.
 
