@@ -12,7 +12,7 @@
 
 </div>
 
-A multi-agent Copilot configuration — agents activate workflows, skills define processes with embedded output templates, and instructions enforce conventions.
+Agentic context engineering for GitHub Copilot — agents route workflows, skills define processes, instructions enforce conventions, hooks guard execution.
 
 ---
 
