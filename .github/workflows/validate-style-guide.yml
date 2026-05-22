@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - '.github/**/*.md'
+      - '.github/scripts/validate-style-guide.sh'
+      - '.github/workflows/validate-style-guide.yml'
 
 jobs:
   validate:

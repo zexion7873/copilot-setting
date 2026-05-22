@@ -20,7 +20,7 @@ The only executable workflow is style-guide validation. Run before committing ch
 bash .github/scripts/validate-style-guide.sh
 ```
 
-This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks frontmatter on instructions / skills / agents, that `skills/<name>/SKILL.md` has `name` matching the directory, that skill `description` is ≤ 1024 chars, that skill frontmatter has no `tools` field (tools belong on agents), that agent `handoffs[].agent` references resolve, and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks: frontmatter on instructions / skills / agents / prompts; that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that each code-touching skill carries its two-layer fallback block (a named-instruction-file reference plus a condensed floor of ≥ 3 bold-labeled rule bullets introduced by `Key rules (fallback ...`); that instruction Anti-Patterns tables use the 3-column `Pattern | Problem | Fix` header; that agent `handoffs[].agent` references resolve; and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
 
 One-time local setup so the validator also runs on `git commit`:
 
@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`) intentionally inline a short bullet list of the **critical non-negotiable rules** at the top of `SKILL.md`. This is the only sanctioned duplication — keep it short and treat the instruction file as canonical.
+**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) carry a two-layer fallback near the top of `SKILL.md`: (1) a **named list of the canonical instruction files** the skill maps to, so an agent with file access can open them directly; and (2) an inline **condensed floor** of the critical non-negotiable rules for when files can't be opened. Each skill names only the instruction files relevant to its domain. This is the only sanctioned duplication — keep the floor short and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -112,7 +112,7 @@ This repo intentionally mixes languages. Respect the split:
 |---|---|---|
 | `@planner` | Claude Opus 4.6 | `plan`, `sdd`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `sdd-review` |
+| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review`, `sdd-review` |
 | `@debugger` | Claude Opus 4.6 | `debug` |
 | `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` |
 

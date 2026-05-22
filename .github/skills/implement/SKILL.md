@@ -7,7 +7,17 @@ description: 'Use when user needs code written — new features, SDD implementat
 
 Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.x projects.
 
-Full coding rules in `instructions/*.instructions.md`. Key rules (fallback for agent chat):
+**Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
+
+- `instructions/java.instructions.md` — Java 8 language boundary
+- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
+- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `instructions/security.instructions.md` — OWASP Top 10
+- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
+- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
+- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+If you cannot open files, Key rules (fallback for agent chat):
 
 - **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
 - **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot

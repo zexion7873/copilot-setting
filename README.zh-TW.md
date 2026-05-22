@@ -1,6 +1,6 @@
 <div align="center">
 
-# GitHub Copilot Configuration
+# Copilot Agentic Context Engineering
 
 [English](README.md) | **繁體中文**
 
@@ -12,11 +12,41 @@
 
 </div>
 
-多 agent 協作的 Copilot 設定——agent 啟動工作流、skill 定義流程（含輸出模板）、instruction 守規範。
+GitHub Copilot 的 agentic context engineering——agent 路由工作流、skill 定義流程、instruction 守規範、hook 守執行。
 
 ---
 
-## ⚙️ 運作機制
+## 🚀 Quick Start
+
+### Option A — Single Project
+
+將 `.github/` 目錄複製到你的專案根目錄：
+
+```text
+your-java-project/
+├── .github/          ← 放這裡
+├── src/
+├── pom.xml
+└── ...
+```
+
+Copilot 會自動載入 — agent、skill、instruction、hook 全部就位。
+
+### Option B — Workspace-Wide
+
+將本 repository 作為資料夾加入 VS Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces)，workspace 內所有專案共享設定。
+
+```text
+my-workspace.code-workspace
+├── copilot-setting/      ← 本 repo
+├── project-a/
+├── project-b/
+└── ...
+```
+
+---
+
+## ⚙️ How It Works
 
 只需選擇 **agent**，其餘資源會自動載入。
 
@@ -30,25 +60,23 @@
 
 資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
 
-```text
-Hooks ──生命週期守衛──→ Agent (調度)
-                          │
-                          └──啟動──→ Skill (工作流程 + 輸出模板)
-                                          │
-                                          └──規則──→ Instruction (規則)
-
-Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
+```mermaid
+flowchart LR
+    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent["🤖 Agent<br/>(調度)"]
+    Agent -->|啟動| Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"]
+    Skill -->|規則| Instruction["📏 Instruction<br/>(規則)"]
+    Prompt["📋 Prompt<br/>(快捷指令)"] -->|"手動 /prompt-name"| Standalone["獨立執行"]
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`、`schema-migration-review`、`pom-review`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
 
 ---
 
-## 🔄 典型工作流程
+## 🔄 Typical Workflow
 
 例子：加一支新的 API endpoint。
 
@@ -90,11 +118,11 @@ Prompt (快捷指令) ──手動 /prompt-name──→ 獨立執行
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `sdd-review` skill，依審查類型分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
 
-### 🤝 Agent Handoffs 工作流程
+### 🤝 Agent Handoffs Workflow
 
 Agent 間可互相交接任務，形成協作工作流：
 
@@ -107,7 +135,7 @@ flowchart LR
 
     Implementer -.->|"subagent"| Researcher
     Implementer -->|"Code Review"| Reviewer
-    Implementer -->|"安全性審查"| Reviewer
+    Implementer -->|"專項審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
@@ -139,6 +167,8 @@ flowchart LR
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
+| 🔄 | `schema-migration-review` | 自動 + 手動 | DDL/DML migration 審查 — rollback 安全性、鎖定衝擊、向後相容性 |
+| 🧱 | `pom-review` | 自動 + 手動 | Maven `pom.xml` 審查 — 依賴衛生、CVE 檢查、scope 與 SNAPSHOT 紀律 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
 
@@ -188,7 +218,7 @@ flowchart LR
 ---
 
 <details>
-<summary><h2>📁 .github/ 目錄結構</h2></summary>
+<summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 ```text
 ~/.github/
