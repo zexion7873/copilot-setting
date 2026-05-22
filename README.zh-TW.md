@@ -1,6 +1,6 @@
 <div align="center">
 
-# GitHub Copilot Configuration
+# Copilot Agentic Context Engineering
 
 [English](README.md) | **繁體中文**
 
