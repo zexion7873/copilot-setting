@@ -16,9 +16,9 @@ GitHub Copilot 的 agentic context engineering——agent 路由工作流、skil
 
 ---
 
-## 🚀 快速開始
+## 🚀 Quick Start
 
-### 方式 A — 單一專案
+### Option A — Single Project
 
 將 `.github/` 目錄複製到你的專案根目錄：
 
@@ -32,7 +32,7 @@ your-java-project/
 
 Copilot 會自動載入 — agent、skill、instruction、hook 全部就位。
 
-### 方式 B — 整個 Workspace 共享
+### Option B — Workspace-Wide
 
 將本 repository 作為資料夾加入 VS Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces)，workspace 內所有專案共享設定。
 
@@ -46,7 +46,7 @@ my-workspace.code-workspace
 
 ---
 
-## ⚙️ 運作機制
+## ⚙️ How It Works
 
 只需選擇 **agent**，其餘資源會自動載入。
 
@@ -76,7 +76,7 @@ flowchart LR
 
 ---
 
-## 🔄 典型工作流程
+## 🔄 Typical Workflow
 
 例子：加一支新的 API endpoint。
 
@@ -122,7 +122,7 @@ flowchart LR
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
 
-### 🤝 Agent Handoffs 工作流程
+### 🤝 Agent Handoffs Workflow
 
 Agent 間可互相交接任務，形成協作工作流：
 
@@ -218,7 +218,7 @@ flowchart LR
 ---
 
 <details>
-<summary><h2>📁 .github/ 目錄結構</h2></summary>
+<summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 ```text
 ~/.github/
