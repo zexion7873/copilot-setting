@@ -209,11 +209,11 @@ flowchart LR
 
 ## 📜 copilot-instructions.md
 
-每次對話都載入的全域最小規範。只定義語言、技術環境和編碼哲學 — 其他慣例由專屬 instruction 各自負責。
+每次對話都載入的全域最小規範。語言、技術環境和編碼哲學 — 其他慣例由專屬 instruction 各自負責。
 
 - 以繁體中文回覆
 - 技術環境：Java 8、Maven、Spring 3.2、Spring Security 3.2、Hibernate 4.2、MySQL 8.0、JSP + JSTL 1.2
-- 編碼哲學：用最少的 code 解決問題、不做預測性抽象、不確定就問
+- 編碼哲學：think before coding（先釐清假設、不要猜）、simplicity first（不做預測性抽象）、surgical changes（只動該動的）
 
 ---
 

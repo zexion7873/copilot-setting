@@ -209,11 +209,11 @@ Automatically injected into the system prompt when the current file matches the 
 
 ## 📜 copilot-instructions.md
 
-Minimal global rules loaded in every conversation. Only language, tech stack, and coding philosophy — all other conventions live in dedicated instruction files.
+Minimal global rules loaded in every conversation. Language, tech stack, and coding philosophy — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
 - Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, JSP + JSTL 1.2
-- Coding philosophy: minimum code, no speculative abstractions, ask when uncertain
+- Coding philosophy: think before coding (surface assumptions, don't guess), simplicity first (no speculative abstractions), surgical changes (touch only what the task requires)
 
 ---
 
