@@ -33,34 +33,7 @@ echo "  STYLE-GUIDE Validation"
 echo "========================================="
 echo ""
 
-echo "📏 Instructions"
-for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
-  [ -f "$file" ] || continue
-  name="$(basename "$file")"
 
-  if ! fm_has_key "$file" "description"; then
-    error "$name: missing 'description' in frontmatter"
-  fi
-
-  if ! fm_has_key "$file" "applyTo"; then
-    error "$name: missing 'applyTo' in frontmatter"
-  fi
-
-  if fm_has_key "$file" "applyTo"; then
-    apply_to="$(fm_value "$file" "applyTo")"
-    if [ -z "$apply_to" ]; then
-      error "$name: 'applyTo' is empty (instruction will never load)"
-    fi
-  fi
-
-  if fm_has_key "$file" "description" && fm_has_key "$file" "applyTo"; then
-    apply_to="$(fm_value "$file" "applyTo")"
-    if [ -n "$apply_to" ]; then
-      pass "$name"
-    fi
-  fi
-done
-echo ""
 
 echo "⚡ Skills"
 for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
@@ -121,38 +94,25 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
 done
 echo ""
 
-echo "🛡️  Fallback Rules Block (code-touching skills)"
-# Skills that modify or review Java code carry a two-layer fallback (see
-# CLAUDE.md: "Fallback rules exception"). Instruction files only auto-load when
-# a matching file is focused, so the block is the safety net for agent chat:
-#   (1) a named list of the canonical instruction file(s) the skill maps to, so
-#       an agent with file access can open them directly; and
-#   (2) an inline condensed floor of critical rules for when files can't open.
-# This guards against accidental removal of either layer.
-FALLBACK_REQUIRED_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review pom-review"
-fb_errors_start=$ERRORS
-for skill in $FALLBACK_REQUIRED_SKILLS; do
-  file="$GITHUB_DIR/skills/$skill/SKILL.md"
+echo "🤖 Agent Coding Standards (code-touching agents)"
+# Code-touching agents (implementer, reviewer, debugger) must have a
+# "## Coding Standards" section. Coding rules moved from skill fallback
+# blocks to agent files for deterministic loading.
+CODING_STD_REQUIRED_AGENTS="implementer reviewer debugger"
+cs_errors_start=$ERRORS
+for agent in $CODING_STD_REQUIRED_AGENTS; do
+  file="$GITHUB_DIR/agents/$agent.agent.md"
   if [ ! -f "$file" ]; then
-    error "fallback check: skills/$skill/SKILL.md not found"
+    error "coding standards check: agents/$agent.agent.md not found"
     continue
   fi
-  if ! grep -q "Key rules (fallback" "$file"; then
-    error "skills/$skill/SKILL.md: missing condensed floor (expected intro 'Key rules (fallback ...')"
-    continue
-  fi
-  bullet_count=$(grep -cE '^- \*\*' "$file" || true)
-  if [ "$bullet_count" -lt 3 ]; then
-    error "skills/$skill/SKILL.md: condensed floor has only $bullet_count bold-labeled bullets (expected >= 3)"
-  fi
-  # Layer 1: must name at least one specific instruction file (not just the *.glob)
-  if ! grep -qE '`instructions/[a-z][a-z-]*\.instructions\.md`' "$file"; then
-    error "skills/$skill/SKILL.md: fallback must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`), not only the glob"
+  if ! grep -q "^## Coding Standards" "$file"; then
+    error "agents/$agent.agent.md: missing '## Coding Standards' section (required for code-touching agents)"
   fi
 done
 
-if [ "$ERRORS" -eq "$fb_errors_start" ]; then
-  pass "all code-touching skills have fallback rules block"
+if [ "$ERRORS" -eq "$cs_errors_start" ]; then
+  pass "all code-touching agents have Coding Standards section"
 fi
 echo ""
 
@@ -220,33 +180,17 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
 done
 echo ""
 
-echo "📊 Anti-Patterns Tables (instructions only)"
-ap_errors_start=$ERRORS
-for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
-  [ -f "$file" ] || continue
-  name="$(basename "$file")"
-  if grep -q "^## Anti-Patterns" "$file"; then
-    if ! grep -qE '^\|\s*Pattern\s*\|\s*Problem\s*\|\s*Fix\s*\|' "$file"; then
-      error "$name: has '## Anti-Patterns' section but missing 3-column header (Pattern | Problem | Fix)"
-    fi
-  fi
-done
 
-if [ "$ERRORS" -eq "$ap_errors_start" ]; then
-  pass "all instruction Anti-Patterns tables use 3-column format"
-fi
-echo ""
 
 echo "🔗 Cross-References"
 # Canonical reference patterns checked here:
-#   `instructions/<name>.instructions.md`
 #   `skills/<name>/SKILL.md`
 #   `agents/<name>.agent.md`
 # Paths containing * (glob) or < > (illustrative placeholders) are skipped.
 xref_errors_start=$ERRORS
 while IFS= read -r file; do
   rel_file="${file#$REPO_ROOT/}"
-  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
+  refs=$(grep -oE '`(skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
   [ -z "$refs" ] && continue
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue
