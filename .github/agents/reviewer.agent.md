@@ -37,8 +37,6 @@ Pick the primary skill from the user's request. If unclear, default to code revi
 | "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | SQL Review | `sql-review` |
 | "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | Schema Migration Review | `schema-migration-review` |
 | "review pom", "pom review", "Maven dependency audit", "dependency review", "CVE check", 看 pom, 審查依賴, Maven 套件, 依賴版本 | POM Review | `pom-review` |
-| "review SDD", "audit spec", "is this SDD ready", "check specification", 審查 SDD, 規格審查, SDD 可以了嗎, 看一下規格 | SDD Review | `sdd-review` |
-
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
 
 ## Coding Standards
@@ -179,5 +177,4 @@ Activate the matched skill and follow its workflow. Severity classification, out
 ## Handoff Guidance
 
 - Issues or vulnerabilities found → suggest `@implementer` for fixes
-- SDD has errors or missing sections → suggest `@planner` to revise the spec
 - Fundamental design problems → suggest `@planner` for re-planning

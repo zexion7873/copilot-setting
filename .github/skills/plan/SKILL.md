@@ -19,71 +19,79 @@ Structured implementation plan.
 |---|---|---|
 | Small | 1–3 files, single module | Lightweight: goal + approach + files |
 | Medium | 4–10 files, cross-module | Standard: full template |
-| Large | 10+ files, schema change, or API change | Full template + risk analysis + alternatives |
+| Large | 10+ files, schema change, or API change | Full template + API contract + data model + error handling |
 
 ## Phase 3 — Draft Plan
 
-Fill the template below. Every section must be concrete:
-- Requirements: traceable `REQ-NNN` / `CON-NNN` identifiers
-- Approach: phased, each phase has a measurable goal
-- Files: real paths from the codebase scan
-- Risks: with specific mitigation, not generic "might be hard"
+Fill the template below. Scale sections by scope:
+- Small/Medium: sections 1–4 are sufficient
+- Large: include sections 5–7 (API contract, data model, error handling)
+
+Every section must be concrete — no `TBD` or vague placeholders.
 
 ## Phase 4 — Validate
 
 - [ ] Every phase has one clear goal
 - [ ] File list matches codebase scan results
 - [ ] No `TBD` or placeholders left
-- [ ] Alternatives section has at least one rejected option with reason
+- [ ] Large scope: API signatures have input/output types and error cases
 
 ## Output Template
 
-Name file `[purpose]-[component]-v[N].md`.
-
 ```md
----
-goal: <Concise plan title>
-date: <YYYY-MM-DD>
-owner: <owner>
-status: 'Planned'
----
+# <Goal — one sentence>
 
-# <goal>
+## 1. Scope
 
-## 1. Requirements & Constraints
+What's included. What's explicitly NOT included (prevents AI from over-engineering).
 
-- REQ-001: <functional requirement>
-- CON-001: <constraint — e.g., Java 8, no Spring Boot>
-- PAT-001: <existing pattern to follow>
+## 2. Affected Files & Patterns
 
-## 2. Implementation Approach
+- `path/to/File.java` — what changes
+- Pattern to follow: `path/to/ExistingExample.java`
+
+## 3. Approach
 
 ### Phase 1 — <Goal>
 
 - What this phase achieves
-- Approach: components touched, order of work
+- Components touched, order of work
 
 ### Phase 2 — <Goal>
 
 - ...
 
-## 3. Files
+## 4. Constraints & Risks
 
-- FILE-001: `path/to/File.java` — what changes
+- Constraint: <e.g., Java 8, no Spring Boot, must use existing DAO pattern>
+- Risk: <specific risk> — mitigation: <specific action>
 
-## 4. Risks & Alternatives
+## 5. API Contract (Large scope only)
 
-- RISK-001: <risk> — mitigation: <specific action>
-- ALT-001: <alternative considered> — rejected because <reason>
+| Method | Signature | Input | Output | Errors |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
 
-## 5. Dependencies
+## 6. Data Model (Large scope only)
 
-- DEP-001: <external or internal dependency>
+Schema/entity changes. Migration needed: yes/no. Rollback approach.
+
+## 7. Error Handling (Large scope only)
+
+| Scenario | Handling |
+|---|---|
+| <input empty/null> | <what happens> |
+| <record not found> | <what happens> |
+| <concurrent modification> | <what happens> |
+
+## Verification
+
+- [ ] <concrete, pass/fail check>
+- [ ] <concrete, pass/fail check>
 ```
 
 ## Handoffs
 
 - → `tasks` skill — to break plan into atomic task list
-- → `sdd` skill — if a formal spec is needed before implementation
 - → `clarify-task` skill — if gaps found during planning
 - ← `@planner` — default activation

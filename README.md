@@ -114,9 +114,9 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `clarify-task` skills; planning and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skills, mode-routed by review type |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
 
@@ -126,7 +126,6 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
 flowchart LR
-    Planner -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
     Planner -.->|"subagent"| Researcher
@@ -139,7 +138,6 @@ flowchart LR
 
     Reviewer -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
-    Reviewer -->|"Revise spec"| Planner
     Reviewer -->|"Re-plan"| Planner
 
     Debugger -->|"Fix bug"| Implementer
@@ -154,10 +152,8 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
-| 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
-| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
-| 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
-| ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
+| 📐 | `plan` | Auto + Manual | Scope-adaptive implementation plan — Small/Medium/Large; Large scope includes API contract, data model, error handling |
+| ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
@@ -229,8 +225,6 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 └── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
     ├── plan/
-    ├── sdd/
-    ├── sdd-review/
     ├── tasks/
     ├── implement/
     ├── refactor/

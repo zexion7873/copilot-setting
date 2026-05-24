@@ -107,9 +107,9 @@ This repo intentionally mixes languages. Respect the split:
 
 | Agent | Model | Activates |
 |---|---|---|
-| `@planner` | Claude Opus 4.6 | `plan`, `sdd`, `tasks`, `clarify-task` |
+| `@planner` | Claude Opus 4.6 | `plan`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review`, `sdd-review` |
+| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review` |
 | `@debugger` | Claude Opus 4.6 | `debug` |
 | `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` |
 
