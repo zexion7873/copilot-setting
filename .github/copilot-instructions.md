@@ -7,14 +7,16 @@
 
 ## Tech Stack
 
-- **Java 8** — WAR packaging, deployed to servlet container (not embedded server)
+- **Java 8** — WAR packaging, servlet container. No `var`, `List.of()`, records, sealed classes, text blocks, module system.
 - **Maven**
-- **Spring Framework 3.2** — not 4.x/5.x. No `@RestController`, no `@Conditional`. XML config + `<tx:advice>` for transactions
+- **Spring 3.2** — XML config + `<tx:advice>` only. No Spring Boot, no `@RestController`, no `@Conditional`, no `@Transactional`.
 - **Spring Security 3.2** — XML namespace config
-- **Hibernate 4.2** — native Session API (not JPA), `hbm.xml` mappings (not annotations), `getCurrentSession()`
+- **Hibernate 4.2** — native Session API, `hbm.xml` mappings, `getCurrentSession()`. No JPA annotations.
 - **MySQL 8.0** — InnoDB, utf8mb4
 - **SLF4J 1.7** + Logback
 - **JSP + JSTL 1.2** — view layer
+- **SQL** — `PreparedStatement` with `?` (JDBC); named params `:param` (HQL). Zero string concatenation.
+- **File operations** — use editing tools, never terminal heredoc / redirection (`cat >`/`echo >>`/`<< EOF`)
 
 ## Coding Philosophy
 
