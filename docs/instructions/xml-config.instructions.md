@@ -1,6 +1,7 @@
 ---
 description: 'XML conventions for Spring configuration, Hibernate hbm.xml, and Maven POM files.'
 applyTo: '**/*.xml'
+# Author reference only. Runtime rules are embedded in agents/*.agent.md (Coding Standards section).
 ---
 
 # XML Configuration Conventions

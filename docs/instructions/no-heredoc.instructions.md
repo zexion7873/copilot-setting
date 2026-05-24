@@ -1,6 +1,7 @@
 ---
 description: 'Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. Works around VS Code Copilot terminal corruption.'
 applyTo: '**'
+# Author reference only. This rule is also in copilot-instructions.md Hard Rules section.
 ---
 
 # No Heredoc File Operations

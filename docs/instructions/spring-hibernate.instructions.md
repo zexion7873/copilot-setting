@@ -1,6 +1,8 @@
 ---
 description: 'Spring 3.2 + Hibernate 4.2 — native Session API, hbm.xml mappings, XML tx:advice, and Spring 3.2 API boundary.'
 applyTo: '**/*.java, **/*.hbm.xml'
+# Author reference only. Runtime rules are embedded in agents/*.agent.md (Coding Standards section).
+# This file still auto-loads via applyTo when a matching file is focused (bonus reinforcement).
 ---
 
 # Spring 3.2 + Hibernate 4.2 Conventions

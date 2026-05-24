@@ -1,6 +1,7 @@
 ---
 description: 'OWASP Top 10 security rules for Java web applications.'
 applyTo: '**/*.java, **/*.jsp'
+# Author reference only. Runtime rules are embedded in agents/*.agent.md (Coding Standards section).
 ---
 
 # Security Rules

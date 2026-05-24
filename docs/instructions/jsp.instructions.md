@@ -1,6 +1,7 @@
 ---
 description: 'JSP template conventions — XSS prevention, JSTL-only policy, and output encoding.'
 applyTo: '**/*.jsp'
+# Author reference only. Runtime rules are embedded in agents/*.agent.md (Coding Standards section).
 ---
 
 # JSP Conventions

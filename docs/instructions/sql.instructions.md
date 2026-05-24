@@ -1,6 +1,7 @@
 ---
 description: 'SQL rules — injection prevention, performance, JDBC resources, and MySQL stored procedure conventions.'
 applyTo: '**/*.java, **/*.sql, **/*.xml'
+# Author reference only. Runtime rules are embedded in agents/*.agent.md (Coding Standards section).
 ---
 
 # SQL Conventions

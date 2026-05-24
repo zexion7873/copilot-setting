@@ -1,6 +1,8 @@
 ---
 description: 'Java 8 language rules — forbidden syntax, exception handling, logging, and code style.'
 applyTo: '**/*.java'
+# Author reference only. Runtime rules are embedded in agents/*.agent.md (Coding Standards section).
+# This file still auto-loads via applyTo when a matching file is focused (bonus reinforcement).
 ---
 
 # Java 8 Conventions
