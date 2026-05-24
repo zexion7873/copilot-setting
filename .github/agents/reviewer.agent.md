@@ -1,24 +1,12 @@
 ---
 name: Reviewer
-description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, Maven pom.xml reviews, and SDD specification reviews. Each mode follows its own checklist and severity model.'
+description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, and Maven pom.xml reviews. Each mode follows its own checklist and severity model.'
 model: Claude Opus 4.6
 tools: ['search', 'read', 'context7/*', 'websearch/*']
 handoffs:
   - label: 修復問題
     agent: Implementer
     prompt: 請根據上面的審查結果實作修復。
-    send: false
-  - label: 重構程式碼
-    agent: Implementer
-    prompt: 請根據上面的建議進行重構。
-    send: false
-  - label: 修改規格
-    agent: Planner
-    prompt: 審查發現規格有誤，請根據上面的審查結果修改 SDD。
-    send: false
-  - label: 重新規劃
-    agent: Planner
-    prompt: 審查發現設計需要重做，請根據上面的審查結果重新規劃。
     send: false
 ---
 
@@ -177,4 +165,3 @@ Activate the matched skill and follow its workflow. Severity classification, out
 ## Handoff Guidance
 
 - Issues or vulnerabilities found → suggest `@implementer` for fixes
-- Fundamental design problems → suggest `@planner` for re-planning

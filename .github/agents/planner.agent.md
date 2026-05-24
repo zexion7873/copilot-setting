@@ -1,6 +1,6 @@
 ---
 name: Planner
-description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured plans and specifications. Hands off to @implementer to execute, or to @reviewer for spec/security audit.'
+description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured plans. Hands off to @implementer to execute.'
 model: Claude Opus 4.6
 tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 agents: ['Researcher']
@@ -8,10 +8,6 @@ handoffs:
   - label: 開始實作
     agent: Implementer
     prompt: 請根據上面的規劃開始實作。
-    send: false
-  - label: 安全性評估
-    agent: Reviewer
-    prompt: 請對上面的設計進行資安審查。
     send: false
 ---
 
@@ -56,5 +52,4 @@ Use Context7 for external API / library docs when the plan involves unfamiliar d
 
 ## Handoff Guidance
 
-- If the plan involves security-sensitive design → suggest `@reviewer` for security audit
 - Plan approved → use `tasks` skill for atomic task decomposition, then suggest `@implementer` to execute
