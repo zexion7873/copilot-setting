@@ -12,7 +12,7 @@
 
 </div>
 
-Agentic context engineering for GitHub Copilot — agents route workflows, skills define processes, instructions enforce conventions, hooks guard execution.
+Agentic context engineering for GitHub Copilot — agents route workflows and enforce conventions, skills define processes, hooks guard execution.
 
 ---
 
@@ -30,7 +30,7 @@ your-java-project/
 └── ...
 ```
 
-Copilot picks it up automatically — agents, skills, instructions, hooks, all active.
+Copilot picks it up automatically — agents, skills, hooks, all active.
 
 ### Option B — Workspace-Wide
 
@@ -52,8 +52,7 @@ Just pick an **agent** — everything else loads automatically.
 
 | Category | Role | Responsibility | When it loads |
 |---|---|---|---|
-| **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
-| **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
+| **Agents** (`agents/`) | Router + Standards | Activate workflows, manage handoffs, enforce coding standards | `@agent-name` in chat |
 | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
 | **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
@@ -62,14 +61,13 @@ Resources reference each other to avoid duplication — each category has one jo
 
 ```mermaid
 flowchart LR
-    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent["🤖 Agent<br/>(Router)"]
+    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent["🤖 Agent<br/>(Router + Coding Standards)"]
     Agent -->|activates| Skill["⚡ Skill<br/>(Workflow + Output Template)"]
-    Skill -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
     Prompt["📋 Prompt<br/>(Shortcut)"] -->|"manual /prompt-name"| Standalone["Standalone execution"]
 ```
 
 > [!NOTE]
-> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `performance`, `debug`, `schema-migration-review`, `pom-review`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+> **Coding standards in agents:** Code-touching agents (`@implementer`, `@reviewer`, `@debugger`) embed coding standards directly in their agent file for deterministic loading — no separate rule files needed.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
@@ -191,29 +189,14 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 
 ---
 
-## 📏 Instructions
-
-Automatically injected into the system prompt when the current file matches the `applyTo` glob.
-
-| File | applyTo | Description |
-|------|---------|-------------|
-| `java` | `**/*.java` | Java 8 language boundary, exception handling, SLF4J logging, and code style — focuses on what AI models get wrong by default. |
-| `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core + Hibernate 4.x — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, XML `<tx:advice>` transactions. The most critical file. |
-| `sql` | `**/*.java, **/*.sql, **/*.xml` | SQL injection prevention, performance pitfalls, JDBC resource handling, and MySQL stored procedure conventions. |
-| `security` | `**/*.java, **/*.jsp` | OWASP Top 10 essentials for Java web applications. |
-| `jsp` | `**/*.jsp` | JSP conventions — XSS prevention via `<c:out>`, JSTL-only policy, output encoding. |
-| `xml-config` | `**/*.xml` | Spring XML config, Hibernate hbm.xml, and Maven POM conventions. |
-| `no-heredoc` | `**` | Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. |
-
----
-
 ## 📜 copilot-instructions.md
 
-Minimal global rules loaded in every conversation. Language, tech stack, and coding philosophy — all other conventions live in dedicated instruction files.
+Minimal global rules loaded in every conversation. Language, tech stack, and coding philosophy — plus a **Hard Rules** section that provides cross-cutting floor rules applied by all agents regardless of which skill is active.
 
 - Respond in Traditional Chinese (繁體中文)
 - Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, JSP + JSTL 1.2
 - Coding philosophy: think before coding (surface assumptions, don't guess), simplicity first (no speculative abstractions), surgical changes (touch only what the task requires)
+- Hard Rules: non-negotiable constraints (Java 8 only, no Spring Boot, no JPA, SQL injection zero tolerance, no terminal file writes) that every agent enforces unconditionally
 
 ---
 
@@ -222,18 +205,9 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 
 ```text
 ~/.github/
-├── copilot-instructions.md                ← Global base instructions
+├── copilot-instructions.md                ← Global base rules
 │
-├── instructions/                          ← Auto-applied rules based on applyTo pattern
-│   ├── java
-│   ├── spring-hibernate
-│   ├── sql
-│   ├── security
-│   ├── jsp
-│   ├── xml-config
-│   └── no-heredoc
-│
-├── agents/                                ← Invoke via @agent-name in chat
+├── agents/                                ← Invoke via @agent-name in chat (includes Coding Standards)
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)

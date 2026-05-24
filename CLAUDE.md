@@ -8,7 +8,7 @@ Always reply to the user in **Traditional Chinese (繁體中文)**. File content
 
 ## Repository Purpose
 
-This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
+This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
 
 The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
@@ -20,7 +20,7 @@ The only executable workflow is style-guide validation. Run before committing ch
 bash .github/scripts/validate-style-guide.sh
 ```
 
-This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks: frontmatter on instructions / skills / agents / prompts; that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that each code-touching skill carries its two-layer fallback block (a named-instruction-file reference plus a condensed floor of ≥ 3 bold-labeled rule bullets introduced by `Key rules (fallback ...`); that instruction Anti-Patterns tables use the 3-column `Pattern | Problem | Fix` header; that agent `handoffs[].agent` references resolve; and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks: frontmatter on skills / agents / prompts; that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that code-touching agents (`implementer`, `reviewer`, `debugger`) have a `## Coding Standards` section; that agent `handoffs[].agent` references resolve; and that canonical cross-references (`` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
 
 One-time local setup so the validator also runs on `git commit`:
 
@@ -33,35 +33,32 @@ git config core.hooksPath .githooks
 ## Architecture
 
 ```text
-Hooks ──lifecycle guard──→ Agent (Router)
+Hooks ──lifecycle guard──→ Agent (Router + Coding Standards)
                              │
                              └──activates──→ Skill (Workflow + Output Template)
-                                                  │
-                                                  └──rules──→ Instruction (Rules)
 
 Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
-| Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | File matching `applyTo` glob is focused |
+
 | Agents | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
 | Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Prompts | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
-**Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
+**Critical separation-of-concerns rule:** each category has exactly one job. Agents carry coding standards in a `## Coding Standards` section for deterministic loading. Skills embed their own output templates directly and are pure workflow — no rule content.
 
-**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) carry a two-layer fallback near the top of `SKILL.md`: (1) a **named list of the canonical instruction files** the skill maps to, so an agent with file access can open them directly; and (2) an inline **condensed floor** of the critical non-negotiable rules for when files can't be opened. Each skill names only the instruction files relevant to its domain. This is the only sanctioned duplication — keep the floor short and treat the instruction file as canonical.
+**Coding standards placement:** Coding standards live in agent files (`## Coding Standards` section) for deterministic loading. Skills are pure workflow — no rule content.
 
 ## Canonical Format — STYLE-GUIDE.md
 
-`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
+`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
 
 Per-category key constraints (full rules in STYLE-GUIDE.md):
 
-- **Instructions** — frontmatter is exactly `description` + `applyTo`. H1 is a descriptive title (no filename suffix). Anti-Patterns table is always 3-column `Pattern | Problem | Fix`.
-- **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Body section order is fixed: `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
+- **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Code-touching agents have `## Coding Standards`. Body section order is fixed: `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
 - **Skills** — frontmatter is exactly `name` + `description`. **No `tools` field on skills** (tools belong on agents — validator enforces this). `description` is ≤ 1024 chars and follows the strict three-part format: `Use when …. Triggers on: …. <one-sentence summary>. Do NOT use for …`. H1 is always `<Name> — Workflow`. Skill `name` must match its directory name.
 - **Prompts** — frontmatter is `agent` + `description`. Lightweight single-task shortcuts invoked via `/prompt-name`. Not output templates (those are embedded in skills).
 
@@ -71,7 +68,7 @@ All cross-references use backtick-wrapped **relative paths from `.github/`**, ne
 
 | Type | Format |
 |---|---|
-| Instruction | `` `instructions/sql.instructions.md` `` |
+
 | Skill | `` `skills/plan/SKILL.md` `` |
 | Output template | Embedded in the paired `skills/<name>/SKILL.md` |
 | Agent file | `` `agents/planner.agent.md` `` |
@@ -92,7 +89,7 @@ Broken paths silently degrade Copilot output — they don't error, they just sto
 
 This repo intentionally mixes languages. Respect the split:
 
-- **All `.github/` content** (instructions, agents, skills) — English, because Copilot may inject it into any user's prompt context.
+- **All `.github/` content** (agents, skills, prompts) — English, because Copilot may inject it into any user's prompt context.
 - **README has two versions**: `README.md` (English) and `README.zh-TW.md` (Traditional Chinese). Keep them in sync when changing either.
 - **`.github/copilot-instructions.md`** declares the downstream-user contract: respond in Traditional Chinese, but code/comments/identifiers in English. Do not mistake this for guidance on how to edit this repo.
 

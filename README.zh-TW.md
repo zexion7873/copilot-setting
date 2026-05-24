@@ -12,7 +12,7 @@
 
 </div>
 
-GitHub Copilot 的 agentic context engineering——agent 路由工作流、skill 定義流程、instruction 守規範、hook 守執行。
+GitHub Copilot 的 agentic context engineering——agent 路由工作流並帶規範、skill 定義流程、hook 守執行。
 
 ---
 
@@ -30,7 +30,7 @@ your-java-project/
 └── ...
 ```
 
-Copilot 會自動載入 — agent、skill、instruction、hook 全部就位。
+Copilot 會自動載入 — agent、skill、hook 全部就位。
 
 ### Option B — Workspace-Wide
 
@@ -52,8 +52,7 @@ my-workspace.code-workspace
 
 | 類別 | 角色 | 職責邊界 | 何時載入 |
 |---|---|---|---|
-| **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
-| **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
+| **Agents**（`agents/`） | 調度 + 規範 | 啟動工作流、管理交接、帶代碼規範 | 在 Chat 打 `@agent-name` |
 | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
 | **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
@@ -62,14 +61,13 @@ my-workspace.code-workspace
 
 ```mermaid
 flowchart LR
-    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent["🤖 Agent<br/>(調度)"]
+    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent["🤖 Agent<br/>(調度 + Coding Standards)"]
     Agent -->|啟動| Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"]
-    Skill -->|規則| Instruction["📏 Instruction<br/>(規則)"]
     Prompt["📋 Prompt<br/>(快捷指令)"] -->|"手動 /prompt-name"| Standalone["獨立執行"]
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`、`schema-migration-review`、`pom-review`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Coding standards 在 agent 裡：** 涉及程式碼的 agent（`@implementer`、`@reviewer`、`@debugger`）直接在 agent 檔案中內嵌 coding standards，確保確定性載入，不需要額外的規則檔。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
@@ -191,29 +189,14 @@ flowchart LR
 
 ---
 
-## 📏 Instructions
-
-當目前編輯的檔案符合 `applyTo` glob 時，自動注入 system prompt。
-
-| 檔案 | applyTo | 說明 |
-|------|---------|------|
-| `java` | `**/*.java` | Java 8 語言邊界、例外處理、SLF4J logging、程式碼風格 — 聚焦在 AI 模型預設會搞錯的部分 |
-| `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core + Hibernate 4.x — native Session API、hbm.xml mapping、`getCurrentSession()` 生命週期、XML `<tx:advice>` transaction。**最關鍵的一份** |
-| `sql` | `**/*.java, **/*.sql, **/*.xml` | SQL injection 防護、效能陷阱、JDBC resource handling、MySQL 預存程序慣例 |
-| `security` | `**/*.java, **/*.jsp` | OWASP Top 10 精華版，針對 Java web 應用 |
-| `jsp` | `**/*.jsp` | JSP 慣例 — 透過 `<c:out>` 防 XSS、JSTL-only 政策、輸出編碼 |
-| `xml-config` | `**/*.xml` | Spring XML config、Hibernate hbm.xml、Maven POM 慣例 |
-| `no-heredoc` | `**` | 防止終端機 heredoc 導致檔案毀損，強制使用檔案編輯工具 |
-
----
-
 ## 📜 copilot-instructions.md
 
-每次對話都載入的全域最小規範。語言、技術環境和編碼哲學 — 其他慣例由專屬 instruction 各自負責。
+每次對話都載入的全域最小規範。語言、技術環境和編碼哲學，加上 **Hard Rules** 區塊，提供所有 agent 無條件執行的跨領域底線規則。
 
 - 以繁體中文回覆
 - 技術環境：Java 8、Maven、Spring 3.2、Spring Security 3.2、Hibernate 4.2、MySQL 8.0、JSP + JSTL 1.2
 - 編碼哲學：think before coding（先釐清假設、不要猜）、simplicity first（不做預測性抽象）、surgical changes（只動該動的）
+- Hard Rules：不可妥協的限制（Java 8 only、no Spring Boot、no JPA、SQL injection 零容忍、禁止終端機寫檔），每個 agent 無條件執行
 
 ---
 
@@ -222,18 +205,9 @@ flowchart LR
 
 ```text
 ~/.github/
-├── copilot-instructions.md                ← 全域基礎指示
+├── copilot-instructions.md                ← 全域基礎規則
 │
-├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── java
-│   ├── spring-hibernate
-│   ├── sql
-│   ├── security
-│   ├── jsp
-│   ├── xml-config
-│   └── no-heredoc
-│
-├── agents/                                ← 在聊天中以 @agent-name 呼叫
+├── agents/                                ← 在聊天中以 @agent-name 呼叫（含 Coding Standards）
 │   ├── planner              (Claude Opus 4.6)
 │   ├── implementer          (GPT-5.3-Codex)
 │   ├── reviewer             (Claude Opus 4.6)
