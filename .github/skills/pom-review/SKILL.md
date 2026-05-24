@@ -5,18 +5,7 @@ description: 'Use when user needs Maven pom.xml reviewed for dependency hygiene,
 
 # POM Review — Workflow
 
-Maven `pom.xml` review. Companion rules: `instructions/xml-config.instructions.md`.
-
-**Canonical rules — open the instruction files** (agent mode can read them directly):
-
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM conventions
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **XML / Maven**: pin every `<plugin>` version; centralize versions in `<dependencyManagement>`; no `LATEST` / `RELEASE` / release-build `SNAPSHOT`
-- **Java 8 target**: `maven-compiler-plugin` source/target = `1.8`
-- **No-heredoc**: edit `pom.xml` with file tools, never terminal heredoc / redirection
+Maven `pom.xml` review. Coding standards are in the agent's `## Coding Standards` section.
 
 Focus: dependency hygiene (versions, scopes, conflicts), known-CVE versions, build plugin pinning, SNAPSHOT discipline, and project metadata consistency.
 

@@ -5,26 +5,7 @@ description: 'Use when user needs code written — new features, SDD implementat
 
 # Implement — Workflow
 
-Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.x projects.
-
-**Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
-
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/security.instructions.md` — OWASP Top 10
-- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
-- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
-- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-- **Security**: `<c:out>` for all JSP output; `HttpOnly` + `Secure` cookie flags
+Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.x projects. Coding standards are in the agent's `## Coding Standards` section.
 
 ## Phase 1 — Understand Context
 

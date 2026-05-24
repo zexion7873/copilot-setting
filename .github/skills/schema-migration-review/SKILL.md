@@ -5,18 +5,7 @@ description: 'Use when user needs SQL migration scripts (DDL/DML schema changes)
 
 # Schema Migration Review — Workflow
 
-DDL/DML migration review for relational schemas. Companion rules: `instructions/sql.instructions.md`.
-
-**Canonical rules — open the instruction files** (agent mode can read them directly):
-
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL conventions
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **SQL (DML safety)**: parameterize with `?` / `:named`; batch large `UPDATE` / `DELETE`; never unbounded writes
-- **SQL (DDL safety)**: online schema change on large tables; new columns nullable or DB-default
-- **SQL (JDBC/HQL)**: `?` placeholders or named parameters — zero string concatenation
+DDL/DML migration review for relational schemas. Coding standards are in the agent's `## Coding Standards` section.
 
 Focus: rollback safety, data-loss risk, lock duration on production-sized tables, FK and index consistency, and backward compatibility with running app instances during deploy.
 

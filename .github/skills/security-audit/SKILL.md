@@ -5,19 +5,7 @@ description: 'Use when user needs an OWASP-focused security audit of Java web co
 
 # Security Audit — Workflow
 
-OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.md`.
-
-**Canonical rules — open the instruction files** (agent mode can read them directly):
-
-- `instructions/security.instructions.md` — OWASP Top 10 for Java web
-- `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **Injection**: `PreparedStatement` / `:named` params; `<c:out>` for all JSP output
-- **Auth & session**: new session ID on login; `HttpOnly` + `Secure` + `SameSite=Strict` cookies
-- **Exposure**: no stack traces in responses; deny-by-default access control
+OWASP Top 10 focused audit. Coding standards are in the agent's `## Coding Standards` section.
 
 ## Phase 1 — Map Attack Surface
 
@@ -27,7 +15,7 @@ If you cannot open files, Key rules (fallback for agent chat):
 
 ## Phase 2 — Check by OWASP Category
 
-For each entry point, check against A01–A10 from `instructions/security.instructions.md`:
+For each entry point, check against A01–A10 (see agent's Coding Standards for the full OWASP checklist):
 - A01: broken access control — authorization on every resource, IDOR, path traversal
 - A02: cryptographic failures — plaintext passwords, weak hashing, missing encryption for sensitive data
 - A03: injection — SQL, OS command, XSS at every input boundary
