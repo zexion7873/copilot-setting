@@ -9,6 +9,10 @@ handoffs:
     agent: Reviewer
     prompt: 請審查上面的程式碼變更。
     send: false
+  - label: 安全性審查
+    agent: Reviewer
+    prompt: 請對上面的程式碼進行資安審查。
+    send: false
   - label: 除錯分析
     agent: Debugger
     prompt: 實作過程遇到 bug，請幫忙分析根因。

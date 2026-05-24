@@ -125,9 +125,10 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
-flowchart TD
+flowchart LR
     Planner -->|"Implement"| Implementer
     Implementer -->|"Code Review"| Reviewer
+    Implementer -->|"Security Audit"| Reviewer
     Reviewer -->|"Fix issues"| Implementer
     Implementer -->|"Debug"| Debugger
     Debugger -->|"Fix bug"| Implementer

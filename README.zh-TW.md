@@ -125,9 +125,10 @@ flowchart LR
 Agent 間可互相交接任務，形成協作工作流：
 
 ```mermaid
-flowchart TD
+flowchart LR
     Planner -->|"開始實作"| Implementer
     Implementer -->|"Code Review"| Reviewer
+    Implementer -->|"安全性審查"| Reviewer
     Reviewer -->|"修復問題"| Implementer
     Implementer -->|"除錯分析"| Debugger
     Debugger -->|"修復 Bug"| Implementer
