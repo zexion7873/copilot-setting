@@ -184,7 +184,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 - Include both **English AND Chinese** triggers (bilingual user base per `copilot-instructions.md`).
 - **4–8 trigger phrases** per skill. Too few = missed intent, too many = false activation.
 - Use **verb phrases**, not bare nouns: `"review SQL"` not `"SQL"`.
-- Include common **variations and synonyms**: `"寫 SDD"` and `"寫規格"` for the same skill.
+- Include common **variations and synonyms**: `"寫計畫"` and `"寫規格"` for the same skill.
 - **No overlap with sibling skills** on the same agent. If a phrase could activate 2 skills, the agent's Skill Activation section must specify a default (e.g., "Default to `implement` if ambiguous").
 - Overlap between skills on **different agents** is acceptable — the user's `@agent-name` choice disambiguates.
 - **Before adding or changing triggers**, grep sibling skills on the same agent to confirm no overlap: `grep -i "<new-trigger>" .github/skills/*/SKILL.md`.
@@ -233,7 +233,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow. Not a repeat of agent-level coding standards. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
-9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `sdd`, `tasks`, `code-review`, `sql-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `sdd-review`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
+9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
 10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
@@ -392,7 +392,7 @@ These require manual verification. Reviewers should check:
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
-- [ ] Skills producing structured artifacts have `## Output Template` section (plan, sdd, tasks, code-review, sql-review)
+- [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
 
 ---
 

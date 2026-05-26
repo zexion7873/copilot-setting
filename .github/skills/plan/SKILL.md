@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫. Produces a structured plan document. Do NOT use for formal specifications (prefer sdd), atomic task lists (prefer tasks), or unclear requirements (prefer clarify-task).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫. Produces a structured plan document. Do NOT use for atomic task lists (prefer tasks) or unclear requirements (prefer clarify-task).'
 ---
 
 # Plan — Workflow

@@ -9,7 +9,7 @@ Test case identification and documentation. Produces a structured test case docu
 
 ## Phase 1 — Identify Boundaries
 
-From the feature/SDD/code under test, extract:
+From the feature/plan/code under test, extract:
 - Input boundaries: min, max, empty, null, overflow
 - State boundaries: initial, in-progress, completed, error
 - Integration boundaries: external API calls, DB operations, file I/O
@@ -40,7 +40,7 @@ Priority: <High | Medium | Low>
 
 ## Phase 4 — Coverage Audit
 
-- [ ] Every requirement from SDD/feature maps to ≥1 test case
+- [ ] Every requirement from plan/feature maps to ≥1 test case
 - [ ] Every public method has at least one happy path + one error case
 - [ ] Boundary values covered for all numeric/string inputs
 - [ ] SQL operations tested for injection and empty result sets
@@ -48,4 +48,4 @@ Priority: <High | Medium | Low>
 ## Handoffs
 
 - ← `@implementer` — after implementation, to verify coverage
-- ← `sdd` skill — to design tests from specification
+- ← `plan` skill — to design tests from specification

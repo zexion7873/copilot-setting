@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Use when user needs code written — new features, SDD implementation, or task execution in Java 8 / Maven / Spring / Hibernate projects. Triggers on: implement, code this, build feature, write code, 實作, 寫程式, 開始做, 幫我寫. Produces working code following existing patterns. Do NOT use for refactoring without new behavior (prefer refactor), performance tuning (prefer performance), or bug investigation (prefer debug).'
+description: 'Use when user needs code written — new features, plan implementation, or task execution in Java 8 / Maven / Spring / Hibernate projects. Triggers on: implement, code this, build feature, write code, 實作, 寫程式, 開始做, 幫我寫. Produces working code following existing patterns. Do NOT use for refactoring without new behavior (prefer refactor), performance tuning (prefer performance), or bug investigation (prefer debug).'
 ---
 
 # Implement — Workflow
@@ -9,7 +9,7 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.x projects
 
 ## Phase 1 — Understand Context
 
-1. Read the SDD / task / user request
+1. Read the plan / task / user request
 2. Scan existing code for patterns: naming, layering, error handling, logging
 3. Identify affected files and their callers/dependents
 

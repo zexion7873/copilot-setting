@@ -39,7 +39,7 @@ Skip delegation when context is already sufficient (small scope, known codebase 
 
 ## Workflow
 
-Follow the activated skill's workflow. Each skill (`plan`, `sdd`, `tasks`, `clarify-task`) defines its own phases, templates, and validation rules — do not duplicate here.
+Follow the activated skill's workflow. Each skill (`plan`, `tasks`, `clarify-task`) defines its own phases, templates, and validation rules — do not duplicate here.
 
 Use Context7 for external API / library docs when the plan involves unfamiliar dependencies. If Context7 is not available, proceed with available context.
 
