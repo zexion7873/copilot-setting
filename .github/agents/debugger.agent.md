@@ -90,3 +90,4 @@ The full debugging workflow (define → gather evidence → hypothesize → isol
 ## Handoff Guidance
 
 - Root cause identified, fix ready → suggest `@implementer`
+- Invoked from `@reviewer` → return root cause analysis, suggest `@implementer` for fix

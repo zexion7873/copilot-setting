@@ -8,6 +8,10 @@ handoffs:
     agent: Implementer
     prompt: 請根據上面的審查結果實作修復。
     send: false
+  - label: 深入除錯
+    agent: Debugger
+    prompt: 請針對上面發現的問題進行根因分析。
+    send: false
 
 ---
 
@@ -166,3 +170,4 @@ Activate the matched skill and follow its workflow. Severity classification, out
 ## Handoff Guidance
 
 - Issues or vulnerabilities found → suggest `@implementer` for fixes
+- Deep bug requiring root cause analysis → suggest `@debugger`

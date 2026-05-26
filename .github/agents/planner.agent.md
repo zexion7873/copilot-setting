@@ -9,6 +9,10 @@ handoffs:
     agent: Implementer
     prompt: 請根據上面的規劃開始實作。
     send: false
+  - label: 架構審查
+    agent: Reviewer
+    prompt: 請審查上面的計畫是否有架構或安全上的疑慮。
+    send: false
 ---
 
 # Planner — Technical Planning & Specification Specialist
@@ -53,3 +57,4 @@ Use Context7 for external API / library docs when the plan involves unfamiliar d
 ## Handoff Guidance
 
 - Plan approved → use `tasks` skill for atomic task decomposition, then suggest `@implementer` to execute
+- Large plan (10+ files, schema change, security impact) → suggest `@reviewer` for architecture review before implementation

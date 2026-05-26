@@ -80,11 +80,10 @@ flowchart LR
 
 ```text
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                        Planner 掃 codebase，拆出分階段計畫，
-                        接著寫正式 SDD（含驗收條件）
+                        Planner 掃 codebase，拆出含驗收條件的分階段計畫
                         ↓ 點「開始實作」
 
-你  →  @implementer   照 SDD 和既有 pattern 寫 code
+你  →  @implementer   照計畫和既有 pattern 寫 code
                         ↓ 點「Code Review」
 
 你  →  @reviewer      查正確性、安全性、效能
@@ -103,8 +102,8 @@ flowchart LR
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
-> - 審查規格 → `@reviewer`（SDD review mode）→ `@planner`
-> - 寫文件 → `@planner`
+> - 大型計畫 → `@planner` → `@reviewer`（架構審查）→ `@implementer`
+> - Review 發現深層 bug → `@reviewer` → `@debugger` → `@implementer`
 
 ---
 
@@ -127,14 +126,18 @@ Agent 間可互相交接任務，形成協作工作流：
 ```mermaid
 flowchart LR
     Planner -->|"開始實作"| Implementer
-    Implementer -->|"Code Review"| Reviewer
-    Implementer -->|"安全性審查"| Reviewer
+    Planner -->|"架構審查"| Reviewer
+
+    Implementer -->|"Code Review <br/>安全性審查"| Reviewer
     Reviewer -->|"修復問題"| Implementer
+
     Implementer -->|"除錯分析"| Debugger
+    Reviewer -->|"深入除錯"| Debugger
     Debugger -->|"修復 Bug"| Implementer
 
-    Planner -.->|"subagent"| Researcher
-    Implementer -.->|"subagent"| Researcher
+    Planner -.->|subagent| Researcher:::muted
+    Implementer -.->|subagent| Researcher
+    Debugger ~~~ Researcher
 ```
 
 ---
@@ -148,7 +151,7 @@ flowchart LR
 | ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
 | 📐 | `plan` | 自動 + 手動 | 自適應實作計畫 — Small/Medium/Large；Large 含 API 合約、資料模型、錯誤處理 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循計畫規格、探索既有 pattern、自我驗證 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
@@ -227,6 +230,8 @@ flowchart LR
     ├── code-review/
     ├── security-audit/
     ├── sql-review/
+    ├── schema-migration-review/
+    ├── pom-review/
     ├── debug/
     └── performance/
 ```

@@ -21,6 +21,7 @@ esac
 #   - --no-preserve-root    explicit root deletion flag
 #   - sudo                  privilege escalation
 #   - DROP DATABASE/SCHEMA  database/schema destruction
+#   - DROP TABLE            table destruction
 #   - TRUNCATE              data wipe without backup
 #   - git push --force      force push (any branch)
 #   - git reset --hard      destructive history rewrite
@@ -30,7 +31,7 @@ esac
 #   - curl/wget | sh        piped remote execution
 #   - dd if=                raw disk write
 #   - kill -9 -1            kill all user processes
-DENY_PATTERNS='rm -rf /([^a-zA-Z0-9]|$)|rm -rf \.( |$)|rm -rf \*|--no-preserve-root|sudo |DROP DATABASE|DROP SCHEMA|TRUNCATE |git push.*--force|git reset --hard|git clean -fd|chmod -R 777|mkfs\.|curl.*\|.*sh|wget.*\|.*sh|dd if=|kill -9 -1'
+DENY_PATTERNS='rm -rf /([^a-zA-Z0-9]|$)|rm -rf \.( |$)|rm -rf \*|--no-preserve-root|sudo |DROP DATABASE|DROP SCHEMA|DROP TABLE|TRUNCATE|git push.*--force|git reset --hard|git clean -fd|chmod -R 777|mkfs\.|curl.*\|.*sh|wget.*\|.*sh|dd if=|kill -9 -1'
 
 if echo "$TOOL_INPUT" | grep -qiE "$DENY_PATTERNS" 2>/dev/null; then
   echo "DENY: blocked by pre-tool policy" >&2

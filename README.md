@@ -80,11 +80,11 @@ Example: adding a new API endpoint.
 
 ```text
 You  →  @planner       "I need an API to query order history by customer ID"
-                        Planner scans the codebase, drafts a phased plan,
-                        then writes a formal SDD (spec) with acceptance criteria
+                        Planner scans the codebase, drafts a phased plan
+                        with acceptance criteria
                         ↓ click "開始實作" handoff
 
-You  →  @implementer   Picks up the SDD, writes code following existing patterns
+You  →  @implementer   Picks up the plan, writes code following existing patterns
                         ↓ click "Code Review" handoff
 
 You  →  @reviewer      Checks correctness, security, performance
@@ -103,8 +103,8 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
-> - Spec review → `@reviewer` (SDD review mode) → `@planner`
-> - Documentation → `@planner`
+> - Large plan → `@planner` → `@reviewer` (architecture review) → `@implementer`
+> - Deep bug from review → `@reviewer` → `@debugger` → `@implementer`
 
 ---
 
@@ -127,14 +127,18 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 ```mermaid
 flowchart LR
     Planner -->|"Implement"| Implementer
-    Implementer -->|"Code Review"| Reviewer
-    Implementer -->|"Security Audit"| Reviewer
+    Planner -->|"Arch Review"| Reviewer
+
+    Implementer -->|"Code Review <br/>Security Audit"| Reviewer
     Reviewer -->|"Fix issues"| Implementer
+
     Implementer -->|"Debug"| Debugger
+    Reviewer -->|"Debug"| Debugger
     Debugger -->|"Fix bug"| Implementer
 
-    Planner -.->|"subagent"| Researcher
-    Implementer -.->|"subagent"| Researcher
+    Planner -.->|subagent| Researcher:::muted
+    Implementer -.->|subagent| Researcher
+    Debugger ~~~ Researcher
 ```
 
 ---
@@ -148,7 +152,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
 | 📐 | `plan` | Auto + Manual | Scope-adaptive implementation plan — Small/Medium/Large; Large scope includes API contract, data model, error handling |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
-| 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
+| 🔨 | `implement` | Auto + Manual | Feature implementation with plan compliance, pattern discovery, and self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
@@ -227,6 +231,8 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
     ├── code-review/
     ├── security-audit/
     ├── sql-review/
+    ├── schema-migration-review/
+    ├── pom-review/
     ├── debug/
     └── performance/
 ```
