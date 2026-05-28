@@ -12,7 +12,7 @@
 
 </div>
 
-Agentic context engineering for GitHub Copilot — agents route workflows, skills define processes, instructions enforce conventions, hooks guard execution.
+Agentic context engineering for GitHub Copilot — agents route, skills execute, instructions enforce, hooks guard.
 
 ---
 
@@ -58,7 +58,7 @@ Just pick an **agent** — everything else loads automatically.
 | **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
 | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
-Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
+Each category has one job. Content that belongs elsewhere is referenced, not copied.
 
 ```mermaid
 flowchart LR
@@ -69,7 +69,7 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `performance`, `debug`, `schema-migration-review`, `pom-review`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
@@ -162,7 +162,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
 | 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
-| 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
+| 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
@@ -267,6 +267,8 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
     ├── code-review/
     ├── security-audit/
     ├── sql-review/
+    ├── schema-migration-review/
+    ├── pom-review/
     ├── debug/
     └── performance/
 ```

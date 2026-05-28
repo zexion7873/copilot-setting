@@ -12,7 +12,7 @@
 
 </div>
 
-GitHub Copilot 的 agentic context engineering——agent 路由工作流、skill 定義流程、instruction 守規範、hook 守執行。
+GitHub Copilot 的 agentic context engineering——agent 路由、skill 執行、instruction 守規範、hook 守安全。
 
 ---
 
@@ -58,7 +58,7 @@ my-workspace.code-workspace
 | **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
 | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
-資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
+每個類別只做一件事。需要別人的內容就引用，不複製。
 
 ```mermaid
 flowchart LR
@@ -69,7 +69,7 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`、`schema-migration-review`、`pom-review`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill 內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
@@ -162,7 +162,7 @@ flowchart LR
 | 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
 | 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
@@ -267,6 +267,8 @@ flowchart LR
     ├── code-review/
     ├── security-audit/
     ├── sql-review/
+    ├── schema-migration-review/
+    ├── pom-review/
     ├── debug/
     └── performance/
 ```
