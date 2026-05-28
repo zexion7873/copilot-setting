@@ -10,7 +10,7 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 ## Security
 
 - **JDBC**: all user input via `PreparedStatement` with `?` — zero tolerance for string concatenation
-- **HQL / Criteria**: use named parameters (`:paramName`) or positional parameters (`?0`) — never concatenate into query strings
+- **HQL / Criteria**: use named parameters (`:paramName`) only — never concatenate into query strings
 - Sanitize `LIKE` wildcards before binding
 - No `SELECT *` on tables with sensitive columns
 - Never log SQL containing credentials or PII
@@ -28,7 +28,7 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 
 - `try-with-resources` for `Connection`, `PreparedStatement`, `ResultSet`
 - `WHERE` clause mandatory on every `UPDATE` and `DELETE`
-- Transactions: commit or rollback on every code path
+- Transactions (raw JDBC only — Spring-managed `<tx:advice>` handles this automatically): commit or rollback on every code path
 
 ## MySQL Stored Procedures
 
