@@ -33,13 +33,9 @@ Default to `plan` if the user's intent is ambiguous but clearly planning-related
 
 ## Subagent Delegation
 
-Before drafting a plan (Phase 2), delegate codebase scanning to the **Researcher** subagent:
+Before drafting a plan (Phase 2), delegate codebase scanning to the **Researcher** subagent to find: related code, existing patterns, dependency structure, and recent git history in the affected area.
 
-- Ask Researcher to find: related code, existing patterns, dependency structure, recent git history in the affected area
-- Only ask for search + read + summarize — never ask Researcher for planning opinions or architecture recommendations
-- Use the returned findings as input for your plan; do not re-search what Researcher already found
-
-Skip delegation when context is already sufficient (small scope, known codebase area).
+Skip when context is already sufficient (small scope, known codebase area).
 
 ## Workflow
 

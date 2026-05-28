@@ -117,7 +117,7 @@ flowchart LR
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-| 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
+| 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -135,9 +135,9 @@ flowchart LR
     Reviewer -->|"深入除錯"| Debugger
     Debugger -->|"修復 Bug"| Implementer
 
-    Planner -.->|subagent| Researcher:::muted
     Implementer -.->|subagent| Researcher
-    Debugger ~~~ Researcher
+    Planner -.->|subagent| Researcher
+    Reviewer -.->|subagent| Researcher
 ```
 
 ---

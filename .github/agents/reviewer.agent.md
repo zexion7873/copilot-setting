@@ -3,6 +3,7 @@ name: Reviewer
 description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, and Maven pom.xml reviews. Each mode follows its own checklist and severity model.'
 model: Claude Opus 4.6
 tools: ['search', 'read', 'context7/*', 'websearch/*']
+agents: ['Researcher']
 handoffs:
   - label: 修復問題
     agent: Implementer
@@ -31,6 +32,12 @@ Pick the primary skill from the user's request. If unclear, default to code revi
 | "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | Schema Migration Review | `schema-migration-review` |
 | "review pom", "pom review", "Maven dependency audit", "dependency review", "CVE check", 看 pom, 審查依賴, Maven 套件, 依賴版本 | POM Review | `pom-review` |
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
+
+## Subagent Delegation
+
+Before reviewing (Phase 1 of any code-touching skill), delegate codebase scanning to the **Researcher** subagent to find: callers/callees of changed code, related SQL patterns, hbm.xml mappings, entry points, and data flows relevant to the review scope.
+
+Skip when reviewing a single file with a small diff that you can trace manually.
 
 ## Coding Standards
 

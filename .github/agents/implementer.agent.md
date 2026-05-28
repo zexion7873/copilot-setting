@@ -38,13 +38,9 @@ Activate the matched skill and follow its workflow. Default to `implement` if th
 
 ## Subagent Delegation
 
-Before writing code (Phase 1 of `implement` / `refactor`), delegate codebase research to the **Researcher** subagent:
+Before writing code (Phase 1 of `implement` / `refactor`), delegate codebase research to the **Researcher** subagent to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers.
 
-- Ask Researcher to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers
-- Only ask for search + read + summarize — never ask Researcher for design opinions or implementation advice
-- Use the returned findings to guide your implementation; do not re-search what Researcher already found
-
-Skip delegation when the task is trivial (single-file typo fix, known location).
+Skip when the task is trivial (single-file typo fix, known location).
 
 ## Coding Standards
 
