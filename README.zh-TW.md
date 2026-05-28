@@ -131,21 +131,22 @@ flowchart LR
     Planner -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
-    Planner -.->|"subagent"| Researcher
 
-    Implementer -.->|"subagent"| Researcher
     Implementer -->|"Code Review"| Reviewer
     Implementer -->|"專項審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
-    Reviewer -.->|"subagent"| Researcher
     Reviewer -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
     Reviewer -->|"修改規格"| Planner
     Reviewer -->|"重新規劃"| Planner
 
     Debugger -->|"修復 Bug"| Implementer
+
+    Implementer -.->|"subagent"| Researcher
+    Planner -.->|"subagent"| Researcher
+    Reviewer -.->|"subagent"| Researcher
 ```
 
 ---

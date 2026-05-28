@@ -131,21 +131,22 @@ flowchart LR
     Planner -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
-    Planner -.->|"subagent"| Researcher
 
-    Implementer -.->|"subagent"| Researcher
     Implementer -->|"Code review"| Reviewer
     Implementer -->|"Specialized review"| Reviewer
     Implementer -->|"Debug"| Debugger
     Implementer -->|"Re-plan"| Planner
 
-    Reviewer -.->|"subagent"| Researcher
     Reviewer -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
     Reviewer -->|"Revise spec"| Planner
     Reviewer -->|"Re-plan"| Planner
 
     Debugger -->|"Fix bug"| Implementer
+
+    Implementer -.->|"subagent"| Researcher
+    Planner -.->|"subagent"| Researcher
+    Reviewer -.->|"subagent"| Researcher
 ```
 
 ---
