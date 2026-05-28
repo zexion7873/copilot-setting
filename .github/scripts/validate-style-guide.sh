@@ -201,19 +201,18 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
   if [ -n "$handoff_agents" ]; then
     while IFS= read -r target_agent; do
       [ -z "$target_agent" ] && continue
-      target_lower=$(echo "$target_agent" | tr '[:upper:]' '[:lower:]')
+      # Case-sensitive match — VS Code handoff buttons require exact agent name (see STYLE-GUIDE rule 6).
       found=false
       for agent_file in "$GITHUB_DIR"/agents/*.agent.md; do
         [ -f "$agent_file" ] || continue
         agent_name="$(fm_value "$agent_file" "name")"
-        agent_lower=$(echo "$agent_name" | tr '[:upper:]' '[:lower:]')
-        if [ "$target_lower" = "$agent_lower" ]; then
+        if [ "$target_agent" = "$agent_name" ]; then
           found=true
           break
         fi
       done
       if [ "$found" = "false" ]; then
-        error "$name: handoff references agent '$target_agent' but no matching agent file found"
+        error "$name: handoff references agent '$target_agent' but no matching agent name found (case-sensitive)"
       fi
     done <<< "$handoff_agents"
   fi
