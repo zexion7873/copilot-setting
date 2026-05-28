@@ -62,9 +62,9 @@ Each category has one job. Content that belongs elsewhere is referenced, not cop
 
 ```mermaid
 flowchart LR
-    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent["🤖 Agent<br/>(Router)"]
-    Agent -->|activates| Skill["⚡ Skill<br/>(Workflow + Output Template)"]
-    Skill -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
+    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent
+    Agent["🤖 Agent<br/>(Router)"] -->|activates| Skill
+    Skill["⚡ Skill<br/>(Workflow + Output Template)"] -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
     Prompt["📋 Prompt<br/>(Shortcut)"] -->|"manual /prompt-name"| Standalone["Standalone execution"]
 ```
 

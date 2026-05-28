@@ -62,9 +62,9 @@ my-workspace.code-workspace
 
 ```mermaid
 flowchart LR
-    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent["🤖 Agent<br/>(調度)"]
-    Agent -->|啟動| Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"]
-    Skill -->|規則| Instruction["📏 Instruction<br/>(規則)"]
+    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent
+    Agent["🤖 Agent<br/>(調度)"] -->|啟動| Skill
+    Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"] -->|規則| Instruction["📏 Instruction<br/>(規則)"]
     Prompt["📋 Prompt<br/>(快捷指令)"] -->|"手動 /prompt-name"| Standalone["獨立執行"]
 ```
 
