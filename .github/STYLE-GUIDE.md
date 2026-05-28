@@ -2,7 +2,7 @@
 
 Canonical format for every file type under `.github/`. All files MUST follow these skeletons. Format changes require updating this guide first.
 
-## Five Categories
+## Categories
 
 | Category | Role | Responsibility |
 |---|---|---|
@@ -54,7 +54,6 @@ Agent (embeds coding standards) ──activates──→ Skill (embeds output te
 | Agent → Skill | ✅ | Skill Activation table: `skill-name` |
 | Agent → self (Coding Standards) | ✅ | Code-touching agents embed condensed rules directly |
 | Skill → Skill | ✅ | Handoffs section only: `→ code-review skill` |
-| Agent → self (Coding Standards) | ✅ | Coding rules embedded within the agent file |
 
 ### Navigational back-references (pointing readers to context)
 
@@ -138,7 +137,7 @@ Skip delegation when <condition>.
    - `Workflow` — process description (only if not fully covered by skills)
    - `Constraints` — constraints list
    - `Handoff Guidance` — when to hand off to other agents (always last body section)
-5. **Lightweight agents** (subagents like `researcher`): may use a minimal structure (`Rules` + `Output Format`) instead of the full skeleton. Frontmatter must still be complete.
+5. **Lightweight agents** (subagents like `researcher`): may use a minimal structure instead of the full skeleton. Minimum required sections: `## Rules` (behavioral constraints) + `## Output Format` (response structure). Omit `Skill Activation`, `Subagent Delegation`, `Coding Standards`, `Constraints`, and `Handoff Guidance`. Frontmatter must still include all required fields (`name`, `description`, `model`, `tools`).
 6. **Handoff target validation**: every `handoffs[].agent` value must match an existing agent `name` (case-sensitive). A typo silently breaks the VS Code handoff button — there is no runtime error.
 7. **Handoff format** (when `handoffs` is present in frontmatter):
    - `label`: short imperative phrase (≤ 10 characters). Chinese preferred for consistency with `copilot-instructions.md` response language; English acceptable for widely recognized terms (e.g., `Code Review`).
@@ -260,6 +259,17 @@ description: '<One-sentence task description starting with an imperative verb.>'
 ---
 ```
 
+The `agent` field sets execution context — which agent runs the prompt. Valid values:
+
+| Value | Meaning |
+|---|---|
+| `agent` | Built-in Agent mode (can use tools) — **use this as the default** |
+| `ask` | Built-in Ask mode (no tools, pure Q&A) |
+| `plan` | Built-in Plan mode |
+| `<custom-agent-name>` | Binds to a custom agent defined in `agents/*.agent.md` (inherits its tools and instructions) |
+
+If omitted, the current agent is used; if `tools` are specified, the default falls back to `agent`. See [VS Code docs](https://code.visualstudio.com/docs/copilot/customization/prompt-files) for full specification.
+
 ### Body Skeleton
 
 ```markdown
@@ -368,14 +378,18 @@ What is machine-checked vs. what requires human review.
 
 These are enforced automatically on every PR that touches `.github/**/*.md`.
 
-
 - Skill frontmatter has `name` + `description`
 - Skill `name` matches its parent directory name
 - Skill `description` ≤ 1024 characters
 - Skill `description` contains required markers (`Use when`, `Triggers on:`, `Do NOT use`) — exempted for `disable-model-invocation: true` skills
+- Skill H1 contains `— Workflow`
 - No `tools` field in skill frontmatter
 - Prompt frontmatter has `agent` + `description`
+- Prompt `agent` value is a valid built-in mode (`agent`, `ask`, `plan`) or an existing custom agent name
+- Prompt filename follows `<verb>-<object>.prompt.md` pattern (lowercase, hyphen-separated, at least one hyphen)
+- Prompt body contains no Markdown headings (`#`)
 - Agent frontmatter has `name`, `description`, `model`, `tools`
+- Code-touching agents (`implementer`, `reviewer`, `debugger`) have `## Coding Standards` section
 - Agent `handoffs[].agent` values reference existing agent names
 - All canonical cross-references (`` `skills/...` ``, `` `prompts/...` ``, `` `agents/...` ``) resolve to existing files
 
@@ -383,8 +397,6 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 
 These require manual verification. Reviewers should check:
 
-- [ ] H1 follows category naming convention
-- [ ] Code-touching agents (`implementer`, `reviewer`, `debugger`) have `## Coding Standards` section
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories (agent Coding Standards is the only sanctioned duplication between agents)
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)

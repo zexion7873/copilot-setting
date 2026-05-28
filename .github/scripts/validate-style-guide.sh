@@ -84,6 +84,12 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
     fi
   fi
 
+  h1_line="$(awk 'BEGIN{found=0} /^---$/{found++; next} found>=2 && /^# /{print; exit}' "$file")"
+  if ! echo "$h1_line" | grep -q '— Workflow'; then
+    error "skills/$dir_name/SKILL.md: H1 must contain '— Workflow' (found: '$h1_line')"
+    format_ok=false
+  fi
+
   if [ "$skill_name" = "$dir_name" ] && [ "$desc_len" -le 1024 ] && ! fm_has_key "$file" "tools" && [ "$format_ok" = "true" ]; then
     if [ "$manual_only" = "true" ]; then
       pass "skills/$dir_name/SKILL.md ($desc_len chars, manual-only)"
@@ -117,10 +123,12 @@ fi
 echo ""
 
 echo "📋 Prompts"
+BUILTIN_AGENT_MODES="agent ask plan"
 if [ -d "$GITHUB_DIR/prompts" ]; then
   for file in "$GITHUB_DIR"/prompts/*.prompt.md; do
     [ -f "$file" ] || continue
     name="$(basename "$file")"
+    prompt_errors_start=$ERRORS
 
     if ! fm_has_key "$file" "agent"; then
       error "$name: missing 'agent' in frontmatter"
@@ -130,7 +138,44 @@ if [ -d "$GITHUB_DIR/prompts" ]; then
       error "$name: missing 'description' in frontmatter"
     fi
 
-    if fm_has_key "$file" "agent" && fm_has_key "$file" "description"; then
+    if fm_has_key "$file" "agent"; then
+      agent_val="$(fm_value "$file" "agent")"
+      is_valid=false
+      for mode in $BUILTIN_AGENT_MODES; do
+        [ "$agent_val" = "$mode" ] && is_valid=true && break
+      done
+      if [ "$is_valid" = "false" ]; then
+        for agent_file in "$GITHUB_DIR"/agents/*.agent.md; do
+          [ -f "$agent_file" ] || continue
+          agent_name="$(fm_value "$agent_file" "name")"
+          if [ "$agent_val" = "$agent_name" ]; then
+            is_valid=true
+            break
+          fi
+        done
+      fi
+      if [ "$is_valid" = "false" ]; then
+        error "$name: agent='$agent_val' is not a built-in mode (agent/ask/plan) and does not match any custom agent name"
+      fi
+    fi
+
+    stem="${name%.prompt.md}"
+    if ! echo "$stem" | grep -qE '^[a-z][a-z0-9]*-[a-z0-9-]+$'; then
+      error "$name: filename must be <verb>-<object>.prompt.md (lowercase, hyphen-separated, at least one hyphen)"
+    fi
+
+    body="$(sed '1,/^---$/!d; 1,/^---$/d' "$file" | sed '/^---$/,$d')"
+    if [ -z "$body" ]; then
+      body="$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$file")"
+      body="$(awk 'BEGIN{found=0} /^---$/{found++; next} found>=2{print}' "$file")"
+    fi
+    if awk 'BEGIN{found=0} /^---$/{found++; next} found>=2 && /^#{1,6} /{exit 1}' "$file"; then
+      :
+    else
+      error "$name: prompt body must not contain Markdown headings (#)"
+    fi
+
+    if [ "$ERRORS" -eq "$prompt_errors_start" ]; then
       pass "$name"
     fi
   done
@@ -190,7 +235,7 @@ echo "🔗 Cross-References"
 xref_errors_start=$ERRORS
 while IFS= read -r file; do
   rel_file="${file#$REPO_ROOT/}"
-  refs=$(grep -oE '`(skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
+  refs=$(grep -oE '`(skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md|prompts/[^`*<>]+\.prompt\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
   [ -z "$refs" ] && continue
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue

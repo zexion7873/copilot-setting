@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: 'Conventional commit message generation and staging.'
+description: '⚠️ MANUAL ONLY — invoke ONLY via /git-commit. NEVER auto-trigger. Use when committing changes with conventional commit format and intelligent staging.'
 disable-model-invocation: true
 ---
 

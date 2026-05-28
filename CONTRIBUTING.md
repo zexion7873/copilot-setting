@@ -16,18 +16,18 @@ Each category has one job. Content that belongs elsewhere must be delegated, not
 
 | Category | Path | Responsibility |
 |---|---|---|
-| Instructions | `instructions/*.instructions.md` | Coding conventions (auto-applied by `applyTo` glob) |
-| Agents | `agents/*.agent.md` | Routing and handoffs |
-| Skills | `skills/*/SKILL.md` | Workflow execution (output templates embedded) |
+| Agents | `agents/*.agent.md` | Router + coding standards, workflow activation, handoffs |
+| Skills | `skills/*/SKILL.md` | Step-by-step workflow with embedded output templates |
 | Prompts | `prompts/*.prompt.md` | Lightweight single-task shortcuts |
+| Hooks | `hooks/` | Block dangerous commands before agent tool execution |
 
 Canonical format for each category is defined in [STYLE-GUIDE.md](.github/STYLE-GUIDE.md).
 
 ## Rules
 
-- Instructions must not duplicate skill workflow content (and vice versa)
+- Agents carry coding standards directly (deterministic loading); skills are pure workflow — no embedded rule content
 - Skills embed output templates directly — prompts are lightweight shortcuts, not templates
-- Cross-references use relative paths from `.github/` (e.g., `instructions/sql.instructions.md`)
+- Cross-references use backtick-wrapped relative paths from `.github/` (e.g., `` `skills/plan/SKILL.md` ``, `` `agents/planner.agent.md` ``)
 - Skill `name` field must match its parent directory name
 - Skill `description` max 1024 characters
 
