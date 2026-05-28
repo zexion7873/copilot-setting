@@ -50,13 +50,13 @@ my-workspace.code-workspace
 
 Just pick an **agent** — everything else loads automatically.
 
-| Category | Role | Responsibility | When it loads |
-|---|---|---|---|
-| **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
-| **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
-| **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
-| **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
-| **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
+|   | Category | Role | Responsibility | When it loads |
+|:-:|---|---|---|---|
+| 📏 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
+| 🤖 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
+| ⚡ | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
+| 📋 | **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
+| 🛡️ | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
 Each category has one job. Content that belongs elsewhere is referenced, not copied.
 
@@ -128,23 +128,23 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
 flowchart LR
-    Planner -->|"Review SDD"| Reviewer
+    Planner["📐 Planner"] -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
 
-    Implementer -->|"Code review"| Reviewer
+    Implementer["🔨 Implementer"] -->|"Code review"| Reviewer
     Implementer -->|"Specialized review"| Reviewer
     Implementer -->|"Debug"| Debugger
     Implementer -->|"Re-plan"| Planner
 
-    Reviewer -->|"Fix issues"| Implementer
+    Reviewer["🔍 Reviewer"] -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
     Reviewer -->|"Revise spec"| Planner
     Reviewer -->|"Re-plan"| Planner
 
-    Debugger -->|"Fix bug"| Implementer
+    Debugger["🐛 Debugger"] -->|"Fix bug"| Implementer
 
-    Implementer -.->|"subagent"| Researcher
+    Implementer -.->|"subagent"| Researcher["📚 Researcher"]
     Planner -.->|"subagent"| Researcher
     Reviewer -.->|"subagent"| Researcher
 ```

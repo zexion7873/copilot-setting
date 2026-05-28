@@ -50,13 +50,13 @@ my-workspace.code-workspace
 
 只需選擇 **agent**，其餘資源會自動載入。
 
-| 類別 | 角色 | 職責邊界 | 何時載入 |
-|---|---|---|---|
-| **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
-| **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
-| **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
-| **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
-| **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
+|   | 類別 | 角色 | 職責邊界 | 何時載入 |
+|:-:|---|---|---|---|
+| 📏 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
+| 🤖 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
+| ⚡ | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
+| 📋 | **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
+| 🛡️ | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
 每個類別只做一件事。需要別人的內容就引用，不複製。
 
@@ -128,23 +128,23 @@ Agent 間可互相交接任務，形成協作工作流：
 
 ```mermaid
 flowchart LR
-    Planner -->|"審查 SDD"| Reviewer
+    Planner["📐 Planner"] -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
 
-    Implementer -->|"Code Review"| Reviewer
+    Implementer["🔨 Implementer"] -->|"Code Review"| Reviewer
     Implementer -->|"專項審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
-    Reviewer -->|"修復問題"| Implementer
+    Reviewer["🔍 Reviewer"] -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
     Reviewer -->|"修改規格"| Planner
     Reviewer -->|"重新規劃"| Planner
 
-    Debugger -->|"修復 Bug"| Implementer
+    Debugger["🐛 Debugger"] -->|"修復 Bug"| Implementer
 
-    Implementer -.->|"subagent"| Researcher
+    Implementer -.->|"subagent"| Researcher["📚 Researcher"]
     Planner -.->|"subagent"| Researcher
     Reviewer -.->|"subagent"| Researcher
 ```
