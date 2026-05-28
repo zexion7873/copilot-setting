@@ -204,6 +204,7 @@ Skip delegation when <condition>.
 ---
 name: <skill-name>
 description: '<Three-part description following the structure below.>'
+disable-model-invocation: true    # optional — manual-only skills (invoked solely via /<skill-name>)
 ---
 ```
 
@@ -242,8 +243,11 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 ```markdown
 # <Skill Name> — Workflow
 
-<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> Key rules (fallback for agent chat context when instructions are not auto-loaded):
+<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> For code-touching skills, follow with the two-layer fallback block (rule 4): first the named canonical instruction files, then the condensed floor introduced by `Key rules (fallback for agent chat):` with **≥ 5** bold-labeled bullets. Non-code-touching skills omit this block.
 
+- **<Category>**: <inline rule summary>
+- **<Category>**: <inline rule summary>
+- **<Category>**: <inline rule summary>
 - **<Category>**: <inline rule summary>
 - **<Category>**: <inline rule summary>
 
@@ -273,7 +277,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 
 Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
-1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required, no other fields. No `tools` in skill frontmatter (tools belong on agents).
+1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required. The only optional field is `disable-model-invocation: true`, for manual-only skills that must never auto-trigger (e.g., `git-commit`). No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). **Exception**: `refactor` and `git-commit` are reference+process hybrids where Phase N format would damage readability — they keep their organic structure but must still use `— Workflow` in the H1.
 3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `instructions/sql.instructions.md`). The fallback block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
 4. **Fallback rules block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`). Two layers: (a) a **named list of the canonical instruction files** the skill maps to — name specific files, not the `*` glob, so an agent with file access can open them directly; and (b) an inline **condensed floor** of the critical non-negotiable rules for when files can't be opened, written as a bullet list with bold category labels (≥5) and introduced by `Key rules (fallback for agent chat):`. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `pom-review` name just theirs).
@@ -428,14 +432,14 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 - Agent frontmatter has `name`, `description`, `model`, `tools`
 - Agent `handoffs[].agent` values reference existing agent names
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
-- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `prompts/...` ``, `` `agents/...` ``) resolve to existing files
+- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files (prompts are standalone shortcuts — not referenced by other files, so not checked here)
 
 ### Tier 2: Human-review (PR review checklist)
 
 These require manual verification. Reviewers should check:
 
 - [ ] H1 follows category naming convention
-- [ ] Fallback rules block present on code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`)
+- [ ] Fallback rules block present on code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`)
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories (sanctioned fallback rules excepted)
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
