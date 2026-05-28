@@ -17,6 +17,8 @@ If you cannot open files, Key rules (fallback for agent chat):
 - **SQL (DML safety)**: parameterize with `?` / `:named`; batch large `UPDATE` / `DELETE`; never unbounded writes
 - **SQL (DDL safety)**: online schema change on large tables; new columns nullable or DB-default
 - **SQL (JDBC/HQL)**: `?` placeholders or named parameters — zero string concatenation
+- **Rollback**: every up-migration needs a paired rollback script; drops go through rename-then-drop over two releases
+- **InnoDB / charset**: `ENGINE=InnoDB`, `utf8mb4`; FK naming `fk_<child>_<parent_col>`; `RESTRICT` default
 
 Focus: rollback safety, data-loss risk, lock duration on production-sized tables, FK and index consistency, and backward compatibility with running app instances during deploy.
 

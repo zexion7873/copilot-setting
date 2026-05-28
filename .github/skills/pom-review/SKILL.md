@@ -17,6 +17,8 @@ If you cannot open files, Key rules (fallback for agent chat):
 - **XML / Maven**: pin every `<plugin>` version; centralize versions in `<dependencyManagement>`; no `LATEST` / `RELEASE` / release-build `SNAPSHOT`
 - **Java 8 target**: `maven-compiler-plugin` source/target = `1.8`
 - **No-heredoc**: edit `pom.xml` with file tools, never terminal heredoc / redirection
+- **Scope discipline**: `<scope>test</scope>` for JUnit/Mockito; `<scope>provided</scope>` for servlet-api; no test jars on runtime classpath
+- **CVE awareness**: compare key dependency versions (Jackson, Log4j, Spring, Commons) against published CVEs; flag any version older than last patched-CVE release
 
 Focus: dependency hygiene (versions, scopes, conflicts), known-CVE versions, build plugin pinning, SNAPSHOT discipline, and project metadata consistency.
 

@@ -142,8 +142,8 @@ for skill in $FALLBACK_REQUIRED_SKILLS; do
     continue
   fi
   bullet_count=$(grep -cE '^- \*\*' "$file" || true)
-  if [ "$bullet_count" -lt 3 ]; then
-    error "skills/$skill/SKILL.md: condensed floor has only $bullet_count bold-labeled bullets (expected >= 3)"
+  if [ "$bullet_count" -lt 5 ]; then
+    error "skills/$skill/SKILL.md: condensed floor has only $bullet_count bold-labeled bullets (expected >= 5)"
   fi
   # Layer 1: must name at least one specific instruction file (not just the *.glob)
   if ! grep -qE '`instructions/[a-z][a-z-]*\.instructions\.md`' "$file"; then

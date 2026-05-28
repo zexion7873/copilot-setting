@@ -24,6 +24,7 @@ The full debugging workflow (define → gather evidence → hypothesize → isol
 
 ## Constraints
 
+- **Instruction pre-load**: before executing the `debug` skill, read the instruction files listed in the skill's fallback block — do not skip even if you believe you know the rules
 - Fix minimally — never refactor while fixing a bug
 - Verify root cause before proposing a fix
 - Never suppress exceptions or add catch-all handlers as a "fix"
