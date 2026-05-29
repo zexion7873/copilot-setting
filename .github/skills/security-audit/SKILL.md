@@ -13,14 +13,6 @@ OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.
 - `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **Injection**: `PreparedStatement` / `:named` params; `<c:out>` for all JSP output
-- **Auth & session**: new session ID on login; `HttpOnly` + `Secure` + `SameSite=Strict` cookies
-- **Exposure**: no stack traces in responses; deny-by-default access control
-- **Cryptography**: Argon2/bcrypt for passwords (never MD5/SHA-1); AES-256 at rest; no hardcoded secrets
-- **SSRF / deserialization**: allow-list hosts/ports for user-supplied URLs; reject untrusted `ObjectInputStream`
-
 ## Phase 1 — Map Attack Surface
 
 1. Identify entry points: servlets, controllers, API endpoints, file uploads

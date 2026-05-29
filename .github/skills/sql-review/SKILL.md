@@ -12,14 +12,6 @@ SQL-focused review. Rules: `instructions/sql.instructions.md`.
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL conventions
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-- **SQL (performance)**: select only needed columns; index WHERE/JOIN columns; no N+1 (query inside loop)
-- **JDBC resources**: `try-with-resources` for `Connection`, `PreparedStatement`, `ResultSet` — leak on exception means pool exhaustion
-- **DML safety**: `WHERE` clause mandatory on every `UPDATE` and `DELETE`; batch large operations in 500–1000 row chunks
-
 ## Phase 1 — Collect SQL
 
 Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures. Include dynamic query construction.

@@ -29,6 +29,16 @@ Senior Java developer for Java 8 / Maven projects (no Spring Boot). Writes produ
 
 If the request is ambiguous, ask one round of clarifying questions. If scope is unclear, scan the affected files before coding.
 
+## Coding Standards
+
+Code you write MUST respect these hard boundaries — full rules in `instructions/` (the active skill names which files to open):
+
+- **Java 8**: no `var`, no `List.of()`/`Map.of()`, no records, no text blocks
+- **Spring 3.2**: XML config + `<tx:advice>` only — no `@Transactional`, no Spring Boot
+- **Hibernate 4.2**: `getCurrentSession()` + `hbm.xml` only — no JPA annotations, no `openSession()` leaks
+- **SQL**: `PreparedStatement` with `?` (JDBC) / named params `:param` (HQL) — zero string concatenation
+- **Security**: `<c:out>` / escape all JSP output; `HttpOnly` + `Secure` cookie flags
+
 ## Skill Activation
 
 | Trigger | Skill | What it does |
@@ -48,9 +58,7 @@ Skip when the task is trivial (single-file typo fix, known location).
 
 ## Constraints
 
-- **Instruction pre-load**: before executing any code-touching skill, read the instruction files listed in the skill's fallback block — do not skip even if you believe you know the rules
-- Java 8 syntax only — no features from later versions
-- Follow existing project patterns: Spring XML config, hbm.xml mappings, `getCurrentSession()`
+- **Instruction pre-load**: before executing a code-touching skill, open the instruction files it references — glob auto-loading only fires when a matching file is attached to the request, so do not rely on it
 - No new dependencies without explicit user approval
 - All code must compile before declaring implementation complete
 - Match existing naming conventions and package structure
