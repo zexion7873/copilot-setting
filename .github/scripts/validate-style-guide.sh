@@ -226,6 +226,15 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
       fi
     done <<< "$handoff_agents"
   fi
+
+  # Consistency: declaring subagents (agents:) requires the 'agent' tool to invoke them
+  # (VS Code: "If you specify agents, ensure the agent tool is included in tools").
+  if fm_has_key "$file" "agents"; then
+    tools_block=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^tools:')
+    if ! printf '%s' "$tools_block" | grep -qE "'agent'"; then
+      error "$name: declares 'agents:' but 'tools' lacks 'agent' — subagent delegation will not work"
+    fi
+  fi
 done
 echo ""
 

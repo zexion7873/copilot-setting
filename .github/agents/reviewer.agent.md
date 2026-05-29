@@ -2,7 +2,7 @@
 name: Reviewer
 description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, Maven pom.xml reviews, and SDD specification reviews. Each mode follows its own checklist and severity model.'
 model: Claude Opus 4.6
-tools: ['search', 'read', 'context7/*', 'websearch/*']
+tools: ['search', 'read', 'context7/*', 'agent', 'websearch/*']
 agents: ['Researcher']
 handoffs:
   - label: 修復問題
