@@ -44,7 +44,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
-| Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | File matching `applyTo` glob is focused |
+| Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is in the chat context (agent is working on it); `applyTo: "**"` loads on every request |
 | Agents | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
 | Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Prompts | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) carry a two-layer fallback near the top of `SKILL.md`: (1) a **named list of the canonical instruction files** the skill maps to, so an agent with file access can open them directly; and (2) an inline **condensed floor** of the critical non-negotiable rules for when files can't be opened. Each skill names only the instruction files relevant to its domain. This is the only sanctioned duplication — keep the floor short and treat the instruction file as canonical.
+**Fallback rules exception:** Instruction files auto-load when a file matching their `applyTo` glob is in the chat context (i.e. the agent is working on it — not merely focused in the editor); `applyTo: "**"` loads unconditionally. However, if the task involves no matching file in context (e.g. a pure chat question with no attached file), the glob trigger won't fire. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) carry a two-layer fallback near the top of `SKILL.md` as belt-and-suspenders: (1) a **named list of the canonical instruction files** the skill maps to, so an agent with file access can open them directly; and (2) an inline **condensed floor** of the critical non-negotiable rules for when no matching files are in context. Each skill names only the instruction files relevant to its domain. This is the only sanctioned duplication — keep the floor short and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
