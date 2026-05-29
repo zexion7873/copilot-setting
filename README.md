@@ -52,7 +52,7 @@ Just pick an **agent** — everything else loads automatically.
 
 |   | Category | Role | Responsibility | When it loads |
 |:-:|---|---|---|---|
-| 📏 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
+| 📏 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | `applyTo` glob matches a file in request context; core rules also embedded in code-touching agents |
 | 🤖 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
 | ⚡ | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
 | 📋 | **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
@@ -69,7 +69,7 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+> **Agent chat caveat:** `applyTo` instructions load only when a matching file is in the request context (attached via `#file:` or the editor), evaluated at request time — files the agent reads mid-task do not retroactively trigger them. To cover `@agent` use without an attached file, the hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards`; code-touching skills additionally name the instruction files they map to.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.

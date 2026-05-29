@@ -52,7 +52,7 @@ my-workspace.code-workspace
 
 |   | 類別 | 角色 | 職責邊界 | 何時載入 |
 |:-:|---|---|---|---|
-| 📏 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
+| 📏 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | request context 內有符合 `applyTo` glob 的檔案；核心規則另內嵌於程式碼相關 agent |
 | 🤖 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
 | ⚡ | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
 | 📋 | **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
@@ -69,7 +69,7 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill 內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Agent chat 注意事項：** `applyTo` instruction 只在符合的檔案於 request 當下進入 context 時才載入（透過 `#file:` 或編輯器附加），且是 request 送出當下的靜態評估——agent 執行過程中才讀到的檔案不會回溯觸發。為了涵蓋 `@agent` 沒有附檔的情況，硬邊界規則（Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / 資安）直接內嵌在涉及程式碼的 agent（`implementer`、`reviewer`、`debugger`）的 `## Coding Standards` 區段；涉及程式碼的 skill 另外列出對應的 instruction 檔。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
