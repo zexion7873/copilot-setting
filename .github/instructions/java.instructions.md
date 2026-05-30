@@ -20,7 +20,7 @@ This project is Java 8. AI models default to modern Java — correct that here.
 
 - Return type only — never field, parameter, or collection element
 - `orElse()` for cheap defaults; `orElseGet()` for expensive computation
-- `orElseThrow()` over `.get()` — `.get()` throws cryptic `NoSuchElementException`
+- `orElseThrow(SomeException::new)` over `.get()` — `.get()` throws cryptic `NoSuchElementException`. Note: Java 8 requires the supplier form `orElseThrow(() -> new ...)` — the no-arg `orElseThrow()` is Java 10+.
 
 ## Streams
 

@@ -119,7 +119,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skills, mode-routed by review type |
-| 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
+| 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
 ### 🤝 Agent Handoffs Workflow
@@ -223,24 +223,24 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 ```text
-~/.github/
+.github/
 ├── copilot-instructions.md                ← Global base instructions
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
-│   ├── java
-│   ├── spring-hibernate
-│   ├── sql
-│   ├── security
-│   ├── jsp
-│   ├── xml-config
-│   └── no-heredoc
+│   ├── java.instructions.md
+│   ├── spring-hibernate.instructions.md
+│   ├── sql.instructions.md
+│   ├── security.instructions.md
+│   ├── jsp.instructions.md
+│   ├── xml-config.instructions.md
+│   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← Invoke via @agent-name in chat
-│   ├── planner              (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
-│   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
-│   └── researcher           (Claude Haiku 4.5)
+│   ├── planner.agent.md              (Claude Opus 4.6)
+│   ├── implementer.agent.md          (GPT-5.3-Codex)
+│   ├── reviewer.agent.md             (Claude Opus 4.6)
+│   ├── debugger.agent.md             (Claude Opus 4.6)
+│   └── researcher.agent.md           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json
@@ -248,11 +248,11 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │       └── block-dangerous-commands.sh
 │
 ├── prompts/                               ← Lightweight single-task shortcuts (/prompt-name)
-│   ├── explain-this
-│   ├── find-impact
-│   ├── check-n-plus-1
-│   ├── generate-migration-sql
-│   └── check-tx
+│   ├── explain-this.prompt.md
+│   ├── find-impact.prompt.md
+│   ├── check-n-plus-1.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── check-tx.prompt.md
 │
 └── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/

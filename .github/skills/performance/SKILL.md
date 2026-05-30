@@ -50,3 +50,4 @@ If the user has not measured yet, **stop and ask them to profile first**.
 - → `sql-review` skill — for deep SQL / index analysis
 - → `debug` skill — if the performance problem is actually a bug
 - → `refactor` skill — if optimization requires structural change
+- ← `@implementer` — when performance mode is activated

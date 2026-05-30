@@ -51,5 +51,8 @@ Before writing new code, find and follow existing patterns:
 - → `@reviewer` — for code review after implementation
 - → `debug` skill — if implementation reveals a bug
 - → `refactor` skill — if existing code needs restructuring first
+- ← `clarify-task` skill — after ambiguity resolved, proceed to implementation
+- ← `sdd` skill — implement features specified in the SDD
+- ← `refactor` skill — if refactoring reveals need for new code
 - ← `@implementer` — default activation
 - ← `tasks` skill — executing a task list

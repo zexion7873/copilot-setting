@@ -1,6 +1,6 @@
 ---
 name: Researcher
-description: 'Lightweight read-only research subagent — searches codebase and external docs, returns structured summaries. Designed as a subagent for @implementer and @planner; can also be invoked directly via @researcher.'
+description: 'Lightweight read-only research subagent — searches codebase and external docs, returns structured summaries. Designed as a subagent for @implementer, @planner, and @reviewer; can also be invoked directly via @researcher.'
 model: Claude Haiku 4.5
 tools: ['search', 'read', 'web/fetch', 'context7/*', 'websearch/*']
 ---

@@ -71,3 +71,5 @@ Summary: `Queries reviewed: N | Findings: N critical, N major, N minor, N nit | 
 - → `@implementer` — to fix SQL findings
 - ← `@reviewer` — SQL review mode activated
 - ← `code-review` skill — code review finds SQL issues
+- ← `performance` skill — when performance issue is SQL-related
+- ← `schema-migration-review` skill — when migration review finds SQL issues

@@ -58,3 +58,4 @@ Fix: <specific remediation>
 - → `@implementer` — to fix security findings
 - ← `@reviewer` — when security mode is activated
 - ← `code-review` skill — when code review finds security concerns
+- ← `pom-review` skill — if a CVE finding needs runtime exploit verification

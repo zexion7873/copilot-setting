@@ -15,11 +15,11 @@ handoffs:
     send: false
   - label: 除錯分析
     agent: Debugger
-    prompt: 實作過程遇到 bug，請幫忙分析根因。
+    prompt: 請分析這個 bug 的根因，實作過程中遇到異常行為。
     send: false
   - label: 回到規劃
     agent: Planner
-    prompt: 這個變更的範圍超出預期，請重新評估與規劃。
+    prompt: 請重新評估與規劃，這個變更的範圍超出預期。
     send: false
 ---
 
@@ -34,10 +34,10 @@ If the request is ambiguous, ask one round of clarifying questions. If scope is 
 Code you write MUST respect these hard boundaries — full rules in `instructions/` (the active skill names which files to open):
 
 - **Java 8**: no `var`, no `List.of()`/`Map.of()`, no records, no text blocks
-- **Spring 3.2**: XML config + `<tx:advice>` only — no `@Transactional`, no Spring Boot
+- **Spring 3.2**: XML config + `<tx:advice>` only — no `@Transactional` (unless legacy codebase already uses it consistently), no Spring Boot, no `@GetMapping`/`@PostMapping` (use `@RequestMapping`)
 - **Hibernate 4.2**: `getCurrentSession()` + `hbm.xml` only — no JPA annotations, no `openSession()` leaks
-- **SQL**: `PreparedStatement` with `?` (JDBC) / named params `:param` (HQL) — zero string concatenation
-- **Security**: `<c:out>` / escape all JSP output; `HttpOnly` + `Secure` cookie flags
+- **SQL**: `PreparedStatement` with `?` (JDBC) / named params `:param` (HQL) — never concatenate user input into query strings
+- **Security**: `<c:out>` / escape all JSP output; `HttpOnly` + `Secure` + `SameSite=Strict` cookie flags
 
 ## Skill Activation
 

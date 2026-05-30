@@ -40,11 +40,12 @@ Binary search on execution path: entry → failure point → check midpoint → 
 
 Before fixing: does the cause explain ALL symptoms? Is this the ROOT cause or a symptom? Could the same cause affect other code?
 
-## Phase 6 — Fix Minimally
+## Phase 6 — Propose Minimal Fix
 
-- Fix only the root cause; do not refactor in a bugfix
-- Smallest possible diff
+- Specify the minimal fix for the root cause; do not propose refactoring in a bugfix
+- Aim for the smallest possible diff
 - Search for same pattern elsewhere; log as separate findings
+- Hand off to `@implementer` for actual code changes
 
 ## Handoffs
 

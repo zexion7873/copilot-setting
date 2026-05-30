@@ -119,7 +119,7 @@ flowchart LR
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skill，依審查類型分流 |
-| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
+| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
 ### 🤝 Agent Handoffs Workflow
@@ -223,24 +223,24 @@ flowchart LR
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 ```text
-~/.github/
+.github/
 ├── copilot-instructions.md                ← 全域基礎指示
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── java
-│   ├── spring-hibernate
-│   ├── sql
-│   ├── security
-│   ├── jsp
-│   ├── xml-config
-│   └── no-heredoc
+│   ├── java.instructions.md
+│   ├── spring-hibernate.instructions.md
+│   ├── sql.instructions.md
+│   ├── security.instructions.md
+│   ├── jsp.instructions.md
+│   ├── xml-config.instructions.md
+│   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
-│   ├── planner              (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
-│   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
-│   └── researcher           (Claude Haiku 4.5)
+│   ├── planner.agent.md              (Claude Opus 4.6)
+│   ├── implementer.agent.md          (GPT-5.3-Codex)
+│   ├── reviewer.agent.md             (Claude Opus 4.6)
+│   ├── debugger.agent.md             (Claude Opus 4.6)
+│   └── researcher.agent.md           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json
@@ -248,11 +248,11 @@ flowchart LR
 │       └── block-dangerous-commands.sh
 │
 ├── prompts/                               ← 輕量快捷指令（/prompt-name）
-│   ├── explain-this
-│   ├── find-impact
-│   ├── check-n-plus-1
-│   ├── generate-migration-sql
-│   └── check-tx
+│   ├── explain-this.prompt.md
+│   ├── find-impact.prompt.md
+│   ├── check-n-plus-1.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── check-tx.prompt.md
 │
 └── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/

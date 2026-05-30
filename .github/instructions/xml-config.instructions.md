@@ -5,6 +5,8 @@ applyTo: '**/*.xml'
 
 # XML Configuration Conventions
 
+Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xml` mappings, and Maven POM files. Transaction management rules: `instructions/spring-hibernate.instructions.md`.
+
 ## Spring XML
 
 - One config file per concern (e.g., `applicationContext-dao.xml`, `applicationContext-service.xml`)

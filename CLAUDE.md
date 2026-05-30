@@ -98,7 +98,7 @@ This repo intentionally mixes languages. Respect the split:
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /`, `rm -rf .`, `rm -rf *`, `rm -rf ./*`, `--no-preserve-root`, `sudo `, `doas `, `pkexec `, `DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`, `DROP INDEX`, `TRUNCATE `, `git push --force` (any branch), `git reset --hard`, `git clean -fd`, `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /` / `rm -fr /`, `rm -rf .`, `rm -rf *`, `rm -rf ./*`, `--no-preserve-root`, `sudo`, `doas`, `pkexec`, `DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`, `DROP INDEX`, `TRUNCATE`, `git push --force` / `git push -f` (any branch), `git reset --hard`, `git clean -f` (any flag combo containing `-f`), `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
 ## Commit & PR Process
 
@@ -114,6 +114,6 @@ This repo intentionally mixes languages. Respect the split:
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
 | `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review`, `sdd-review` |
 | `@debugger` | Claude Opus 4.6 | `debug` |
-| `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` |
+| `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.
