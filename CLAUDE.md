@@ -20,7 +20,7 @@ The only executable workflow is style-guide validation. Run before committing ch
 bash .github/scripts/validate-style-guide.sh
 ```
 
-This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks: frontmatter on instructions / skills / agents / prompts; that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that each code-touching skill carries its two-layer fallback block (a named-instruction-file reference plus a condensed floor of ≥ 3 bold-labeled rule bullets introduced by `Key rules (fallback ...`); that instruction Anti-Patterns tables use the 3-column `Pattern | Problem | Fix` header; that agent `handoffs[].agent` references resolve; and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`. It checks: frontmatter on instructions / skills / agents / prompts; that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that each code-touching skill names the canonical instruction file(s) it maps to (a `instructions/...` reference), and that each code-touching agent (implementer/reviewer/debugger) embeds a `## Coding Standards` section; that instruction Anti-Patterns tables use the 3-column `Pattern | Problem | Fix` header; that agent `handoffs[].agent` references resolve (matched case-sensitively); and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``) point to real files.
 
 One-time local setup so the validator also runs on `git commit`:
 
@@ -44,7 +44,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
-| Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | File matching `applyTo` glob is focused |
+| Instructions | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment); `applyTo: "**"` loads on every request |
 | Agents | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
 | Skills | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Prompts | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Fallback rules exception:** In agent chat, instruction files only auto-load when a matching file is focused in the editor. So code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) carry a two-layer fallback near the top of `SKILL.md`: (1) a **named list of the canonical instruction files** the skill maps to, so an agent with file access can open them directly; and (2) an inline **condensed floor** of the critical non-negotiable rules for when files can't be opened. Each skill names only the instruction files relevant to its domain. This is the only sanctioned duplication — keep the floor short and treat the instruction file as canonical.
+**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. This embed is the only sanctioned duplication — keep it to the version-lock essentials and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -61,7 +61,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 Per-category key constraints (full rules in STYLE-GUIDE.md):
 
 - **Instructions** — frontmatter is exactly `description` + `applyTo`. H1 is a descriptive title (no filename suffix). Anti-Patterns table is always 3-column `Pattern | Problem | Fix`.
-- **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Body section order is fixed: `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
+- **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Body section order is fixed: `Coding Standards` (code-touching agents only) → `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
 - **Skills** — frontmatter is exactly `name` + `description`. **No `tools` field on skills** (tools belong on agents — validator enforces this). `description` is ≤ 1024 chars and follows the strict three-part format: `Use when …. Triggers on: …. <one-sentence summary>. Do NOT use for …`. H1 is always `<Name> — Workflow`. Skill `name` must match its directory name.
 - **Prompts** — frontmatter is `agent` + `description`. Lightweight single-task shortcuts invoked via `/prompt-name`. Not output templates (those are embedded in skills).
 
@@ -98,7 +98,7 @@ This repo intentionally mixes languages. Respect the split:
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /`, `rm -rf .`, `rm -rf *`, `--no-preserve-root`, `sudo `, `DROP DATABASE`, `DROP SCHEMA`, `TRUNCATE `, `git push --force` (any branch), `git reset --hard`, `git clean -fd`, `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /` / `rm -fr /`, `rm -rf .`, `rm -rf *`, `rm -rf ./*`, `--no-preserve-root`, `sudo`, `doas`, `pkexec`, `DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`, `DROP INDEX`, `TRUNCATE`, `git push --force` / `git push -f` (any branch), `git reset --hard`, `git clean -f` (any flag combo containing `-f`), `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
 ## Commit & PR Process
 
@@ -114,6 +114,6 @@ This repo intentionally mixes languages. Respect the split:
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
 | `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review`, `sdd-review` |
 | `@debugger` | Claude Opus 4.6 | `debug` |
-| `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` |
+| `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.

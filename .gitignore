@@ -34,6 +34,7 @@ dependency-reduced-pom.xml
 
 # AI agent artifacts
 .claude/
+.codegraph/
 .sisyphus/
 
 # Misc

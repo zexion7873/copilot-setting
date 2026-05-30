@@ -121,38 +121,48 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
 done
 echo ""
 
-echo "🛡️  Fallback Rules Block (code-touching skills)"
-# Skills that modify or review Java code carry a two-layer fallback (see
-# CLAUDE.md: "Fallback rules exception"). Instruction files only auto-load when
-# a matching file is focused, so the block is the safety net for agent chat:
-#   (1) a named list of the canonical instruction file(s) the skill maps to, so
-#       an agent with file access can open them directly; and
-#   (2) an inline condensed floor of critical rules for when files can't open.
-# This guards against accidental removal of either layer.
-FALLBACK_REQUIRED_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review pom-review"
-fb_errors_start=$ERRORS
-for skill in $FALLBACK_REQUIRED_SKILLS; do
+echo "🔗 Instruction Reference (code-touching skills)"
+# Skills that modify or review Java code must name the canonical instruction
+# file(s) they map to, so the agent can open them on demand when the skill is
+# triggered. The condensed floor was removed — hard-boundary rules now live in
+# the code-touching agent bodies (## Coding Standards), which load
+# deterministically on agent selection.
+INSTRUCTION_REF_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review pom-review"
+ref_errors_start=$ERRORS
+for skill in $INSTRUCTION_REF_SKILLS; do
   file="$GITHUB_DIR/skills/$skill/SKILL.md"
   if [ ! -f "$file" ]; then
-    error "fallback check: skills/$skill/SKILL.md not found"
+    error "instruction reference check: skills/$skill/SKILL.md not found"
     continue
   fi
-  if ! grep -q "Key rules (fallback" "$file"; then
-    error "skills/$skill/SKILL.md: missing condensed floor (expected intro 'Key rules (fallback ...')"
-    continue
-  fi
-  bullet_count=$(grep -cE '^- \*\*' "$file" || true)
-  if [ "$bullet_count" -lt 3 ]; then
-    error "skills/$skill/SKILL.md: condensed floor has only $bullet_count bold-labeled bullets (expected >= 3)"
-  fi
-  # Layer 1: must name at least one specific instruction file (not just the *.glob)
+  # Must name at least one specific instruction file (not just the *.glob)
   if ! grep -qE '`instructions/[a-z][a-z-]*\.instructions\.md`' "$file"; then
-    error "skills/$skill/SKILL.md: fallback must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`), not only the glob"
+    error "skills/$skill/SKILL.md: must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`)"
   fi
 done
 
-if [ "$ERRORS" -eq "$fb_errors_start" ]; then
-  pass "all code-touching skills have fallback rules block"
+if [ "$ERRORS" -eq "$ref_errors_start" ]; then
+  pass "all code-touching skills reference their instruction files"
+fi
+echo ""
+
+echo "🤖 Agent Coding Standards (code-touching agents)"
+# Hard-boundary rules are embedded in code-touching agent bodies so they load
+# deterministically when the agent is selected (independent of attached files).
+CODE_AGENTS="implementer reviewer debugger"
+ca_errors_start=$ERRORS
+for a in $CODE_AGENTS; do
+  file="$GITHUB_DIR/agents/$a.agent.md"
+  if [ ! -f "$file" ]; then
+    error "agent coding standards check: agents/$a.agent.md not found"
+    continue
+  fi
+  if ! grep -q "^## Coding Standards" "$file"; then
+    error "agents/$a.agent.md: missing '## Coding Standards' section (hard-boundary rules must be embedded)"
+  fi
+done
+if [ "$ERRORS" -eq "$ca_errors_start" ]; then
+  pass "all code-touching agents embed Coding Standards"
 fi
 echo ""
 
@@ -201,21 +211,29 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
   if [ -n "$handoff_agents" ]; then
     while IFS= read -r target_agent; do
       [ -z "$target_agent" ] && continue
-      target_lower=$(echo "$target_agent" | tr '[:upper:]' '[:lower:]')
+      # Case-sensitive match — VS Code handoff buttons require exact agent name (see STYLE-GUIDE rule 6).
       found=false
       for agent_file in "$GITHUB_DIR"/agents/*.agent.md; do
         [ -f "$agent_file" ] || continue
         agent_name="$(fm_value "$agent_file" "name")"
-        agent_lower=$(echo "$agent_name" | tr '[:upper:]' '[:lower:]')
-        if [ "$target_lower" = "$agent_lower" ]; then
+        if [ "$target_agent" = "$agent_name" ]; then
           found=true
           break
         fi
       done
       if [ "$found" = "false" ]; then
-        error "$name: handoff references agent '$target_agent' but no matching agent file found"
+        error "$name: handoff references agent '$target_agent' but no matching agent name found (case-sensitive)"
       fi
     done <<< "$handoff_agents"
+  fi
+
+  # Consistency: declaring subagents (agents:) requires the 'agent' tool to invoke them
+  # (VS Code: "If you specify agents, ensure the agent tool is included in tools").
+  if fm_has_key "$file" "agents"; then
+    tools_block=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^tools:')
+    if ! printf '%s' "$tools_block" | grep -qE "'agent'"; then
+      error "$name: declares 'agents:' but 'tools' lacks 'agent' — subagent delegation will not work"
+    fi
   fi
 done
 echo ""

@@ -152,6 +152,10 @@ handoffs:                          # optional — only if this agent has handoff
 
 <Role description (1–2 sentences). Tech stack context (e.g., "Java 8 / Maven projects"). Ambiguity-handling stance (e.g., "ask clarifying questions before planning").>
 
+## Coding Standards
+
+<Code-touching agents only. Hard-boundary coding rules the agent must enforce on every change.>
+
 ## Skill Activation
 
 | Trigger | Skill | Output |
@@ -181,6 +185,7 @@ Skip delegation when <condition>.
 2. **H1**: `<Name> — <Role Subtitle>`. Subtitle describes the specialist domain (e.g., "Technical Planning & Specification Specialist").
 3. **Opening paragraph**: role description + tech stack context + ambiguity stance.
 4. **Section order** (include only applicable sections, but maintain this order):
+   - `Coding Standards` — hard-boundary coding rules (code-touching agents only)
    - `Skill Activation` — table of trigger → skill → output (all agents that activate skills must have this)
    - `Subagent Delegation` — delegation instructions
    - `Workflow` — process description (only if not fully covered by skills)
@@ -204,6 +209,7 @@ Skip delegation when <condition>.
 ---
 name: <skill-name>
 description: '<Three-part description following the structure below.>'
+disable-model-invocation: true    # optional — manual-only skills (invoked solely via /<skill-name>)
 ---
 ```
 
@@ -242,10 +248,10 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 ```markdown
 # <Skill Name> — Workflow
 
-<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> Key rules (fallback for agent chat context when instructions are not auto-loaded):
+<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> For code-touching skills, follow with the named canonical instruction file(s) the skill maps to (rule 4) — a bullet list of `instructions/...` references the agent opens on demand. Non-code-touching skills omit this block.
 
-- **<Category>**: <inline rule summary>
-- **<Category>**: <inline rule summary>
+- `instructions/<name>.instructions.md` — <what this file covers>
+- `instructions/<name>.instructions.md` — <what this file covers>
 
 ## Phase 1 — <Verb Phrase>
 
@@ -273,10 +279,10 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 
 Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
-1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required, no other fields. No `tools` in skill frontmatter (tools belong on agents).
+1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required. The only optional field is `disable-model-invocation: true`, for manual-only skills that must never auto-trigger (e.g., `git-commit`). No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). **Exception**: `refactor` and `git-commit` are reference+process hybrids where Phase N format would damage readability — they keep their organic structure but must still use `— Workflow` in the H1.
-3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `instructions/sql.instructions.md`). The fallback block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
-4. **Fallback rules block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`). Two layers: (a) a **named list of the canonical instruction files** the skill maps to — name specific files, not the `*` glob, so an agent with file access can open them directly; and (b) an inline **condensed floor** of the critical non-negotiable rules for when files can't be opened, written as a bullet list with bold category labels (≥3) and introduced by `Key rules (fallback for agent chat):`. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `pom-review` name just theirs).
+3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `instructions/sql.instructions.md`). The instruction-reference block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
+4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`). It names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `pom-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) may use topic-based H2 sections instead.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
@@ -396,7 +402,7 @@ exit 0
 | Reference type | Format | Example | Validated? |
 |---|---|---|---|
 | Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql.instructions.md` `` | ✅ CI |
-| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Used in skill fallback intro when depending on all instructions | ❌ |
+| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Avoid in skills — name specific files in the instruction-reference block instead | ❌ |
 | Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` | ✅ CI |
 | Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` | ✅ CI |
 | Agent mention | `` `@agent-name` `` | `` `@implementer` `` | ❌ |
@@ -428,16 +434,18 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 - Agent frontmatter has `name`, `description`, `model`, `tools`
 - Agent `handoffs[].agent` values reference existing agent names
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
-- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `prompts/...` ``, `` `agents/...` ``) resolve to existing files
+- Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
+- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section
+- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files (prompts are standalone shortcuts — not referenced by other files, so not checked here)
 
 ### Tier 2: Human-review (PR review checklist)
 
 These require manual verification. Reviewers should check:
 
 - [ ] H1 follows category naming convention
-- [ ] Fallback rules block present on code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, `performance`)
+- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and has not drifted from `instructions/`
 - [ ] Phase sections use imperative verb phrases
-- [ ] No duplicated content across categories (sanctioned fallback rules excepted)
+- [ ] No duplicated content across categories (the agent-body `## Coding Standards` embed is the only sanctioned exception)
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
 - [ ] Agent Skill Activation table matches the skills that reference that agent
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)

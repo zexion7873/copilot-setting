@@ -14,14 +14,6 @@ Systematic isolation and minimal fix.
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
-- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
-- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-
 ## Phase 1 — Define the Problem
 
 ```
@@ -48,11 +40,12 @@ Binary search on execution path: entry → failure point → check midpoint → 
 
 Before fixing: does the cause explain ALL symptoms? Is this the ROOT cause or a symptom? Could the same cause affect other code?
 
-## Phase 6 — Fix Minimally
+## Phase 6 — Propose Minimal Fix
 
-- Fix only the root cause; do not refactor in a bugfix
-- Smallest possible diff
+- Specify the minimal fix for the root cause; do not propose refactoring in a bugfix
+- Aim for the smallest possible diff
 - Search for same pattern elsewhere; log as separate findings
+- Hand off to `@implementer` for actual code changes
 
 ## Handoffs
 

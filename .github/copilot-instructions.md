@@ -16,6 +16,8 @@
 - **SLF4J 1.7** + Logback
 - **JSP + JSTL 1.2** — view layer
 
+**Hard boundary**: do NOT use APIs, annotations, or patterns from newer versions of these frameworks. When uncertain, read the matching instruction file under `instructions/` before writing code.
+
 ## Coding Philosophy
 
 ### Think Before Coding

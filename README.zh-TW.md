@@ -12,7 +12,7 @@
 
 </div>
 
-GitHub Copilot 的 agentic context engineering——agent 路由工作流、skill 定義流程、instruction 守規範、hook 守執行。
+GitHub Copilot 的 agentic context engineering——agent 路由、skill 執行、instruction 守規範、hook 守安全。
 
 ---
 
@@ -50,26 +50,26 @@ my-workspace.code-workspace
 
 只需選擇 **agent**，其餘資源會自動載入。
 
-| 類別 | 角色 | 職責邊界 | 何時載入 |
-|---|---|---|---|
-| **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | 符合 `applyTo` glob；skill fallback 引用 |
-| **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
-| **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
-| **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
-| **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
+|   | 類別 | 角色 | 職責邊界 | 何時載入 |
+|:-:|---|---|---|---|
+| 📏 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | request context 內有符合 `applyTo` glob 的檔案；核心規則另內嵌於程式碼相關 agent |
+| 🤖 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
+| ⚡ | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
+| 📋 | **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
+| 🛡️ | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
-資源之間互相引用以避免重複 — 每個類別只做一件事，需要別人的內容就引用、不要複製。
+每個類別只做一件事。需要別人的內容就引用，不複製。
 
 ```mermaid
 flowchart LR
-    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent["🤖 Agent<br/>(調度)"]
-    Agent -->|啟動| Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"]
-    Skill -->|規則| Instruction["📏 Instruction<br/>(規則)"]
+    Hook["🛡️ Hooks"] -->|生命週期守衛| Agent
+    Agent["🤖 Agent<br/>(調度)"] -->|啟動| Skill
+    Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"] -->|規則| Instruction["📏 Instruction<br/>(規則)"]
     Prompt["📋 Prompt<br/>(快捷指令)"] -->|"手動 /prompt-name"| Standalone["獨立執行"]
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** Instruction 只在編輯器 focus 到符合的檔案時才自動載入。在 `@agent` 對話中若沒有開啟對應檔案，檔案類型規則（如 `sql`、`spring-hibernate`）可能不會注入。為此，涉及程式碼的 skill（`implement`、`refactor`、`code-review`、`sql-review`、`security-audit`、`performance`、`debug`、`schema-migration-review`、`pom-review`）內建了關鍵規則的 **fallback rules** — 不管開什麼檔案都會生效。
+> **Agent chat 注意事項：** `applyTo` instruction 只在符合的檔案於 request 當下進入 context 時才載入（透過 `#file:` 或編輯器附加），且是 request 送出當下的靜態評估——agent 執行過程中才讀到的檔案不會回溯觸發。為了涵蓋 `@agent` 沒有附檔的情況，硬邊界規則（Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / 資安）直接內嵌在涉及程式碼的 agent（`implementer`、`reviewer`、`debugger`）的 `## Coding Standards` 區段；涉及程式碼的 skill 另外列出對應的 instruction 檔。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
@@ -119,8 +119,8 @@ flowchart LR
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skill，依審查類型分流 |
-| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正並補回歸測試 |
-| 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@implementer` 和 `@planner` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要 |
+| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
+| 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -128,23 +128,25 @@ Agent 間可互相交接任務，形成協作工作流：
 
 ```mermaid
 flowchart LR
-    Planner -->|"審查 SDD"| Reviewer
+    Planner["📐 Planner"] -->|"審查 SDD"| Reviewer
     Planner -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
-    Planner -.->|"subagent"| Researcher
 
-    Implementer -.->|"subagent"| Researcher
-    Implementer -->|"Code Review"| Reviewer
+    Implementer["🔨 Implementer"] -->|"Code Review"| Reviewer
     Implementer -->|"專項審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
-    Reviewer -->|"修復問題"| Implementer
+    Reviewer["🔍 Reviewer"] -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
     Reviewer -->|"修改規格"| Planner
     Reviewer -->|"重新規劃"| Planner
 
-    Debugger -->|"修復 Bug"| Implementer
+    Debugger["🐛 Debugger"] -->|"修復 Bug"| Implementer
+
+    Implementer -.->|"subagent"| Researcher["📚 Researcher"]
+    Planner -.->|"subagent"| Researcher
+    Reviewer -.->|"subagent"| Researcher
 ```
 
 ---
@@ -160,7 +162,7 @@ flowchart LR
 | 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
 | 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 遵循 SDD 規格、探索既有 pattern、自我驗證 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
 | 📦 | `git-commit` | **僅手動** | Conventional Commit 訊息產生與智慧檔案暫存 |
@@ -221,24 +223,24 @@ flowchart LR
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 ```text
-~/.github/
+.github/
 ├── copilot-instructions.md                ← 全域基礎指示
 │
 ├── instructions/                          ← 依 applyTo 規則自動套用
-│   ├── java
-│   ├── spring-hibernate
-│   ├── sql
-│   ├── security
-│   ├── jsp
-│   ├── xml-config
-│   └── no-heredoc
+│   ├── java.instructions.md
+│   ├── spring-hibernate.instructions.md
+│   ├── sql.instructions.md
+│   ├── security.instructions.md
+│   ├── jsp.instructions.md
+│   ├── xml-config.instructions.md
+│   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
-│   ├── planner              (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
-│   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
-│   └── researcher           (Claude Haiku 4.5)
+│   ├── planner.agent.md              (Claude Opus 4.6)
+│   ├── implementer.agent.md          (GPT-5.3-Codex)
+│   ├── reviewer.agent.md             (Claude Opus 4.6)
+│   ├── debugger.agent.md             (Claude Opus 4.6)
+│   └── researcher.agent.md           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json
@@ -246,11 +248,11 @@ flowchart LR
 │       └── block-dangerous-commands.sh
 │
 ├── prompts/                               ← 輕量快捷指令（/prompt-name）
-│   ├── explain-this
-│   ├── find-impact
-│   ├── check-n-plus-1
-│   ├── generate-migration-sql
-│   └── check-tx
+│   ├── explain-this.prompt.md
+│   ├── find-impact.prompt.md
+│   ├── check-n-plus-1.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── check-tx.prompt.md
 │
 └── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/
@@ -265,6 +267,8 @@ flowchart LR
     ├── code-review/
     ├── security-audit/
     ├── sql-review/
+    ├── schema-migration-review/
+    ├── pom-review/
     ├── debug/
     └── performance/
 ```

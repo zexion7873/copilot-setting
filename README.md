@@ -12,7 +12,7 @@
 
 </div>
 
-Agentic context engineering for GitHub Copilot — agents route workflows, skills define processes, instructions enforce conventions, hooks guard execution.
+Agentic context engineering for GitHub Copilot — agents route, skills execute, instructions enforce, hooks guard.
 
 ---
 
@@ -50,26 +50,26 @@ my-workspace.code-workspace
 
 Just pick an **agent** — everything else loads automatically.
 
-| Category | Role | Responsibility | When it loads |
-|---|---|---|---|
-| **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | Matches `applyTo` glob; skill fallback refs |
-| **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
-| **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
-| **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
-| **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
+|   | Category | Role | Responsibility | When it loads |
+|:-:|---|---|---|---|
+| 📏 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | `applyTo` glob matches a file in request context; core rules also embedded in code-touching agents |
+| 🤖 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
+| ⚡ | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
+| 📋 | **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
+| 🛡️ | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
-Resources reference each other to avoid duplication — each category has one job, content that belongs elsewhere is delegated, not copied.
+Each category has one job. Content that belongs elsewhere is referenced, not copied.
 
 ```mermaid
 flowchart LR
-    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent["🤖 Agent<br/>(Router)"]
-    Agent -->|activates| Skill["⚡ Skill<br/>(Workflow + Output Template)"]
-    Skill -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
+    Hook["🛡️ Hooks"] -->|lifecycle guard| Agent
+    Agent["🤖 Agent<br/>(Router)"] -->|activates| Skill
+    Skill["⚡ Skill<br/>(Workflow + Output Template)"] -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
     Prompt["📋 Prompt<br/>(Shortcut)"] -->|"manual /prompt-name"| Standalone["Standalone execution"]
 ```
 
 > [!NOTE]
-> **Agent chat caveat:** Instructions only auto-load when a matching file is focused in the editor. In `@agent` chat without a matching file open, file-type rules (e.g., `sql`, `spring-hibernate`) may not be injected. To compensate, code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `performance`, `debug`, `schema-migration-review`, `pom-review`) include inline **fallback rules** for critical conventions — these apply regardless of which file is focused.
+> **Agent chat caveat:** `applyTo` instructions load only when a matching file is in the request context (attached via `#file:` or the editor), evaluated at request time — files the agent reads mid-task do not retroactively trigger them. To cover `@agent` use without an attached file, the hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards`; code-touching skills additionally name the instruction files they map to.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
@@ -119,8 +119,8 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skills, mode-routed by review type |
-| 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix with regression test |
-| 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@implementer` and `@planner` — searches codebase and external docs, returns structured summaries |
+| 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
+| 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -128,23 +128,25 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
 flowchart LR
-    Planner -->|"Review SDD"| Reviewer
+    Planner["📐 Planner"] -->|"Review SDD"| Reviewer
     Planner -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
-    Planner -.->|"subagent"| Researcher
 
-    Implementer -.->|"subagent"| Researcher
-    Implementer -->|"Code review"| Reviewer
+    Implementer["🔨 Implementer"] -->|"Code review"| Reviewer
     Implementer -->|"Specialized review"| Reviewer
     Implementer -->|"Debug"| Debugger
     Implementer -->|"Re-plan"| Planner
 
-    Reviewer -->|"Fix issues"| Implementer
+    Reviewer["🔍 Reviewer"] -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
     Reviewer -->|"Revise spec"| Planner
     Reviewer -->|"Re-plan"| Planner
 
-    Debugger -->|"Fix bug"| Implementer
+    Debugger["🐛 Debugger"] -->|"Fix bug"| Implementer
+
+    Implementer -.->|"subagent"| Researcher["📚 Researcher"]
+    Planner -.->|"subagent"| Researcher
+    Reviewer -.->|"subagent"| Researcher
 ```
 
 ---
@@ -160,7 +162,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
 | 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
-| 🔨 | `implement` | Auto + Manual | Feature implementation with SDD compliance, pattern discovery, and self-verification |
+| 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
 | 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
@@ -221,24 +223,24 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 <summary><h2>📁 .github/ Directory Structure</h2></summary>
 
 ```text
-~/.github/
+.github/
 ├── copilot-instructions.md                ← Global base instructions
 │
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
-│   ├── java
-│   ├── spring-hibernate
-│   ├── sql
-│   ├── security
-│   ├── jsp
-│   ├── xml-config
-│   └── no-heredoc
+│   ├── java.instructions.md
+│   ├── spring-hibernate.instructions.md
+│   ├── sql.instructions.md
+│   ├── security.instructions.md
+│   ├── jsp.instructions.md
+│   ├── xml-config.instructions.md
+│   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← Invoke via @agent-name in chat
-│   ├── planner              (Claude Opus 4.6)
-│   ├── implementer          (GPT-5.3-Codex)
-│   ├── reviewer             (Claude Opus 4.6)
-│   ├── debugger             (Claude Opus 4.6)
-│   └── researcher           (Claude Haiku 4.5)
+│   ├── planner.agent.md              (Claude Opus 4.6)
+│   ├── implementer.agent.md          (GPT-5.3-Codex)
+│   ├── reviewer.agent.md             (Claude Opus 4.6)
+│   ├── debugger.agent.md             (Claude Opus 4.6)
+│   └── researcher.agent.md           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json
@@ -246,11 +248,11 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │       └── block-dangerous-commands.sh
 │
 ├── prompts/                               ← Lightweight single-task shortcuts (/prompt-name)
-│   ├── explain-this
-│   ├── find-impact
-│   ├── check-n-plus-1
-│   ├── generate-migration-sql
-│   └── check-tx
+│   ├── explain-this.prompt.md
+│   ├── find-impact.prompt.md
+│   ├── check-n-plus-1.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── check-tx.prompt.md
 │
 └── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
@@ -265,6 +267,8 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
     ├── code-review/
     ├── security-audit/
     ├── sql-review/
+    ├── schema-migration-review/
+    ├── pom-review/
     ├── debug/
     └── performance/
 ```

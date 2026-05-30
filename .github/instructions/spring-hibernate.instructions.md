@@ -14,6 +14,7 @@ No Spring Boot. No Spring 4+. No JPA annotations. AI models default to all three
 - `AsyncRestTemplate`, `ListenableFuture`
 - `AbstractAnnotationConfigDispatcherServletInitializer` — this project uses `web.xml`
 - `RestTemplate.exchange()` with `ParameterizedTypeReference` (Spring 3.2 has basic `RestTemplate` only)
+- `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`, `@PatchMapping` — use `@RequestMapping(method = RequestMethod.GET)` etc.
 - Spring 4 test annotations (`@Sql`, `@SqlGroup`)
 
 ## Hibernate 4.2 API

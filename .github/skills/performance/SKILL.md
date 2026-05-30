@@ -14,14 +14,6 @@ Measure-first performance tuning. SQL performance rules: `instructions/sql.instr
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **Java 8**: no `var`, no `List.of()`, no records — checked exceptions must be handled or declared
-- **Spring 3.2**: XML config + `<tx:advice>` only, no `@Transactional`, no Spring Boot
-- **Hibernate 4.2**: `getCurrentSession()` only, `hbm.xml` mappings, no JPA annotations
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-
 ## Phase 1 — Measure First
 
 1. **Profile before optimizing** — guessing is the enemy of performance
@@ -58,3 +50,4 @@ If the user has not measured yet, **stop and ask them to profile first**.
 - → `sql-review` skill — for deep SQL / index analysis
 - → `debug` skill — if the performance problem is actually a bug
 - → `refactor` skill — if optimization requires structural change
+- ← `@implementer` — when performance mode is activated

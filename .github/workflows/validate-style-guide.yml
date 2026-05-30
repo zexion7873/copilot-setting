@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/**/*.md'
       - '.github/scripts/validate-style-guide.sh'
+      - '.github/hooks/**'
       - '.github/workflows/validate-style-guide.yml'
 
 jobs:

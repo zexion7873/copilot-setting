@@ -18,19 +18,23 @@ esac
 # Blocked patterns (case-insensitive)
 #   - rm -rf /              root deletion
 #   - rm -rf . / rm -rf *   current-dir or glob wipe
+#   - rm -rf ./*            current-dir content wipe via dot-slash
 #   - --no-preserve-root    explicit root deletion flag
 #   - sudo                  privilege escalation
+#   - doas / pkexec         sudo alternatives
 #   - DROP DATABASE/SCHEMA  database/schema destruction
+#   - DROP TABLE            table destruction
+#   - DROP INDEX            index destruction
 #   - TRUNCATE              data wipe without backup
 #   - git push --force      force push (any branch)
 #   - git reset --hard      destructive history rewrite
-#   - git clean -fd         delete untracked files
+#   - git clean -f*          delete untracked files (any flag combo with -f)
 #   - chmod -R 777          world-writable permissions
 #   - mkfs.                 filesystem formatting
 #   - curl/wget | sh        piped remote execution
 #   - dd if=                raw disk write
 #   - kill -9 -1            kill all user processes
-DENY_PATTERNS='rm -rf /([^a-zA-Z0-9]|$)|rm -rf \.( |$)|rm -rf \*|--no-preserve-root|sudo |DROP DATABASE|DROP SCHEMA|TRUNCATE |git push.*--force|git reset --hard|git clean -fd|chmod -R 777|mkfs\.|curl.*\|.*sh|wget.*\|.*sh|dd if=|kill -9 -1'
+DENY_PATTERNS='rm -(rf|fr) /([^a-zA-Z0-9]|$)|rm -(rf|fr) \.( |$)|rm -(rf|fr) \*|rm -(rf|fr) \./\*|--no-preserve-root|(^| )sudo( |$)|(^| )doas( |$)|(^| )pkexec( |$)|DROP DATABASE|DROP SCHEMA|DROP TABLE|DROP INDEX|TRUNCATE( |$)|git push.*(--force|-f( |$))|git reset --hard|git clean -[a-zA-Z]*f|chmod -R 777|mkfs\.|curl.*\|.*sh|wget.*\|.*sh|dd if=|kill -9 -1'
 
 if echo "$TOOL_INPUT" | grep -qiE "$DENY_PATTERNS" 2>/dev/null; then
   echo "DENY: blocked by pre-tool policy" >&2

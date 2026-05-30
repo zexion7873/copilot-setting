@@ -12,12 +12,6 @@ SQL-focused review. Rules: `instructions/sql.instructions.md`.
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL conventions
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-If you cannot open files, Key rules (fallback for agent chat):
-
-- **SQL (JDBC)**: `PreparedStatement` with `?` — zero string concatenation
-- **SQL (HQL)**: named parameters (`:param`) — never concatenate into query strings
-- **SQL (performance)**: select only needed columns; index WHERE/JOIN columns; no N+1 (query inside loop)
-
 ## Phase 1 — Collect SQL
 
 Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures. Include dynamic query construction.
@@ -77,3 +71,5 @@ Summary: `Queries reviewed: N | Findings: N critical, N major, N minor, N nit | 
 - → `@implementer` — to fix SQL findings
 - ← `@reviewer` — SQL review mode activated
 - ← `code-review` skill — code review finds SQL issues
+- ← `performance` skill — when performance issue is SQL-related
+- ← `schema-migration-review` skill — when migration review finds SQL issues
