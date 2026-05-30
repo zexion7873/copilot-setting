@@ -67,4 +67,4 @@ Skip when the task is trivial (single-file typo fix, known location).
 
 - Code / refactor / tests complete → suggest `@reviewer` for review
 - Complex bug requiring root cause analysis → suggest `@debugger`
-- Scope larger than expected / SDD-first gate triggered → suggest `@planner` for re-planning
+- Scope larger than expected → suggest `@planner` for re-planning

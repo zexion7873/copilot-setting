@@ -82,11 +82,11 @@ flowchart LR
 
 ```text
 你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                        Planner 掃 codebase，拆出分階段計畫，
-                        接著寫正式 SDD（含驗收條件）
+                        plan 拆出含驗收條件的分階段方案，
+                        tasks 再拆成原子步驟（T001/T002…）
                         ↓ 點「開始實作」
 
-你  →  @implementer   照 SDD 和既有 pattern 寫 code
+你  →  @implementer   照 task 清單和既有 pattern 寫 code
                         ↓ 點「Code Review」
 
 你  →  @reviewer      查正確性、安全性、效能
@@ -105,8 +105,8 @@ flowchart LR
 > - Bug → `@debugger` → `@implementer`
 > - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
 > - 資安 → `@reviewer`（security audit mode）→ `@implementer`
-> - 審查規格 → `@reviewer`（SDD review mode）→ `@planner`
 > - 寫文件 → `@planner`
+> - 小改動（1–3 檔）→ 跳過 `plan`/`tasks`，直接 `@implementer`
 
 ---
 
@@ -116,9 +116,9 @@ flowchart LR
 
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `sdd` / `clarify-task` skill；規劃、規格定義、任務拆解一站完成 |
+| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `clarify-task` skill；規劃、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skill，依審查類型分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
@@ -128,18 +128,16 @@ Agent 間可互相交接任務，形成協作工作流：
 
 ```mermaid
 flowchart LR
-    Planner["📐 Planner"] -->|"審查 SDD"| Reviewer
-    Planner -->|"開始實作"| Implementer
+    Planner["📐 Planner"] -->|"開始實作"| Implementer
     Planner -->|"安全性評估"| Reviewer
 
     Implementer["🔨 Implementer"] -->|"Code Review"| Reviewer
-    Implementer -->|"專項審查"| Reviewer
+    Implementer -->|"安全性審查"| Reviewer
     Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
     Reviewer["🔍 Reviewer"] -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
-    Reviewer -->|"修改規格"| Planner
     Reviewer -->|"重新規劃"| Planner
 
     Debugger["🐛 Debugger"] -->|"修復 Bug"| Implementer
@@ -159,9 +157,7 @@ flowchart LR
 |:-:|-------|----------|------|
 | ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
-| 📄 | `sdd` | 自動 + 手動 | SDD（Spec-Driven Development）文件 — 實作前的正式規格定義 |
-| 📋 | `sdd-review` | 自動 + 手動 | 實作前的 SDD 規格審查 — 完整度、可測試性、可行性、清晰度稽核 |
-| ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 或 SDD 先存在 |
+| ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證 |
 | ♻️ | `refactor` | 自動 + 手動 | 漸進式重構 — 擷取、重命名、消除異味 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
@@ -257,8 +253,6 @@ flowchart LR
 └── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
     ├── clarify-task/
     ├── plan/
-    ├── sdd/
-    ├── sdd-review/
     ├── tasks/
     ├── implement/
     ├── refactor/

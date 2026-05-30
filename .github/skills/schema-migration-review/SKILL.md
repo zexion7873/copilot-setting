@@ -1,6 +1,6 @@
 ---
 name: schema-migration-review
-description: 'Use when user needs SQL migration scripts (DDL/DML schema changes) reviewed for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review migration, migration review, schema change, DDL review, ALTER TABLE review, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified migration findings with rollback and lock guidance. Do NOT use for SELECT query performance (prefer sql-review), application code review (prefer code-review), or initial schema design (prefer plan or sdd).'
+description: 'Use when user needs SQL migration scripts (DDL/DML schema changes) reviewed for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review migration, migration review, schema change, DDL review, ALTER TABLE review, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified migration findings with rollback and lock guidance. Do NOT use for SELECT query performance (prefer sql-review), application code review (prefer code-review), or initial schema design (prefer plan).'
 ---
 
 # Schema Migration Review — Workflow

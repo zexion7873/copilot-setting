@@ -82,11 +82,11 @@ Example: adding a new API endpoint.
 
 ```text
 You  →  @planner       "I need an API to query order history by customer ID"
-                        Planner scans the codebase, drafts a phased plan,
-                        then writes a formal SDD (spec) with acceptance criteria
+                        plan drafts a phased approach with acceptance
+                        criteria; tasks breaks it into atomic T001/T002… steps
                         ↓ click "開始實作" handoff
 
-You  →  @implementer   Picks up the SDD, writes code following existing patterns
+You  →  @implementer   Picks up the task list, writes code following existing patterns
                         ↓ click "Code Review" handoff
 
 You  →  @reviewer      Checks correctness, security, performance
@@ -105,8 +105,8 @@ Each `↓` is a handoff button in VS Code. The next agent gets the full conversa
 > - Bug → `@debugger` → `@implementer`
 > - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
 > - Security → `@reviewer` (security audit mode) → `@implementer`
-> - Spec review → `@reviewer` (SDD review mode) → `@planner`
 > - Documentation → `@planner`
+> - Small change (1–3 files) → skip `plan`/`tasks`, go straight to `@implementer`
 
 ---
 
@@ -116,9 +116,9 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `sdd` / `clarify-task` skills; plans, specs, and task decomposition in one agent |
+| 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `clarify-task` skills; plans and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` / `sdd-review` skills, mode-routed by review type |
+| 🔍 | `@reviewer` | Claude Opus 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Opus 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
@@ -128,18 +128,16 @@ Agents can hand off tasks to each other, forming a collaborative workflow:
 
 ```mermaid
 flowchart LR
-    Planner["📐 Planner"] -->|"Review SDD"| Reviewer
-    Planner -->|"Implement"| Implementer
+    Planner["📐 Planner"] -->|"Implement"| Implementer
     Planner -->|"Security assessment"| Reviewer
 
     Implementer["🔨 Implementer"] -->|"Code review"| Reviewer
-    Implementer -->|"Specialized review"| Reviewer
+    Implementer -->|"Security review"| Reviewer
     Implementer -->|"Debug"| Debugger
     Implementer -->|"Re-plan"| Planner
 
     Reviewer["🔍 Reviewer"] -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
-    Reviewer -->|"Revise spec"| Planner
     Reviewer -->|"Re-plan"| Planner
 
     Debugger["🐛 Debugger"] -->|"Fix bug"| Implementer
@@ -159,9 +157,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 |:-:|-------|---------|-------------|
 | ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
 | 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
-| 📄 | `sdd` | Auto + Manual | Spec-Driven Development document — formal spec before implementation |
-| 📋 | `sdd-review` | Auto + Manual | SDD specification review BEFORE implementation — completeness, testability, feasibility, clarity audit |
-| ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan or SDD is approved |
+| ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
@@ -257,8 +253,6 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 └── skills/                                ← Executable skills for agents (output templates embedded)
     ├── clarify-task/
     ├── plan/
-    ├── sdd/
-    ├── sdd-review/
     ├── tasks/
     ├── implement/
     ├── refactor/
