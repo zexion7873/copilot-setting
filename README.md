@@ -138,6 +138,7 @@ flowchart LR
 
     Reviewer["🔍 Reviewer"] -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
+    Reviewer -->|"Debug"| Debugger
     Reviewer -->|"Re-plan"| Planner
 
     Debugger["🐛 Debugger"] -->|"Fix bug"| Implementer

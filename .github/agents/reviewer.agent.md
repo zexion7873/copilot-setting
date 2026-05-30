@@ -13,6 +13,10 @@ handoffs:
     agent: Implementer
     prompt: 請根據上面的建議進行重構。
     send: false
+  - label: 除錯分析
+    agent: Debugger
+    prompt: 請對上面審查發現的問題進行根因分析。
+    send: false
   - label: 重新規劃
     agent: Planner
     prompt: 請根據上面的審查結果重新規劃，審查發現設計需要重做。
@@ -64,4 +68,5 @@ Skip when reviewing a single file with a small diff that you can trace manually.
 ## Handoff Guidance
 
 - Issues or vulnerabilities found → suggest `@implementer` for fixes
+- Bug needing root cause analysis → suggest `@debugger`
 - Fundamental design problems → suggest `@planner` for re-planning

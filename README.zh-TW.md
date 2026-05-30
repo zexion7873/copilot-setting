@@ -138,6 +138,7 @@ flowchart LR
 
     Reviewer["🔍 Reviewer"] -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
+    Reviewer -->|"除錯分析"| Debugger
     Reviewer -->|"重新規劃"| Planner
 
     Debugger["🐛 Debugger"] -->|"修復 Bug"| Implementer
