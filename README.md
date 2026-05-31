@@ -120,7 +120,7 @@ flowchart LR
 
 Each `→` is a handoff button in VS Code — click it and the next agent inherits the full conversation context. Every path finishes with `/git-commit` (invoke it manually; it never auto-triggers).
 
-#### 📐 `@planner` — Start here for new features
+### 📐 `@planner` — Start here for new features
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
@@ -131,7 +131,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 > [!TIP]
 > Skip `@planner` for small changes (1–3 files) — go straight to `@implementer`.
 
-#### 🔨 `@implementer` — Write and change code
+### 🔨 `@implementer` — Write and change code
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
@@ -140,7 +140,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 | `test-design` | Design test case document (categories, boundaries, coverage gaps) | → `@reviewer` |
 | `performance` | Measure-first performance tuning (frontend / Java / DB) | → `@reviewer` |
 
-#### 🔍 `@reviewer` — Review and audit
+### 🔍 `@reviewer` — Review and audit
 
 | Skill | When to use | Then hand off to |
 |---|---|---|
@@ -154,7 +154,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 > Every finding is graded CRITICAL / HIGH / MEDIUM / LOW. Never merge with an open CRITICAL or HIGH.
 > If review uncovers a deeper bug → `@debugger`. If design-level rework is needed → `@planner`.
 
-#### 🐛 `@debugger` — Diagnose bugs
+### 🐛 `@debugger` — Diagnose bugs
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
@@ -163,7 +163,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 > [!NOTE]
 > `@debugger` diagnoses only — it does not implement fixes. Always hand off to `@implementer`.
 
-#### 📚 `@researcher` — Read-only subagent (automatic)
+### 📚 `@researcher` — Read-only subagent (automatic)
 
 Not invoked manually. Auto-delegated by `@planner`, `@implementer`, and `@reviewer` to scan the codebase and external docs before acting. Returns structured summaries — no opinions or recommendations.
 

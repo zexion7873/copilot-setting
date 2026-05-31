@@ -120,7 +120,7 @@ flowchart LR
 
 每個 `→` 是 VS Code 裡的 handoff 按鈕——點下去，下一個 agent 拿到完整對話脈絡。每條路徑都以 `/git-commit` 收尾（手動呼叫，不會自動觸發）。
 
-#### 📐 `@planner` — 新功能從這裡開始
+### 📐 `@planner` — 新功能從這裡開始
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
@@ -131,7 +131,7 @@ flowchart LR
 > [!TIP]
 > 小改動（1–3 檔）跳過 `@planner`，直接找 `@implementer`。
 
-#### 🔨 `@implementer` — 寫 code、改 code
+### 🔨 `@implementer` — 寫 code、改 code
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
@@ -140,7 +140,7 @@ flowchart LR
 | `test-design` | 設計測試案例文件（分類、邊界、覆蓋缺口） | → `@reviewer` |
 | `performance` | 先量測再優化（前端 / Java / DB） | → `@reviewer` |
 
-#### 🔍 `@reviewer` — 審查與稽核
+### 🔍 `@reviewer` — 審查與稽核
 
 | Skill | 何時使用 | 接著交給 |
 |---|---|---|
@@ -154,7 +154,7 @@ flowchart LR
 > 每個 finding 分級 CRITICAL / HIGH / MEDIUM / LOW；有未解的 CRITICAL/HIGH 不放行。
 > 審查發現更深層 bug → `@debugger`。需要設計層級重做 → `@planner`。
 
-#### 🐛 `@debugger` — 診斷 bug
+### 🐛 `@debugger` — 診斷 bug
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
@@ -163,7 +163,7 @@ flowchart LR
 > [!NOTE]
 > `@debugger` 只診斷，不實作修復。一律交給 `@implementer`。
 
-#### 📚 `@researcher` — 唯讀子代理（自動）
+### 📚 `@researcher` — 唯讀子代理（自動）
 
 不需手動呼叫。由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件。回傳結構化摘要 — 不提供建議與決策。
 
