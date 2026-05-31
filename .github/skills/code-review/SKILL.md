@@ -55,6 +55,13 @@ Structured code review.
 - [ ] No copy-paste duplication
 - [ ] Names self-explanatory; comments explain WHY not WHAT
 
+**POM / Dependencies** (check if `pom.xml` is in scope):
+- [ ] No `SNAPSHOT` in release builds; no `LATEST`/`RELEASE` markers
+- [ ] Versions centralized in `<dependencyManagement>` — no per-module duplicates
+- [ ] Test libs scoped `<scope>test</scope>`; servlet API scoped `provided`
+- [ ] Key dependencies (Spring, Hibernate, Jackson, Log4j, Commons) not on known-CVE versions
+- [ ] `maven-compiler-plugin` source/target = `1.8`; all plugin versions pinned
+
 ## Phase 3 — Classify Findings
 
 | Severity | Definition | Action |

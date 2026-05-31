@@ -76,25 +76,6 @@ flowchart LR
 
 ---
 
-## 🔄 Typical Workflow
-
-四條場景路徑。每個 `→` 是 VS Code 裡的 handoff 按鈕——點下去，下一個 agent 拿到完整對話脈絡。每條路徑都以 `/git-commit` 收尾（手動呼叫，不會自動觸發）。
-
-| 場景 | 起手 | 路徑（`→` = handoff 按鈕） | 收尾 |
-|---|---|---|---|
-| **新功能** | `@planner` — `clarify-task`（需求不清時）→ `plan` → `tasks` | `@implementer`（`implement`）→ `@reviewer`（`code-review`）→ `@implementer`（修復） | `/git-commit` |
-| **Bug 修復** | `@debugger`（`debug`）— 重現 → 根因 → 最小修復 | `@implementer`（`implement`）→ `@reviewer`（`code-review`） | `/git-commit` |
-| **程式碼審查** | `@reviewer` — 依類型選 mode：`code-review` · `security-audit` · `sql-review` · `schema-migration-review` · `pom-review` | findings → `@implementer`（修復）/ `@debugger`（根因）/ `@planner`（重新規劃）→ 回審 | `/git-commit` |
-| **重構 / 效能** | `@implementer` — `refactor`（行為不變）或 `performance`（先量測） | `@reviewer`（`code-review`；慢查詢用 `sql-review`） | `/git-commit` |
-
-> [!NOTE]
-> - **小改動（1–3 檔）** → 跳過 `plan`/`tasks`，直接 `@implementer`。
-> - **Bug 修復保持最小** — `@debugger` 先重現再給最小修復，不夾帶重構。
-> - **審查門檻** — 每個 finding 分級 CRITICAL / HIGH / MEDIUM / LOW；有未解的 CRITICAL/HIGH 不放行。
-> - **`@researcher`** 是唯讀子代理，由 `@planner` / `@implementer` / `@reviewer` 自動叫去掃 codebase，不是手動步驟。
-
----
-
 ## 🤖 Agents
 
 在 Copilot Chat 中輸入 `@agent-name` 呼叫。所有 agent 皆針對 Java 8 / Maven 專案客製。
@@ -103,7 +84,7 @@ flowchart LR
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `clarify-task` skill；規劃、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Sonnet 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skill，依審查類型分流 |
+| 🔍 | `@reviewer` | Claude Sonnet 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
@@ -135,6 +116,56 @@ flowchart LR
 
 ---
 
+## 🔄 Typical Workflow
+
+每個 `→` 是 VS Code 裡的 handoff 按鈕——點下去，下一個 agent 拿到完整對話脈絡。每條路徑都以 `/git-commit` 收尾（手動呼叫，不會自動觸發）。
+
+#### 📐 `@planner` — 新功能從這裡開始
+
+| Skill | 做什麼 | 接著交給 |
+|---|---|---|
+| `clarify-task` | 提出編號問題釐清模糊需求 | 留在 `@planner` |
+| `plan` | 建立分階段實作計畫，含風險與依賴 | 留在 `@planner` |
+| `tasks` | 將核准的計畫拆成有依賴順序的原子任務 | → `@implementer` |
+
+> 小改動（1–3 檔）跳過 `@planner`，直接找 `@implementer`。
+
+#### 🔨 `@implementer` — 寫 code、改 code
+
+| Skill | 做什麼 | 接著交給 |
+|---|---|---|
+| `implement` | 實作功能任務或修復審查發現 | → `@reviewer` |
+| `refactor` | 行為不變的結構改善 | → `@reviewer` |
+| `test-design` | 設計測試案例文件（分類、邊界、覆蓋缺口） | → `@reviewer` |
+| `performance` | 先量測再優化（前端 / Java / DB） | → `@reviewer` |
+
+#### 🔍 `@reviewer` — 審查與稽核
+
+| Skill | 何時使用 | 接著交給 |
+|---|---|---|
+| `code-review` | 一般程式碼審查 — 正確性、風格、bug | → `@implementer`（修復） |
+| `security-audit` | OWASP Top 10 資安稽核 | → `@implementer`（修復） |
+| `sql-review` | SQL 注入、索引策略、查詢反模式 | → `@implementer`（修復） |
+| `schema-migration-review` | DDL/DML rollback 安全性、鎖定影響、部署相容 | → `@implementer`（修復） |
+
+
+> 每個 finding 分級 CRITICAL / HIGH / MEDIUM / LOW；有未解的 CRITICAL/HIGH 不放行。
+> 審查發現更深層 bug → `@debugger`。需要設計層級重做 → `@planner`。
+
+#### 🐛 `@debugger` — 診斷 bug
+
+| Skill | 做什麼 | 接著交給 |
+|---|---|---|
+| `debug` | 重現 → 假說 → 隔離 → 驗證根因 → 提出最小修復 | → `@implementer`（修復） |
+
+> `@debugger` 只診斷，不實作修復。一律交給 `@implementer`。
+
+#### 📚 `@researcher` — 唯讀子代理（自動）
+
+不需手動呼叫。由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件。回傳結構化摘要 — 不提供建議與決策。
+
+---
+
 ## ⚡ Skills
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
@@ -152,7 +183,7 @@ flowchart LR
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
 | 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
 | 🔄 | `schema-migration-review` | 自動 + 手動 | DDL/DML migration 審查 — rollback 安全性、鎖定衝擊、向後相容性 |
-| 🧱 | `pom-review` | 自動 + 手動 | Maven `pom.xml` 審查 — 依賴衛生、CVE 檢查、scope 與 SNAPSHOT 紀律 |
+
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
 | ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
 
@@ -248,7 +279,6 @@ flowchart LR
     ├── security-audit/
     ├── sql-review/
     ├── schema-migration-review/
-    ├── pom-review/
     ├── debug/
     └── performance/
 ```

@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. This embed is the only sanctioned duplication — keep it to the version-lock essentials and treat the instruction file as canonical.
+**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. This embed is the only sanctioned duplication — keep it to the version-lock essentials and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -112,7 +112,7 @@ This repo intentionally mixes languages. Respect the split:
 |---|---|---|
 | `@planner` | Claude Opus 4.6 | `plan`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Sonnet 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review` |
+| `@reviewer` | Claude Sonnet 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
 | `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 

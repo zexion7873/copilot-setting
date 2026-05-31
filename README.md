@@ -76,25 +76,6 @@ flowchart LR
 
 ---
 
-## 🔄 Typical Workflow
-
-Four scenario paths. Each `→` is a handoff button in VS Code — click it and the next agent inherits the full conversation context. Every path finishes with `/git-commit` (invoke it manually; it never auto-triggers).
-
-| Scenario | Start here | Path (`→` = handoff button) | Finish |
-|---|---|---|---|
-| **New feature** | `@planner` — `clarify-task` (if vague) → `plan` → `tasks` | `@implementer` (`implement`) → `@reviewer` (`code-review`) → `@implementer` (fix) | `/git-commit` |
-| **Bug fix** | `@debugger` (`debug`) — reproduce → root cause → minimal fix | `@implementer` (`implement`) → `@reviewer` (`code-review`) | `/git-commit` |
-| **Code review** | `@reviewer` — mode by type: `code-review` · `security-audit` · `sql-review` · `schema-migration-review` · `pom-review` | findings → `@implementer` (fix) / `@debugger` (root cause) / `@planner` (re-plan) → re-review | `/git-commit` |
-| **Refactor / performance** | `@implementer` — `refactor` (behavior-preserving) or `performance` (measure first) | `@reviewer` (`code-review`; `sql-review` for slow queries) | `/git-commit` |
-
-> [!NOTE]
-> - **Small change (1–3 files)** → skip `plan`/`tasks`, go straight to `@implementer`.
-> - **Bug fix stays minimal** — `@debugger` reproduces and proposes the smallest fix; no refactoring bundled in.
-> - **Review gate** — every finding is graded CRITICAL / HIGH / MEDIUM / LOW; never merge with an open CRITICAL or HIGH.
-> - **`@researcher`** is a read-only subagent auto-delegated by `@planner` / `@implementer` / `@reviewer` to scan the codebase — not a manual step.
-
----
-
 ## 🤖 Agents
 
 Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / Maven projects.
@@ -103,7 +84,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.6 | Activates `plan` / `tasks` / `clarify-task` skills; plans and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Sonnet 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skills, mode-routed by review type |
+| 🔍 | `@reviewer` | Claude Sonnet 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
@@ -135,6 +116,56 @@ flowchart LR
 
 ---
 
+## 🔄 Typical Workflow
+
+Each `→` is a handoff button in VS Code — click it and the next agent inherits the full conversation context. Every path finishes with `/git-commit` (invoke it manually; it never auto-triggers).
+
+#### 📐 `@planner` — Start here for new features
+
+| Skill | What it does | Then hand off to |
+|---|---|---|
+| `clarify-task` | Ask numbered questions to refine vague requirements | stay in `@planner` |
+| `plan` | Create phased implementation plan with risks and dependencies | stay in `@planner` |
+| `tasks` | Break approved plan into atomic, dependency-ordered tasks | → `@implementer` |
+
+> Skip `@planner` for small changes (1–3 files) — go straight to `@implementer`.
+
+#### 🔨 `@implementer` — Write and change code
+
+| Skill | What it does | Then hand off to |
+|---|---|---|
+| `implement` | Implement feature tasks or fix review findings | → `@reviewer` |
+| `refactor` | Behavior-preserving structural improvements | → `@reviewer` |
+| `test-design` | Design test case document (categories, boundaries, coverage gaps) | → `@reviewer` |
+| `performance` | Measure-first performance tuning (frontend / Java / DB) | → `@reviewer` |
+
+#### 🔍 `@reviewer` — Review and audit
+
+| Skill | When to use | Then hand off to |
+|---|---|---|
+| `code-review` | General code review — correctness, style, bugs | → `@implementer` (fix) |
+| `security-audit` | OWASP Top 10 focused security audit | → `@implementer` (fix) |
+| `sql-review` | SQL injection, index strategy, query anti-patterns | → `@implementer` (fix) |
+| `schema-migration-review` | DDL/DML rollback safety, lock impact, deploy compat | → `@implementer` (fix) |
+
+
+> Every finding is graded CRITICAL / HIGH / MEDIUM / LOW. Never merge with an open CRITICAL or HIGH.
+> If review uncovers a deeper bug → `@debugger`. If design-level rework is needed → `@planner`.
+
+#### 🐛 `@debugger` — Diagnose bugs
+
+| Skill | What it does | Then hand off to |
+|---|---|---|
+| `debug` | Reproduce → hypothesize → isolate → verify root cause → propose minimal fix | → `@implementer` (fix) |
+
+> `@debugger` diagnoses only — it does not implement fixes. Always hand off to `@implementer`.
+
+#### 📚 `@researcher` — Read-only subagent (automatic)
+
+Not invoked manually. Auto-delegated by `@planner`, `@implementer`, and `@reviewer` to scan the codebase and external docs before acting. Returns structured summaries — no opinions or recommendations.
+
+---
+
 ## ⚡ Skills
 
 Executable workflows. Auto-triggered by Copilot when relevant (unless disabled), or invoke manually via `/skill-name`.
@@ -152,7 +183,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🔄 | `schema-migration-review` | Auto + Manual | DDL/DML migration review — rollback safety, lock impact, backward compatibility |
-| 🧱 | `pom-review` | Auto + Manual | Maven `pom.xml` review — dependency hygiene, CVE check, scope and SNAPSHOT discipline |
+
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
 
@@ -248,7 +279,6 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
     ├── security-audit/
     ├── sql-review/
     ├── schema-migration-review/
-    ├── pom-review/
     ├── debug/
     └── performance/
 ```

@@ -47,7 +47,7 @@ Pick the primary skill from the user's request. If unclear, default to code revi
 | "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | Security Audit | `security-audit` |
 | "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | SQL Review | `sql-review` |
 | "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | Schema Migration Review | `schema-migration-review` |
-| "review pom", "pom review", "Maven dependency audit", "dependency review", "CVE check", 看 pom, 審查依賴, Maven 套件, 依賴版本 | POM Review | `pom-review` |
+
 
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
 
