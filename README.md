@@ -78,35 +78,20 @@ flowchart LR
 
 ## 🔄 Typical Workflow
 
-Example: adding a new API endpoint.
+Four scenario paths. Each `→` is a handoff button in VS Code — click it and the next agent inherits the full conversation context. Every path finishes with `/git-commit` (invoke it manually; it never auto-triggers).
 
-```text
-You  →  @planner       "I need an API to query order history by customer ID"
-                        plan drafts a phased approach with acceptance
-                        criteria; tasks breaks it into atomic T001/T002… steps
-                        ↓ click "開始實作" handoff
+| Scenario | Start here | Path (`→` = handoff button) | Finish |
+|---|---|---|---|
+| **New feature** | `@planner` — `clarify-task` (if vague) → `plan` → `tasks` | `@implementer` (`implement`) → `@reviewer` (`code-review`) → `@implementer` (fix) | `/git-commit` |
+| **Bug fix** | `@debugger` (`debug`) — reproduce → root cause → minimal fix | `@implementer` (`implement`) → `@reviewer` (`code-review`) | `/git-commit` |
+| **Code review** | `@reviewer` — mode by type: `code-review` · `security-audit` · `sql-review` · `schema-migration-review` · `pom-review` | findings → `@implementer` (fix) / `@debugger` (root cause) / `@planner` (re-plan) → re-review | `/git-commit` |
+| **Refactor / performance** | `@implementer` — `refactor` (behavior-preserving) or `performance` (measure first) | `@reviewer` (`code-review`; `sql-review` for slow queries) | `/git-commit` |
 
-You  →  @implementer   Picks up the task list, writes code following existing patterns
-                        ↓ click "Code Review" handoff
-
-You  →  @reviewer      Checks correctness, security, performance
-                        Catches SQL injection risk → CRITICAL
-                        ↓ click "修復問題" handoff
-
-You  →  @implementer   Switches to PreparedStatement, verifies fix
-                        Done ✓
-```
-
-Each `↓` is a handoff button in VS Code. The next agent gets the full conversation context.
-
-> [!TIP]
-> **Other common starting points:**
->
-> - Bug → `@debugger` → `@implementer`
-> - Slow SQL → `@reviewer` (SQL review mode) → `@implementer`
-> - Security → `@reviewer` (security audit mode) → `@implementer`
-> - Documentation → `@planner`
-> - Small change (1–3 files) → skip `plan`/`tasks`, go straight to `@implementer`
+> [!NOTE]
+> - **Small change (1–3 files)** → skip `plan`/`tasks`, go straight to `@implementer`.
+> - **Bug fix stays minimal** — `@debugger` reproduces and proposes the smallest fix; no refactoring bundled in.
+> - **Review gate** — every finding is graded CRITICAL / HIGH / MEDIUM / LOW; never merge with an open CRITICAL or HIGH.
+> - **`@researcher`** is a read-only subagent auto-delegated by `@planner` / `@implementer` / `@reviewer` to scan the codebase — not a manual step.
 
 ---
 

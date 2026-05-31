@@ -78,35 +78,20 @@ flowchart LR
 
 ## 🔄 Typical Workflow
 
-例子：加一支新的 API endpoint。
+四條場景路徑。每個 `→` 是 VS Code 裡的 handoff 按鈕——點下去，下一個 agent 拿到完整對話脈絡。每條路徑都以 `/git-commit` 收尾（手動呼叫，不會自動觸發）。
 
-```text
-你  →  @planner       「我需要一支依客戶 ID 查訂單歷史的 API」
-                        plan 拆出含驗收條件的分階段方案，
-                        tasks 再拆成原子步驟（T001/T002…）
-                        ↓ 點「開始實作」
+| 場景 | 起手 | 路徑（`→` = handoff 按鈕） | 收尾 |
+|---|---|---|---|
+| **新功能** | `@planner` — `clarify-task`（需求不清時）→ `plan` → `tasks` | `@implementer`（`implement`）→ `@reviewer`（`code-review`）→ `@implementer`（修復） | `/git-commit` |
+| **Bug 修復** | `@debugger`（`debug`）— 重現 → 根因 → 最小修復 | `@implementer`（`implement`）→ `@reviewer`（`code-review`） | `/git-commit` |
+| **程式碼審查** | `@reviewer` — 依類型選 mode：`code-review` · `security-audit` · `sql-review` · `schema-migration-review` · `pom-review` | findings → `@implementer`（修復）/ `@debugger`（根因）/ `@planner`（重新規劃）→ 回審 | `/git-commit` |
+| **重構 / 效能** | `@implementer` — `refactor`（行為不變）或 `performance`（先量測） | `@reviewer`（`code-review`；慢查詢用 `sql-review`） | `/git-commit` |
 
-你  →  @implementer   照 task 清單和既有 pattern 寫 code
-                        ↓ 點「Code Review」
-
-你  →  @reviewer      查正確性、安全性、效能
-                        抓到 SQL injection → CRITICAL
-                        ↓ 點「修復問題」
-
-你  →  @implementer   改成 PreparedStatement，驗證修復
-                        Done ✓
-```
-
-每個 `↓` 是 VS Code 裡的 handoff 按鈕，下一個 agent 拿到完整對話脈絡。
-
-> [!TIP]
-> **其他常見起手式：**
->
-> - Bug → `@debugger` → `@implementer`
-> - SQL 太慢 → `@reviewer`（SQL review mode）→ `@implementer`
-> - 資安 → `@reviewer`（security audit mode）→ `@implementer`
-> - 寫文件 → `@planner`
-> - 小改動（1–3 檔）→ 跳過 `plan`/`tasks`，直接 `@implementer`
+> [!NOTE]
+> - **小改動（1–3 檔）** → 跳過 `plan`/`tasks`，直接 `@implementer`。
+> - **Bug 修復保持最小** — `@debugger` 先重現再給最小修復，不夾帶重構。
+> - **審查門檻** — 每個 finding 分級 CRITICAL / HIGH / MEDIUM / LOW；有未解的 CRITICAL/HIGH 不放行。
+> - **`@researcher`** 是唯讀子代理，由 `@planner` / `@implementer` / `@reviewer` 自動叫去掃 codebase，不是手動步驟。
 
 ---
 
