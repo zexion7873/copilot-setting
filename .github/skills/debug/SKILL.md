@@ -30,7 +30,7 @@ Read stack trace bottom-up — first line in YOUR code is the entry point. Check
 
 ## Phase 3 — Form Hypotheses
 
-List causes ranked by likelihood. For each: what confirms it, what refutes it, effort to verify. **Verify lowest-effort hypothesis first.**
+List ≥ 3 candidate causes before ranking — never investigate the first hypothesis without listing alternatives. For each: what confirms it, what refutes it, effort to verify. **Verify lowest-effort hypothesis first.**
 
 ## Phase 4 — Isolate
 
@@ -38,7 +38,13 @@ Binary search on execution path: entry → failure point → check midpoint → 
 
 ## Phase 5 — Verify Root Cause
 
-Before fixing: does the cause explain ALL symptoms? Is this the ROOT cause or a symptom? Could the same cause affect other code?
+Verification gate (MUST answer before Phase 6):
+
+1. Does this cause explain ALL reported symptoms? List each symptom + how this cause produces it.
+2. Remove this cause hypothetically — would the bug disappear? If unsure, you haven't found root cause.
+3. Is this the deepest cause, or a symptom of something upstream?
+
+If any answer is "no" or "unsure" → return to Phase 3.
 
 ## Phase 6 — Propose Minimal Fix
 

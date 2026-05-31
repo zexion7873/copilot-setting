@@ -25,15 +25,35 @@ Structured code review.
 
 ## Phase 2 — Review by Category
 
-**Correctness**: logic errors, off-by-one, null handling, edge cases (empty collections, zero values), concurrency (shared mutable state), resource leaks (unclosed connections)
+**Correctness** (check each):
+- [ ] Null/empty inputs handled at method entry
+- [ ] Off-by-one: loop bounds, substring, index access
+- [ ] Edge cases: zero, negative, empty collection, max-size
+- [ ] Shared mutable state accessed from multiple threads → synchronized or thread-local?
+- [ ] Resources (Connection, InputStream, Session) closed in finally
 
-**Security**: SQL injection (all queries parameterized?), XSS (all JSP output encoded?), auth (access control on every endpoint?), secrets (no hardcoded credentials?)
+**Security** (check each):
+- [ ] Every SQL query uses bind parameters (`?` or `:named`)
+- [ ] Every JSP output wrapped in `<c:out>` or equivalent encoding
+- [ ] Every endpoint has explicit access control check
+- [ ] No hardcoded credentials, API keys, or secrets
 
-**Performance**: N+1 queries (SQL inside loops)? `SELECT *` or missing indexes? Unbounded result sets? Expensive ops in hot paths?
+**Performance** (check each):
+- [ ] No SQL inside a loop (N+1)
+- [ ] No `SELECT *` on wide tables
+- [ ] WHERE/JOIN columns have indexes
+- [ ] Result sets bounded (LIMIT or pagination)
 
-**Convention Compliance**: Java 8 only? `getCurrentSession()` + hbm.xml + no JPA? `<tx:advice>` only, no `@Transactional`? SLF4J parameterized? Proper exception hierarchy?
+**Convention** (check each):
+- [ ] Java 8 only — no `var`, `List.of()`, records, text blocks
+- [ ] Hibernate: `getCurrentSession()` + hbm.xml, no JPA annotations
+- [ ] Transactions: `<tx:advice>` only (unless existing `@Transactional` convention)
+- [ ] Logging: SLF4J `{}` placeholders, no string concatenation
 
-**Maintainability**: clear naming? No duplication? Methods ≤30 lines? Comments explain WHY?
+**Maintainability** (check each):
+- [ ] Methods ≤ 30 lines
+- [ ] No copy-paste duplication
+- [ ] Names self-explanatory; comments explain WHY not WHAT
 
 ## Phase 3 — Classify Findings
 

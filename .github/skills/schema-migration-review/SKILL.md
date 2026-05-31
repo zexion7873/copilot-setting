@@ -37,10 +37,14 @@ Focus: rollback safety, data-loss risk, lock duration on production-sized tables
 
 ## Phase 4 — Compatibility With Running App
 
-- [ ] New columns are nullable or have DB-level default — running old app instances won't fail INSERT
-- [ ] Column drops happen AFTER all app instances stop reading/writing them
-- [ ] FK constraints don't reference soon-to-be-changed columns
-- [ ] Application's `hbm.xml` / DAO matches new schema after deploy
+For each DDL/DML, answer: "If old app version runs DURING this migration, what breaks?"
+
+- [ ] New columns nullable or have DB default → old app INSERT won't fail
+- [ ] Column drops happen AFTER all app instances stop reading/writing
+- [ ] FK constraints don't reference columns being altered in same migration
+- [ ] `hbm.xml` / DAO aligned with post-migration schema after deploy
+
+If any answer is "old app breaks" → finding is at least MAJOR; recommend splitting into multi-release migration.
 
 ## Phase 5 — Report
 
