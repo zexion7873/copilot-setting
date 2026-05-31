@@ -103,8 +103,8 @@ flowchart LR
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `clarify-task` skill；規劃、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skill，依審查類型分流 |
-| 🐛 | `@debugger` | Claude Opus 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
+| 🔍 | `@reviewer` | Claude Sonnet 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` / `pom-review` skill，依審查類型分流 |
+| 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | Claude Haiku 4.5 | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
 ### 🤝 Agent Handoffs Workflow
@@ -220,8 +220,8 @@ flowchart LR
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
 │   ├── planner.agent.md              (Claude Opus 4.6)
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
-│   ├── reviewer.agent.md             (Claude Opus 4.6)
-│   ├── debugger.agent.md             (Claude Opus 4.6)
+│   ├── reviewer.agent.md             (Claude Sonnet 4.6)
+│   ├── debugger.agent.md             (Claude Sonnet 4.6)
 │   └── researcher.agent.md           (Claude Haiku 4.5)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
