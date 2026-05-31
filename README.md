@@ -178,7 +178,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
-| 📦 | `git-commit` | **Manual only** | Conventional commit message generation and intelligent staging |
+| 📦 | `git-commit` | **Manual only** | [Conventional Commits](https://www.conventionalcommits.org/) message generation and intelligent staging |
 | 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
