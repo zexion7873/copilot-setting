@@ -69,7 +69,7 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **Agent chat 注意事項：** `applyTo` instruction 只在符合的檔案於 request 當下進入 context 時才載入（透過 `#file:` 或編輯器附加），且是 request 送出當下的靜態評估——agent 執行過程中才讀到的檔案不會回溯觸發。為了涵蓋 `@agent` 沒有附檔的情況，硬邊界規則（Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / 資安）直接內嵌在涉及程式碼的 agent（`implementer`、`reviewer`、`debugger`）的 `## Coding Standards` 區段；涉及程式碼的 skill 另外列出對應的 instruction 檔。
+> **Agent chat 注意事項：** `applyTo` instruction 只在符合的檔案於 request 當下進入 context 時才載入（透過 `#file:` 或編輯器附加），且是 request 送出當下的靜態評估——agent 執行過程中才讀到的檔案不會回溯觸發。為了涵蓋 `@agent` 沒有附檔的情況，硬邊界規則直接內嵌在涉及程式碼的 agent 的 `## Coding Standards` 區段；涉及程式碼的 skill 另外列出對應的 instruction 檔。
 
 > [!TIP]
 > **維護規則：** 重新命名或搬移 `.github/` 下的檔案前，先執行 `grep -rn "<舊檔名>" .github/` 檢查引用。路徑斷裂會無聲地降低 Copilot 的輸出品質。
