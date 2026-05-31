@@ -54,7 +54,7 @@ Just pick an **agent** — everything else loads automatically.
 |:-:|---|---|---|---|
 | 📏 | **Instructions** (`instructions/`) | Rules | Single source of truth for conventions | `applyTo` glob matches a file in request context; core rules also embedded in code-touching agents |
 | 🤖 | **Agents** (`agents/`) | Router | Activate workflows, manage handoffs | `@agent-name` in chat |
-| ⚡ | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
+| 🛠️ | **Skills** (`skills/`) | Workflow | Execution steps — reference rules and templates | Matches `description`; Skill Activation routes |
 | 📋 | **Prompts** (`prompts/`) | Shortcut | Lightweight single-task commands | Manual invocation (`/prompt-name`) |
 | 🛡️ | **Hooks** (`hooks/`) | Lifecycle guard | Block dangerous commands before execution | Agent tool use events |
 
@@ -64,7 +64,7 @@ Each category has one job. Content that belongs elsewhere is referenced, not cop
 flowchart LR
     Hook["🛡️ Hooks"] -->|lifecycle guard| Agent
     Agent["🤖 Agent<br/>(Router)"] -->|activates| Skill
-    Skill["⚡ Skill<br/>(Workflow + Output Template)"] -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
+    Skill["🛠️ Skill<br/>(Workflow + Output Template)"] -->|rules| Instruction["📏 Instruction<br/>(Rules)"]
     Prompt["📋 Prompt<br/>(Shortcut)"] -->|"manual /prompt-name"| Standalone["Standalone execution"]
 ```
 
@@ -169,13 +169,13 @@ Not invoked manually. Auto-delegated by `@planner`, `@implementer`, and `@review
 
 ---
 
-## ⚡ Skills
+## 🛠️ Skills
 
 Executable workflows. Auto-triggered by Copilot when relevant (unless disabled), or invoke manually via `/skill-name`.
 
 |   | Skill | Trigger | Description |
 |:-:|-------|---------|-------------|
-| ❓ | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
+| 💬 | `clarify-task` | Auto + Manual | Interactive task refinement — numbered clarifying questions before acting |
 | 📐 | `plan` | Auto + Manual | Implementation plan — phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
 | 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
@@ -184,11 +184,11 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📦 | `git-commit` | **Manual only** | [Conventional Commits](https://www.conventionalcommits.org/) message generation and intelligent staging |
 | 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
-| 🗄️ | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
-| 🔄 | `schema-migration-review` | Auto + Manual | DDL/DML migration review — rollback safety, lock impact, backward compatibility |
+| 🔎 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
+| 🔀 | `schema-migration-review` | Auto + Manual | DDL/DML migration review — rollback safety, lock impact, backward compatibility |
 
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
-| ⚡ | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
+| 🚀 | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
 
 > [!WARNING]
 > `git-commit` uses `disable-model-invocation: true` to prevent auto-triggering. Always invoke explicitly via `/git-commit`.

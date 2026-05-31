@@ -54,7 +54,7 @@ my-workspace.code-workspace
 |:-:|---|---|---|---|
 | 📏 | **Instructions**（`instructions/`） | 規則 | 編碼規範單一來源 | request context 內有符合 `applyTo` glob 的檔案；核心規則另內嵌於程式碼相關 agent |
 | 🤖 | **Agents**（`agents/`） | 調度 | 啟動工作流、管理交接 | 在 Chat 打 `@agent-name` |
-| ⚡ | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
+| 🛠️ | **Skills**（`skills/`） | 工作流程 | 引用規則和模板的執行步驟 | 比對 `description`；Skill Activation 路由 |
 | 📋 | **Prompts**（`prompts/`） | 快捷指令 | 輕量單次任務指令 | 手動呼叫（`/prompt-name`） |
 | 🛡️ | **Hooks**（`hooks/`） | 生命週期守衛 | 攔截危險指令 | Agent 工具執行事件 |
 
@@ -64,7 +64,7 @@ my-workspace.code-workspace
 flowchart LR
     Hook["🛡️ Hooks"] -->|生命週期守衛| Agent
     Agent["🤖 Agent<br/>(調度)"] -->|啟動| Skill
-    Skill["⚡ Skill<br/>(工作流程 + 輸出模板)"] -->|規則| Instruction["📏 Instruction<br/>(規則)"]
+    Skill["🛠️ Skill<br/>(工作流程 + 輸出模板)"] -->|規則| Instruction["📏 Instruction<br/>(規則)"]
     Prompt["📋 Prompt<br/>(快捷指令)"] -->|"手動 /prompt-name"| Standalone["獨立執行"]
 ```
 
@@ -169,13 +169,13 @@ flowchart LR
 
 ---
 
-## ⚡ Skills
+## 🛠️ Skills
 
 可執行的工作流。Copilot 判斷相關時自動觸發（除非停用），也可手動以 `/skill-name` 呼叫。
 
 |   | Skill | 觸發方式 | 說明 |
 |:-:|-------|----------|------|
-| ❓ | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
+| 💬 | `clarify-task` | 自動 + 手動 | 互動式任務釐清 — 動手前以編號問題確認範圍 |
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 階段、需求、檔案、風險（原子任務拆解交給 `tasks` skill） |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證 |
@@ -184,11 +184,11 @@ flowchart LR
 | 📦 | `git-commit` | **僅手動** | [Conventional Commits](https://www.conventionalcommits.org/) 訊息產生與智慧檔案暫存 |
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
-| 🗄️ | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
-| 🔄 | `schema-migration-review` | 自動 + 手動 | DDL/DML migration 審查 — rollback 安全性、鎖定衝擊、向後相容性 |
+| 🔎 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測 |
+| 🔀 | `schema-migration-review` | 自動 + 手動 | DDL/DML migration 審查 — rollback 安全性、鎖定衝擊、向後相容性 |
 
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
-| ⚡ | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
+| 🚀 | `performance` | 自動 + 手動 | Measure-first 效能調校，涵蓋前端、Java 後端、資料庫 |
 
 > [!WARNING]
 > `git-commit` 使用 `disable-model-invocation: true` 防止自動觸發，請一律以 `/git-commit` 顯式呼叫。
