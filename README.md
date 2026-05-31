@@ -128,6 +128,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 | `plan` | Create phased implementation plan with risks and dependencies | stay in `@planner` |
 | `tasks` | Break approved plan into atomic, dependency-ordered tasks | → `@implementer` |
 
+> [!TIP]
 > Skip `@planner` for small changes (1–3 files) — go straight to `@implementer`.
 
 #### 🔨 `@implementer` — Write and change code
@@ -149,6 +150,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 | `schema-migration-review` | DDL/DML rollback safety, lock impact, deploy compat | → `@implementer` (fix) |
 
 
+> [!WARNING]
 > Every finding is graded CRITICAL / HIGH / MEDIUM / LOW. Never merge with an open CRITICAL or HIGH.
 > If review uncovers a deeper bug → `@debugger`. If design-level rework is needed → `@planner`.
 
@@ -158,6 +160,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 |---|---|---|
 | `debug` | Reproduce → hypothesize → isolate → verify root cause → propose minimal fix | → `@implementer` (fix) |
 
+> [!NOTE]
 > `@debugger` diagnoses only — it does not implement fixes. Always hand off to `@implementer`.
 
 #### 📚 `@researcher` — Read-only subagent (automatic)

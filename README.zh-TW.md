@@ -128,6 +128,7 @@ flowchart LR
 | `plan` | 建立分階段實作計畫，含風險與依賴 | 留在 `@planner` |
 | `tasks` | 將核准的計畫拆成有依賴順序的原子任務 | → `@implementer` |
 
+> [!TIP]
 > 小改動（1–3 檔）跳過 `@planner`，直接找 `@implementer`。
 
 #### 🔨 `@implementer` — 寫 code、改 code
@@ -149,6 +150,7 @@ flowchart LR
 | `schema-migration-review` | DDL/DML rollback 安全性、鎖定影響、部署相容 | → `@implementer`（修復） |
 
 
+> [!WARNING]
 > 每個 finding 分級 CRITICAL / HIGH / MEDIUM / LOW；有未解的 CRITICAL/HIGH 不放行。
 > 審查發現更深層 bug → `@debugger`。需要設計層級重做 → `@planner`。
 
@@ -158,6 +160,7 @@ flowchart LR
 |---|---|---|
 | `debug` | 重現 → 假說 → 隔離 → 驗證根因 → 提出最小修復 | → `@implementer`（修復） |
 
+> [!NOTE]
 > `@debugger` 只診斷，不實作修復。一律交給 `@implementer`。
 
 #### 📚 `@researcher` — 唯讀子代理（自動）
