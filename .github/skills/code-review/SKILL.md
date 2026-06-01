@@ -67,9 +67,9 @@ Structured code review.
 | Severity | Definition | Action |
 |---|---|---|
 | 🔴 CRITICAL | Security vuln, data loss, crash | Must fix before merge |
-| 🟠 MAJOR | Bug, perf issue, convention violation | Should fix |
-| 🟡 MINOR | Style, naming, minor improvement | Nice to fix |
-| ⚪ NIT | Preference, trivial | Optional |
+| 🟠 HIGH | Bug, perf issue, convention violation | Should fix |
+| 🟡 MEDIUM | Style, naming, minor improvement | Nice to fix |
+| ⚪ LOW | Preference, trivial | Optional |
 
 ## Phase 4 — Verdict
 
@@ -81,7 +81,7 @@ Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
 
 ```
 ## Verdict: APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
-Findings: N critical, N major, N minor, N nit
+Findings: N critical, N high, N medium, N low
 Summary: <one-sentence assessment>
 ```
 

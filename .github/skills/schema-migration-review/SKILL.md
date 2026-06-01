@@ -65,11 +65,11 @@ Fix: <specific remediation, e.g., "split into two releases">
 | Severity | Criteria |
 |---|---|
 | 🔴 CRITICAL | Irreversible data loss; production-blocking lock; no rollback path |
-| 🟠 MAJOR | Multi-minute lock on large table; breaks running app instances during deploy |
-| 🟡 MINOR | Backfill not chunked; missing index after column add |
-| ⚪ NIT | Naming convention; column comment missing |
+| 🟠 HIGH | Multi-minute lock on large table; breaks running app instances during deploy |
+| 🟡 MEDIUM | Backfill not chunked; missing index after column add |
+| ⚪ LOW | Naming convention; column comment missing |
 
-Summary: `Migrations reviewed: N | Findings: N critical, N major, N minor, N nit | Top issue: <most impactful>`
+Summary: `Migrations reviewed: N | Findings: N critical, N high, N medium, N low | Top issue: <most impactful>`
 
 ## Anti-Patterns
 

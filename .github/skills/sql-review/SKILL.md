@@ -51,11 +51,11 @@ Impact: <performance/security/correctness>
 | Severity | Criteria |
 |---|---|
 | 🔴 CRITICAL | SQL injection; data loss; unbounded DELETE/UPDATE |
-| 🟠 MAJOR | Missing index on large table; N+1; `SELECT *` on wide table |
-| 🟡 MINOR | Suboptimal pagination; unnecessary columns |
-| ⚪ NIT | Alias naming; formatting |
+| 🟠 HIGH | Missing index on large table; N+1; `SELECT *` on wide table |
+| 🟡 MEDIUM | Suboptimal pagination; unnecessary columns |
+| ⚪ LOW | Alias naming; formatting |
 
-Summary: `Queries reviewed: N | Findings: N critical, N major, N minor, N nit | Top issue: <most impactful>`
+Summary: `Queries reviewed: N | Findings: N critical, N high, N medium, N low | Top issue: <most impactful>`
 
 ### EXPLAIN Cheat Sheet (MySQL)
 
