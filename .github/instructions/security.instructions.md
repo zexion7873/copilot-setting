@@ -39,6 +39,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 - Pin dependency versions; no `SNAPSHOT` in production
 - Track CVEs: `mvn versions:display-dependency-updates`
+- Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL 2017) carry unpatched CVEs — document as baseline risk in every audit
 
 ## A07 Authentication Failures
 

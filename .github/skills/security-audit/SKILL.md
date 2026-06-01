@@ -10,6 +10,7 @@ OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.
 **Canonical rules — open the instruction files** (agent mode can read them directly):
 
 - `instructions/security.instructions.md` — OWASP Top 10 for Java web
+- `instructions/sql.instructions.md` — SQL injection, parameterization, JDBC resources
 - `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
