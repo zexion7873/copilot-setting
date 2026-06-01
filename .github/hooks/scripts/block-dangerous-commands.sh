@@ -26,15 +26,20 @@ TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""') || {
   exit 2
 }
 
-TOOL_INPUT=$(echo "$INPUT" | jq -r '.toolInput // "" | if type == "object" then tostring else . end') || {
+TOOL_INPUT=$(echo "$INPUT" | jq -r '
+  .toolInput // "" |
+  if type == "object" then
+    (.command // .cmd // .script // tostring) |
+    if type == "array" then join(" ") else . end
+  else . end') || {
   echo "DENY: failed to parse toolInput (fail-closed)" >&2
   exit 2
 }
 
 # ── Only inspect shell-like tool calls ──────────────────────────────
 case "$TOOL_NAME" in
-  shell_command|terminal|bash|run_command|execute|exec|sh|command) ;;
-  *) exit 0 ;;
+  read_file|list_dir|list_directory|search|grep|codebase|read|find_files) exit 0 ;;
+  *) ;;
 esac
 
 # ── Normalize input ─────────────────────────────────────────────────
@@ -53,14 +58,14 @@ NORM=$(echo "$TOOL_INPUT" | tr -s '[:space:]' ' ')
 #   Split flags: -r -f, -f -r
 #   Long flags: --recursive, --force
 #   Targets: /, ~, $HOME, ., .., *, ./*
-DENY_PATTERNS='rm (-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r) (/|~|\.|\.\.|\*|\./\*|\$)'
+DENY_PATTERNS='rm (-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)( --)? ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
 DENY_PATTERNS="$DENY_PATTERNS"'|rm (-r -f|-f -r) '
 DENY_PATTERNS="$DENY_PATTERNS"'|rm --recursive|rm --force'
 DENY_PATTERNS="$DENY_PATTERNS"'|--no-preserve-root'
 
 # find — destructive actions
 DENY_PATTERNS="$DENY_PATTERNS"'|find .*-delete'
-DENY_PATTERNS="$DENY_PATTERNS"'|find .*-exec rm'
+DENY_PATTERNS="$DENY_PATTERNS"'|find .*-exec(dir)? rm'
 
 # Privilege escalation
 DENY_PATTERNS="$DENY_PATTERNS"'|(^| )(sudo|doas|pkexec)( |$)'
@@ -78,8 +83,8 @@ DENY_PATTERNS="$DENY_PATTERNS"'|git clean -[a-zA-Z]*f'
 
 # Filesystem permissions and formatting
 #   chmod 777 — with or without -R, handles -R777 (flag glued to value)
-DENY_PATTERNS="$DENY_PATTERNS"'|chmod (-[a-zA-Z]+ |-[a-zA-Z]*)?777'
-DENY_PATTERNS="$DENY_PATTERNS"'|mkfs\.'
+DENY_PATTERNS="$DENY_PATTERNS"'|chmod (-[a-zA-Z]+ |-[a-zA-Z]*)?0?777'
+DENY_PATTERNS="$DENY_PATTERNS"'|mkfs( |\.)'
 DENY_PATTERNS="$DENY_PATTERNS"'|shred '
 DENY_PATTERNS="$DENY_PATTERNS"'|wipefs '
 
@@ -89,7 +94,7 @@ DENY_PATTERNS="$DENY_PATTERNS"'|wget.*\|.*(sh|bash)'
 DENY_PATTERNS="$DENY_PATTERNS"'|base64 (-d|--decode).*\|'
 
 # Raw disk write / mass process kill
-DENY_PATTERNS="$DENY_PATTERNS"'|dd if='
+DENY_PATTERNS="$DENY_PATTERNS"'|dd (if=|of=/dev/)'
 DENY_PATTERNS="$DENY_PATTERNS"'|kill -9 -1'
 
 # Fork bomb

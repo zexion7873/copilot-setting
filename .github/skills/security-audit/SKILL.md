@@ -35,6 +35,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] Passwords hashed with bcrypt/scrypt — never plaintext, MD5, or SHA1
 - [ ] Sensitive data encrypted at rest and in transit
 - [ ] No secrets in logs, error messages, or client responses
+- [ ] No hardcoded credentials in source or config — search for password/secret/apikey/token literals
 
 **A03 Injection** (check each):
 - [ ] SQL: all queries parameterized — search for string concat near `createQuery`/`createSQLQuery`/`PreparedStatement`

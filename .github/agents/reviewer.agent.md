@@ -1,6 +1,6 @@
 ---
 name: Reviewer
-description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, and Maven pom.xml reviews. Each mode follows its own checklist and severity model.'
+description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, and Maven pom.xml dependency checks (within code review). Each review mode follows its own checklist and severity model.'
 model: Claude Sonnet 4.6
 tools: ['search', 'read', 'context7/*', 'agent', 'websearch/*']
 agents: ['Researcher']

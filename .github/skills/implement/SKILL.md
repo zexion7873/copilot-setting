@@ -5,7 +5,7 @@ description: 'Use when user needs code written — new features or task executio
 
 # Implement — Workflow
 
-Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.x projects.
+Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects.
 
 **Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
 

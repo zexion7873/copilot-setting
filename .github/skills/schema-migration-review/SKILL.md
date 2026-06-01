@@ -44,7 +44,7 @@ For each DDL/DML, answer: "If old app version runs DURING this migration, what b
 - [ ] FK constraints don't reference columns being altered in same migration
 - [ ] `hbm.xml` / DAO aligned with post-migration schema after deploy
 
-If any answer is "old app breaks" → finding is at least MAJOR; recommend splitting into multi-release migration.
+If any answer is "old app breaks" → finding is at least HIGH; recommend splitting into multi-release migration.
 
 ## Phase 5 — Report
 

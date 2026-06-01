@@ -85,4 +85,5 @@ status: 'Planned'
 
 - → `tasks` skill — to break plan into atomic task list
 - → `clarify-task` skill — if gaps found during planning
+- ← `clarify-task` skill — when ambiguity resolved and ready to plan
 - ← `@planner` — default activation

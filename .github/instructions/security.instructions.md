@@ -43,7 +43,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 ## A07 Authentication Failures
 
-- New session ID on login; cookies: `HttpOnly` + `Secure` + `SameSite=Strict`
+- New session ID on login; cookies: `HttpOnly` + `Secure` + `SameSite=Strict` (Servlet 3.0 has no SameSite API — set via `Set-Cookie` response header or container config)
 
 ## A08 Integrity Failures
 
