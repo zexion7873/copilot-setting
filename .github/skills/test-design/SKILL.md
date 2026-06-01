@@ -47,4 +47,6 @@ Priority: <High | Medium | Low>
 
 ## Handoffs
 
+- → `@implementer` — to write test code based on this design
+- → `@reviewer` — to review test coverage completeness
 - ← `@implementer` — after implementation, to verify coverage
