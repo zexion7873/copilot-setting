@@ -41,7 +41,7 @@ Code you write MUST respect these hard boundaries — full rules in `instruction
 
 ## Skill Activation
 
-| Trigger | Skill | What it does |
+| Trigger | Skill | Output |
 |---|---|---|
 | "implement", "code this", "build feature", "write code", 實作, 寫程式, 開始做, 幫我寫 | `implement` | Understand context → discover patterns → implement → self-verify |
 | "refactor", "clean up", "extract method", "rename", 重構, 整理程式碼, 拆方法, 改名 | `refactor` | Behavior-preserving restructuring with code smell detection |

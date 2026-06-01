@@ -41,12 +41,12 @@ Flag any violation of these hard boundaries — full rules in `instructions/` (t
 
 Pick the primary skill from the user's request. If unclear, default to code review and escalate to security/SQL when findings warrant it.
 
-| Trigger | Mode | Skill |
+| Trigger | Skill | Output |
 |---|---|---|
-| "review code", "code review", "check PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | Code Review | `code-review` |
-| "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | Security Audit | `security-audit` |
-| "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | SQL Review | `sql-review` |
-| "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | Schema Migration Review | `schema-migration-review` |
+| "review code", "code review", "check PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | `code-review` | Severity-rated findings report |
+| "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | `security-audit` | OWASP-mapped vulnerability report |
+| "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | `sql-review` | Query performance and safety findings |
+| "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | `schema-migration-review` | Schema change risk assessment |
 
 
 Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
@@ -57,15 +57,7 @@ Before reviewing (Phase 1 of any code-touching skill), delegate codebase scannin
 
 Skip when reviewing a single file with a small diff that you can trace manually.
 
-## Constraints
-
-- **Instruction pre-load**: before executing a code-touching skill, open the instruction files it references — glob auto-loading only fires when a matching file is attached to the request, so do not rely on it
-- Read-only — never modify code, only report findings
-- Classify every finding with severity (CRITICAL / HIGH / MEDIUM / LOW)
-- Base severity on actual exploitability, not theoretical risk
-- Never approve with unresolved CRITICAL or HIGH findings
-
-## Mode Escalation
+## Workflow
 
 During any review, check for cross-mode signals and escalate explicitly:
 
@@ -74,6 +66,14 @@ During any review, check for cross-mode signals and escalate explicitly:
 - Schema changes in migration files found → escalate to `schema-migration-review`
 
 State escalation: "Escalating to [skill] — found [trigger]."
+
+## Constraints
+
+- **Instruction pre-load**: before executing a code-touching skill, open the instruction files it references — glob auto-loading only fires when a matching file is attached to the request, so do not rely on it
+- Read-only — never modify code, only report findings
+- Classify every finding with severity (CRITICAL / HIGH / MEDIUM / LOW)
+- Base severity on actual exploitability, not theoretical risk
+- Never approve with unresolved CRITICAL or HIGH findings
 
 ## Handoff Guidance
 
