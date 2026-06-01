@@ -28,6 +28,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] Object references (ID in URL/param) validated against current user's ownership (IDOR)
 - [ ] No path traversal: file paths from user input sanitized
 - [ ] HTTP method restrictions enforced (POST-only for mutations)
+- [ ] CSRF: all state-changing POST forms carry a CSRF token (Spring Security 3.2 `<csrf>` config or manual token+session check)
 
 **A02 Cryptographic Failures** (check each):
 - [ ] Passwords hashed with bcrypt/scrypt — never plaintext, MD5, or SHA1
@@ -50,6 +51,8 @@ For each entry point, trace data flow from input → processing → storage → 
 
 **A06 Vulnerable Components** (check each):
 - [ ] Key dependencies (Spring, Hibernate, Jackson, Log4j, Commons) not on known-CVE versions
+- [ ] Run `mvn org.owasp:dependency-check-maven:check` or `mvn versions:display-dependency-updates` and flag any CVE
+- [ ] Spring 3.2 and Hibernate 4.2 are EOL — document known unpatched CVEs as baseline risk
 
 **A07 Auth & Session** (check each):
 - [ ] Cookie flags: `HttpOnly`, `Secure`, `SameSite=Strict`

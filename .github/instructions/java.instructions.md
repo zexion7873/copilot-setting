@@ -28,6 +28,12 @@ This project is Java 8. AI models default to modern Java — correct that here.
 - Never modify external state inside `forEach` / `map` / `filter`
 - Prefer `for` loop for simple iterations with side effects
 
+## Date and Time
+
+- Use `java.time` API (`LocalDate`, `LocalDateTime`, `ZonedDateTime`, `Instant`, `Duration`) — this is a Java 8 feature and the correct choice for this project
+- Never use `java.util.Date`, `java.util.Calendar`, or `java.sql.Timestamp` in new code
+- Conversion: `Date.toInstant()` / `Date.from(instant)` at integration boundaries with legacy APIs
+
 ## Exception Handling
 
 - **Unchecked** (`RuntimeException`) for programming errors; **Checked** for recoverable conditions
@@ -61,3 +67,4 @@ This project is Java 8. AI models default to modern Java — correct that here.
 | `System.out.println(...)` | Unstructured, no levels, lost in production | `log.debug(...)` via SLF4J |
 | `throw new RuntimeException("err")` without cause | Loses original stack trace | `throw new RuntimeException("msg", original)` |
 | `catch (Exception e) { return null; }` | Converts to NPE elsewhere | Rethrow meaningful exception or `Optional.empty()` |
+| `new Date()` / `Calendar.getInstance()` | Legacy API; mutable, error-prone, poorly designed | `LocalDate.now()` / `LocalDateTime.now()` via `java.time` |

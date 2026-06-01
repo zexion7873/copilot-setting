@@ -34,6 +34,16 @@ No Spring Boot. No Spring 4+. No JPA annotations. AI models default to all three
 - **Never** `session.close()` / `flush()` in DAOs — Spring owns lifecycle
 - **Never** pass session across threads — not thread-safe
 
+## Lazy Loading Strategy
+
+Choose ONE per module — do not mix within a module:
+
+- **`OpenSessionInViewFilter`** — keeps Session open through JSP render; simplest for read-heavy pages. Configure in `web.xml`. Risk: N+1 queries hidden in views.
+- **DTO projection** — assemble DTOs in service layer; JSP never touches entities. Safest, best for APIs. More boilerplate.
+- **`JOIN FETCH` / `Hibernate.initialize()`** — eagerly load required associations in service. Middle ground; needs discipline to avoid missing paths.
+
+`LazyInitializationException` in JSP means the Session closed before rendering. Fix by choosing one of the three strategies above — do not suppress the exception.
+
 ## Transaction Management (tx:advice)
 
 - `HibernateTransactionManager` + `<tx:advice>` + `<aop:config>` pointcut on service layer

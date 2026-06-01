@@ -11,6 +11,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 - Deny by default; explicitly check rights per resource
 - Allow-list for user-supplied URLs/paths; prevent path traversal
+- CSRF: all state-changing POST forms must carry a CSRF token; Spring Security 3.2: configure `<csrf>` in security namespace; without Spring Security: manual double-submit cookie or synchronizer token
 
 ## A02 Cryptographic Failures
 

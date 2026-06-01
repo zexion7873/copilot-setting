@@ -38,6 +38,9 @@ Code you write MUST respect these hard boundaries — full rules in `instruction
 - **Hibernate 4.2**: `getCurrentSession()` + `hbm.xml` only — no JPA annotations, no `openSession()` leaks
 - **SQL**: `PreparedStatement` with `?` (JDBC) / named params `:param` (HQL) — never concatenate user input into query strings
 - **Security**: `<c:out>` / escape all JSP output; `HttpOnly` + `Secure` + `SameSite=Strict` cookie flags
+- **Access Control (A01)**: deny by default; every endpoint must check role/permission, not just login; CSRF tokens on all state-changing POST forms
+- **Deserialization (A08)**: never deserialize untrusted data via `ObjectInputStream` — prefer JSON
+- **SSRF (A10)**: allow-list hosts/ports/protocols for any server-side URL fetch with user-supplied target; block private IP ranges
 
 ## Skill Activation
 

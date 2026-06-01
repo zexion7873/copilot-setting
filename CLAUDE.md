@@ -98,7 +98,11 @@ This repo intentionally mixes languages. Respect the split:
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /` / `rm -fr /`, `rm -rf .`, `rm -rf *`, `rm -rf ./*`, `--no-preserve-root`, `sudo`, `doas`, `pkexec`, `DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`, `DROP INDEX`, `TRUNCATE`, `git push --force` / `git push -f` (any branch), `git reset --hard`, `git clean -f` (any flag combo containing `-f`), `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive, input is whitespace-normalised before matching). The hook is **fail-closed** — JSON parse errors or missing `jq` → deny.
+
+**Blocked categories:** `rm` with recursive+force flags (combined `-rf`/`-fr`, split `-r -f`, long `--recursive`/`--force`) targeting `/`, `~`, `$HOME`, `.`, `..`, `*`, `./*`; `find -delete` / `find -exec rm`; `--no-preserve-root`; `sudo`, `doas`, `pkexec`; `DROP DATABASE/SCHEMA/TABLE/INDEX/VIEW/FUNCTION/PROCEDURE`; `TRUNCATE`; `DELETE FROM`; `git push --force` / `git push -f` / `git push +refspec`; `git reset --hard`; `git clean -f` (any flag combo containing `-f`); `chmod 777` (with or without `-R`, including `-R777`); `mkfs.`; `shred`; `wipefs`; `curl|sh` / `wget|bash`; `base64 -d|` (decode-pipe); `dd if=`; `kill -9 -1`; fork bomb `:(){ ... }`.
+
+This is a **last-resort safety net, not a sandbox** — blocklists are inherently bypassable via encoding, aliases, or variable indirection. Downstream repos should run agents in restricted-permission environments. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
 ## Commit & PR Process
 
