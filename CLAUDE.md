@@ -12,6 +12,8 @@ This repo is **not application code** — it is a configuration distribution for
 
 The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
+The root `AGENTS.md` is a condensed, agent-agnostic index of this same architecture (for non-Claude tools). This `CLAUDE.md` is canonical; keep `AGENTS.md` a high-level mirror and do not let the two diverge. There are intentionally no per-directory `AGENTS.md` files — keep navigation in this single root file.
+
 ## Validation Commands
 
 The only executable workflow is style-guide validation. Run before committing changes under `.github/`:
