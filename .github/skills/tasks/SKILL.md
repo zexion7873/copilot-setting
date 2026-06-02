@@ -9,7 +9,9 @@ Atomic task decomposition from an approved plan.
 
 ## Phase 1 — Parse Source
 
-Read the plan. Extract: phases/goals, file list, dependencies, constraints.
+Locate the approved plan in `docs/plans/` (the `plan` skill writes there). If the user named a plan, read that file. If exactly one plan exists, use it. If none exists or the source is ambiguous, **stop and ask** — do not invent a task list from scratch; redirect to the `plan` skill when no plan exists yet.
+
+From the plan, extract: phases/goals, file list, dependencies, constraints. Record the plan's path in the `source:` field of the output.
 
 ## Phase 2 — Decompose
 

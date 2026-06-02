@@ -161,8 +161,27 @@ for a in $CODE_AGENTS; do
     error "agents/$a.agent.md: missing '## Coding Standards' section (hard-boundary rules must be embedded)"
   fi
 done
+
+# Drift guard: the hard-boundary bullets (lines starting with '- ') must be
+# byte-identical across all code-touching agents. Only the intro sentence may
+# differ per-agent voice ("Code you write" vs "Any fix you propose" vs "Flag
+# any violation"). This is the sanctioned duplication from CLAUDE.md — a machine
+# check so a version-lock edit to one agent cannot silently skip the others.
+cs_bullets() {
+  awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$1" | grep -E '^- '
+}
+ref_bullets="$(cs_bullets "$GITHUB_DIR/agents/implementer.agent.md")"
+for a in $CODE_AGENTS; do
+  [ "$a" = "implementer" ] && continue
+  file="$GITHUB_DIR/agents/$a.agent.md"
+  [ -f "$file" ] || continue
+  if [ "$(cs_bullets "$file")" != "$ref_bullets" ]; then
+    error "agents/$a.agent.md: Coding Standards hard-boundary bullets drifted from implementer (must be byte-identical — only the intro sentence may differ)"
+  fi
+done
+
 if [ "$ERRORS" -eq "$ca_errors_start" ]; then
-  pass "all code-touching agents embed Coding Standards"
+  pass "all code-touching agents embed Coding Standards (and hard-boundary bullets match)"
 fi
 echo ""
 

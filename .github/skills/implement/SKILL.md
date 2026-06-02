@@ -7,7 +7,7 @@ description: 'Use when user needs code written — new features or task executio
 
 Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects.
 
-**Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
+**MANDATORY pre-load gate — do NOT write code (Phase 3) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
@@ -43,7 +43,7 @@ Before writing new code, find and follow existing patterns:
 
 - [ ] Ran `mvn compile` and the relevant tests — actually green, not assumed
 - [ ] Follows patterns found in Phase 2
-- [ ] No `@Transactional`, no `openSession()`, no JPA annotations
+- [ ] Ran `grep -rnE '@Transactional|@Entity|@Table|@Column|openSession\(' <changed files>` — zero hits (these compile but violate the Spring 3.2 / Hibernate 4.2 lock; mechanical check, not eyeballed)
 - [ ] SQL uses parameterized queries only
 - [ ] No hardcoded secrets or credentials
 

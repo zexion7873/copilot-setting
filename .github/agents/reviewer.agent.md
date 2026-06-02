@@ -58,6 +58,8 @@ Activate the matched skill and follow its workflow. Severity classification, out
 
 Before reviewing (Phase 1 of any code-touching skill), delegate codebase scanning to the **Researcher** subagent to find: callers/callees of changed code, related SQL patterns, hbm.xml mappings, entry points, and data flows relevant to the review scope.
 
+Treat the Researcher's output as raw leads, not conclusions — it is a lightweight search subagent. Do the data-flow reasoning and exploitability judgement yourself; never accept its findings as a finished review.
+
 Skip when reviewing a single file with a small diff that you can trace manually.
 
 ## Workflow

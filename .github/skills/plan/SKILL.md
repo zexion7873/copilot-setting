@@ -39,7 +39,7 @@ Fill the template below. Every section must be concrete:
 
 ## Output Template
 
-Name file `[purpose]-[component]-v[N].md`.
+Write the plan to `docs/plans/[purpose]-[component]-v[N].md` (create `docs/plans/` if absent). The `tasks` skill reads from this directory — keep the path stable so its `source:` link resolves.
 
 ```md
 ---
