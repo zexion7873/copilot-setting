@@ -82,7 +82,7 @@ flowchart LR
 
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
-| 📐 | `@planner` | Claude Opus 4.6 | 觸發 `plan` / `tasks` / `clarify-task` skill；規劃、任務拆解一站完成 |
+| 📐 | `@planner` | Claude Opus 4.8 | 觸發 `plan` / `tasks` / `clarify-task` skill；規劃、任務拆解一站完成 |
 | 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` / `test-design` / `performance` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Sonnet 4.6 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
@@ -253,7 +253,7 @@ flowchart LR
 │   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫
-│   ├── planner.agent.md              (Claude Opus 4.6)
+│   ├── planner.agent.md              (Claude Opus 4.8)
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
 │   ├── reviewer.agent.md             (Claude Sonnet 4.6)
 │   ├── debugger.agent.md             (Claude Sonnet 4.6)
