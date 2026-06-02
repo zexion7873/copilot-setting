@@ -36,6 +36,7 @@ dependency-reduced-pom.xml
 .claude/
 .codegraph/
 .omc/
+.omo/
 .sisyphus/
 
 # Misc
