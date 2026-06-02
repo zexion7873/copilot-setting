@@ -126,7 +126,7 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 |---|---|---|
 | `@planner` | Claude Opus 4.8 | `plan`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Sonnet 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
+| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
 | `@researcher` | GPT-5 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 

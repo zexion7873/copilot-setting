@@ -84,7 +84,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.8 | Activates `plan` / `tasks` / `clarify-task` skills; plans and task decomposition in one agent |
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Sonnet 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skills, mode-routed by review type |
+| 🔍 | `@reviewer` | Claude Opus 4.8 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | GPT-5 mini | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
@@ -255,7 +255,7 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 ├── agents/                                ← Invoke via @agent-name in chat
 │   ├── planner.agent.md              (Claude Opus 4.8)
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
-│   ├── reviewer.agent.md             (Claude Sonnet 4.6)
+│   ├── reviewer.agent.md             (Claude Opus 4.8)
 │   ├── debugger.agent.md             (Claude Sonnet 4.6)
 │   └── researcher.agent.md           (GPT-5 mini)
 │
