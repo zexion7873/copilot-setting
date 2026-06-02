@@ -1,6 +1,6 @@
 ---
 name: schema-migration-review
-description: 'Use when user needs SQL migration scripts (DDL/DML schema changes) reviewed for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review migration, migration review, schema change, DDL review, ALTER TABLE review, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified migration findings with rollback and lock guidance. Do NOT use for SELECT query performance (prefer sql-review), application code review (prefer code-review), or initial schema design (prefer plan or sdd).'
+description: 'Use when user needs SQL migration scripts (DDL/DML schema changes) reviewed for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review migration, migration review, schema change, DDL review, ALTER TABLE review, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified migration findings with rollback and lock guidance. Do NOT use for SELECT query performance (prefer sql-review), application code review (prefer code-review), or initial schema design (prefer plan).'
 ---
 
 # Schema Migration Review — Workflow
@@ -37,10 +37,14 @@ Focus: rollback safety, data-loss risk, lock duration on production-sized tables
 
 ## Phase 4 — Compatibility With Running App
 
-- [ ] New columns are nullable or have DB-level default — running old app instances won't fail INSERT
-- [ ] Column drops happen AFTER all app instances stop reading/writing them
-- [ ] FK constraints don't reference soon-to-be-changed columns
-- [ ] Application's `hbm.xml` / DAO matches new schema after deploy
+For each DDL/DML, answer: "If old app version runs DURING this migration, what breaks?"
+
+- [ ] New columns nullable or have DB default → old app INSERT won't fail
+- [ ] Column drops happen AFTER all app instances stop reading/writing
+- [ ] FK constraints don't reference columns being altered in same migration
+- [ ] `hbm.xml` / DAO aligned with post-migration schema after deploy
+
+If any answer is "old app breaks" → finding is at least HIGH; recommend splitting into multi-release migration.
 
 ## Phase 5 — Report
 
@@ -61,11 +65,11 @@ Fix: <specific remediation, e.g., "split into two releases">
 | Severity | Criteria |
 |---|---|
 | 🔴 CRITICAL | Irreversible data loss; production-blocking lock; no rollback path |
-| 🟠 MAJOR | Multi-minute lock on large table; breaks running app instances during deploy |
-| 🟡 MINOR | Backfill not chunked; missing index after column add |
-| ⚪ NIT | Naming convention; column comment missing |
+| 🟠 HIGH | Multi-minute lock on large table; breaks running app instances during deploy |
+| 🟡 MEDIUM | Backfill not chunked; missing index after column add |
+| ⚪ LOW | Naming convention; column comment missing |
 
-Summary: `Migrations reviewed: N | Findings: N critical, N major, N minor, N nit | Top issue: <most impactful>`
+Summary: `Migrations reviewed: N | Findings: N critical, N high, N medium, N low | Top issue: <most impactful>`
 
 ## Anti-Patterns
 

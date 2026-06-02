@@ -2,41 +2,105 @@
 set -euo pipefail
 
 # Pre-tool policy hook: blocks dangerous shell commands before execution.
-# Input:  JSON on stdin (tool name + arguments from Copilot agent)
-# Output: exit 0 = allow, exit 2 = deny
+#
+# WARNING — LAST-RESORT SAFETY NET, NOT A SANDBOX.
+# Blocklists are inherently bypassable (encoding, aliases, variable
+# indirection, etc.).  Downstream repos should run agents inside
+# restricted-permission environments.  This hook catches common
+# accidental destruction; it cannot stop a determined adversary.
+#
+# Input:  JSON on stdin  (tool name + arguments from Copilot agent)
+# Output: exit 0 = allow,  exit 2 = deny
+# Policy: FAIL-CLOSED — any parse or match failure → deny.
 
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""')
-TOOL_INPUT=$(echo "$INPUT" | jq -r '.toolInput // "" | if type == "object" then tostring else . end')
 
-# Only inspect shell-like tool calls
+# ── Fail-closed guards ──────────────────────────────────────────────
+if ! command -v jq >/dev/null 2>&1; then
+  echo "DENY: jq not found (fail-closed)" >&2
+  exit 2
+fi
+
+TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""') || {
+  echo "DENY: failed to parse toolName (fail-closed)" >&2
+  exit 2
+}
+
+TOOL_INPUT=$(echo "$INPUT" | jq -r '
+  .toolInput // "" |
+  if type == "object" then
+    (.command // .cmd // .script // tostring) |
+    if type == "array" then join(" ") else . end
+  else . end') || {
+  echo "DENY: failed to parse toolInput (fail-closed)" >&2
+  exit 2
+}
+
+# ── Only inspect shell-like tool calls ──────────────────────────────
 case "$TOOL_NAME" in
-  shell_command|terminal|bash|run_command) ;;
-  *) exit 0 ;;
+  read_file|list_dir|list_directory|search|grep|codebase|read|find_files) exit 0 ;;
+  *) ;;
 esac
 
-# Blocked patterns (case-insensitive)
-#   - rm -rf /              root deletion
-#   - rm -rf . / rm -rf *   current-dir or glob wipe
-#   - rm -rf ./*            current-dir content wipe via dot-slash
-#   - --no-preserve-root    explicit root deletion flag
-#   - sudo                  privilege escalation
-#   - doas / pkexec         sudo alternatives
-#   - DROP DATABASE/SCHEMA  database/schema destruction
-#   - DROP TABLE            table destruction
-#   - DROP INDEX            index destruction
-#   - TRUNCATE              data wipe without backup
-#   - git push --force      force push (any branch)
-#   - git reset --hard      destructive history rewrite
-#   - git clean -f*          delete untracked files (any flag combo with -f)
-#   - chmod -R 777          world-writable permissions
-#   - mkfs.                 filesystem formatting
-#   - curl/wget | sh        piped remote execution
-#   - dd if=                raw disk write
-#   - kill -9 -1            kill all user processes
-DENY_PATTERNS='rm -(rf|fr) /([^a-zA-Z0-9]|$)|rm -(rf|fr) \.( |$)|rm -(rf|fr) \*|rm -(rf|fr) \./\*|--no-preserve-root|(^| )sudo( |$)|(^| )doas( |$)|(^| )pkexec( |$)|DROP DATABASE|DROP SCHEMA|DROP TABLE|DROP INDEX|TRUNCATE( |$)|git push.*(--force|-f( |$))|git reset --hard|git clean -[a-zA-Z]*f|chmod -R 777|mkfs\.|curl.*\|.*sh|wget.*\|.*sh|dd if=|kill -9 -1'
+# ── Normalize input ─────────────────────────────────────────────────
+# Collapse all consecutive whitespace to a single space so that
+# split-flag tricks (rm -r -f), multi-space evasion, and tab
+# insertion are neutralised before pattern matching.
+NORM=$(echo "$TOOL_INPUT" | tr -s '[:space:]' ' ')
 
-if echo "$TOOL_INPUT" | grep -qiE "$DENY_PATTERNS" 2>/dev/null; then
+# ── Blocked patterns (case-insensitive POSIX ERE) ──────────────────
+#
+# After normalisation every whitespace sequence is a single space,
+# so patterns can use literal ' ' safely.
+#
+# rm — recursive forced deletion
+#   Combined flags in any order: -rf, -fr, -rfi, -fir, …
+#   Split flags: -r -f, -f -r
+#   Long flags: --recursive, --force
+#   Targets: /, ~, $HOME, ., .., *, ./*
+DENY_PATTERNS='rm (-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)( --)? ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
+DENY_PATTERNS="$DENY_PATTERNS"'|rm (-r -f|-f -r) '
+DENY_PATTERNS="$DENY_PATTERNS"'|rm --recursive|rm --force'
+DENY_PATTERNS="$DENY_PATTERNS"'|--no-preserve-root'
+
+# find — destructive actions
+DENY_PATTERNS="$DENY_PATTERNS"'|find .*-delete'
+DENY_PATTERNS="$DENY_PATTERNS"'|find .*-exec(dir)? rm'
+
+# Privilege escalation
+DENY_PATTERNS="$DENY_PATTERNS"'|(^| )(sudo|doas|pkexec)( |$)'
+
+# SQL destruction (DDL + unqualified DML)
+DENY_PATTERNS="$DENY_PATTERNS"'|DROP (DATABASE|SCHEMA|TABLE|INDEX|VIEW|FUNCTION|PROCEDURE)'
+DENY_PATTERNS="$DENY_PATTERNS"'|TRUNCATE( |$)'
+DENY_PATTERNS="$DENY_PATTERNS"'|DELETE FROM'
+
+# Git destructive operations
+#   --force / -f flag, or refspec + prefix (git push origin +main)
+DENY_PATTERNS="$DENY_PATTERNS"'|git push .*(--force|-f( |$)|\+[a-zA-Z])'
+DENY_PATTERNS="$DENY_PATTERNS"'|git reset --hard'
+DENY_PATTERNS="$DENY_PATTERNS"'|git clean -[a-zA-Z]*f'
+
+# Filesystem permissions and formatting
+#   chmod 777 — with or without -R, handles -R777 (flag glued to value)
+DENY_PATTERNS="$DENY_PATTERNS"'|chmod (-[a-zA-Z]+ |-[a-zA-Z]*)?0?777'
+DENY_PATTERNS="$DENY_PATTERNS"'|mkfs( |\.)'
+DENY_PATTERNS="$DENY_PATTERNS"'|shred '
+DENY_PATTERNS="$DENY_PATTERNS"'|wipefs '
+
+# Remote code execution / encoded pipes
+DENY_PATTERNS="$DENY_PATTERNS"'|curl.*\|.*(sh|bash)'
+DENY_PATTERNS="$DENY_PATTERNS"'|wget.*\|.*(sh|bash)'
+DENY_PATTERNS="$DENY_PATTERNS"'|base64 (-d|--decode).*\|'
+
+# Raw disk write / mass process kill
+DENY_PATTERNS="$DENY_PATTERNS"'|dd (if=|of=/dev/)'
+DENY_PATTERNS="$DENY_PATTERNS"'|kill -9 -1'
+
+# Fork bomb
+DENY_PATTERNS="$DENY_PATTERNS"'|:\(\) *\{'
+
+if echo "$NORM" | grep -qiE "$DENY_PATTERNS"; then
   echo "DENY: blocked by pre-tool policy" >&2
   exit 2
 fi

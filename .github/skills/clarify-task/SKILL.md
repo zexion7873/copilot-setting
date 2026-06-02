@@ -50,4 +50,3 @@ After answers, produce a summary block:
 - → `implement` skill — when the task is small and fully understood
 - ← `@planner` — when planner detects ambiguity before planning
 - ← `plan` skill — if gaps found during planning
-- ← `sdd` skill — if gaps found during SDD drafting

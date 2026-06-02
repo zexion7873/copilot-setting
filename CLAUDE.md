@@ -52,7 +52,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. This embed is the only sanctioned duplication — keep it to the version-lock essentials and treat the instruction file as canonical.
+**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. This embed is the only sanctioned duplication — keep it to the version-lock essentials and treat the instruction file as canonical.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -88,6 +88,16 @@ grep -rn "<old-filename>" .github/
 
 Broken paths silently degrade Copilot output — they don't error, they just stop loading the referenced content.
 
+## Maintenance Rule — Cache-Friendly Edits
+
+Copilot's usage-based billing (since June 2026) reuses **prompt cache** at stable prefix boundaries (system prompt, tool definitions, then injected instruction / agent / skill content). A cache *read* costs ~10× less than fresh input; the first *write* costs ~25% more. Within a session these files sit in the cached prefix, so the practical cost lever is **cache hit rate, not file length**.
+
+Because caching is prefix-based, editing one line invalidates that file's cached segment **and everything after it** — the next session pays a full cache-write to rebuild. So:
+
+- **Batch edits to `instructions/`, `agents/`, and `skills/` — change once, decisively. Do not micro-tune for token count.** The input savings from a shorter file are near-zero once the prefix is cached; the cache-write churn from frequent edits costs more than it saves.
+- Trimming a file for clarity or correctness is fine. Trimming *purely* to shave tokens is a net loss — the cache already neutralised that cost.
+- Keep these files stable between releases; land prompt-engineering changes together rather than as a drip of small commits.
+
 ## Bilingual Conventions
 
 This repo intentionally mixes languages. Respect the split:
@@ -98,7 +108,11 @@ This repo intentionally mixes languages. Respect the split:
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive): `rm -rf /` / `rm -fr /`, `rm -rf .`, `rm -rf *`, `rm -rf ./*`, `--no-preserve-root`, `sudo`, `doas`, `pkexec`, `DROP DATABASE`, `DROP SCHEMA`, `DROP TABLE`, `DROP INDEX`, `TRUNCATE`, `git push --force` / `git push -f` (any branch), `git reset --hard`, `git clean -f` (any flag combo containing `-f`), `chmod -R 777`, `mkfs.`, `curl|sh` / `wget|sh`, `dd if=`, `kill -9 -1`. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive, input is whitespace-normalised before matching). The hook is **fail-closed** — JSON parse errors or missing `jq` → deny.
+
+**Blocked categories:** `rm` with recursive+force flags (combined `-rf`/`-fr`, split `-r -f`, long `--recursive`/`--force`) targeting `/`, `~`, `$HOME`, `.`, `..`, `*`, `./*`; `find -delete` / `find -exec rm`; `--no-preserve-root`; `sudo`, `doas`, `pkexec`; `DROP DATABASE/SCHEMA/TABLE/INDEX/VIEW/FUNCTION/PROCEDURE`; `TRUNCATE`; `DELETE FROM`; `git push --force` / `git push -f` / `git push +refspec`; `git reset --hard`; `git clean -f` (any flag combo containing `-f`); `chmod 777` (with or without `-R`, including `-R777`); `mkfs.`; `shred`; `wipefs`; `curl|sh` / `wget|bash`; `base64 -d|` (decode-pipe); `dd if=`; `kill -9 -1`; fork bomb `:(){ ... }`.
+
+This is a **last-resort safety net, not a sandbox** — blocklists are inherently bypassable via encoding, aliases, or variable indirection. Downstream repos should run agents in restricted-permission environments. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
 ## Commit & PR Process
 
@@ -110,10 +124,10 @@ This repo intentionally mixes languages. Respect the split:
 
 | Agent | Model | Activates |
 |---|---|---|
-| `@planner` | Claude Opus 4.6 | `plan`, `sdd`, `tasks`, `clarify-task` |
+| `@planner` | Claude Opus 4.8 | `plan`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Opus 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review`, `pom-review`, `sdd-review` |
-| `@debugger` | Claude Opus 4.6 | `debug` |
-| `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
+| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
+| `@debugger` | Claude Sonnet 4.6 | `debug` |
+| `@researcher` | GPT-5 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.

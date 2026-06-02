@@ -1,15 +1,15 @@
 ---
 name: tasks
-description: 'Use when a plan or SDD needs to be broken into dependency-ordered atomic tasks for implementation. Triggers on: break down tasks, task list, decompose, create tasks, 拆任務, 拆工作, 任務拆解, 列出步驟. Produces a T###-formatted task list with dependency ordering and parallel markers. Do NOT use for creating plans (prefer plan), writing specs (prefer sdd), or direct implementation (prefer implement).'
+description: 'Use when a plan needs to be broken into dependency-ordered atomic tasks for implementation. Triggers on: break down tasks, task list, decompose, create tasks, 拆任務, 拆工作, 任務拆解, 列出步驟. Produces a T###-formatted task list with dependency ordering and parallel markers. Do NOT use for creating plans (prefer plan) or direct implementation (prefer implement).'
 ---
 
 # Tasks — Workflow
 
-Atomic task decomposition from an approved plan or SDD.
+Atomic task decomposition from an approved plan.
 
 ## Phase 1 — Parse Source
 
-Read the plan or SDD. Extract: phases/goals, file list, dependencies, constraints.
+Read the plan. Extract: phases/goals, file list, dependencies, constraints.
 
 ## Phase 2 — Decompose
 
@@ -36,7 +36,7 @@ Break each phase into atomic tasks. Each task must be:
 
 ```md
 ---
-source: <Path to plan or SDD>
+source: <Path to plan>
 date: <YYYY-MM-DD>
 ---
 
@@ -73,4 +73,3 @@ T001 → T003 ──┘
 
 - → `@implementer` — to start executing task list
 - ← `plan` skill — after plan is approved
-- ← `sdd` skill — after SDD is approved

@@ -11,6 +11,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 - Deny by default; explicitly check rights per resource
 - Allow-list for user-supplied URLs/paths; prevent path traversal
+- CSRF: all state-changing POST forms must carry a CSRF token; Spring Security 3.2: configure `<csrf>` in security namespace; without Spring Security: manual double-submit cookie or synchronizer token
 
 ## A02 Cryptographic Failures
 
@@ -22,6 +23,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 - SQL: `PreparedStatement` with `?` only
 - OS command: argument-escaping libs; no shell concatenation
 - XSS: `<c:out>` in JSP; context-aware encoding
+- XXE: disable DTDs and external entities on every XML parser (`DocumentBuilderFactory`, `SAXParserFactory`, `XMLInputFactory`, JAXB `Unmarshaller`) — set `FEATURE_SECURE_PROCESSING` and `disallow-doctype-decl`; critical in this XML-heavy stack
 
 ## A04 Insecure Design
 
@@ -38,10 +40,11 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 - Pin dependency versions; no `SNAPSHOT` in production
 - Track CVEs: `mvn versions:display-dependency-updates`
+- Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL 2017) carry unpatched CVEs — document as baseline risk in every audit
 
 ## A07 Authentication Failures
 
-- New session ID on login; cookies: `HttpOnly` + `Secure` + `SameSite=Strict`
+- New session ID on login; cookies: `HttpOnly` + `Secure` + `SameSite=Strict` (Servlet 3.0 has no SameSite API — set via `Set-Cookie` response header or container config)
 
 ## A08 Integrity Failures
 
@@ -66,3 +69,4 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 | No logging on failed logins | Brute-force undetected (A09) | Log with IP + timestamp |
 | `ObjectInputStream.readObject()` on untrusted data | Deserialization RCE (A08) | Prefer JSON |
 | Hardcoded credentials | First thing attackers try (A05) | Env vars / secret store |
+| `DocumentBuilderFactory.newInstance()` parsing user XML unhardened | XXE — file read, SSRF, DoS (A03) | `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)` |

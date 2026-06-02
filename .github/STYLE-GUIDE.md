@@ -238,7 +238,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 - Include both **English AND Chinese** triggers (bilingual user base per `copilot-instructions.md`).
 - **4–8 trigger phrases** per skill. Too few = missed intent, too many = false activation.
 - Use **verb phrases**, not bare nouns: `"review SQL"` not `"SQL"`.
-- Include common **variations and synonyms**: `"寫 SDD"` and `"寫規格"` for the same skill.
+- Include common **variations and synonyms**: `"怎麼做"` and `"幫我想方案"` for the same skill.
 - **No overlap with sibling skills** on the same agent. If a phrase could activate 2 skills, the agent's Skill Activation section must specify a default (e.g., "Default to `implement` if ambiguous").
 - Overlap between skills on **different agents** is acceptable — the user's `@agent-name` choice disambiguates.
 - **Before adding or changing triggers**, grep sibling skills on the same agent to confirm no overlap: `grep -i "<new-trigger>" .github/skills/*/SKILL.md`.
@@ -282,12 +282,12 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required. The only optional field is `disable-model-invocation: true`, for manual-only skills that must never auto-trigger (e.g., `git-commit`). No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). **Exception**: `refactor` and `git-commit` are reference+process hybrids where Phase N format would damage readability — they keep their organic structure but must still use `— Workflow` in the H1.
 3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `instructions/sql.instructions.md`). The instruction-reference block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
-4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `pom-review`, `security-audit`, `debug`, `performance`). It names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `pom-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
+4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`). It names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `sql-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) may use topic-based H2 sections instead.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
-9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `sdd`, `tasks`, `code-review`, `sql-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `sdd-review`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
+9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
 10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
@@ -451,7 +451,7 @@ These require manual verification. Reviewers should check:
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
-- [ ] Skills producing structured artifacts have `## Output Template` section (plan, sdd, tasks, code-review, sql-review)
+- [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
 
 ---
 
@@ -464,6 +464,16 @@ These require manual verification. Reviewers should check:
 3. Run validator: `bash .github/scripts/validate-style-guide.sh`
 
 Broken paths silently degrade Copilot output — they do not error.
+
+### Editing Existing Files (Cache-Friendly)
+
+Under Copilot usage-based billing, `instructions/` / `agents/` / `skills/` content sits in the **prompt-cache prefix**. Caching is prefix-based: editing one line invalidates that file's cached segment and everything after it, forcing a cache-write rebuild next session.
+
+1. Batch edits — change a file once, decisively. Do **not** micro-tune for token count.
+2. Edit for clarity or correctness, never *purely* to shave tokens (cache already neutralised that cost).
+3. Land prompt-engineering changes together in one PR, not as a drip of small commits.
+
+See `CLAUDE.md` → "Maintenance Rule — Cache-Friendly Edits" for the rationale.
 
 ### STYLE-GUIDE Changes
 

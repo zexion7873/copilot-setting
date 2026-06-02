@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫. Produces a structured plan document. Do NOT use for formal specifications (prefer sdd), atomic task lists (prefer tasks), or unclear requirements (prefer clarify-task).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫. Produces a structured plan document. Do NOT use for atomic task lists (prefer tasks) or unclear requirements (prefer clarify-task).'
 ---
 
 # Plan — Workflow
@@ -35,6 +35,7 @@ Fill the template below. Every section must be concrete:
 - [ ] File list matches codebase scan results
 - [ ] No `TBD` or placeholders left
 - [ ] Alternatives section has at least one rejected option with reason
+- [ ] Refactor / structural plans: affected callers inventoried (verified via `find-impact`, not a single summary)
 
 ## Output Template
 
@@ -71,12 +72,18 @@ status: 'Planned'
 
 - FILE-001: `path/to/File.java` — what changes
 
-## 4. Risks & Alternatives
+## 4. Impact / Affected Callers
+
+- Refactors / structural changes: inventory every caller and dependent of changed symbols, across packages — verify with the `find-impact` prompt, do not rely on a single research summary
+- IMP-001: `path/to/Caller.java:NN` — calls `<symbol>`; needs `<update>`
+- Spring XML beans / `hbm.xml` mappings referencing changed types
+
+## 5. Risks & Alternatives
 
 - RISK-001: <risk> — mitigation: <specific action>
 - ALT-001: <alternative considered> — rejected because <reason>
 
-## 5. Dependencies
+## 6. Dependencies
 
 - DEP-001: <external or internal dependency>
 ```
@@ -84,6 +91,6 @@ status: 'Planned'
 ## Handoffs
 
 - → `tasks` skill — to break plan into atomic task list
-- → `sdd` skill — if a formal spec is needed before implementation
 - → `clarify-task` skill — if gaps found during planning
+- ← `clarify-task` skill — when ambiguity resolved and ready to plan
 - ← `@planner` — default activation

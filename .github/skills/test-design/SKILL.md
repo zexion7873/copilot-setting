@@ -7,9 +7,11 @@ description: 'Use when user needs test case identification and documentation —
 
 Test case identification and documentation. Produces a structured test case document, not executable test code.
 
+Framework rules for any test code that follows from this design: `instructions/testing.instructions.md`.
+
 ## Phase 1 — Identify Boundaries
 
-From the feature/SDD/code under test, extract:
+From the feature/code under test, extract:
 - Input boundaries: min, max, empty, null, overflow
 - State boundaries: initial, in-progress, completed, error
 - Integration boundaries: external API calls, DB operations, file I/O
@@ -40,12 +42,13 @@ Priority: <High | Medium | Low>
 
 ## Phase 4 — Coverage Audit
 
-- [ ] Every requirement from SDD/feature maps to ≥1 test case
+- [ ] Every requirement from the feature maps to ≥1 test case
 - [ ] Every public method has at least one happy path + one error case
 - [ ] Boundary values covered for all numeric/string inputs
 - [ ] SQL operations tested for injection and empty result sets
 
 ## Handoffs
 
+- → `@implementer` — to write test code based on this design
+- → `@reviewer` — to review test coverage completeness
 - ← `@implementer` — after implementation, to verify coverage
-- ← `sdd` skill — to design tests from specification

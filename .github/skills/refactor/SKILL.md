@@ -47,3 +47,5 @@ Surgical, behavior-preserving structural changes.
 - → `@reviewer` — for review after refactoring
 - → `implement` skill — if refactoring reveals a need for new code
 - ← `@implementer` — when code needs cleanup before feature work
+- ← `implement` skill — if existing code needs restructuring first
+- ← `performance` skill — if optimization requires structural change
