@@ -124,7 +124,7 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 
 | Agent | Model | Activates |
 |---|---|---|
-| `@planner` | Claude Opus 4.8 | `plan`, `tasks`, `clarify-task` |
+| `@planner` | Claude Sonnet 4.6 | `plan`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
 | `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
