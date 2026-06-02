@@ -249,6 +249,7 @@ flowchart LR
 │   ├── security.instructions.md
 │   ├── jsp.instructions.md
 │   ├── xml-config.instructions.md
+│   ├── testing.instructions.md
 │   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← 在聊天中以 @agent-name 呼叫

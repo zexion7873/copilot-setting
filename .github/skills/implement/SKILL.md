@@ -15,6 +15,7 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects
 - `instructions/security.instructions.md` — OWASP Top 10
 - `instructions/jsp.instructions.md` — JSP / JSTL, XSS
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
+- `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 (when writing tests)
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
 ## Phase 1 — Understand Context
@@ -40,7 +41,7 @@ Before writing new code, find and follow existing patterns:
 
 ## Phase 4 — Self-Verify
 
-- [ ] Compiles without warnings
+- [ ] Ran `mvn compile` and the relevant tests — actually green, not assumed
 - [ ] Follows patterns found in Phase 2
 - [ ] No `@Transactional`, no `openSession()`, no JPA annotations
 - [ ] SQL uses parameterized queries only

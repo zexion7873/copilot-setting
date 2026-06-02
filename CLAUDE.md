@@ -88,6 +88,16 @@ grep -rn "<old-filename>" .github/
 
 Broken paths silently degrade Copilot output — they don't error, they just stop loading the referenced content.
 
+## Maintenance Rule — Cache-Friendly Edits
+
+Copilot's usage-based billing (since June 2026) reuses **prompt cache** at stable prefix boundaries (system prompt, tool definitions, then injected instruction / agent / skill content). A cache *read* costs ~10× less than fresh input; the first *write* costs ~25% more. Within a session these files sit in the cached prefix, so the practical cost lever is **cache hit rate, not file length**.
+
+Because caching is prefix-based, editing one line invalidates that file's cached segment **and everything after it** — the next session pays a full cache-write to rebuild. So:
+
+- **Batch edits to `instructions/`, `agents/`, and `skills/` — change once, decisively. Do not micro-tune for token count.** The input savings from a shorter file are near-zero once the prefix is cached; the cache-write churn from frequent edits costs more than it saves.
+- Trimming a file for clarity or correctness is fine. Trimming *purely* to shave tokens is a net loss — the cache already neutralised that cost.
+- Keep these files stable between releases; land prompt-engineering changes together rather than as a drip of small commits.
+
 ## Bilingual Conventions
 
 This repo intentionally mixes languages. Respect the split:

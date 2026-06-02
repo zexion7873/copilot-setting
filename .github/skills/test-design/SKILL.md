@@ -7,6 +7,8 @@ description: 'Use when user needs test case identification and documentation —
 
 Test case identification and documentation. Produces a structured test case document, not executable test code.
 
+Framework rules for any test code that follows from this design: `instructions/testing.instructions.md`.
+
 ## Phase 1 — Identify Boundaries
 
 From the feature/code under test, extract:

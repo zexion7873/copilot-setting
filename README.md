@@ -249,6 +249,7 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── security.instructions.md
 │   ├── jsp.instructions.md
 │   ├── xml-config.instructions.md
+│   ├── testing.instructions.md
 │   └── no-heredoc.instructions.md
 │
 ├── agents/                                ← Invoke via @agent-name in chat

@@ -465,6 +465,16 @@ These require manual verification. Reviewers should check:
 
 Broken paths silently degrade Copilot output — they do not error.
 
+### Editing Existing Files (Cache-Friendly)
+
+Under Copilot usage-based billing, `instructions/` / `agents/` / `skills/` content sits in the **prompt-cache prefix**. Caching is prefix-based: editing one line invalidates that file's cached segment and everything after it, forcing a cache-write rebuild next session.
+
+1. Batch edits — change a file once, decisively. Do **not** micro-tune for token count.
+2. Edit for clarity or correctness, never *purely* to shave tokens (cache already neutralised that cost).
+3. Land prompt-engineering changes together in one PR, not as a drip of small commits.
+
+See `CLAUDE.md` → "Maintenance Rule — Cache-Friendly Edits" for the rationale.
+
 ### STYLE-GUIDE Changes
 
 This file is the canonical source. When updating format rules:

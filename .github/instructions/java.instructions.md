@@ -34,6 +34,18 @@ This project is Java 8. AI models default to modern Java — correct that here.
 - Never use `java.util.Date`, `java.util.Calendar`, or `java.sql.Timestamp` in new code
 - Conversion: `Date.toInstant()` / `Date.from(instant)` at integration boundaries with legacy APIs
 
+## Numbers & Money
+
+- Money / currency / any exact decimal → `BigDecimal`; never `double` or `float`
+- Construct from `String`: `new BigDecimal("0.1")`, never `new BigDecimal(0.1)` (captures binary float error)
+- Compare with `compareTo() == 0`, not `equals()` — `2.0` and `2.00` are unequal under `equals()`
+
+## Concurrency
+
+- Servlets, Spring singletons, and DAOs must be **stateless** — no shared mutable instance fields
+- Shared mutable data → `ConcurrentHashMap` / `Atomic*` / explicit `synchronized`; never a bare `HashMap` across threads
+- Prefer `final` fields and immutability over locking; `volatile` for cross-thread visibility flags
+
 ## Exception Handling
 
 - **Unchecked** (`RuntimeException`) for programming errors; **Checked** for recoverable conditions
@@ -68,3 +80,5 @@ This project is Java 8. AI models default to modern Java — correct that here.
 | `throw new RuntimeException("err")` without cause | Loses original stack trace | `throw new RuntimeException("msg", original)` |
 | `catch (Exception e) { return null; }` | Converts to NPE elsewhere | Rethrow meaningful exception or `Optional.empty()` |
 | `new Date()` / `Calendar.getInstance()` | Legacy API; mutable, error-prone, poorly designed | `LocalDate.now()` / `LocalDateTime.now()` via `java.time` |
+| `double price = 19.99` for money | Binary float rounding errors | `new BigDecimal("19.99")` |
+| Shared `HashMap` mutated by servlet threads | Race condition; lost updates | `ConcurrentHashMap` or confine to method scope |

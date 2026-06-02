@@ -23,6 +23,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 - SQL: `PreparedStatement` with `?` only
 - OS command: argument-escaping libs; no shell concatenation
 - XSS: `<c:out>` in JSP; context-aware encoding
+- XXE: disable DTDs and external entities on every XML parser (`DocumentBuilderFactory`, `SAXParserFactory`, `XMLInputFactory`, JAXB `Unmarshaller`) — set `FEATURE_SECURE_PROCESSING` and `disallow-doctype-decl`; critical in this XML-heavy stack
 
 ## A04 Insecure Design
 
@@ -68,3 +69,4 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 | No logging on failed logins | Brute-force undetected (A09) | Log with IP + timestamp |
 | `ObjectInputStream.readObject()` on untrusted data | Deserialization RCE (A08) | Prefer JSON |
 | Hardcoded credentials | First thing attackers try (A05) | Env vars / secret store |
+| `DocumentBuilderFactory.newInstance()` parsing user XML unhardened | XXE — file read, SSRF, DoS (A03) | `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)` |
