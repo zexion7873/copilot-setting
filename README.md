@@ -86,7 +86,7 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` / `test-design` / `performance` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Sonnet 4.6 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
-| 📚 | `@researcher` | Claude Haiku 4.5 | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
+| 📚 | `@researcher` | GPT-5 mini | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -257,7 +257,7 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
 │   ├── reviewer.agent.md             (Claude Sonnet 4.6)
 │   ├── debugger.agent.md             (Claude Sonnet 4.6)
-│   └── researcher.agent.md           (Claude Haiku 4.5)
+│   └── researcher.agent.md           (GPT-5 mini)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json

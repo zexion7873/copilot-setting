@@ -128,6 +128,6 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
 | `@reviewer` | Claude Sonnet 4.6 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
-| `@researcher` | Claude Haiku 4.5 | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
+| `@researcher` | GPT-5 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.
