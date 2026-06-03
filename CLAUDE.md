@@ -8,7 +8,7 @@ Always reply to the user in **Traditional Chinese (繁體中文)**. File content
 
 ## Repository Purpose
 
-This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core + Hibernate 4.x projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
+This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core 3.2 + Hibernate 4.2 projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
 
 The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
@@ -112,7 +112,7 @@ This repo intentionally mixes languages. Respect the split:
 
 `.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive, input is whitespace-normalised before matching). The hook is **fail-closed** — JSON parse errors or missing `jq` → deny.
 
-**Blocked categories:** `rm` with recursive+force flags (combined `-rf`/`-fr`, split `-r -f`, long `--recursive`/`--force`) targeting `/`, `~`, `$HOME`, `.`, `..`, `*`, `./*`; `find -delete` / `find -exec rm`; `--no-preserve-root`; `sudo`, `doas`, `pkexec`; `DROP DATABASE/SCHEMA/TABLE/INDEX/VIEW/FUNCTION/PROCEDURE`; `TRUNCATE`; `DELETE FROM`; `git push --force` / `git push -f` / `git push +refspec`; `git reset --hard`; `git clean -f` (any flag combo containing `-f`); `chmod 777` (with or without `-R`, including `-R777`); `mkfs.`; `shred`; `wipefs`; `curl|sh` / `wget|bash`; `base64 -d|` (decode-pipe); `dd if=`; `kill -9 -1`; fork bomb `:(){ ... }`.
+**Blocked categories:** `rm` with recursive+force flags — combined `-rf`/`-fr` only when targeting `/`, `~`, `$HOME`, `.`, `..`, `*`, `./*`, but split `-r -f`/`-f -r` and long `--recursive`/`--force` blocked unconditionally (any target); `find -delete` / `find -exec rm` / `find -execdir rm`; `--no-preserve-root`; `sudo`, `doas`, `pkexec`; `DROP DATABASE/SCHEMA/TABLE/INDEX/VIEW/FUNCTION/PROCEDURE`; `TRUNCATE`; `DELETE FROM`; `git push --force` / `git push -f` / `git push +refspec`; `git reset --hard`; `git clean -f` (any flag combo containing `-f`); `chmod 777` (with or without `-R`, including `-R777`); `mkfs.`; `shred`; `wipefs`; `curl|sh` / `wget|bash`; `base64 -d|` (decode-pipe); `dd if=` / `dd of=/dev/` (raw disk write); `kill -9 -1`; fork bomb `:(){ ... }`.
 
 This is a **last-resort safety net, not a sandbox** — blocklists are inherently bypassable via encoding, aliases, or variable indirection. Downstream repos should run agents in restricted-permission environments. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
