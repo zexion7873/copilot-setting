@@ -237,7 +237,7 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 ---
 
 <details>
-<summary><h2>📁 .github/ Directory Structure</h2></summary>
+<summary><h2>📁 What Copilot Loads</h2></summary>
 
 ```text
 .github/
