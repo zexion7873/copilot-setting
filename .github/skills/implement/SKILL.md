@@ -43,7 +43,8 @@ Before writing new code, find and follow existing patterns:
 
 - [ ] Ran `mvn compile` and the relevant tests — actually green, not assumed
 - [ ] Follows patterns found in Phase 2
-- [ ] Ran `grep -rnE '@Transactional|@Entity|@Table|@Column|openSession\(' <changed files>` — zero hits (these compile but violate the Spring 3.2 / Hibernate 4.2 lock; mechanical check, not eyeballed)
+- [ ] Ran `grep -rnE '@Entity|@Table|@Column|openSession\(' <changed files>` — zero hits (these compile but violate the Spring 3.2 / Hibernate 4.2 lock; mechanical check, not eyeballed)
+- [ ] No `@Transactional` on NEW code (use `<tx:advice>`); a module already consistently `@Transactional` may sustain it per `instructions/spring-hibernate.instructions.md`
 - [ ] SQL uses parameterized queries only
 - [ ] No hardcoded secrets or credentials
 
