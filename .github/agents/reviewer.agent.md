@@ -42,7 +42,7 @@ Flag any violation of these hard boundaries — full rules in `instructions/` (t
 
 ## Skill Activation
 
-Pick the primary skill from the user's request. If unclear, default to code review and escalate to security/SQL when findings warrant it.
+Pick the primary skill from the user's request.
 
 | Trigger | Skill | Output |
 |---|---|---|
