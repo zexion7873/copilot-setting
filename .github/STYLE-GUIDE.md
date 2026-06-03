@@ -303,7 +303,7 @@ Supporting files referenced by a skill's body (e.g., before/after code examples,
 
 ## Prompts (`prompts/*.prompt.md`)
 
-Standalone single-task shortcuts the user invokes via `/<prompt-name>`. NOT referenced by skills — prompts are independent of the agent/skill graph.
+Standalone single-task shortcuts the user invokes via `/<prompt-name>`. A prompt **body** must not reference skills or agents (a prompt is a leaf of the graph), but a skill or agent **may** name a prompt as a suggested shortcut (e.g. the `find-impact` prompt) — that inbound mention is allowed and is validated to resolve.
 
 ### Frontmatter (required fields)
 
@@ -436,7 +436,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
 - Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section
-- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files (prompts are standalone shortcuts — not referenced by other files, so not checked here)
+- All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 
 ### Tier 2: Human-review (PR review checklist)
 

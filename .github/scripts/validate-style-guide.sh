@@ -279,11 +279,14 @@ echo "🔗 Cross-References"
 #   `instructions/<name>.instructions.md`
 #   `skills/<name>/SKILL.md`
 #   `agents/<name>.agent.md`
+#   `prompts/<name>.prompt.md`         (path-style prompt refs, if ever introduced)
 # Paths containing * (glob) or < > (illustrative placeholders) are skipped.
+# Name-style prompt mentions (a skill or agent naming a prompt, e.g. the
+# `find-impact` prompt) are also checked to resolve to prompts/<name>.prompt.md.
 xref_errors_start=$ERRORS
 while IFS= read -r file; do
   rel_file="${file#$REPO_ROOT/}"
-  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
+  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md|prompts/[^`*<>]+\.prompt\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
   [ -z "$refs" ] && continue
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue
@@ -292,6 +295,22 @@ while IFS= read -r file; do
       error "$rel_file: references '$ref' but file does not exist"
     fi
   done <<< "$refs"
+done < <(find "$GITHUB_DIR" -name "*.md" -type f)
+
+# Name-style prompt mentions: a skill or agent may name a prompt as a suggested
+# shortcut (e.g. the `find-impact` prompt). The form used in this repo is a
+# backtick-wrapped lowercase name immediately followed by the word "prompt".
+# Verify each such mention resolves to a real prompts/<name>.prompt.md.
+while IFS= read -r file; do
+  rel_file="${file#$REPO_ROOT/}"
+  mentions=$(grep -oE '`[a-z][a-z0-9-]*` +prompt' "$file" 2>/dev/null | sed -E 's/^`([a-z][a-z0-9-]*)` +prompt$/\1/' | sort -u || true)
+  [ -z "$mentions" ] && continue
+  while IFS= read -r pname; do
+    [ -z "$pname" ] && continue
+    if [ ! -f "$GITHUB_DIR/prompts/$pname.prompt.md" ]; then
+      error "$rel_file: references prompt '$pname' but prompts/$pname.prompt.md does not exist"
+    fi
+  done <<< "$mentions"
 done < <(find "$GITHUB_DIR" -name "*.md" -type f)
 
 if [ "$ERRORS" -eq "$xref_errors_start" ]; then

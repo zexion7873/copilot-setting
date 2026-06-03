@@ -186,7 +186,6 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🔎 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns |
 | 🔀 | `schema-migration-review` | Auto + Manual | DDL/DML migration review — rollback safety, lock impact, backward compatibility |
-
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | 🚀 | `performance` | Auto + Manual | Measure-first performance tuning across frontend, Java backend, and DB |
 
