@@ -71,7 +71,7 @@ Structured code review.
 | 🟡 MEDIUM | Style, naming, minor improvement | Nice to fix |
 | ⚪ LOW | Preference, trivial | Optional |
 
-## Phase 4 — Verdict
+## Phase 4 — Render Verdict
 
 Classify all findings, then format using the Output Template below.
 
@@ -90,4 +90,5 @@ Summary: <one-sentence assessment>
 - → `@implementer` — to fix findings
 - → `security-audit` skill — security concerns warrant deeper audit
 - → `sql-review` skill — SQL issues warrant dedicated review
+- → `schema-migration-review` skill — migration / DDL changes warrant dedicated schema review
 - ← `@reviewer` — default activation

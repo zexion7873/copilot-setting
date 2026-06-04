@@ -52,7 +52,7 @@ Pick the primary skill from the user's request.
 | "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | `schema-migration-review` | Schema change risk assessment |
 
 
-Activate the matched skill and follow its workflow. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
+Activate the matched skill and follow its workflow. Default to `code-review` if the user's intent is ambiguous but clearly review-related. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
 
 ## Subagent Delegation
 

@@ -10,6 +10,8 @@ DDL/DML migration review for relational schemas. Companion rules: `instructions/
 **Canonical rules — open the instruction files** (agent mode can read them directly):
 
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL conventions
+- `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
+- `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
 Focus: rollback safety, data-loss risk, lock duration on production-sized tables, FK and index consistency, and backward compatibility with running app instances during deploy.
@@ -20,7 +22,7 @@ Focus: rollback safety, data-loss risk, lock duration on production-sized tables
 - For each statement, classify target table size (small <100k rows, medium 100k–10M, large >10M). Ask if unknown.
 - Note migration ordering and inter-statement dependencies.
 
-## Phase 2 — Rollback Safety
+## Phase 2 — Verify Rollback Safety
 
 - [ ] Down migration / rollback script exists for every up statement
 - [ ] Dropped columns are renamed-then-dropped across two releases (not single-shot)
@@ -28,14 +30,14 @@ Focus: rollback safety, data-loss risk, lock duration on production-sized tables
 - [ ] No `DROP TABLE` without explicit user sign-off
 - [ ] Backfill scripts are idempotent and re-runnable
 
-## Phase 3 — Lock & Downtime Impact
+## Phase 3 — Assess Lock & Downtime Impact
 
 - [ ] `ALTER TABLE` on large tables uses online schema change (pt-osc / gh-ost) or carries explicit downtime note
 - [ ] No `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT <expr>` on large tables (rewrites whole table)
 - [ ] Index creation uses `ALGORITHM=INPLACE, LOCK=NONE` on MySQL where supported
 - [ ] No long-running `UPDATE` / `DELETE` without batching (chunked in 1k–10k rows)
 
-## Phase 4 — Compatibility With Running App
+## Phase 4 — Check Running-App Compatibility
 
 For each DDL/DML, answer: "If old app version runs DURING this migration, what breaks?"
 

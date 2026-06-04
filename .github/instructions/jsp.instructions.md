@@ -36,4 +36,4 @@ XSS prevention is the #1 priority. All dynamic output must be encoded.
 |---|---|---|
 | `${user.name}` without encoding | XSS — attacker injects script | `<c:out value="${user.name}"/>` |
 | `<%= request.getParameter("q") %>` | Scriptlet + unencoded = XSS | `<c:out value="${param.q}"/>` |
-| `<% if (cond) { %>` | Scriptlet logic | `<c:if test="${cond}">` |
+| `<% if (cond) { %>` | Untestable Java in the view; violates JSTL-only policy | `<c:if test="${cond}">` |

@@ -1,6 +1,6 @@
 ---
 name: performance
-description: 'Use when user reports slow response, high memory, or needs bottleneck analysis and optimization. Triggers on: performance, slow, latency, throughput, memory, bottleneck, optimize speed, 效能, 跑很慢, 記憶體, 怎麼加速, 找瓶頸, 效能調校. Applies measure-first methodology. Do NOT use for SQL-only review (prefer sql-review), bug investigation (prefer debug), or general code review (prefer code-review).'
+description: 'Use when user reports slow response, high memory, or needs bottleneck analysis and optimization. Triggers on: optimize speed, reduce latency, fix high memory, find bottleneck, 跑很慢, 怎麼加速, 找瓶頸, 效能調校. Applies measure-first methodology. Do NOT use for SQL-only review (prefer sql-review), bug investigation (prefer debug), or general code review (prefer code-review).'
 ---
 
 # Performance — Workflow
