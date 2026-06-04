@@ -7,7 +7,7 @@ description: 'Use when user reports a bug, error, exception, or unexpected behav
 
 Systematic isolation and minimal fix.
 
-**Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
+**MANDATORY pre-load gate — do NOT propose a fix (Phase 6) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
