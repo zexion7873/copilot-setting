@@ -33,10 +33,10 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts (5) | Manual `/prompt-name` |
 | `.github/hooks/` | Fail-closed pre-tool-use guard blocking dangerous shell commands | Agent tool-use events |
 | `.github/scripts/validate-style-guide.sh` | The only executable workflow — format validator | Run manually / pre-commit / CI |
-| `.github/workflows/validate-style-guide.yml` | GitHub Actions CI running the validator | PR touching `.github/**/*.md` |
+| `.github/workflows/validate-style-guide.yml` | GitHub Actions CI running the validator | PR touching `.github/**/*.md`, the validator script, hooks, or the workflow |
 | `.github/STYLE-GUIDE.md` | Authoritative format spec for every file under `.github/` | Read before any structural edit |
 
-> Not part of the product (ignored state / dependencies / IDE config): `.omc/`, `.claude/`, `.opencode/`, `.codegraph/`, `.sisyphus/`, `.idea/`, `.vscode/`.
+> Not part of the product (ignored state / dependencies / IDE config): `.omc/`, `.omo/`, `.claude/`, `.codegraph/`, `.sisyphus/`, `.idea/`, `.vscode/`.
 
 ## For AI Agents
 
@@ -53,7 +53,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
   ```bash
   bash .github/scripts/validate-style-guide.sh
   ```
-- Run before committing any `.github/` change. CI enforces it on PRs touching `.github/**/*.md`.
+- Run before committing any `.github/` change. CI enforces it on PRs touching `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file.
 - One-time local setup so it also runs on `git commit`: `git config core.hooksPath .githooks`
 
 ### Common Patterns

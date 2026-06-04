@@ -426,7 +426,7 @@ What is machine-checked vs. what requires human review.
 
 ### Tier 1: Machine-checked (`validate-style-guide.sh` + CI)
 
-These are enforced automatically on every PR that touches `.github/**/*.md`.
+These are enforced automatically on every PR that touches `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file.
 
 - Instruction frontmatter has `description` + `applyTo`
 - Instruction `applyTo` value is non-empty

@@ -15,7 +15,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 ## A02 Cryptographic Failures
 
-- Passwords: Argon2/bcrypt (never MD5/SHA-1); data at rest: AES-256; transit: HTTPS
+- Passwords: bcrypt (`BCryptPasswordEncoder`, native to Spring Security 3.2) or Argon2 (needs argon2-jvm — no native SS 3.2 encoder); never MD5/SHA-1. Data at rest: AES-256; transit: HTTPS
 - No hardcoded secrets — env vars or secret store
 
 ## A03 Injection
