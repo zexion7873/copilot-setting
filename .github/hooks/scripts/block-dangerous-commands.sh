@@ -31,6 +31,7 @@ TOOL_INPUT=$(echo "$INPUT" | jq -r '
   if type == "object" then
     (.command // .cmd // .script // tostring) |
     if type == "array" then join(" ") else . end
+  elif type == "array" then join(" ")
   else . end') || {
   echo "DENY: failed to parse toolInput (fail-closed)" >&2
   exit 2
@@ -58,7 +59,7 @@ NORM=$(echo "$TOOL_INPUT" | tr -s '[:space:]' ' ')
 #   Split flags: -r -f, -f -r
 #   Long flags: --recursive, --force
 #   Targets: /, ~, $HOME, ., .., *, ./*
-DENY_PATTERNS='rm (-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)( --)? ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
+DENY_PATTERNS='rm (-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*)( --)?( -[a-z]+)* ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
 DENY_PATTERNS="$DENY_PATTERNS"'|rm (-r -f|-f -r) '
 DENY_PATTERNS="$DENY_PATTERNS"'|rm --recursive|rm --force'
 DENY_PATTERNS="$DENY_PATTERNS"'|--no-preserve-root'
@@ -79,7 +80,7 @@ DENY_PATTERNS="$DENY_PATTERNS"'|DELETE FROM'
 #   --force / -f flag, or refspec + prefix (git push origin +main)
 DENY_PATTERNS="$DENY_PATTERNS"'|git push .*(--force|-f( |$)|\+[a-zA-Z])'
 DENY_PATTERNS="$DENY_PATTERNS"'|git reset --hard'
-DENY_PATTERNS="$DENY_PATTERNS"'|git clean -[a-zA-Z]*f'
+DENY_PATTERNS="$DENY_PATTERNS"'|git clean -[a-zA-Z]*f|git clean .*--force'
 
 # Filesystem permissions and formatting
 #   chmod 777 — with or without -R, handles -R777 (flag glued to value)

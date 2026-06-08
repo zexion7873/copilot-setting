@@ -16,13 +16,13 @@ SQL-focused review. Rules: `instructions/sql.instructions.md`.
 
 Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures. Include dynamic query construction.
 
-## Phase 2 — Security Check
+## Phase 2 — Check Security
 
 - [ ] Parameters bound via `?` or `:named` — never concatenated
 - [ ] `LIKE` wildcards sanitized
 - [ ] No sensitive columns in `SELECT *`
 
-## Phase 3 — Performance Check
+## Phase 3 — Check Performance
 
 - [ ] Only needed columns selected
 - [ ] WHERE/JOIN columns likely indexed

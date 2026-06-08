@@ -20,7 +20,7 @@ Hook (Guard) ──lifecycle guard──→ Agent (Router) ──activates──
 Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
-Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See **Dependency Direction** and **Delegation Architecture** sections for enforcement rules.
+Each category has ONE job. Content that belongs in another category MUST be delegated, not copied. See the **Dependency Direction** section for enforcement rules.
 
 ---
 
@@ -194,7 +194,7 @@ Skip delegation when <condition>.
 5. **Lightweight agents** (subagents like `researcher`): may use a minimal structure (`Rules` + `Output Format`) instead of the full skeleton. Frontmatter must still be complete.
 6. **Handoff target validation**: every `handoffs[].agent` value must match an existing agent `name` (case-sensitive). A typo silently breaks the VS Code handoff button — there is no runtime error.
 7. **Handoff format** (when `handoffs` is present in frontmatter):
-   - `label`: short imperative phrase (≤ 10 characters). Chinese preferred for consistency with `copilot-instructions.md` response language; English acceptable for widely recognized terms (e.g., `Code Review`).
+   - `label`: short imperative phrase (≤ 12 characters; CJK labels are typically 4–5 glyphs). Chinese preferred for consistency with `copilot-instructions.md` response language; English acceptable for widely recognized terms (e.g., `Code Review`).
    - `agent`: must reference an existing agent `name` (case-sensitive).
    - `prompt`: one sentence in Chinese, starts with `請`. Provides context for the receiving agent.
    - `send: false` is the default — the user confirms before handoff is sent. Use `send: true` only for fully automated handoffs (none currently exist).
@@ -273,6 +273,10 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 ## Anti-Patterns
 
 - <Anti-pattern description> → <consequence or fix>
+
+## Output Template
+
+<CONDITIONAL — only for skills emitting a fixed-shape structured artifact (plan, tasks, code-review, sql-review, schema-migration-review). The deterministic markdown skeleton the skill produces.>
 ```
 
 ### Rules
@@ -287,7 +291,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
-9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
+9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`, `schema-migration-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
 10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
@@ -367,10 +371,11 @@ INPUT=$(cat)
 TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""')
 TOOL_INPUT=$(echo "$INPUT" | jq -r '.toolInput // "" | if type == "object" then tostring else . end')
 
-# Filter by tool type — exit 0 early for irrelevant tools
+# Filter by tool type — fail-closed: fast-path allow known read-only tools,
+# all other (incl. unknown) tools fall through to deny-pattern inspection
 case "$TOOL_NAME" in
-  shell_command|terminal|bash|run_command) ;;
-  *) exit 0 ;;
+  read_file|list_dir|search|grep|read) exit 0 ;;
+  *) ;;
 esac
 
 # Deny patterns (case-insensitive)
@@ -390,7 +395,7 @@ exit 0
 2. **Error handling**: `set -euo pipefail` on line 2.
 3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`.
 4. **Input format**: JSON on stdin with `toolName` (string) and `toolInput` (string or object). Parse with `jq`.
-5. **Tool filtering**: always check `TOOL_NAME` first and `exit 0` for irrelevant tool types. Never inspect non-shell tools.
+5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `CLAUDE.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
 6. **Timeout**: `timeoutSec` ≤ 10. Hooks must be fast — they run on every tool call.
 7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny message on stderr).
 8. **Pattern matching**: use `grep -qiE` (case-insensitive extended regex) for deny patterns. False positives are worse than false negatives — err on the side of allowing.
@@ -421,7 +426,7 @@ What is machine-checked vs. what requires human review.
 
 ### Tier 1: Machine-checked (`validate-style-guide.sh` + CI)
 
-These are enforced automatically on every PR that touches `.github/**/*.md`.
+These are enforced automatically on every PR that touches `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file.
 
 - Instruction frontmatter has `description` + `applyTo`
 - Instruction `applyTo` value is non-empty
@@ -433,9 +438,10 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 - Prompt frontmatter has `agent` + `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
 - Agent `handoffs[].agent` values reference existing agent names
+- Agent declaring `agents:` in frontmatter includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
-- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section
+- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ)
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 
 ### Tier 2: Human-review (PR review checklist)
@@ -443,7 +449,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`.
 These require manual verification. Reviewers should check:
 
 - [ ] H1 follows category naming convention
-- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and has not drifted from `instructions/`
+- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and its content still matches the canonical `instructions/` source of truth (the validator cross-checks byte-equality between agents, but never against `instructions/`)
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories (the agent-body `## Coding Standards` embed is the only sanctioned exception)
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
@@ -451,7 +457,7 @@ These require manual verification. Reviewers should check:
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
-- [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
+- [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review, schema-migration-review)
 
 ---
 

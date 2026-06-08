@@ -1,6 +1,6 @@
 ---
 name: debug
-description: 'Use when user reports a bug, error, exception, or unexpected behavior needing root cause analysis and minimal fix. Triggers on: debug, bug, exception, stack trace, root cause, why does this fail, NPE, 除錯, 找 bug, 報錯了, 為什麼會錯, 修 bug, 這裡怪怪的. Performs systematic isolation and minimal fix. Do NOT use for feature requests (prefer implement), performance tuning without a concrete error (prefer performance), or known simple typos (prefer implement).'
+description: 'Use when user reports a bug, error, exception, or unexpected behavior needing root cause analysis and minimal fix. Triggers on: debug this, why does this fail, root-cause this, fix the exception, 除錯, 找 bug, 報錯了, 為什麼會錯. Performs systematic isolation and minimal fix. Do NOT use for feature requests (prefer implement), performance tuning without a concrete error (prefer performance), or known simple typos (prefer implement).'
 ---
 
 # Debug — Workflow
@@ -58,4 +58,5 @@ If any answer is "no" or "unsure" → return to Phase 3.
 - → `@implementer` — to implement the fix after root cause confirmed
 - ← `@debugger` — default activation
 - ← `@implementer` — when implementation reveals a deeper bug
+- ← `implement` skill — when implementation reveals a bug
 - ← `performance` skill — when a performance issue turns out to be a bug

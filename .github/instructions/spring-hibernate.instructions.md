@@ -25,7 +25,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 - Named parameters (`:param`) only — never concatenation, even in HQL
 - `session.get()` over `session.load()` unless you need a lazy proxy
 - `StatelessSession` for batch >1000 rows
-- Forbidden (Hibernate 5+): `Session.byId()`, `Session.byNaturalId()`
+- `session.byId()` / `session.byNaturalId()` (fluent load-access, added in Hibernate 4.1) work in 4.2 — allowed, but prefer `session.get()` / HQL / `Criteria` for house consistency
 
 ## Session Lifecycle (DAOs)
 

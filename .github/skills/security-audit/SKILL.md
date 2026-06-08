@@ -32,7 +32,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] CSRF: all state-changing POST forms carry a CSRF token (Spring Security 3.2 `<csrf>` config or manual token+session check)
 
 **A02 Cryptographic Failures** (check each):
-- [ ] Passwords hashed with Argon2/bcrypt — never plaintext, MD5, or SHA1
+- [ ] Passwords hashed with bcrypt (native `BCryptPasswordEncoder`) or Argon2 (needs argon2-jvm) — never plaintext, MD5, or SHA1
 - [ ] Sensitive data encrypted at rest and in transit
 - [ ] No secrets in logs, error messages, or client responses
 - [ ] No hardcoded credentials in source or config — search for password/secret/apikey/token literals

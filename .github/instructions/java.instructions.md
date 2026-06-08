@@ -73,7 +73,7 @@ This project is Java 8. AI models default to modern Java — correct that here.
 | Pattern | Problem | Fix |
 |---|---|---|
 | `var result = ...` | Java 9+ — won't compile | Explicit type declaration |
-| `List.of("a", "b")` | Java 9+ | `Arrays.asList("a", "b")` |
+| `List.of("a", "b")` | Java 9+ — won't compile on Java 8 | `Arrays.asList("a", "b")` |
 | `catch (Throwable t) { }` | Catches unrecoverable `Error`s; empty body swallows | Catch specific exception; never empty body |
 | `log.info("User " + userId)` | Concatenation runs even when level disabled | `log.info("User {}", userId)` |
 | `System.out.println(...)` | Unstructured, no levels, lost in production | `log.debug(...)` via SLF4J |
