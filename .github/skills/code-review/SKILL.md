@@ -71,9 +71,29 @@ Structured code review.
 | 🟡 MEDIUM | Style, naming, minor improvement | Nice to fix |
 | ⚪ LOW | Preference, trivial | Optional |
 
-## Phase 4 — Render Verdict
+## Phase 4 — Require Build & Test Evidence
+
+The reviewer is read-only and does not run the build itself — require the author to supply it.
+
+Before rendering a verdict, confirm fresh evidence that the change builds and tests pass:
+
+- [ ] Actual `mvn` output is present in the PR / change context (e.g. `mvn -q clean verify`, or at least `compile` + `test`)
+- [ ] The evidence reflects the **current** revision under review — not a stale run from before the latest change
+- [ ] Tests covering the change actually ran (not skipped, no `-DskipTests`)
+
+If build/test evidence is missing or stale, you **cannot** APPROVE — render REQUEST CHANGES (or NEEDS DISCUSSION) and ask the author to attach fresh `mvn` output. Never infer a passing build from reading the diff.
+
+## Phase 5 — Render Verdict
 
 Classify all findings, then format using the Output Template below.
+
+APPROVE requires ALL of:
+
+- Zero unresolved 🔴 CRITICAL or 🟠 HIGH findings
+- Fresh build & test evidence for the current revision (Phase 4)
+- No outstanding Java 8 / `<tx:advice>` / N+1 convention violations from Phase 2
+
+Otherwise render REQUEST CHANGES or NEEDS DISCUSSION.
 
 ## Output Template
 
@@ -82,6 +102,7 @@ Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
 ```
 ## Verdict: APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
 Findings: N critical, N high, N medium, N low
+Evidence: <mvn command + result, or "MISSING — fresh build/test output required">
 Summary: <one-sentence assessment>
 ```
 

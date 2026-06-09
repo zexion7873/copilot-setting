@@ -37,6 +37,17 @@ Fill the template below. Every section must be concrete:
 - [ ] Alternatives section has at least one rejected option with reason
 - [ ] Refactor / structural plans: affected callers inventoried (verified via `find-impact`, not a single summary)
 
+## Phase 5 — Red-Team the Plan
+
+Before handing off, challenge the plan as an adversary would. Do not skip this when the plan "looks complete" — that is exactly when blind spots hide.
+
+- **Unstated assumptions**: what must be true for this plan to work that you never wrote down? (data shape, library version, call order, single-threaded access…)
+- **What breaks**: which existing caller, Spring bean, or `hbm.xml` mapping fails if you ship this as written?
+- **Missing cases**: null/empty, concurrent access, rollback path, backward compatibility, migration ordering
+- **Weakest link**: the one step you are least sure about — name it explicitly
+
+Fold material findings back into sections 4–5; record the residual assumptions and gaps in section 7.
+
 ## Output Template
 
 Write the plan to `docs/plans/[purpose]-[component]-v[N].md` (create `docs/plans/` if absent). The `tasks` skill reads from this directory — keep the path stable so its `source:` link resolves.
@@ -86,6 +97,11 @@ status: 'Planned'
 ## 6. Dependencies
 
 - DEP-001: <external or internal dependency>
+
+## 7. Red-Team Notes
+
+- ASM-001: <unstated assumption that must hold for this plan>
+- GAP-001: <known gap / weakest link — what could break, and how it would be caught>
 ```
 
 ## Handoffs
