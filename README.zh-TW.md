@@ -87,6 +87,10 @@ flowchart LR
 | 🔍 | `@reviewer` | Claude Opus 4.8 | 觸發 `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | GPT-5 mini | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
+| 🎯 | `@orchestrator`（選用） | Claude Opus 4.8 | 單一入口路由器 — 拆解需求，把子任務以 subagent 形式派給上面那幾個 agent。方便用的前門，非必需 |
+
+> [!NOTE]
+> `@orchestrator` 是**選用、實驗性**的前門，適合你懶得自己挑 agent 時。代價：被派出的 agent 以 subagent 執行，其 skill 工作流**可能不會自動觸發**（worker 化的 `@reviewer` 保有硬邊界，但失去 `code-review` 的 phases/verdict），且 subagent 的模型**被 coordinator 的 tier 封頂**（因此跑 Opus 4.8）。需要完整 skill 的工作，請直接 `@name` 呼叫對應的 agent。需開啟 VS Code subagent 設定；一般 `@agent-name` 流程不需要它。
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -257,7 +261,8 @@ flowchart LR
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
 │   ├── reviewer.agent.md             (Claude Opus 4.8)
 │   ├── debugger.agent.md             (Claude Sonnet 4.6)
-│   └── researcher.agent.md           (GPT-5 mini)
+│   ├── researcher.agent.md           (GPT-5 mini)
+│   └── orchestrator.agent.md         (Claude Opus 4.8, 選用路由器)
 │
 ├── hooks/                                 ← Agent 生命週期事件的 shell 命令
 │   ├── default.json

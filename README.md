@@ -87,6 +87,10 @@ Invoke via `@agent-name` in Copilot Chat. All agents are tailored for Java 8 / M
 | 🔍 | `@reviewer` | Claude Opus 4.8 | Activates `code-review` / `security-audit` / `sql-review` / `schema-migration-review` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | GPT-5 mini | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
+| 🎯 | `@orchestrator` *(optional)* | Claude Opus 4.8 | Single entry-point router — decomposes a request and dispatches to the specialists above as subagents. A convenience front door, not required |
+
+> [!NOTE]
+> `@orchestrator` is an **optional, experimental** front door for when you'd rather not pick a specialist yourself. Trade-offs: a dispatched specialist runs as a subagent and may **not** auto-activate its skill workflow (a worker `@reviewer` keeps its hard boundaries but loses `code-review`'s phases/verdict), and a subagent's model is **capped at the coordinator's tier** (so it runs Opus 4.8). For skill-heavy work, invoke the specialist directly with `@name`. Requires the VS Code subagent setting; the normal `@agent-name` flow does not need it.
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -257,7 +261,8 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
 │   ├── reviewer.agent.md             (Claude Opus 4.8)
 │   ├── debugger.agent.md             (Claude Sonnet 4.6)
-│   └── researcher.agent.md           (GPT-5 mini)
+│   ├── researcher.agent.md           (GPT-5 mini)
+│   └── orchestrator.agent.md         (Claude Opus 4.8, optional router)
 │
 ├── hooks/                                 ← Shell commands at agent lifecycle events
 │   ├── default.json

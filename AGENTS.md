@@ -27,7 +27,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 | Path | Role | Loads when |
 |------|------|------------|
-| `.github/agents/*.agent.md` | Routers — activate workflows, manage handoffs (5: planner, implementer, reviewer, debugger, researcher) | User types `@agent-name` |
+| `.github/agents/*.agent.md` | Routers — activate workflows, manage handoffs (5 specialists: planner, implementer, reviewer, debugger, researcher; + optional `orchestrator` routing to them) | User types `@agent-name` |
 | `.github/skills/<name>/SKILL.md` | Step-by-step workflows with embedded output templates (13 skills) | Intent match or `/skill-name` |
 | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions (8 files) | A file matching its `applyTo` glob is in context; `applyTo: "**"` always loads |
 | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts (5) | Manual `/prompt-name` |

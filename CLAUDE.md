@@ -131,5 +131,6 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 | `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
 | `@researcher` | GPT-5 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
+| `@orchestrator` *(optional)* | Claude Opus 4.8 | Routes to specialists — no skills; dispatches `@planner` / `@implementer` / `@reviewer` / `@debugger` / `@researcher` as subagents. Must run top-tier: a subagent's model is capped at the coordinator's cost tier, so a cheaper coordinator would downgrade Opus workers. Convenience front door; skill-heavy work should still go direct (subagents don't reliably activate their own skills, and routing here pays Opus rates) |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.
