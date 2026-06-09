@@ -5,7 +5,7 @@
       {
         "type": "command",
         "bash": "bash .github/hooks/scripts/block-dangerous-commands.sh",
-        "timeoutSec": 5
+        "timeout": 5
       }
     ]
   }
