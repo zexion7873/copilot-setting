@@ -126,10 +126,10 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 
 | Agent | Model | Activates |
 |---|---|---|
-| `@planner` | Claude Sonnet 4.6 | `plan`, `tasks`, `clarify-task` |
+| `@planner` | Claude Opus 4.8 | `plan`, `tasks`, `clarify-task` |
 | `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
 | `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
-| `@researcher` | GPT-5 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
+| `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.

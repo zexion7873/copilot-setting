@@ -1,7 +1,7 @@
 ---
 name: Researcher
 description: 'Lightweight read-only research subagent — searches codebase and external docs, returns structured summaries. Designed as a subagent for @implementer, @planner, and @reviewer; can also be invoked directly via @researcher.'
-model: GPT-5 mini
+model: GPT-5.4 mini
 tools: ['search', 'read', 'web/fetch', 'githubRepo', 'context7/*', 'websearch/*']
 ---
 
