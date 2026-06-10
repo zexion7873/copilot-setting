@@ -13,7 +13,6 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 - `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` → `@RequestMapping(method = RequestMethod.GET)` etc.
 - `@Conditional`, `@Profile` with complex conditions
 - `AsyncRestTemplate`, `ListenableFuture`
-- `RestTemplate.exchange()` + `ParameterizedTypeReference` (3.2 has basic `RestTemplate` only)
 - `AbstractAnnotationConfigDispatcherServletInitializer` (this project uses `web.xml`)
 - Spring 4 test annotations (`@Sql`, `@SqlGroup`)
 
@@ -34,7 +33,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 ## Lazy Loading — pick ONE per module, never mix
 
-- `OpenSessionInViewFilter` (web.xml) — Session open through JSP render; simplest for read-heavy pages; risk: hidden N+1
+- `OpenSessionInViewFilter` (web.xml) — Session open through JSP render; simplest for read-heavy pages; risk: hidden N+1. Even with OSIV, prepare view data in the service layer — it is a safety net against `LazyInitializationException`, not license for the JSP to drive lazy loads (`instructions/jsp.instructions.md`)
 - DTO projection — assemble DTOs in service, JSP never touches entities; safest for APIs; more boilerplate
 - `JOIN FETCH` / `Hibernate.initialize()` — eager-load required associations in service; middle ground, easy to miss paths
 
@@ -53,7 +52,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 - Root `<hibernate-mapping package="...">` with explicit package
 - Collections `lazy="true"` explicit for intent
-- FK naming `foreign-key="FK_<table>_<column>"`
+- FK naming `foreign-key="fk_<child>_<parent_col>"` — match the SQL DDL convention so Hibernate-generated and hand-written DDL agree (`instructions/sql.instructions.md`)
 - Second-level cache opt-in per entity, never global
 
 ## Anti-Patterns

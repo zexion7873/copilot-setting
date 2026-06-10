@@ -27,7 +27,7 @@ XSS prevention is the #1 priority. All dynamic output must be encoded.
 
 ## Data Preparation
 
-- JSP must NOT trigger lazy loading — all data must be fully prepared in the controller/service layer before forwarding to the view
+- JSP must NOT trigger lazy loading — all data must be fully prepared in the controller/service layer before forwarding to the view (Lazy Loading strategies: `instructions/spring-hibernate.instructions.md`)
 - If a JSP accesses a Hibernate lazy collection, it means the service layer did not eagerly fetch the required data — fix the service, not the JSP
 
 ## Anti-Patterns

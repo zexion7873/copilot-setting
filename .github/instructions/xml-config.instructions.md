@@ -17,7 +17,7 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 
 - One file per entity: `<EntityName>.hbm.xml`, alongside the POJO
 - Root: `<hibernate-mapping package="...">` with explicit package
-- Collections: `lazy="true"` explicit; FK: `foreign-key="FK_<table>_<column>"`
+- Collections: `lazy="true"` explicit; FK: `foreign-key="fk_<child>_<parent_col>"` (match SQL DDL — see `instructions/sql.instructions.md`)
 
 ## Maven POM
 
