@@ -17,15 +17,23 @@ pass() {
   echo "✅ $1"
 }
 
+# Usage: fm_block "file" — print ONLY the leading YAML frontmatter block.
+# Restricted to the first '---' (line 1) through the next '---', so body-level
+# '---' horizontal rules cannot re-open the slice (sed's /^---$/,/^---$/ range
+# otherwise re-triggers on every later pair, leaking body keys into the block).
+fm_block() {
+  awk 'NR==1 && /^---$/{f=1; next} f && /^---$/{exit} f' "$1"
+}
+
 # Usage: fm_value "file" "key" — extract value from YAML frontmatter
 fm_value() {
   local file="$1" key="$2"
-  sed -n '/^---$/,/^---$/p' "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed "s/^['\"]//;s/['\"]$//"
+  fm_block "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed "s/^['\"]//;s/['\"]$//"
 }
 
 fm_has_key() {
   local file="$1" key="$2"
-  sed -n '/^---$/,/^---$/p' "$file" | grep -qE "^${key}:"
+  fm_block "$file" | grep -qE "^${key}:"
 }
 
 echo "========================================="
@@ -226,7 +234,7 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
     pass "$name"
   fi
 
-  handoff_agents=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^\s+agent:' | sed 's/.*agent:[[:space:]]*//' | sed "s/^['\"]//;s/['\"]$//" || true)
+  handoff_agents=$(fm_block "$file" | grep -E '^\s+agent:' | sed 's/.*agent:[[:space:]]*//' | sed "s/^['\"]//;s/['\"]$//" || true)
   if [ -n "$handoff_agents" ]; then
     while IFS= read -r target_agent; do
       [ -z "$target_agent" ] && continue
@@ -249,7 +257,7 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
   # Consistency: declaring subagents (agents:) requires the 'agent' tool to invoke them
   # (VS Code: "If you specify agents, ensure the agent tool is included in tools").
   if fm_has_key "$file" "agents"; then
-    tools_block=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^tools:')
+    tools_block=$(fm_block "$file" | grep -E '^tools:')
     if ! printf '%s' "$tools_block" | grep -qE "'agent'"; then
       error "$name: declares 'agents:' but 'tools' lacks 'agent' — subagent delegation will not work"
     fi
