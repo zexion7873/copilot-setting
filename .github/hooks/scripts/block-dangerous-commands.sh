@@ -15,6 +15,12 @@ set -euo pipefail
 
 INPUT=$(cat)
 
+# Empty / whitespace-only stdin → deny (honor the documented fail-closed contract).
+if [ -z "${INPUT//[[:space:]]/}" ]; then
+  echo "DENY: empty input (fail-closed)" >&2
+  exit 2
+fi
+
 # ── Fail-closed guards ──────────────────────────────────────────────
 if ! command -v jq >/dev/null 2>&1; then
   echo "DENY: jq not found (fail-closed)" >&2
@@ -61,10 +67,10 @@ NORM=$(echo "$TOOL_INPUT" | tr -s '[:space:]' ' ')
 #     intervening flags (rm -r -v -f) — blocked unconditionally (any target).
 #   Long flags: --recursive, --force — blocked unconditionally.
 #   Targets (combined form): /, ~, any $-variable, ., .., *, ./*
-DENY_PATTERNS='rm( -[a-z]+)* (-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*)( --)?( -[a-z]+)* ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
-DENY_PATTERNS="$DENY_PATTERNS"'|rm( -[a-z]+)*( -[a-z]*r[a-z]*)( -[a-z]+)*( -[a-z]*f[a-z]*)'
-DENY_PATTERNS="$DENY_PATTERNS"'|rm( -[a-z]+)*( -[a-z]*f[a-z]*)( -[a-z]+)*( -[a-z]*r[a-z]*)'
-DENY_PATTERNS="$DENY_PATTERNS"'|rm --recursive|rm --force'
+DENY_PATTERNS='(^|[^a-z])rm( -[a-z]+)* (-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*)( --)?( -[a-z]+)* ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
+DENY_PATTERNS="$DENY_PATTERNS"'|(^|[^a-z])rm( -[a-z]+)*( -[a-z]*r[a-z]*)( -[a-z]+)*( -[a-z]*f[a-z]*)'
+DENY_PATTERNS="$DENY_PATTERNS"'|(^|[^a-z])rm( -[a-z]+)*( -[a-z]*f[a-z]*)( -[a-z]+)*( -[a-z]*r[a-z]*)'
+DENY_PATTERNS="$DENY_PATTERNS"'|(^|[^a-z])rm --recursive|(^|[^a-z])rm --force'
 DENY_PATTERNS="$DENY_PATTERNS"'|--no-preserve-root'
 
 # find — destructive actions
@@ -81,7 +87,7 @@ DENY_PATTERNS="$DENY_PATTERNS"'|DELETE FROM'
 
 # Git destructive operations
 #   --force / -f flag, or refspec + prefix (git push origin +main)
-DENY_PATTERNS="$DENY_PATTERNS"'|git push .*(--force|-f( |$)|\+[a-zA-Z])'
+DENY_PATTERNS="$DENY_PATTERNS"'|git push.* (--force|-f( |$)|\+[a-zA-Z])'
 DENY_PATTERNS="$DENY_PATTERNS"'|git reset --hard'
 DENY_PATTERNS="$DENY_PATTERNS"'|git clean -[a-zA-Z]*f|git clean .*--force'
 

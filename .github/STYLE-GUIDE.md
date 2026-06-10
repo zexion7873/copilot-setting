@@ -437,11 +437,12 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 - No `tools` field in skill frontmatter
 - Prompt frontmatter has `agent` + `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
+- Agent `description` is a single-line scalar (no YAML block scalars `|`/`>` — the validator does not parse them)
 - Agent `handoffs[].agent` values reference existing agent names
 - Agent declaring `agents:` in frontmatter includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
-- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ)
+- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ); those bullets must be top-level `- ` items — indented sub-bullets or numbered lines, which would escape the byte-identity comparison, are rejected
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 
 ### Tier 2: Human-review (PR review checklist)
@@ -451,7 +452,7 @@ These require manual verification. Reviewers should check:
 - [ ] H1 follows category naming convention
 - [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and its content still matches the canonical `instructions/` source of truth (the validator cross-checks byte-equality between agents, but never against `instructions/`)
 - [ ] Phase sections use imperative verb phrases
-- [ ] No duplicated content across categories (the agent-body `## Coding Standards` embed is the only sanctioned exception)
+- [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) the review/audit verification checklists in `code-review` / `security-audit`, which may *name* conventions as check items but add no detail (see AGENTS.md "Two narrow duplications")
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
 - [ ] Agent Skill Activation table matches the skills that reference that agent
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)

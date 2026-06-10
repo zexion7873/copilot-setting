@@ -168,6 +168,11 @@ for a in $CODE_AGENTS; do
   if ! grep -q "^## Coding Standards" "$file"; then
     error "agents/$a.agent.md: missing '## Coding Standards' section (hard-boundary rules must be embedded)"
   fi
+  # Coding Standards must use only top-level '- ' bullets; indented sub-bullets or
+  # numbered items would escape the byte-identical drift guard below.
+  if awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$file" | grep -qE '^[[:space:]]+-|^[0-9]+\.'; then
+    error "agents/$a.agent.md: Coding Standards must use only top-level '- ' bullets (sub-bullets / numbered items escape the drift guard)"
+  fi
 done
 
 # Drift guard: the hard-boundary bullets (lines starting with '- ') must be
@@ -230,6 +235,8 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
 
   if [ -n "$missing" ]; then
     error "$name: missing frontmatter fields:$missing"
+  elif fm_block "$file" | grep -qE '^description:[[:space:]]*[|>]'; then
+    error "$name: description must be a single-line scalar (YAML block scalars |/> are not parsed by the validator)"
   else
     pass "$name"
   fi
@@ -257,7 +264,9 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
   # Consistency: declaring subagents (agents:) requires the 'agent' tool to invoke them
   # (VS Code: "If you specify agents, ensure the agent tool is included in tools").
   if fm_has_key "$file" "agents"; then
-    tools_block=$(fm_block "$file" | grep -E '^tools:')
+    # Capture the tools: line plus any following YAML block-list items, so both
+    # inline (tools: ['agent']) and block-list (tools: then '  - agent') forms are seen.
+    tools_block=$(fm_block "$file" | awk '/^tools:/{f=1; print; next} f && /^[[:space:]]*-/{print; next} f{exit}')
     if ! printf '%s' "$tools_block" | grep -qE "'agent'"; then
       error "$name: declares 'agents:' but 'tools' lacks 'agent' — subagent delegation will not work"
     fi
