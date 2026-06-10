@@ -2,7 +2,7 @@
 name: Planner
 description: 'Analyze requirements, design implementation phases, estimate impact scope, and create structured plans. Hands off to @implementer to execute, or to @reviewer for security audit.'
 model: Claude Sonnet 4.6
-tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode.mermaid-chat-features/renderMermaidDiagram']
+tools: ['edit', 'search', 'read', 'web/fetch', 'context7/*', 'agent', 'todo', 'vscode/askQuestions', 'vscode.mermaid-chat-features/renderMermaidDiagram']
 agents: ['Researcher']
 handoffs:
   - label: 開始實作
