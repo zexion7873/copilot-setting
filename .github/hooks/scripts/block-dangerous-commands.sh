@@ -55,12 +55,15 @@ NORM=$(echo "$TOOL_INPUT" | tr -s '[:space:]' ' ')
 # so patterns can use literal ' ' safely.
 #
 # rm — recursive forced deletion
-#   Combined flags in any order: -rf, -fr, -rfi, -fir, …
-#   Split flags: -r -f, -f -r
-#   Long flags: --recursive, --force
-#   Targets: /, ~, $HOME, ., .., *, ./*
-DENY_PATTERNS='rm (-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*)( --)?( -[a-z]+)* ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
-DENY_PATTERNS="$DENY_PATTERNS"'|rm (-r -f|-f -r) '
+#   Combined glued flags in any order (-rf, -fr, -rfi, …), optionally preceded
+#     by unrelated flags (rm -v -rf), targeting a dangerous path.
+#   Split flags: a recursive token and a force token in either order, tolerating
+#     intervening flags (rm -r -v -f) — blocked unconditionally (any target).
+#   Long flags: --recursive, --force — blocked unconditionally.
+#   Targets (combined form): /, ~, any $-variable, ., .., *, ./*
+DENY_PATTERNS='rm( -[a-z]+)* (-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*)( --)?( -[a-z]+)* ["'"'"']?(/|~|\.|\.\.|\*|\./\*|\$)'
+DENY_PATTERNS="$DENY_PATTERNS"'|rm( -[a-z]+)*( -[a-z]*r[a-z]*)( -[a-z]+)*( -[a-z]*f[a-z]*)'
+DENY_PATTERNS="$DENY_PATTERNS"'|rm( -[a-z]+)*( -[a-z]*f[a-z]*)( -[a-z]+)*( -[a-z]*r[a-z]*)'
 DENY_PATTERNS="$DENY_PATTERNS"'|rm --recursive|rm --force'
 DENY_PATTERNS="$DENY_PATTERNS"'|--no-preserve-root'
 
