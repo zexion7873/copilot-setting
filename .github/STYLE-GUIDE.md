@@ -7,7 +7,7 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 | Category | Role | Responsibility |
 |---|---|---|
 | **Agent** | Router | Who I am, which workflows I activate, who I hand off to |
-| **Skill** | Workflow | Step-by-step process — references Rules and Templates, never rewrites them |
+| **Skill** | Workflow | Step-by-step process — references Rules and Templates rather than restating them (review/audit checklists may *name* conventions as check items only) |
 | **Instruction** | Rules | Single source of truth for coding conventions — referenced by workflows |
 | **Prompt** | Shortcut | Lightweight single-task shortcuts invoked via `/prompt-name` |
 | **Hook** | Lifecycle Guard | Block dangerous commands before agent tool execution |
@@ -354,7 +354,7 @@ Lifecycle guards that intercept agent tool calls before execution. Hooks inspect
       {
         "type": "command",
         "bash": "bash .github/hooks/scripts/<script-name>.sh",
-        "timeoutSec": 5
+        "timeout": 5
       }
     ]
   }
@@ -396,7 +396,7 @@ exit 0
 3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`.
 4. **Input format**: JSON on stdin with `toolName` (string) and `toolInput` (string or object). Parse with `jq`.
 5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `AGENTS.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
-6. **Timeout**: `timeoutSec` ≤ 10. Hooks must be fast — they run on every tool call.
+6. **Timeout**: `timeout` ≤ 10 (the field name `default.json` uses). Hooks must be fast — they run on every tool call.
 7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny message on stderr).
 8. **Pattern matching**: use `grep -qiE` (case-insensitive extended regex) for deny patterns. False positives are worse than false negatives — err on the side of allowing.
 
