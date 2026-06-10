@@ -395,7 +395,7 @@ exit 0
 2. **Error handling**: `set -euo pipefail` on line 2.
 3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`.
 4. **Input format**: JSON on stdin with `toolName` (string) and `toolInput` (string or object). Parse with `jq`.
-5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `CLAUDE.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
+5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `AGENTS.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
 6. **Timeout**: `timeoutSec` ≤ 10. Hooks must be fast — they run on every tool call.
 7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny message on stderr).
 8. **Pattern matching**: use `grep -qiE` (case-insensitive extended regex) for deny patterns. False positives are worse than false negatives — err on the side of allowing.
@@ -479,7 +479,7 @@ Under Copilot usage-based billing, `instructions/` / `agents/` / `skills/` conte
 2. Edit for clarity or correctness, never *purely* to shave tokens (cache already neutralised that cost).
 3. Land prompt-engineering changes together in one PR, not as a drip of small commits.
 
-See `CLAUDE.md` → "Maintenance Rule — Cache-Friendly Edits" for the rationale.
+See `AGENTS.md` → "Maintenance Rule — Cache-Friendly Edits" for the rationale.
 
 ### STYLE-GUIDE Changes
 

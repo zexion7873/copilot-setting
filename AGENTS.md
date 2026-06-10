@@ -1,64 +1,150 @@
-<!-- Generated: 2026-06-03 | Updated: 2026-06-03 -->
+<!-- Generated: 2026-06-03 | Updated: 2026-06-10 -->
 
-# copilot-setting
+# copilot-setting — Agent Guide
 
-## Purpose
-A **configuration distribution for GitHub Copilot** — not application code. It ships a multi-agent system (agents, skills, instructions, prompts, hooks) that teaches Copilot how to work in downstream **Java 8 / Maven / Spring Core 3.2 + Hibernate 4.2** projects (no Spring Boot; declarative transactions via XML `<tx:advice>`). Everything meaningful lives under `.github/`, which Copilot loads at runtime. There is no build, no test suite, and no runtime — only Markdown prompt-engineering artifacts and one validation script.
+**Canonical** guidance for any AI agent (Claude Code, OpenAI Codex, Cursor, GitHub Copilot, …) working in this repository. `CLAUDE.md` is a thin pointer that imports this file via `@AGENTS.md`, so every tool reads one source of truth; the authoritative *format* spec is `.github/STYLE-GUIDE.md`. Read both before editing. There are intentionally no per-directory `AGENTS.md` files — keep navigation in this single root file.
 
-> This file is a condensed, agent-agnostic index. The authoritative, Claude-specific guidance is `CLAUDE.md`; the authoritative format spec is `.github/STYLE-GUIDE.md`. Read those before editing.
+## Communication Language
+
+Always reply to the user in **Traditional Chinese (繁體中文)**. File contents, code, identifiers, and commit messages remain in English per the conventions below — only the chat replies are in Chinese.
+
+## Repository Purpose
+
+This repo is **not application code** — it is a configuration distribution for **GitHub Copilot** that defines a multi-agent system for Java 8 / Maven / Spring Core 3.2 + Hibernate 4.2 projects (no Spring Boot — declarative transactions via XML `<tx:advice>`). Everything under `.github/` is content loaded by Copilot at runtime (agents, skills, instructions, prompts, hooks). When editing, you are editing prompt-engineering artifacts, not source code.
+
+The target audience of the artifacts here is **Copilot users working in downstream Java repos**, not this repo itself. There is no build, no test suite, and no runtime — only Markdown content and one validation script.
 
 ## Top-Level Files
+
 | File | Description |
 |------|-------------|
-| `CLAUDE.md` | Authoritative guidance for AI agents editing this repo — architecture, separation-of-concerns rules, maintenance protocols |
+| `AGENTS.md` | **Canonical** guidance for AI agents editing this repo — architecture, separation-of-concerns rules, maintenance protocols. This file is the source of truth. |
+| `CLAUDE.md` | Thin pointer — a single `@AGENTS.md` import so Claude Code (which reads `CLAUDE.md`) shares this exact file. Do not duplicate content into it. |
 | `CONTRIBUTING.md` | PR workflow: branch from `main`, follow STYLE-GUIDE, run inbound-reference grep, run validator |
 | `README.md` / `README.zh-TW.md` | Project overview (English + Traditional Chinese) — keep in sync |
 | `SECURITY.md` | Security policy and disclosure process |
 
-## The `.github/` Layout
-Five categories with **strict separation of concerns** — each has exactly one job; content belonging to another category is *referenced*, never copied. The runtime pipeline:
+> Not part of the product (ignored state / dependencies / IDE config): `.omc/`, `.omo/`, `.claude/`, `.codegraph/`, `.sisyphus/`, `.idea/`, `.vscode/`.
+
+## Validation Commands
+
+The only executable workflow is style-guide validation. Run before committing changes under `.github/`:
+
+```bash
+bash .github/scripts/validate-style-guide.sh
+```
+
+This is also enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file. It checks: frontmatter on instructions / skills / agents / prompts; that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that each code-touching skill names the canonical instruction file(s) it maps to (a `instructions/...` reference), and that each code-touching agent (implementer/reviewer/debugger) embeds a `## Coding Standards` section whose hard-boundary bullets are byte-identical across the three; that instruction Anti-Patterns tables use the 3-column `Pattern | Problem | Fix` header; that agent `handoffs[].agent` references resolve (matched case-sensitively); that an agent declaring `agents:` lists `'agent'` in its `tools`; and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``, `` `prompts/<name>.prompt.md` ``) point to real files — including inbound name-style prompt mentions (a backtick-wrapped lowercase name followed by the word "prompt", e.g. the `find-impact` prompt).
+
+One-time local setup so the validator also runs on `git commit`:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+`.githooks/pre-commit` runs the validator only when staged paths match `.github/**/*.md`, so unrelated commits aren't slowed down.
+
+## Architecture
 
 ```text
 Hooks ──lifecycle guard──→ Agent (Router)
+                             │
                              └──activates──→ Skill (Workflow + Output Template)
+                                                  │
                                                   └──rules──→ Instruction (Rules)
+
 Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 ```
 
-| Path | Role | Loads when |
-|------|------|------------|
-| `.github/agents/*.agent.md` | Routers — activate workflows, manage handoffs (5: planner, implementer, reviewer, debugger, researcher) | User types `@agent-name` |
-| `.github/skills/<name>/SKILL.md` | Step-by-step workflows with embedded output templates (13 skills) | Intent match or `/skill-name` |
-| `.github/instructions/*.instructions.md` | Single source of truth for coding conventions (8 files) | A file matching its `applyTo` glob is in context; `applyTo: "**"` always loads |
-| `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts (5) | Manual `/prompt-name` |
-| `.github/hooks/` | Fail-closed pre-tool-use guard blocking dangerous shell commands | Agent tool-use events |
-| `.github/scripts/validate-style-guide.sh` | The only executable workflow — format validator | Run manually / pre-commit / CI |
-| `.github/workflows/validate-style-guide.yml` | GitHub Actions CI running the validator | PR touching `.github/**/*.md`, the validator script, hooks, or the workflow |
-| `.github/STYLE-GUIDE.md` | Authoritative format spec for every file under `.github/` | Read before any structural edit |
+| Category | Path | Role | Loads when |
+|---|---|---|---|
+| Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment); `applyTo: "**"` loads on every request |
+| Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
+| Skills (13) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
+| Prompts (5) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
+| Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
-> Not part of the product (ignored state / dependencies / IDE config): `.omc/`, `.omo/`, `.claude/`, `.codegraph/`, `.sisyphus/`, `.idea/`, `.vscode/`.
+**Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions (with one exception below).
 
-## For AI Agents
+**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. This embed is the only sanctioned duplication — keep it to the version-lock essentials and treat the instruction file as canonical.
 
-### Working In This Directory
-- You are editing **prompt-engineering artifacts**, not source code. Words are the product.
-- Read `.github/STYLE-GUIDE.md` **before** adding or restructuring any agent / skill / instruction. Format changes update STYLE-GUIDE.md *first*, then propagate.
-- **Separation-of-concerns is the prime directive.** Skills embed their own output templates; instructions hold rules only; skills never duplicate instruction rule-lists — except the one sanctioned exception: hard-boundary version locks (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) embedded in code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards`.
-- Cross-references use backtick-wrapped **relative paths from `.github/`** (e.g. `` `instructions/sql.instructions.md` ``), never bare names.
-- Before renaming/moving any file under `.github/`, grep for inbound references — broken paths silently degrade Copilot output (they don't error, they just stop loading).
-- Batch edits to `instructions/`, `agents/`, `skills/` — they sit in Copilot's prompt cache; frequent small edits cost more (cache-write churn) than they save.
+## Canonical Format — STYLE-GUIDE.md
 
-### Testing Requirements
-- The only executable workflow:
-  ```bash
-  bash .github/scripts/validate-style-guide.sh
-  ```
-- Run before committing any `.github/` change. CI enforces it on PRs touching `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file.
-- One-time local setup so it also runs on `git commit`: `git config core.hooksPath .githooks`
+`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
 
-### Common Patterns
-- **Bilingual split**: all `.github/` content is English (Copilot may inject it into any user's prompt); chat replies to downstream users are Traditional Chinese; README has synced English + zh-TW versions.
-- **Conventional Commits** for all commit messages (see `.github/skills/git-commit/SKILL.md` — manual-only via `/git-commit`).
+Per-category key constraints (full rules in STYLE-GUIDE.md):
+
+- **Instructions** — frontmatter is exactly `description` + `applyTo`. H1 is a descriptive title (no filename suffix). Anti-Patterns table is always 3-column `Pattern | Problem | Fix`.
+- **Agents** — frontmatter requires `name`, `description`, `model`, `tools`. Body section order is fixed: `Coding Standards` (code-touching agents only) → `Skill Activation` → `Subagent Delegation` → `Workflow` → `Constraints` → `Handoff Guidance`.
+- **Skills** — frontmatter is exactly `name` + `description`. **No `tools` field on skills** (tools belong on agents — validator enforces this). `description` is ≤ 1024 chars and follows the strict three-part format: `Use when …. Triggers on: …. <one-sentence summary>. Do NOT use for …`. H1 is always `<Name> — Workflow`. Skill `name` must match its directory name.
+- **Prompts** — frontmatter is `agent` + `description`. Lightweight single-task shortcuts invoked via `/prompt-name`. Not output templates (those are embedded in skills).
+
+## Cross-Reference Format
+
+All cross-references use backtick-wrapped **relative paths from `.github/`**, never bare names:
+
+| Type | Format |
+|---|---|
+| Instruction | `` `instructions/sql.instructions.md` `` |
+| Skill | `` `skills/plan/SKILL.md` `` |
+| Output template | Embedded in the paired `skills/<name>/SKILL.md` |
+| Agent file | `` `agents/planner.agent.md` `` |
+| Agent mention (in chat) | `` `@implementer` `` |
+| Skill mention (inline) | `` `plan` skill `` |
+
+## Maintenance Rule — Inbound Reference Check
+
+Cross-references are not enforced by the validator. Before renaming or moving any file under `.github/`, scan for inbound references:
+
+```bash
+grep -rn "<old-filename>" .github/
+```
+
+Broken paths silently degrade Copilot output — they don't error, they just stop loading the referenced content.
+
+## Maintenance Rule — Cache-Friendly Edits
+
+Copilot's usage-based billing (since June 2026) reuses **prompt cache** at stable prefix boundaries (system prompt, tool definitions, then injected instruction / agent / skill content). A cache *read* costs ~10× less than fresh input; the first *write* costs ~25% more. Within a session these files sit in the cached prefix, so the practical cost lever is **cache hit rate, not file length**.
+
+Because caching is prefix-based, editing one line invalidates that file's cached segment **and everything after it** — the next session pays a full cache-write to rebuild. So:
+
+- **Batch edits to `instructions/`, `agents/`, and `skills/` — change once, decisively. Do not micro-tune for token count.** The input savings from a shorter file are near-zero once the prefix is cached; the cache-write churn from frequent edits costs more than it saves.
+- Trimming a file for clarity or correctness is fine. Trimming *purely* to shave tokens is a net loss — the cache already neutralised that cost.
+- Keep these files stable between releases; land prompt-engineering changes together rather than as a drip of small commits.
+
+## Bilingual Conventions
+
+This repo intentionally mixes languages. Respect the split:
+
+- **All `.github/` content** (instructions, agents, skills) — English, because Copilot may inject it into any user's prompt context.
+- **README has two versions**: `README.md` (English) and `README.zh-TW.md` (Traditional Chinese). Keep them in sync when changing either.
+- **`.github/copilot-instructions.md`** declares the downstream-user contract: respond in Traditional Chinese, but code/comments/identifiers in English. Do not mistake this for guidance on how to edit this repo.
+
+## Hooks — Dangerous-Command Block List
+
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive, input is whitespace-normalised before matching). The hook is **fail-closed** — JSON parse errors or missing `jq` → deny.
+
+**Blocked categories:** `rm` with recursive+force flags — combined `-rf`/`-fr` only when targeting `/`, `~`, `$HOME`, `.`, `..`, `*`, `./*`, but split `-r -f`/`-f -r` and long `--recursive`/`--force` blocked unconditionally (any target); `find -delete` / `find -exec rm` / `find -execdir rm`; `--no-preserve-root`; `sudo`, `doas`, `pkexec`; `DROP DATABASE/SCHEMA/TABLE/INDEX/VIEW/FUNCTION/PROCEDURE`; `TRUNCATE`; `DELETE FROM`; `git push --force` / `git push -f` / `git push +refspec`; `git reset --hard`; `git clean -f` (any flag combo containing `-f`); `chmod 777` (with or without `-R`, including `-R777`); `mkfs.`; `shred`; `wipefs`; `curl|sh` / `wget|bash`; `base64 -d|` (decode-pipe); `dd if=` / `dd of=/dev/` (raw disk write); `kill -9 -1`; fork bomb `:(){ ... }`.
+
+This is a **last-resort safety net, not a sandbox** — blocklists are inherently bypassable via encoding, aliases, or variable indirection. Downstream repos should run agents in restricted-permission environments. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
+
+## Commit & PR Process
+
+- Conventional Commits (see `.github/skills/git-commit/SKILL.md` for the type table — `feat` / `fix` / `docs` / `refactor` / `perf` / `test` / `build` / `ci` / `chore` / `revert`).
+- The `git-commit` skill is marked `disable-model-invocation: true` and **must** be invoked explicitly via `/git-commit` — never auto-trigger.
+- PR workflow per `CONTRIBUTING.md`: branch from `main`, follow `STYLE-GUIDE.md`, run the inbound-reference grep before renaming files, run `validate-style-guide.sh` locally.
+
+## Agent Roster (for orientation)
+
+| Agent | Model | Activates |
+|---|---|---|
+| `@planner` | Claude Opus 4.8 | `plan`, `tasks`, `clarify-task` |
+| `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
+| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
+| `@debugger` | Claude Sonnet 4.6 | `debug` |
+| `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
+
+When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.
 
 ## Dependencies
 
