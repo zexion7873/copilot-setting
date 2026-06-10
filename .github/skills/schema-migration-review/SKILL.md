@@ -76,7 +76,7 @@ Summary: `Migrations reviewed: N | Findings: N critical, N high, N medium, N low
 ## Anti-Patterns
 
 - `DROP COLUMN` in same release that stopped writing it — keep removed-but-present for one full release cycle
-- `ALTER TABLE ... ADD COLUMN NOT NULL DEFAULT '...'` on a 10M-row table — add nullable, backfill in chunks, then `SET NOT NULL`
+- `ALTER TABLE ... ADD COLUMN NOT NULL DEFAULT '...'` on a 10M-row table — add nullable, backfill in chunks, then enforce with `MODIFY COLUMN c <type> NOT NULL` (MySQL has no `ALTER COLUMN ... SET NOT NULL`; `MODIFY` restates the full column definition, so re-list `DEFAULT` / `COMMENT` / charset or they are dropped)
 - `UPDATE huge_table SET ...` without `WHERE` + batching — batch with `WHERE id BETWEEN ? AND ?` in 1k–10k chunks
 - Renaming a column in one shot — add new column, dual-write, switch reads, drop old over multiple releases
 - Migration script that is not idempotent — wrap creates with `IF NOT EXISTS`, drops with `IF EXISTS`
