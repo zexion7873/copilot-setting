@@ -2,7 +2,7 @@
 name: Debugger
 description: 'Systematically debug issues by analyzing stack traces, reproducing problems, tracing execution flow, and identifying root causes. Hands off to @implementer once root cause is identified.'
 model: Claude Sonnet 4.6
-tools: ['search', 'read', 'execute', 'context7/*']
+tools: ['search', 'read', 'execute', 'context7/*', 'vscode/askQuestions']
 handoffs:
   - label: 修復 Bug
     agent: Implementer
