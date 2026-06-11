@@ -5,8 +5,10 @@
 #   bash .github/hooks/scripts/test-block-dangerous-commands.sh
 #
 # Each case pipes a real hook payload through the script and asserts the
-# exit code (0 = allow, 2 = deny).  Deny cases additionally assert that a
-# permissionDecisionReason JSON line is emitted on stdout.
+# decision: allow = exit 0 with no decision JSON on stdout; deny = exit 0
+# with a permissionDecision:"deny" JSON line on stdout.  Copilot parses
+# stdout as hook output only on exit 0, and treats exit 2 as a
+# NON-BLOCKING warning — so a deny must exit 0, never 2.
 set -uo pipefail
 
 SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/block-dangerous-commands.sh"
@@ -17,37 +19,46 @@ payload() {
   jq -cn --arg cmd "$1" '{toolName: "bash", toolArgs: {command: $cmd}}'
 }
 
-expect() { # $1 = expected exit code, $2 = label, $3 = raw payload
+expect() { # $1 = allow|deny, $2 = label, $3 = raw payload
   local rc=0 out
   out=$(printf '%s' "$3" | bash "$SCRIPT" 2>/dev/null) || rc=$?
-  if [ "$rc" -eq "$1" ]; then
-    PASS=$((PASS + 1))
-  else
+  if [ "$rc" -ne 0 ]; then
     FAIL=$((FAIL + 1))
-    echo "FAIL [$2] expected exit $1, got $rc"
+    echo "FAIL [$2] expected exit 0, got $rc"
+    return
   fi
-  if [ "$1" -eq 2 ] && [ "$rc" -eq 2 ]; then
-    if ! grep -q 'permissionDecisionReason' <<<"$out"; then
+  if [ "$1" = "deny" ]; then
+    if grep -q '"permissionDecision":"deny"' <<<"$out" \
+        && grep -q 'permissionDecisionReason' <<<"$out"; then
+      PASS=$((PASS + 1))
+    else
       FAIL=$((FAIL + 1))
-      echo "FAIL [$2] denied without permissionDecisionReason on stdout"
+      echo "FAIL [$2] expected deny JSON on stdout, got: ${out:-<empty>}"
+    fi
+  else
+    if grep -q 'permissionDecision' <<<"$out"; then
+      FAIL=$((FAIL + 1))
+      echo "FAIL [$2] expected allow (no decision JSON), got: $out"
+    else
+      PASS=$((PASS + 1))
     fi
   fi
 }
 
-deny_cmd()  { expect 2 "deny: $1"  "$(payload "$1")"; }
-allow_cmd() { expect 0 "allow: $1" "$(payload "$1")"; }
+deny_cmd()  { expect deny  "deny: $1"  "$(payload "$1")"; }
+allow_cmd() { expect allow "allow: $1" "$(payload "$1")"; }
 
 # ── Payload shapes and fail-closed contract ─────────────────────────
-expect 2 "empty stdin"            ""
-expect 2 "whitespace stdin"       "   "
-expect 2 "invalid JSON"           "not json at all"
-expect 2 "missing args payload"   '{"toolName":"bash"}'
-expect 0 "read-only tool"         '{"toolName":"read_file","toolArgs":{"path":"/etc/passwd"}}'
-expect 2 "PascalCase tool_input"  '{"tool_name":"bash","tool_input":{"command":"rm -rf /"}}'
-expect 2 "stringified toolArgs"   '{"toolName":"bash","toolArgs":"{\"command\":\"rm -rf /\"}"}'
-expect 2 "argv array command"     '{"toolName":"bash","toolArgs":{"command":["rm","-rf","/"]}}'
-expect 0 "non-shell object args"  '{"toolName":"write_file","toolArgs":{"path":"a.txt","content":"hello"}}'
-expect 0 "empty command string"   '{"toolName":"bash","toolArgs":{"command":""}}'
+expect deny  "empty stdin"            ""
+expect deny  "whitespace stdin"       "   "
+expect deny  "invalid JSON"           "not json at all"
+expect deny  "missing args payload"   '{"toolName":"bash"}'
+expect allow "read-only tool"         '{"toolName":"read_file","toolArgs":{"path":"/etc/passwd"}}'
+expect deny  "PascalCase tool_input"  '{"tool_name":"bash","tool_input":{"command":"rm -rf /"}}'
+expect deny  "stringified toolArgs"   '{"toolName":"bash","toolArgs":"{\"command\":\"rm -rf /\"}"}'
+expect deny  "argv array command"     '{"toolName":"bash","toolArgs":{"command":["rm","-rf","/"]}}'
+expect allow "non-shell object args"  '{"toolName":"write_file","toolArgs":{"path":"a.txt","content":"hello"}}'
+expect allow "empty command string"   '{"toolName":"bash","toolArgs":{"command":""}}'
 
 # ── rm: forced recursive deletion ───────────────────────────────────
 deny_cmd 'rm -rf /'

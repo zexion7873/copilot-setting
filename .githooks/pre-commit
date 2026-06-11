@@ -8,7 +8,10 @@ set -euo pipefail
 # .github/copilot-instructions.md) AND nested ones (agents/, skills/, ...).
 # The previous '.github/**/*.md' required at least one directory level and
 # silently skipped the two top-level files.
-STAGED_MD=$(git diff --cached --name-only --diff-filter=ACMR -- '.github/*.md' 2>/dev/null || true)
+# Deletions (D) must trigger too: removing a file is the change most likely
+# to break cross-references, and the index snapshot below validates the
+# post-deletion tree correctly once triggered.
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACMRD -- '.github/*.md' 2>/dev/null || true)
 
 if [ -z "$STAGED_MD" ]; then
   exit 0

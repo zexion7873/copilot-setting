@@ -369,10 +369,12 @@ set -euo pipefail
 
 # Deny reasons must not contain double quotes or backslashes — they are
 # embedded verbatim into the stdout JSON.
+# Must exit 0: the decision JSON is only parsed on exit 0; exit 2 would
+# downgrade the deny to a non-blocking warning and the command would run.
 deny() {
   printf '{"permissionDecision":"deny","permissionDecisionReason":"%s"}\n' "$1"
   echo "DENY: $1" >&2
-  exit 2
+  exit 0
 }
 
 INPUT=$(cat)
@@ -412,7 +414,7 @@ exit 0
 
 1. **Shebang**: `#!/usr/bin/env bash` on line 1.
 2. **Error handling**: `set -euo pipefail` on line 2.
-3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`. On deny, also print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout — that JSON is the documented merge channel, so the agent sees *why* it was denied and can self-correct; the stderr line is only for human log readability.
+3. **Exit codes**: always exit `0` — the decision travels on stdout, which Copilot parses as hook output JSON *only* on exit 0. Deny = print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout and exit `0` (the agent sees *why* and can self-correct); allow = exit `0` with no decision JSON. **Never exit `2` to deny** — Copilot treats exit 2 as a non-blocking warning and the tool call proceeds. Any other non-zero exit signals a script error, which `preToolUse` handles fail-closed (denied, but without a readable reason); the stderr line is only for human log readability.
 4. **Input format**: JSON on stdin. camelCase surfaces (Copilot CLI, cloud agent) send `toolName` (string) and `toolArgs` (object **or JSON-encoded string** — unwrap with `fromjson?`); the VS Code PascalCase payload sends `tool_name` and `tool_input`. Parse with `jq` fallback chains covering both shapes (see the skeleton). The field `toolInput` does not exist in any payload format — reading it silently yields an empty string and the hook inspects nothing.
 5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `AGENTS.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
 6. **Timeout**: `timeout` ≤ 10 (the field name `default.json` uses). Hooks must be fast — they run on every tool call.

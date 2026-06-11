@@ -13,20 +13,25 @@ set -euo pipefail
 #         send { toolName, toolArgs } where toolArgs may be an object or a
 #         JSON-encoded string; the VS Code PascalCase payload sends
 #         { tool_name, tool_input }.  Both shapes are handled.
-# Output: exit 0 = allow.  exit 2 = deny, with
+# Output: allow = exit 0 with no stdout JSON.  Deny = exit 0 with
 #         {"permissionDecision":"deny","permissionDecisionReason":"..."}
-#         on stdout (the documented merge channel) and a human-readable
-#         line on stderr for logs.
+#         on stdout — Copilot parses stdout as hook output only on exit 0,
+#         and exit 2 is reserved as a NON-BLOCKING warning (the run
+#         continues), so a deny must exit 0.  Unexpected crashes exit
+#         non-zero (not 2), which preToolUse treats as a fail-closed deny.
+#         The stderr line is only for human log readability.
 # Policy: FAIL-CLOSED — empty input, JSON parse errors, missing jq,
 #         missing toolArgs/tool_input payload, or a grep error during
 #         pattern matching → deny.
 
 # Deny reasons must not contain double quotes or backslashes — they are
 # embedded verbatim into the stdout JSON (jq may not be available here).
+# Must exit 0: the decision JSON is only parsed on exit 0; exit 2 would
+# downgrade the deny to a non-blocking warning and the command would run.
 deny() {
   printf '{"permissionDecision":"deny","permissionDecisionReason":"%s"}\n' "$1"
   echo "DENY: $1" >&2
-  exit 2
+  exit 0
 }
 
 INPUT=$(cat)
