@@ -110,6 +110,5 @@ Summary: <one-sentence assessment>
 
 - → `@implementer` — to fix findings
 - → `security-audit` skill — security concerns warrant deeper audit
-- → `sql-review` skill — SQL issues warrant dedicated review
-- → `schema-migration-review` skill — migration / DDL changes warrant dedicated schema review
+- → `sql-review` skill — SQL issues or migration / DDL changes warrant dedicated review
 - ← `@reviewer` — default activation

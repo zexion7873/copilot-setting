@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: 'Use when existing code needs structural improvement without changing behavior — extract method, rename, eliminate duplication, simplify logic. Triggers on: refactor, clean up, extract method, rename, reduce duplication, 重構, 整理程式碼, 拆方法, 改名. Produces behavior-preserving structural changes. Do NOT use for new features (prefer implement), bug fixes (prefer debug), or performance optimization (prefer performance).'
+description: 'Use when existing code needs structural improvement without changing behavior — extract method, rename, eliminate duplication, simplify logic. Triggers on: refactor, clean up, extract method, rename, reduce duplication, 重構, 整理程式碼, 拆方法, 改名. Produces behavior-preserving structural changes. Do NOT use for new features (prefer implement) or bug fixes (prefer debug).'
 ---
 
 # Refactor — Workflow
@@ -48,4 +48,3 @@ Surgical, behavior-preserving structural changes.
 - → `implement` skill — if refactoring reveals a need for new code
 - ← `@implementer` — when code needs cleanup before feature work
 - ← `implement` skill — if existing code needs restructuring first
-- ← `performance` skill — if optimization requires structural change

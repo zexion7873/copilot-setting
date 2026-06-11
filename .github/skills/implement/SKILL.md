@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Use when user needs code written — new features or task execution in Java 8 / Maven / Spring / Hibernate projects. Triggers on: implement, code this, build feature, write code, 實作, 寫程式, 開始做, 幫我寫. Produces working code following existing patterns. Do NOT use for refactoring without new behavior (prefer refactor), performance tuning (prefer performance), or bug investigation (prefer debug).'
+description: 'Use when user needs code written — new features or task execution in Java 8 / Maven / Spring / Hibernate projects. Triggers on: implement, code this, build feature, write code, 實作, 寫程式, 開始做, 幫我寫. Produces working code following existing patterns. Do NOT use for refactoring without new behavior (prefer refactor) or bug investigation (prefer debug).'
 ---
 
 # Implement — Workflow
@@ -53,7 +53,7 @@ Before writing new code, find and follow existing patterns:
 - → `@reviewer` — for code review after implementation
 - → `debug` skill — if implementation reveals a bug
 - → `refactor` skill — if existing code needs restructuring first
-- ← `clarify-task` skill — after ambiguity resolved, proceed to implementation
+- ← `plan` skill — when clarification (Phase 1) resolves the task to a small, fully understood change
 - ← `refactor` skill — if refactoring reveals need for new code
 - ← `@implementer` — default activation
 - ← `tasks` skill — executing a task list

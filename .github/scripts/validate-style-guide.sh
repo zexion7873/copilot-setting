@@ -146,7 +146,7 @@ echo "🔗 Instruction Reference (code-touching skills)"
 # triggered. The condensed floor was removed — hard-boundary rules now live in
 # the code-touching agent bodies (## Coding Standards), which load
 # deterministically on agent selection.
-INSTRUCTION_REF_SKILLS="implement refactor code-review sql-review security-audit debug performance schema-migration-review"
+INSTRUCTION_REF_SKILLS="implement refactor code-review sql-review security-audit debug"
 ref_errors_start=$ERRORS
 for skill in $INSTRUCTION_REF_SKILLS; do
   file="$GITHUB_DIR/skills/$skill/SKILL.md"
