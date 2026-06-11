@@ -36,7 +36,7 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 | Pattern | Problem | Fix |
 |---|---|---|
 | `spring-beans-4.0.xsd` in namespace | Schema version exceeds Spring 3.2 runtime — silent misconfiguration | Use `spring-beans-3.2.xsd` (match actual framework version) |
-| `<tx:annotation-driven/>` | Conflicts with project's `<tx:advice>` + `<aop:config>` transaction strategy | Remove; use `<tx:advice>` — see `instructions/spring-hibernate.instructions.md` |
+| `<tx:annotation-driven/>` | Conflicts with project's `<tx:advice>` + `<aop:config>` transaction strategy | Remove in greenfield / `<tx:advice>` modules; **keep** if the module is consistently `@Transactional`-based — removing it silently disables every annotated transaction (see the legacy exception in `instructions/spring-hibernate.instructions.md`) |
 | `<context:component-scan base-package="com.example"/>` | Scans entire package tree — picks up test doubles, unintended beans | Narrow to specific subpackage: `com.example.service` |
 | `<hibernate-mapping>` without `package` | Every `<class>` needs FQCN; noisy and error-prone | Add `package="com.example.entity"` on root element |
 | `<version>[1.0,2.0)</version>` | Version range — non-reproducible builds | Pin exact version: `<version>1.2.3</version>` |

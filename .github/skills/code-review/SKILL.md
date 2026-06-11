@@ -30,7 +30,7 @@ Structured code review.
 - [ ] Off-by-one: loop bounds, substring, index access
 - [ ] Edge cases: zero, negative, empty collection, max-size
 - [ ] Shared mutable state accessed from multiple threads → synchronized or thread-local?
-- [ ] Resources (Connection, InputStream, Session) closed in finally
+- [ ] JDBC resources (`Connection`, `PreparedStatement`, `ResultSet`, streams) managed via try-with-resources; Hibernate `Session` from `getCurrentSession()` is never closed/flushed manually (Spring owns its lifecycle)
 
 **Security** (check each):
 - [ ] Every SQL query uses bind parameters (`?` or `:named`)

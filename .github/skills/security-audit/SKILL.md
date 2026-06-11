@@ -54,7 +54,7 @@ For each entry point, trace data flow from input → processing → storage → 
 
 **A06 Vulnerable Components** (check each):
 - [ ] Key dependencies (Spring, Hibernate, Jackson, Log4j, Commons) not on known-CVE versions
-- [ ] Run `mvn org.owasp:dependency-check-maven:check` or `mvn versions:display-dependency-updates` and flag any CVE
+- [ ] Require the author to attach a fresh `mvn org.owasp:dependency-check-maven:check` report — the reviewer is read-only and cannot run Maven (mirrors `code-review` Phase 4 build-evidence rule); cross-check flagged dependencies against CVE advisories. Do NOT rely on `mvn versions:display-dependency-updates` for CVEs — it reports version drift, not vulnerabilities
 - [ ] Spring 3.2 and Hibernate 4.2 are EOL — document known unpatched CVEs as baseline risk
 
 **A07 Auth & Session** (check each):

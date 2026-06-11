@@ -11,10 +11,13 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 - `@RestController` → `@Controller` + `@ResponseBody`
 - `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` → `@RequestMapping(method = RequestMethod.GET)` etc.
-- `@Conditional`, `@Profile` with complex conditions
+- `@Conditional` (Spring 4.0) — note: `@Profile` itself is Spring **3.1** and allowed; only profile *expressions* (`!` / `&` / `|` in the value, Spring 5.1) are out
 - `AsyncRestTemplate`, `ListenableFuture`
-- `AbstractAnnotationConfigDispatcherServletInitializer` (this project uses `web.xml`)
 - Spring 4 test annotations (`@Sql`, `@SqlGroup`)
+
+## Forbidden by Project Convention (valid in 3.2, not used here)
+
+- `AbstractAnnotationConfigDispatcherServletInitializer` — exists since Spring 3.2, but this project bootstraps via `web.xml`; do not introduce servlet initializers
 
 ## Hibernate 4.2 API
 
