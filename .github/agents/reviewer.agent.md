@@ -1,6 +1,6 @@
 ---
 name: Reviewer
-description: 'Perform code reviews, security audits (OWASP Top 10), SQL reviews, schema migration reviews, and Maven pom.xml dependency checks (within code review). Each review mode follows its own checklist and severity model.'
+description: 'Perform code reviews, security audits (OWASP Top 10), SQL and schema migration reviews, and Maven pom.xml dependency checks (within code review). Each review mode follows its own checklist and severity model.'
 model: Claude Opus 4.8
 tools: ['search', 'read', 'context7/*', 'agent', 'websearch/*']
 agents: ['Researcher']
@@ -48,8 +48,7 @@ Pick the primary skill from the user's request.
 |---|---|---|
 | "review code", "code review", "check this code", "check PR", "review PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | `code-review` | Severity-rated findings report |
 | "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | `security-audit` | OWASP-mapped vulnerability report |
-| "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | `sql-review` | Query performance and safety findings |
-| "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | `schema-migration-review` | Schema change risk assessment |
+| "review SQL", "SQL review", "query review", "slow query", "check SQL", "review migration", "schema change", "DDL review", SQL 審查, 看一下 SQL, 查詢太慢, 看 migration, 審 schema, 看 DDL, 改表審查 | `sql-review` | Query and schema-migration findings — performance, safety, rollback, lock impact |
 
 
 Activate the matched skill and follow its workflow. Default to `code-review` if the user's intent is ambiguous but clearly review-related. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
@@ -66,9 +65,8 @@ Skip when reviewing a single file with a small diff that you can trace manually.
 
 During any review, check for cross-mode signals and escalate explicitly:
 
-- SQL concatenation or missing parameterization found → escalate to `sql-review`
+- SQL concatenation, missing parameterization, or schema changes in migration files found → escalate to `sql-review`
 - Auth/access control gaps or credential handling found → escalate to `security-audit`
-- Schema changes in migration files found → escalate to `schema-migration-review`
 
 State escalation: "Escalating to [skill] — found [trigger]."
 

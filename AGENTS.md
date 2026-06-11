@@ -58,15 +58,15 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
+| Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User selects the agent from the chat agents dropdown |
+| Skills (10) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment), or the model loads it on demand via semantic match on its `description` (discretionary); `applyTo: "**"` loads on every request |
-| Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
-| Skills (13) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
-| Prompts (5) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
+| Prompts (4) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions, save the two narrow exceptions noted below.
 
-**Instruction loading model:** instructions reach the model through two channels, and only the first is deterministic. (1) **Glob injection at request time** — `applyTo` globs are matched against files explicitly in context (attached via `#file:`, editor attachment) and matching instruction files are auto-attached. Files the agent reads or edits dynamically during execution do NOT retroactively trigger glob instructions — the VS Code feature request to refresh instructions mid-session (microsoft/vscode#282964) was closed as not planned. (2) **On-demand semantic loading** — each request also carries a list of all instruction files (glob + `description`), and the model may choose to load one whose description matches the task; this is model-discretionary, never guaranteed. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. **Two narrow duplications are sanctioned, both keeping the instruction file canonical:** (1) this version-lock hard-boundary embed in the code-touching agent bodies; and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases (e.g. `code-review`, `security-audit`, `sql-review`, `implement`, `performance`), which may *name* canonical conventions as one-line check items but must not add detail beyond the instruction file. Keep both minimal; full rule restatement with added detail in a skill is a defect.
+**Instruction loading model:** instructions reach the model through two channels, and only the first is deterministic. (1) **Glob injection at request time** — `applyTo` globs are matched against files explicitly in context (attached via `#file:`, editor attachment) and matching instruction files are auto-attached. Files the agent reads or edits dynamically during execution do NOT retroactively trigger glob instructions — the VS Code feature request to refresh instructions mid-session (microsoft/vscode#282964) was closed as not planned. (2) **On-demand semantic loading** — each request also carries a list of all instruction files (glob + `description`), and the model may choose to load one whose description matches the task; this is model-discretionary, never guaranteed. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. **Two narrow duplications are sanctioned, both keeping the instruction file canonical:** (1) this version-lock hard-boundary embed in the code-touching agent bodies; and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases (e.g. `code-review`, `security-audit`, `sql-review`, `implement`), which may *name* canonical conventions as one-line check items but must not add detail beyond the instruction file. Keep both minimal; full rule restatement with added detail in a skill is a defect.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -102,6 +102,8 @@ grep -rn "<old-filename>" .github/
 
 Broken paths silently degrade Copilot output — they don't error, they just stop loading the referenced content.
 
+When **deleting or merging** a file, the path grep alone is not enough — several places reference skills/prompts by *name* in hardcoded lists. Follow the sweep checklist in `.github/STYLE-GUIDE.md` → File Lifecycle → Removing or Merging Files.
+
 ## Maintenance Rule — Cache-Friendly Edits
 
 Copilot's usage-based billing (since June 2026) reuses **prompt cache** at stable prefix boundaries (system prompt, tool definitions, then injected instruction / agent / skill content). A cache *read* costs ~10× less than fresh input; the first *write* costs ~25% more. Within a session these files sit in the cached prefix, so the practical cost lever is **cache hit rate, not file length**.
@@ -111,6 +113,15 @@ Because caching is prefix-based, editing one line invalidates that file's cached
 - **Batch edits to `instructions/`, `agents/`, and `skills/` — change once, decisively. Do not micro-tune for token count.** The input savings from a shorter file are near-zero once the prefix is cached; the cache-write churn from frequent edits costs more than it saves.
 - Trimming a file for clarity or correctness is fine. Trimming *purely* to shave tokens is a net loss — the cache already neutralised that cost.
 - Keep these files stable between releases; land prompt-engineering changes together rather than as a drip of small commits.
+
+## Maintenance Rule — List Ordering
+
+Lists in `README.md`, `README.zh-TW.md`, and this file follow one of two deliberate orders. Decide which kind of list you are touching before picking an insertion position:
+
+- **Mirror lists** — anything that claims to reflect the filesystem or a complete catalog: the "What Copilot Loads" tree and the Skills / Prompts / Instructions reference tables. Order: directories first, then files, alphabetical at every level — exactly what the VS Code explorer and GitHub show, so the list can be verified against `ls` at a glance and new entries have a deterministic insertion point.
+- **Narrative lists** — anything that teaches the pipeline: the How It Works category table and the Architecture table in this file (Agents → Skills → Instructions → Prompts → Hooks), the Agents table, and the Typical Workflow sections (planner → implementer → reviewer → debugger). Order follows the user journey / activation chain — the order itself is content; do not alphabetize.
+
+Alphabetizing a narrative list destroys the story; hand-ordering a mirror list breaks at-a-glance verification.
 
 ## Bilingual Conventions
 
@@ -138,9 +149,9 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 
 | Agent | Model | Activates |
 |---|---|---|
-| `@planner` | Claude Opus 4.8 | `plan`, `tasks`, `clarify-task` |
-| `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design`, `performance` |
-| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `schema-migration-review` |
+| `@planner` | Claude Opus 4.8 | `plan`, `tasks` |
+| `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design` |
+| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
 | `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
