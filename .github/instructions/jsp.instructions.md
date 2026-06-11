@@ -10,7 +10,7 @@ XSS prevention is the #1 priority. All dynamic output must be encoded.
 ## Output Encoding
 
 - **Every** dynamic value: `<c:out value="${...}"/>` or `fn:escapeXml()` — no raw `${...}` in HTML
-- JavaScript context: JSON-encode server-side before embedding in `<script>`
+- JavaScript context: JSON-encode server-side with `<` escaped as `\u003c` — plain JSON encoding leaves `</script>` intact and the HTML parser ends the script block at the first `</script>` regardless of string context; or pass the JSON in an HTML-escaped `data-*` attribute and read it from JS
 - URL context: `<c:url>` with `<c:param>` for proper encoding
 
 ## JSTL Only

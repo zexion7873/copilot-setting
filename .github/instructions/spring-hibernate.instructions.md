@@ -11,7 +11,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 - `@RestController` → `@Controller` + `@ResponseBody`
 - `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` → `@RequestMapping(method = RequestMethod.GET)` etc.
-- `@Conditional` (Spring 4.0) — note: `@Profile` itself is Spring **3.1** and allowed; only profile *expressions* (`!` / `&` / `|` in the value, Spring 5.1) are out
+- `@Conditional` (Spring 4.0) — note: `@Profile` itself is Spring **3.1** and allowed, and single-profile negation (`!dev`, SPR-8728) works since **3.2**; only compound profile *expressions* (`&` / `|` in the value, Spring 5.1) are out
 - `AsyncRestTemplate`, `ListenableFuture`
 - Spring 4 test annotations (`@Sql`, `@SqlGroup`)
 

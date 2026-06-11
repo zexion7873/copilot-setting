@@ -42,7 +42,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] HQL: named parameters `:param` only — no `"... where x = '" + input + "'"`
 - [ ] OS command: no `Runtime.exec()` or `ProcessBuilder` with user input
 - [ ] XSS: every JSP variable in `<c:out>` — search for `${` without encoding
-- [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities — search for `DocumentBuilderFactory` / `SAXParserFactory` / `XMLInputFactory` / `Unmarshaller` without `disallow-doctype-decl`
+- [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities using each API's own switch (`instructions/security.instructions.md` A03) — search for `DocumentBuilderFactory` / `SAXParserFactory` without `disallow-doctype-decl`, `XMLInputFactory` without `SUPPORT_DTD` set to false (StAX has no `setFeature`), and `Unmarshaller` not reading from a hardened `SAXSource`
 
 **A04 Insecure Design** (check each):
 - [ ] Rate limiting on login/registration/password-reset

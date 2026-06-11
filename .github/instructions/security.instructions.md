@@ -42,7 +42,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 ## A06 Vulnerable Components
 
 - Pin dependency versions; no `SNAPSHOT` in production
-- Track CVEs: `mvn versions:display-dependency-updates`
+- Track CVEs: OWASP Dependency-Check (`mvn org.owasp:dependency-check-maven:check`) — `versions:display-dependency-updates` only lists newer versions, it does not scan vulnerabilities
 - Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL 2017) carry unpatched CVEs — document as baseline risk in every audit
 
 ## A07 Authentication Failures
