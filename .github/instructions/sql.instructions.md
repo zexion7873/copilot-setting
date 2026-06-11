@@ -21,7 +21,7 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 - No functions on indexed columns in `WHERE` — use range conditions
 - No `OFFSET` pagination on large tables — cursor: `WHERE id > ? ORDER BY id LIMIT N`
 - N+1 = SQL inside a loop — batch with `IN` or JOIN
-- `EXISTS` over `IN` for large subqueries
+- `IN` vs `EXISTS` subqueries: MySQL 8.0 optimizes both with the same semijoin transforms (`EXISTS` since 8.0.16) — pick the clearer form and check `EXPLAIN`; beware `NOT IN` matching nothing when the subquery returns a `NULL`
 - Batch INSERT/UPDATE/DELETE (500–1000 rows); never row-by-row
 
 ## JDBC Resources
@@ -37,6 +37,7 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 - Body: `DECLARE EXIT HANDLER FOR SQLEXCEPTION` required; variables `v_` prefix
 - Tables: InnoDB, `utf8mb4`, `created_at` / `updated_at` timestamps mandatory
 - FK: `fk_<child>_<parent_col>`; `RESTRICT` default, `CASCADE` only for dependent children
+- Index: `idx_<table>_<columns>`
 
 ## Anti-Patterns
 

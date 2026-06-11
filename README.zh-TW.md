@@ -165,7 +165,7 @@ flowchart LR
 
 ### 📚 `@researcher` — 唯讀子代理（自動）
 
-不需手動呼叫。由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件。回傳結構化摘要 — 不提供建議與決策。
+通常由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件，也可直接以 `@researcher` 呼叫。回傳結構化摘要 — 不提供建議與決策。
 
 ---
 
@@ -230,7 +230,7 @@ flowchart LR
 每次對話都載入的全域最小規範。語言、技術環境和編碼哲學 — 其他慣例由專屬 instruction 各自負責。
 
 - 以繁體中文回覆
-- 技術環境：Java 8、Maven、Spring 3.2、Spring Security 3.2、Hibernate 4.2、MySQL 8.0、JSP + JSTL 1.2
+- 技術環境：Java 8、Maven、Spring 3.2、Spring Security 3.2、Hibernate 4.2、MySQL 8.0、SLF4J 1.7 + Logback、JSP + JSTL 1.2
 - 編碼哲學：think before coding（先釐清假設、不要猜）、simplicity first（不做預測性抽象）、surgical changes（只動該動的）
 
 ---

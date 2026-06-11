@@ -1,6 +1,6 @@
 ---
 name: test-design
-description: 'Use when user needs test case identification and documentation — boundary analysis, category classification, and coverage gap audit. Triggers on: test cases, what should we test, test plan, test design, 測試案例, 要測什麼, 測試規劃, 列測試項目. Produces a test case document (not test code). Do NOT use for implementation (prefer implement), code review (prefer code-review), or debugging (prefer debug).'
+description: 'Use when user needs test case identification and documentation — boundary analysis, category classification, and coverage gap audit. Triggers on: test cases, what should we test, test plan, test design, design tests, 測試案例, 要測什麼, 測試規劃, 列測試項目. Produces a test case document (not test code). Do NOT use for implementation (prefer implement), code review (prefer code-review), or debugging (prefer debug).'
 ---
 
 # Test Design — Workflow

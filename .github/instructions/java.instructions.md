@@ -30,9 +30,12 @@ This project is Java 8. AI models default to modern Java — correct that here.
 
 ## Date and Time
 
-- Use `java.time` API (`LocalDate`, `LocalDateTime`, `ZonedDateTime`, `Instant`, `Duration`) — this is a Java 8 feature and the correct choice for this project
-- Never use `java.util.Date`, `java.util.Calendar`, or `java.sql.Timestamp` in new code
-- Conversion: `Date.toInstant()` / `Date.from(instant)` at integration boundaries with legacy APIs
+- Use `java.time` (`LocalDate`, `LocalDateTime`, `ZonedDateTime`, `Instant`, `Duration`) for business logic, computation, and internal date handling — a Java 8 feature and the default for new code
+- **Two hard exceptions on this stack** — Hibernate 4.2 has no `java.time` support (that arrived in Hibernate 5's `hibernate-java8` module) and JSTL 1.2 `<fmt:formatDate>` accepts only `java.util.Date`:
+  - hbm.xml-mapped entity date fields stay `java.util.Date` / `java.sql.Timestamp` — a `LocalDateTime` field has no Hibernate 4.2 type mapping (fails, or silently persists as a serialized BLOB)
+  - dates passed to a JSP for `<fmt:formatDate>` stay `java.util.Date` (`instructions/jsp.instructions.md`)
+- Convert at the service boundary with `Date.from(instant)` / `Date.toInstant()` between `java.time` logic and the persistence / view layers
+- Still avoid `java.util.Calendar` (mutable, error-prone) in new code
 
 ## Numbers & Money
 
@@ -67,6 +70,7 @@ This project is Java 8. AI models default to modern Java — correct that here.
 
 - Comments explain WHY, not WHAT — code should be self-explanatory
 - Delete commented-out code; that's what git is for
+- Keep methods ≤ 30 lines of logic; extract a method when one grows past that
 
 ## Anti-Patterns
 
@@ -79,6 +83,6 @@ This project is Java 8. AI models default to modern Java — correct that here.
 | `System.out.println(...)` | Unstructured, no levels, lost in production | `log.debug(...)` via SLF4J |
 | `throw new RuntimeException("err")` without cause | Loses original stack trace | `throw new RuntimeException("msg", original)` |
 | `catch (Exception e) { return null; }` | Converts to NPE elsewhere | Rethrow meaningful exception or `Optional.empty()` |
-| `new Date()` / `Calendar.getInstance()` | Legacy API; mutable, error-prone, poorly designed | `LocalDate.now()` / `LocalDateTime.now()` via `java.time` |
+| `new Date()` / `Calendar.getInstance()` in business logic | Legacy mutable API | `java.time` (`LocalDateTime.now()` etc.) — but hbm.xml entity date fields & `<fmt:formatDate>` inputs must stay `java.util.Date` (Hibernate 4.2 / JSTL 1.2 lack java.time) |
 | `double price = 19.99` for money | Binary float rounding errors | `new BigDecimal("19.99")` |
 | Shared `HashMap` mutated by servlet threads | Race condition; lost updates | `ConcurrentHashMap` or confine to method scope |

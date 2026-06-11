@@ -36,6 +36,8 @@ Break each phase into atomic tasks. Each task must be:
 
 ## Output Template
 
+Write the task breakdown to `docs/plans/<plan-basename>.tasks.md` beside the source plan, so the `source:` frontmatter link resolves as a relative sibling path.
+
 ```md
 ---
 source: <Path to plan>

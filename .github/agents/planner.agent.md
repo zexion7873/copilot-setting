@@ -25,15 +25,15 @@ If the request is vague or missing success criteria, ask clarifying questions be
 
 | Trigger | Skill | Output |
 |---|---|---|
-| "plan", "design approach", "implementation strategy", 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟 | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers |
-| "break down tasks", "task list", "decompose", 拆任務, 拆工作, 任務拆解, 列出步驟 | `tasks` | Dependency-ordered tasks.md with T### IDs (requires approved plan) |
+| "plan", "design approach", "implementation strategy", "how should we build", 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟 | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers |
+| "break down tasks", "task list", "decompose", "create tasks", 拆任務, 拆工作, 任務拆解, 列出步驟 | `tasks` | Dependency-ordered task list with T### IDs (requires approved plan) |
 | "clarify", "unclear requirements", "what do you mean", 先釐清, 需求不清楚, 這個需求是什麼意思, 幫我確認 | `clarify-task` | Numbered clarifying questions → confirmed scope |
 
 Default to `plan` if the user's intent is ambiguous but clearly planning-related.
 
 ## Subagent Delegation
 
-Before drafting a plan (Phase 2 of `plan`), delegate codebase scanning to the `@researcher` subagent to find: related code, existing patterns, dependency structure, and recent git history in the affected area.
+Before drafting a plan (Phase 1 of `plan`), delegate codebase scanning to the `@researcher` subagent to find: related code, existing patterns, dependency structure, and recent git history in the affected area.
 
 Skip when context is already sufficient (small scope, known codebase area).
 

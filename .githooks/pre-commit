@@ -3,7 +3,15 @@
 
 set -euo pipefail
 
-STAGED_MD=$(git diff --cached --name-only --diff-filter=ACMR -- '.github/**/*.md' 2>/dev/null || true)
+# Pathspec note: in git's default pathspec semantics '*' also matches '/', so
+# '.github/*.md' matches BOTH top-level files (.github/STYLE-GUIDE.md,
+# .github/copilot-instructions.md) AND nested ones (agents/, skills/, ...).
+# The previous '.github/**/*.md' required at least one directory level and
+# silently skipped the two top-level files.
+# Deletions (D) must trigger too: removing a file is the change most likely
+# to break cross-references, and the index snapshot below validates the
+# post-deletion tree correctly once triggered.
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACMRD -- '.github/*.md' 2>/dev/null || true)
 
 if [ -z "$STAGED_MD" ]; then
   exit 0
@@ -11,7 +19,31 @@ fi
 
 echo "🔍 .github/ markdown changed — running STYLE-GUIDE validation..."
 
-if bash .github/scripts/validate-style-guide.sh; then
+# Validate the STAGED INDEX, not the working tree: with partial staging
+# (git add -p) the worktree can diverge from what is actually being committed.
+# Snapshot the index into a temp dir and run the validator from the snapshot.
+SNAPSHOT="$(mktemp -d "${TMPDIR:-/tmp}/pre-commit-style.XXXXXX")"
+trap 'rm -rf "$SNAPSHOT"' EXIT
+
+# -a (whole index, not just the staged .md files) because the validator
+# cross-checks files against each other (cross-references, handoff targets,
+# agent drift guard) and needs its own script in the tree — a partial checkout
+# would false-fail those checks. The repo is tiny, so a full checkout costs
+# milliseconds. --prefix MUST end in '/', otherwise git treats it as a
+# filename prefix instead of a directory.
+if ! git checkout-index --prefix="$SNAPSHOT/" -a; then
+  echo "❌ Could not snapshot the staged index — aborting commit."
+  exit 1
+fi
+
+if [ ! -f "$SNAPSHOT/.github/scripts/validate-style-guide.sh" ]; then
+  echo "❌ validate-style-guide.sh is missing from the staged tree — aborting commit."
+  exit 1
+fi
+
+# The validator resolves its repo root from its own location, so running the
+# snapshot's copy validates exactly what is being committed.
+if bash "$SNAPSHOT/.github/scripts/validate-style-guide.sh"; then
   exit 0
 else
   echo ""

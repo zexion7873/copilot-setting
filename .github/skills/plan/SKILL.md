@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫. Produces a structured plan document. Do NOT use for atomic task lists (prefer tasks) or unclear requirements (prefer clarify-task).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding. Triggers on: plan, design approach, implementation strategy, how should we build, 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟. Produces a structured plan document. Do NOT use for atomic task lists (prefer tasks) or unclear requirements (prefer clarify-task).'
 ---
 
 # Plan — Workflow
@@ -17,13 +17,13 @@ Structured implementation plan.
 
 | Scope | Definition | Plan depth |
 |---|---|---|
-| Small | 1–3 files, single module | Lightweight: goal + approach + files |
+| Small | 1–3 files, single module | Lightweight: goal + approach + files (template sections 1–3) |
 | Medium | 4–10 files, cross-module | Standard: full template |
-| Large | 10+ files, schema change, or API change | Full template + risk analysis + alternatives |
+| Large | 10+ files, schema change, or API change | Full template + mandatory red-team depth (≥2 ASM/GAP entries) + migration/rollback plan (dedicated phases in section 2, RISK entries in section 5) |
 
 ## Phase 3 — Draft Plan
 
-Fill the template below. Every section must be concrete:
+Fill the template below (Small scope: sections 1–3 only; Medium+: full template). Every section must be concrete:
 - Requirements: traceable `REQ-NNN` / `CON-NNN` identifiers
 - Approach: phased, each phase has a measurable goal
 - Files: real paths from the codebase scan
@@ -34,8 +34,8 @@ Fill the template below. Every section must be concrete:
 - [ ] Every phase has one clear goal
 - [ ] File list matches codebase scan results
 - [ ] No `TBD` or placeholders left
-- [ ] Alternatives section has at least one rejected option with reason
-- [ ] Refactor / structural plans: affected callers inventoried (verified via `find-impact`, not a single summary)
+- [ ] Medium+ scope: Alternatives section has at least one rejected option with reason
+- [ ] Refactor / structural plans: affected callers inventoried (verified via `find-impact`, not a single summary; Small plans record the inventory in the approach notes)
 
 ## Phase 5 — Red-Team the Plan
 
@@ -46,7 +46,7 @@ Before handing off, challenge the plan as an adversary would. Do not skip this w
 - **Missing cases**: null/empty, concurrent access, rollback path, backward compatibility, migration ordering
 - **Weakest link**: the one step you are least sure about — name it explicitly
 
-Fold material findings back into sections 4–5; record the residual assumptions and gaps in section 7.
+Fold material findings back into sections 4–5 and record the residual assumptions and gaps in section 7 (Medium+ scope); for Small plans, append findings to the approach notes.
 
 ## Output Template
 

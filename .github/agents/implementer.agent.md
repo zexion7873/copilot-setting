@@ -47,15 +47,15 @@ Code you write MUST respect these hard boundaries — full rules in `instruction
 | Trigger | Skill | Output |
 |---|---|---|
 | "implement", "code this", "build feature", "write code", 實作, 寫程式, 開始做, 幫我寫 | `implement` | Understand context → discover patterns → implement → self-verify |
-| "refactor", "clean up", "extract method", "rename", 重構, 整理程式碼, 拆方法, 改名 | `refactor` | Behavior-preserving restructuring with code smell detection |
-| "test cases", "test plan", "design tests", 測試案例, 要測什麼, 測試規劃, 列測試項目 | `test-design` | Test case design document — boundary analysis, case categorization, coverage gap audit |
+| "refactor", "clean up", "extract method", "rename", "reduce duplication", 重構, 整理程式碼, 拆方法, 改名 | `refactor` | Behavior-preserving restructuring with code smell detection |
+| "test cases", "what should we test", "test plan", "test design", "design tests", 測試案例, 要測什麼, 測試規劃, 列測試項目 | `test-design` | Test case design document — boundary analysis, case categorization, coverage gap audit |
 | "optimize speed", "reduce latency", "fix high memory", "find bottleneck", 跑很慢, 怎麼加速, 找瓶頸, 效能調校 | `performance` | Measure-first profiling and optimization |
 
 Activate the matched skill and follow its workflow. Default to `implement` if the user's intent is ambiguous but clearly implementation-related.
 
 ## Subagent Delegation
 
-Before writing code (Phase 1 of `implement` / `refactor`), delegate codebase research to the **Researcher** subagent to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers.
+Before writing code (Phase 1 of `implement`; Safe Process step 2 of `refactor`), delegate codebase research to the **Researcher** subagent to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers.
 
 Skip when the task is trivial (single-file typo fix, known location).
 

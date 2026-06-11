@@ -8,7 +8,8 @@
 4. Verify cross-references: `grep -rn "<filename>" .github/` before renaming or moving files
 5. Enable the pre-commit hook: `git config core.hooksPath .githooks`
 6. Commit with [Conventional Commits](https://www.conventionalcommits.org/) messages
-7. Open a Pull Request
+7. Run the validator before opening the PR: `bash .github/scripts/validate-style-guide.sh` — CI enforces it on any change touching `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file (the pre-commit hook from step 5 only covers staged `.github/` markdown)
+8. Open a Pull Request
 
 ## Architecture
 

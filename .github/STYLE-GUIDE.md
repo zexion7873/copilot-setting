@@ -7,7 +7,7 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 | Category | Role | Responsibility |
 |---|---|---|
 | **Agent** | Router | Who I am, which workflows I activate, who I hand off to |
-| **Skill** | Workflow | Step-by-step process — references Rules and Templates, never rewrites them |
+| **Skill** | Workflow | Step-by-step process — embeds its own output template when one is needed (see skill rule 9); references Rules rather than restating them (verification checklists may *name* conventions as check items only) |
 | **Instruction** | Rules | Single source of truth for coding conventions — referenced by workflows |
 | **Prompt** | Shortcut | Lightweight single-task shortcuts invoked via `/prompt-name` |
 | **Hook** | Lifecycle Guard | Block dangerous commands before agent tool execution |
@@ -66,6 +66,7 @@ Agent ──activates──→ Skill (embeds output template)
 | From | To | Allowed? | Purpose |
 |---|---|---|---|
 | Skill → Agent | ✅ | Handoffs section only: "suggest `@reviewer`" |
+| Skill/Agent → Prompt | ✅ | Suggested-shortcut mention only — backtick-wrapped name followed by the word "prompt" (e.g. the `find-impact` prompt); CI validates it resolves to `prompts/<name>.prompt.md` |
 
 ### Forbidden directions
 
@@ -224,19 +225,21 @@ Triggers on: <en-keyword-1>, <en-keyword-2>, <zh-keyword-1>, <zh-keyword-2>.
 Do NOT use for <exclusion-1> (prefer <alternative-skill>), <exclusion-2> (prefer <alternative-skill>).
 ```
 
-For manual-only skills, replace the first line:
+For manual-only skills (`disable-model-invocation: true`), the entire description is:
 
 ```
 ⚠️ MANUAL ONLY — invoke ONLY via /<skill-name>. NEVER auto-trigger.
 Use when <trigger scenario>.
 ```
 
+`Triggers on:` and `Do NOT use for` are omitted — trigger keywords are meaningless for a skill that never auto-triggers; the validator exempts all three markers for these skills (see Tier 1).
+
 ### Trigger Keyword Design
 
 Guidelines for the `Triggers on:` section in skill descriptions and the corresponding agent Skill Activation table.
 
 - Include both **English AND Chinese** triggers (bilingual user base per `copilot-instructions.md`).
-- **4–8 trigger phrases** per skill. Too few = missed intent, too many = false activation.
+- **4–10 trigger phrases** per skill. Too few = missed intent, too many = false activation.
 - Use **verb phrases**, not bare nouns: `"review SQL"` not `"SQL"`.
 - Include common **variations and synonyms**: `"怎麼做"` and `"幫我想方案"` for the same skill.
 - **No overlap with sibling skills** on the same agent. If a phrase could activate 2 skills, the agent's Skill Activation section must specify a default (e.g., "Default to `implement` if ambiguous").
@@ -292,7 +295,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
 9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`, `schema-migration-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
-10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
+10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/<name>/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
 
@@ -301,7 +304,7 @@ Supporting files referenced by a skill's body (e.g., before/after code examples,
 1. **No frontmatter** — subfiles are not auto-triggered or indexed.
 2. **H1**: `<Operation> — <Context> Examples`.
 3. **Consistent structure across sibling files** — all files in the same subdirectory must follow the same skeleton.
-4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`).
+4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/<topic>.md`).
 
 ---
 
@@ -354,7 +357,7 @@ Lifecycle guards that intercept agent tool calls before execution. Hooks inspect
       {
         "type": "command",
         "bash": "bash .github/hooks/scripts/<script-name>.sh",
-        "timeoutSec": 5
+        "timeout": 5
       }
     ]
   }
@@ -367,9 +370,19 @@ Lifecycle guards that intercept agent tool calls before execution. Hooks inspect
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Deny reasons must not contain double quotes or backslashes — they are
+# embedded verbatim into the stdout JSON.
+# Must exit 0: the decision JSON is only parsed on exit 0; exit 2 would
+# downgrade the deny to a non-blocking warning and the command would run.
+deny() {
+  printf '{"permissionDecision":"deny","permissionDecisionReason":"%s"}\n' "$1"
+  echo "DENY: $1" >&2
+  exit 0
+}
+
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""')
-TOOL_INPUT=$(echo "$INPUT" | jq -r '.toolInput // "" | if type == "object" then tostring else . end')
+TOOL_NAME=$(jq -r '.toolName // .tool_name // ""' <<<"$INPUT") \
+  || deny "unparseable input (fail-closed)"
 
 # Filter by tool type — fail-closed: fast-path allow known read-only tools,
 # all other (incl. unknown) tools fall through to deny-pattern inspection
@@ -378,12 +391,23 @@ case "$TOOL_NAME" in
   *) ;;
 esac
 
+# camelCase surfaces (Copilot CLI, cloud agent) send toolArgs — an object
+# or a JSON-encoded string; the VS Code PascalCase payload sends tool_input.
+CMD=$(jq -r '(.toolArgs // .tool_input // "")
+  | if type == "string" then (fromjson? // .) else . end
+  | if type == "object" then (.command // "") else . end
+  | tostring' <<<"$INPUT") \
+  || deny "unparseable input (fail-closed)"
+
 # Deny patterns (case-insensitive)
 DENY_PATTERNS="<pipe-separated regex patterns>"
 
-if echo "$TOOL_INPUT" | grep -qiE "$DENY_PATTERNS" 2>/dev/null; then
-  echo "DENY: <reason>" >&2
-  exit 2
+RC=0
+grep -qiE "$DENY_PATTERNS" <<<"$CMD" || RC=$?
+if [ "$RC" -eq 0 ]; then
+  deny "<reason>"
+elif [ "$RC" -ge 2 ]; then
+  deny "pattern match error (fail-closed)"
 fi
 
 exit 0
@@ -393,11 +417,11 @@ exit 0
 
 1. **Shebang**: `#!/usr/bin/env bash` on line 1.
 2. **Error handling**: `set -euo pipefail` on line 2.
-3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`.
-4. **Input format**: JSON on stdin with `toolName` (string) and `toolInput` (string or object). Parse with `jq`.
+3. **Exit codes**: always exit `0` — the decision travels on stdout, which Copilot parses as hook output JSON *only* on exit 0. Deny = print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout and exit `0` (the agent sees *why* and can self-correct); allow = exit `0` with no decision JSON. **Never exit `2` to deny** — Copilot treats exit 2 as a non-blocking warning and the tool call proceeds. Any other non-zero exit signals a script error, which `preToolUse` handles fail-closed (denied, but without a readable reason); the stderr line is only for human log readability.
+4. **Input format**: JSON on stdin. camelCase surfaces (Copilot CLI, cloud agent) send `toolName` (string) and `toolArgs` (object **or JSON-encoded string** — unwrap with `fromjson?`); the VS Code PascalCase payload sends `tool_name` and `tool_input`. Parse with `jq` fallback chains covering both shapes (see the skeleton). The field `toolInput` does not exist in any payload format — reading it silently yields an empty string and the hook inspects nothing.
 5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `AGENTS.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
-6. **Timeout**: `timeoutSec` ≤ 10. Hooks must be fast — they run on every tool call.
-7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny message on stderr).
+6. **Timeout**: `timeout` ≤ 10 (the field name `default.json` uses). Hooks must be fast — they run on every tool call.
+7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny-decision JSON on stdout and the log line on stderr).
 8. **Pattern matching**: use `grep -qiE` (case-insensitive extended regex) for deny patterns. False positives are worse than false negatives — err on the side of allowing.
 
 ---
@@ -410,8 +434,10 @@ exit 0
 | Instruction glob (all) | `` `instructions/*.instructions.md` `` | Avoid in skills — name specific files in the instruction-reference block instead | ❌ |
 | Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` | ✅ CI |
 | Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` | ✅ CI |
+| Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/find-impact.prompt.md` `` | ✅ CI |
 | Agent mention | `` `@agent-name` `` | `` `@implementer` `` | ❌ |
 | Skill mention (inline) | `` `skill-name` `` or `` `skill-name` skill `` | `` `plan` skill `` | ❌ |
+| Prompt mention (name-style) | `` `<name>` `` followed by the word "prompt" | the `` `find-impact` `` prompt | ✅ CI |
 | Global instructions | `` `copilot-instructions.md` `` | `` `copilot-instructions.md` `` | ❌ |
 
 All paths are relative from `.github/`. Never use bare names without context (e.g., `` `sql-rules` `` alone) — always include enough path to be unambiguous.
@@ -437,11 +463,13 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 - No `tools` field in skill frontmatter
 - Prompt frontmatter has `agent` + `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
+- Agent `description` is a single-line scalar (no YAML block scalars `|`/`>` — the validator does not parse them)
+- Skill `description` and prompt `description`/`agent` values are single-line scalars (same rule)
 - Agent `handoffs[].agent` values reference existing agent names
 - Agent declaring `agents:` in frontmatter includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
-- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ)
+- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ); those bullets must be top-level `- ` items — indented sub-bullets, `*`/`+` bullets, or numbered lines, which would escape the byte-identity comparison, are rejected
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 
 ### Tier 2: Human-review (PR review checklist)
@@ -451,7 +479,7 @@ These require manual verification. Reviewers should check:
 - [ ] H1 follows category naming convention
 - [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and its content still matches the canonical `instructions/` source of truth (the validator cross-checks byte-equality between agents, but never against `instructions/`)
 - [ ] Phase sections use imperative verb phrases
-- [ ] No duplicated content across categories (the agent-body `## Coding Standards` embed is the only sanctioned exception)
+- [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases, which may *name* canonical conventions as one-line check items but add no detail beyond the instruction file — full rule restatement with added detail remains a defect (see AGENTS.md "Two narrow duplications")
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
 - [ ] Agent Skill Activation table matches the skills that reference that agent
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)

@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 'Use when user wants code reviewed for correctness, style, bugs, and maintainability. Triggers on: review code, code review, check this code, review PR, 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼. Produces severity-classified findings with a verdict. Do NOT use for security-focused audit (prefer security-audit) or SQL-focused review (prefer sql-review).'
+description: 'Use when user wants code reviewed for correctness, style, bugs, and maintainability. Triggers on: review code, code review, check this code, check PR, review PR, review this, 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼. Produces severity-classified findings with a verdict. Do NOT use for security-focused audit (prefer security-audit) or SQL-focused review (prefer sql-review).'
 ---
 
 # Code Review — Workflow
@@ -30,7 +30,7 @@ Structured code review.
 - [ ] Off-by-one: loop bounds, substring, index access
 - [ ] Edge cases: zero, negative, empty collection, max-size
 - [ ] Shared mutable state accessed from multiple threads → synchronized or thread-local?
-- [ ] Resources (Connection, InputStream, Session) closed in finally
+- [ ] JDBC resources (`Connection`, `PreparedStatement`, `ResultSet`, streams) managed via try-with-resources; Hibernate `Session` from `getCurrentSession()` is never closed/flushed manually (Spring owns its lifecycle)
 
 **Security** (check each):
 - [ ] Every SQL query uses bind parameters (`?` or `:named`)
@@ -40,7 +40,7 @@ Structured code review.
 
 **Performance** (check each):
 - [ ] No SQL inside a loop (N+1)
-- [ ] No `SELECT *` on wide tables
+- [ ] No `SELECT *` — columns listed explicitly
 - [ ] WHERE/JOIN columns have indexes
 - [ ] Result sets bounded (LIMIT or pagination)
 
@@ -51,7 +51,7 @@ Structured code review.
 - [ ] Logging: SLF4J `{}` placeholders, no string concatenation
 
 **Maintainability** (check each):
-- [ ] Methods ≤ 30 lines
+- [ ] Methods ≤ 30 lines of logic
 - [ ] No copy-paste duplication
 - [ ] Names self-explanatory; comments explain WHY not WHAT
 

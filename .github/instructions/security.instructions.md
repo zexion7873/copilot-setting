@@ -12,6 +12,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 - Deny by default; explicitly check rights per resource
 - Allow-list for user-supplied URLs/paths; prevent path traversal
 - CSRF: all state-changing POST forms must carry a CSRF token; Spring Security 3.2: configure `<csrf>` in security namespace; without Spring Security: manual double-submit cookie or synchronizer token
+- State-changing operations via POST/PUT/DELETE only — never GET; restrict handlers with `@RequestMapping(method = ...)` (a mapping without `method` matches every verb and bypasses POST-form CSRF tokens)
 
 ## A02 Cryptographic Failures
 
@@ -23,7 +24,10 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 - SQL: `PreparedStatement` with `?` only
 - OS command: argument-escaping libs; no shell concatenation
 - XSS: `<c:out>` in JSP; context-aware encoding
-- XXE: disable DTDs and external entities on every XML parser (`DocumentBuilderFactory`, `SAXParserFactory`, `XMLInputFactory`, JAXB `Unmarshaller`) — set `FEATURE_SECURE_PROCESSING` and `disallow-doctype-decl`; critical in this XML-heavy stack
+- XXE: disable DTDs and external entities on every XML parser, using each API's own switch (they differ — `setFeature`/`disallow-doctype-decl` exists only on the first pair); critical in this XML-heavy stack:
+  - `DocumentBuilderFactory` / `SAXParserFactory`: `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)` plus `FEATURE_SECURE_PROCESSING`
+  - `XMLInputFactory` (StAX): `setProperty(XMLInputFactory.SUPPORT_DTD, false)` and `setProperty("javax.xml.stream.isSupportingExternalEntities", false)` — it has no `setFeature`
+  - JAXB `Unmarshaller`: no DTD switch of its own — unmarshal via a `SAXSource` wrapping a hardened `XMLReader` configured as above
 
 ## A04 Insecure Design
 
@@ -39,8 +43,8 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 ## A06 Vulnerable Components
 
 - Pin dependency versions; no `SNAPSHOT` in production
-- Track CVEs: `mvn versions:display-dependency-updates`
-- Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL 2017) carry unpatched CVEs — document as baseline risk in every audit
+- Track CVEs: OWASP Dependency-Check (`mvn org.owasp:dependency-check-maven:check`) — `versions:display-dependency-updates` only lists newer versions, it does not scan vulnerabilities
+- Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL — final release 2015) carry unpatched CVEs — document as baseline risk in every audit
 
 ## A07 Authentication Failures
 

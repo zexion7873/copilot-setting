@@ -11,11 +11,13 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 - `@RestController` → `@Controller` + `@ResponseBody`
 - `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` / `@PatchMapping` → `@RequestMapping(method = RequestMethod.GET)` etc.
-- `@Conditional`, `@Profile` with complex conditions
+- `@Conditional` (Spring 4.0) — note: `@Profile` itself is Spring **3.1** and allowed, and single-profile negation (`!dev`, SPR-8728) works since **3.2**; only compound profile *expressions* (`&` / `|` in the value, Spring 5.1) are out
 - `AsyncRestTemplate`, `ListenableFuture`
-- `RestTemplate.exchange()` + `ParameterizedTypeReference` (3.2 has basic `RestTemplate` only)
-- `AbstractAnnotationConfigDispatcherServletInitializer` (this project uses `web.xml`)
 - Spring 4 test annotations (`@Sql`, `@SqlGroup`)
+
+## Forbidden by Project Convention (valid in 3.2, not used here)
+
+- `AbstractAnnotationConfigDispatcherServletInitializer` — exists since Spring 3.2, but this project bootstraps via `web.xml`; do not introduce servlet initializers
 
 ## Hibernate 4.2 API
 
@@ -34,7 +36,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 ## Lazy Loading — pick ONE per module, never mix
 
-- `OpenSessionInViewFilter` (web.xml) — Session open through JSP render; simplest for read-heavy pages; risk: hidden N+1
+- `OpenSessionInViewFilter` (web.xml) — Session open through JSP render; simplest for read-heavy pages; risk: hidden N+1. Even with OSIV, prepare view data in the service layer — it is a safety net against `LazyInitializationException`, not license for the JSP to drive lazy loads (`instructions/jsp.instructions.md`)
 - DTO projection — assemble DTOs in service, JSP never touches entities; safest for APIs; more boilerplate
 - `JOIN FETCH` / `Hibernate.initialize()` — eager-load required associations in service; middle ground, easy to miss paths
 
@@ -53,7 +55,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 - Root `<hibernate-mapping package="...">` with explicit package
 - Collections `lazy="true"` explicit for intent
-- FK naming `foreign-key="FK_<table>_<column>"`
+- FK naming `foreign-key="fk_<child>_<parent_col>"` — match the SQL DDL convention so Hibernate-generated and hand-written DDL agree (`instructions/sql.instructions.md`)
 - Second-level cache opt-in per entity, never global
 
 ## Anti-Patterns

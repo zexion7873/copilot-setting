@@ -17,15 +17,27 @@ pass() {
   echo "✅ $1"
 }
 
-# Usage: fm_value "file" "key" — extract value from YAML frontmatter
+# Usage: fm_block "file" — print ONLY the leading YAML frontmatter block.
+# Restricted to the first '---' (line 1) through the next '---', so body-level
+# '---' horizontal rules cannot re-open the slice (sed's /^---$/,/^---$/ range
+# otherwise re-triggers on every later pair, leaking body keys into the block).
+fm_block() {
+  awk 'NR==1 && /^---$/{f=1; next} f && /^---$/{exit} f' "$1"
+}
+
+# Usage: fm_value "file" "key" — extract value from YAML frontmatter.
+# '|| true': grep exits 1 when the key is absent and pipefail propagates it past
+# the seds; without the guard, any bare assignment ($(fm_value ...)) kills the
+# whole script under set -e with no diagnostic (same class as the cs_bullets
+# guard below). A missing key legitimately yields an empty string.
 fm_value() {
   local file="$1" key="$2"
-  sed -n '/^---$/,/^---$/p' "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed "s/^['\"]//;s/['\"]$//"
+  fm_block "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed "s/^['\"]//;s/['\"]$//" || true
 }
 
 fm_has_key() {
   local file="$1" key="$2"
-  sed -n '/^---$/,/^---$/p' "$file" | grep -qE "^${key}:"
+  fm_block "$file" | grep -qE "^${key}:"
 }
 
 echo "========================================="
@@ -74,6 +86,13 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
 
   if ! fm_has_key "$file" "description"; then
     error "skills/$dir_name/SKILL.md: missing 'description' in frontmatter"
+    continue
+  fi
+
+  # Same single-line-scalar rule as agents: a block scalar would be measured as
+  # the literal '>-'/'|' (2 chars) and silently pass every downstream check.
+  if fm_block "$file" | grep -qE '^description:[[:space:]]*[|>]'; then
+    error "skills/$dir_name/SKILL.md: description must be a single-line scalar (YAML block scalars |/> are not parsed by the validator)"
     continue
   fi
 
@@ -160,6 +179,12 @@ for a in $CODE_AGENTS; do
   if ! grep -q "^## Coding Standards" "$file"; then
     error "agents/$a.agent.md: missing '## Coding Standards' section (hard-boundary rules must be embedded)"
   fi
+  # Coding Standards must use only top-level '- ' bullets; indented sub-bullets,
+  # '*'/'+' bullets, or numbered items (at any indentation) would escape the
+  # byte-identical drift guard below.
+  if awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$file" | grep -qE '^[[:space:]]+-|^[[:space:]]*([*+]|[0-9]+\.)([[:space:]]|$)'; then
+    error "agents/$a.agent.md: Coding Standards must use only top-level '- ' bullets (sub-bullets, */+ bullets, or numbered items escape the drift guard)"
+  fi
 done
 
 # Drift guard: the hard-boundary bullets (lines starting with '- ') must be
@@ -170,7 +195,12 @@ done
 cs_bullets() {
   awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$1" | grep -E '^- '
 }
-ref_bullets="$(cs_bullets "$GITHUB_DIR/agents/implementer.agent.md")"
+# grep exits 1 when the section has zero '- ' bullets; without '|| true' the
+# bare assignment kills the whole script under set -e with no diagnostic.
+ref_bullets="$(cs_bullets "$GITHUB_DIR/agents/implementer.agent.md" || true)"
+if [ -z "$ref_bullets" ]; then
+  error "agents/implementer.agent.md: '## Coding Standards' has no top-level '- ' bullets (drift guard has no reference to compare)"
+fi
 for a in $CODE_AGENTS; do
   [ "$a" = "implementer" ] && continue
   file="$GITHUB_DIR/agents/$a.agent.md"
@@ -199,7 +229,9 @@ if [ -d "$GITHUB_DIR/prompts" ]; then
       error "$name: missing 'description' in frontmatter"
     fi
 
-    if fm_has_key "$file" "agent" && fm_has_key "$file" "description"; then
+    if fm_block "$file" | grep -qE '^(description|agent):[[:space:]]*[|>]'; then
+      error "$name: frontmatter values must be single-line scalars (YAML block scalars |/> are not parsed by the validator)"
+    elif fm_has_key "$file" "agent" && fm_has_key "$file" "description"; then
       pass "$name"
     fi
   done
@@ -222,11 +254,13 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
 
   if [ -n "$missing" ]; then
     error "$name: missing frontmatter fields:$missing"
+  elif fm_block "$file" | grep -qE '^description:[[:space:]]*[|>]'; then
+    error "$name: description must be a single-line scalar (YAML block scalars |/> are not parsed by the validator)"
   else
     pass "$name"
   fi
 
-  handoff_agents=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^\s+agent:' | sed 's/.*agent:[[:space:]]*//' | sed "s/^['\"]//;s/['\"]$//" || true)
+  handoff_agents=$(fm_block "$file" | grep -E '^\s+agent:' | sed 's/.*agent:[[:space:]]*//' | sed "s/^['\"]//;s/['\"]$//" || true)
   if [ -n "$handoff_agents" ]; then
     while IFS= read -r target_agent; do
       [ -z "$target_agent" ] && continue
@@ -249,8 +283,13 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
   # Consistency: declaring subagents (agents:) requires the 'agent' tool to invoke them
   # (VS Code: "If you specify agents, ensure the agent tool is included in tools").
   if fm_has_key "$file" "agents"; then
-    tools_block=$(sed -n '/^---$/,/^---$/p' "$file" | grep -E '^tools:')
-    if ! printf '%s' "$tools_block" | grep -qE "'agent'"; then
+    # Capture the tools: line plus any following YAML block-list items, so both
+    # inline (tools: ['agent']) and block-list (tools: then '  - agent') forms are seen.
+    # Quotes are stripped before matching so unquoted, single- and double-quoted
+    # 'agent' all count; the boundary classes reject near-misses (vscode/agent,
+    # agent-foo, useragent).
+    tools_block=$(fm_block "$file" | awk '/^tools:/{f=1; print; next} f && /^[[:space:]]*-/{print; next} f{exit}')
+    if ! printf '%s\n' "$tools_block" | tr -d "'\"" | grep -qE "(^|[][,[:space:]])agent([][,[:space:]]|$)"; then
       error "$name: declares 'agents:' but 'tools' lacks 'agent' — subagent delegation will not work"
     fi
   fi
@@ -263,8 +302,11 @@ for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
   [ -f "$file" ] || continue
   name="$(basename "$file")"
   if grep -q "^## Anti-Patterns" "$file"; then
-    if ! grep -qE '^\|\s*Pattern\s*\|\s*Problem\s*\|\s*Fix\s*\|' "$file"; then
-      error "$name: has '## Anti-Patterns' section but missing 3-column header (Pattern | Problem | Fix)"
+    # Scope to the Anti-Patterns section and anchor at end-of-line, so a matching
+    # header elsewhere in the file does not satisfy the check and a 4+-column
+    # header (| Pattern | Problem | Fix | Extra |) is rejected.
+    if ! awk '/^## Anti-Patterns/{f=1; next} f && /^## /{exit} f' "$file" | grep -qE '^\|\s*Pattern\s*\|\s*Problem\s*\|\s*Fix\s*\|\s*$'; then
+      error "$name: '## Anti-Patterns' section missing exact 3-column header (Pattern | Problem | Fix)"
     fi
   fi
 done

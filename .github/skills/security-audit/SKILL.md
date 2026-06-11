@@ -28,7 +28,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] Every endpoint enforces role/permission — not just login check
 - [ ] Object references (ID in URL/param) validated against current user's ownership (IDOR)
 - [ ] No path traversal: file paths from user input sanitized
-- [ ] HTTP method restrictions enforced (POST-only for mutations)
+- [ ] HTTP method restrictions enforced (mutations via POST/PUT/DELETE only — never GET; `@RequestMapping` declares `method`)
 - [ ] CSRF: all state-changing POST forms carry a CSRF token (Spring Security 3.2 `<csrf>` config or manual token+session check)
 
 **A02 Cryptographic Failures** (check each):
@@ -42,7 +42,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] HQL: named parameters `:param` only — no `"... where x = '" + input + "'"`
 - [ ] OS command: no `Runtime.exec()` or `ProcessBuilder` with user input
 - [ ] XSS: every JSP variable in `<c:out>` — search for `${` without encoding
-- [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities — search for `DocumentBuilderFactory` / `SAXParserFactory` / `XMLInputFactory` / `Unmarshaller` without `disallow-doctype-decl`
+- [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities using each API's own switch (`instructions/security.instructions.md` A03) — search for `DocumentBuilderFactory` / `SAXParserFactory` without `disallow-doctype-decl`, `XMLInputFactory` without `SUPPORT_DTD` set to false (StAX has no `setFeature`), and `Unmarshaller` not reading from a hardened `SAXSource`
 
 **A04 Insecure Design** (check each):
 - [ ] Rate limiting on login/registration/password-reset
@@ -54,7 +54,7 @@ For each entry point, trace data flow from input → processing → storage → 
 
 **A06 Vulnerable Components** (check each):
 - [ ] Key dependencies (Spring, Hibernate, Jackson, Log4j, Commons) not on known-CVE versions
-- [ ] Run `mvn org.owasp:dependency-check-maven:check` or `mvn versions:display-dependency-updates` and flag any CVE
+- [ ] Require the author to attach a fresh `mvn org.owasp:dependency-check-maven:check` report — the reviewer is read-only and cannot run Maven (mirrors `code-review` Phase 4 build-evidence rule); cross-check flagged dependencies against CVE advisories. Do NOT rely on `mvn versions:display-dependency-updates` for CVEs — it reports version drift, not vulnerabilities
 - [ ] Spring 3.2 and Hibernate 4.2 are EOL — document known unpatched CVEs as baseline risk
 
 **A07 Auth & Session** (check each):

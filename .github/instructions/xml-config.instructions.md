@@ -17,12 +17,14 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 
 - One file per entity: `<EntityName>.hbm.xml`, alongside the POJO
 - Root: `<hibernate-mapping package="...">` with explicit package
-- Collections: `lazy="true"` explicit; FK: `foreign-key="FK_<table>_<column>"`
+- Collections: `lazy="true"` explicit; FK: `foreign-key="fk_<child>_<parent_col>"` (match SQL DDL — see `instructions/sql.instructions.md`)
 
 ## Maven POM
 
-- Pin all dependency versions — no ranges, no `SNAPSHOT` in releases
+- Pin all dependency versions — no ranges, no `SNAPSHOT` in releases, no dynamic `LATEST`/`RELEASE` markers
 - `<dependencyManagement>` for version centralization in multi-module
+- Scopes: test-only libraries (JUnit, Mockito) use `<scope>test</scope>`; container-provided APIs (servlet, JSP) use `<scope>provided</scope>` — never bundle them into the WAR
+- `maven-compiler-plugin` with `source`/`target` = `1.8`; pin every plugin version (unpinned plugins follow Maven defaults — non-reproducible builds)
 - Encoding: `<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>`
 
 ## General
@@ -36,7 +38,7 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 | Pattern | Problem | Fix |
 |---|---|---|
 | `spring-beans-4.0.xsd` in namespace | Schema version exceeds Spring 3.2 runtime — silent misconfiguration | Use `spring-beans-3.2.xsd` (match actual framework version) |
-| `<tx:annotation-driven/>` | Conflicts with project's `<tx:advice>` + `<aop:config>` transaction strategy | Remove; use `<tx:advice>` — see `instructions/spring-hibernate.instructions.md` |
+| `<tx:annotation-driven/>` | Conflicts with project's `<tx:advice>` + `<aop:config>` transaction strategy | Remove in greenfield / `<tx:advice>` modules; **keep** if the module is consistently `@Transactional`-based — removing it silently disables every annotated transaction (see the legacy exception in `instructions/spring-hibernate.instructions.md`) |
 | `<context:component-scan base-package="com.example"/>` | Scans entire package tree — picks up test doubles, unintended beans | Narrow to specific subpackage: `com.example.service` |
 | `<hibernate-mapping>` without `package` | Every `<class>` needs FQCN; noisy and error-prone | Add `package="com.example.entity"` on root element |
 | `<version>[1.0,2.0)</version>` | Version range — non-reproducible builds | Pin exact version: `<version>1.2.3</version>` |
