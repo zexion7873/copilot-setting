@@ -46,7 +46,7 @@ Pick the primary skill from the user's request.
 
 | Trigger | Skill | Output |
 |---|---|---|
-| "review code", "code review", "check PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | `code-review` | Severity-rated findings report |
+| "review code", "code review", "check this code", "check PR", "review PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | `code-review` | Severity-rated findings report |
 | "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | `security-audit` | OWASP-mapped vulnerability report |
 | "review SQL", "SQL review", "query review", "slow query", "check SQL", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能 | `sql-review` | Query performance and safety findings |
 | "review migration", "migration review", "schema change", "DDL review", "ALTER TABLE review", 看 migration, 審 schema, 看 DDL, 改表審查 | `schema-migration-review` | Schema change risk assessment |

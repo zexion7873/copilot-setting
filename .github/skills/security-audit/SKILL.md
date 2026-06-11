@@ -28,7 +28,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] Every endpoint enforces role/permission — not just login check
 - [ ] Object references (ID in URL/param) validated against current user's ownership (IDOR)
 - [ ] No path traversal: file paths from user input sanitized
-- [ ] HTTP method restrictions enforced (POST-only for mutations)
+- [ ] HTTP method restrictions enforced (mutations via POST/PUT/DELETE only — never GET; `@RequestMapping` declares `method`)
 - [ ] CSRF: all state-changing POST forms carry a CSRF token (Spring Security 3.2 `<csrf>` config or manual token+session check)
 
 **A02 Cryptographic Failures** (check each):

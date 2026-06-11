@@ -12,6 +12,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 - Deny by default; explicitly check rights per resource
 - Allow-list for user-supplied URLs/paths; prevent path traversal
 - CSRF: all state-changing POST forms must carry a CSRF token; Spring Security 3.2: configure `<csrf>` in security namespace; without Spring Security: manual double-submit cookie or synchronizer token
+- State-changing operations via POST/PUT/DELETE only — never GET; restrict handlers with `@RequestMapping(method = ...)` (a mapping without `method` matches every verb and bypasses POST-form CSRF tokens)
 
 ## A02 Cryptographic Failures
 
@@ -43,7 +44,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 - Pin dependency versions; no `SNAPSHOT` in production
 - Track CVEs: OWASP Dependency-Check (`mvn org.owasp:dependency-check-maven:check`) — `versions:display-dependency-updates` only lists newer versions, it does not scan vulnerabilities
-- Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL 2017) carry unpatched CVEs — document as baseline risk in every audit
+- Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL — final release 2015) carry unpatched CVEs — document as baseline risk in every audit
 
 ## A07 Authentication Failures
 

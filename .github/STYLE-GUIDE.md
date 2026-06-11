@@ -7,7 +7,7 @@ Canonical format for every file type under `.github/`. All files MUST follow the
 | Category | Role | Responsibility |
 |---|---|---|
 | **Agent** | Router | Who I am, which workflows I activate, who I hand off to |
-| **Skill** | Workflow | Step-by-step process — references Rules and Templates rather than restating them (review/audit checklists may *name* conventions as check items only) |
+| **Skill** | Workflow | Step-by-step process — embeds its own output template when one is needed (see skill rule 9); references Rules rather than restating them (verification checklists may *name* conventions as check items only) |
 | **Instruction** | Rules | Single source of truth for coding conventions — referenced by workflows |
 | **Prompt** | Shortcut | Lightweight single-task shortcuts invoked via `/prompt-name` |
 | **Hook** | Lifecycle Guard | Block dangerous commands before agent tool execution |
@@ -66,6 +66,7 @@ Agent ──activates──→ Skill (embeds output template)
 | From | To | Allowed? | Purpose |
 |---|---|---|---|
 | Skill → Agent | ✅ | Handoffs section only: "suggest `@reviewer`" |
+| Skill/Agent → Prompt | ✅ | Suggested-shortcut mention only — backtick-wrapped name followed by the word "prompt" (e.g. the `find-impact` prompt); CI validates it resolves to `prompts/<name>.prompt.md` |
 
 ### Forbidden directions
 
@@ -224,19 +225,21 @@ Triggers on: <en-keyword-1>, <en-keyword-2>, <zh-keyword-1>, <zh-keyword-2>.
 Do NOT use for <exclusion-1> (prefer <alternative-skill>), <exclusion-2> (prefer <alternative-skill>).
 ```
 
-For manual-only skills, replace the first line:
+For manual-only skills (`disable-model-invocation: true`), the entire description is:
 
 ```
 ⚠️ MANUAL ONLY — invoke ONLY via /<skill-name>. NEVER auto-trigger.
 Use when <trigger scenario>.
 ```
 
+`Triggers on:` and `Do NOT use for` are omitted — trigger keywords are meaningless for a skill that never auto-triggers; the validator exempts all three markers for these skills (see Tier 1).
+
 ### Trigger Keyword Design
 
 Guidelines for the `Triggers on:` section in skill descriptions and the corresponding agent Skill Activation table.
 
 - Include both **English AND Chinese** triggers (bilingual user base per `copilot-instructions.md`).
-- **4–8 trigger phrases** per skill. Too few = missed intent, too many = false activation.
+- **4–10 trigger phrases** per skill. Too few = missed intent, too many = false activation.
 - Use **verb phrases**, not bare nouns: `"review SQL"` not `"SQL"`.
 - Include common **variations and synonyms**: `"怎麼做"` and `"幫我想方案"` for the same skill.
 - **No overlap with sibling skills** on the same agent. If a phrase could activate 2 skills, the agent's Skill Activation section must specify a default (e.g., "Default to `implement` if ambiguous").
@@ -292,7 +295,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix.
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
 9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`, `schema-migration-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `performance`, `security-audit`, `test-design`, `clarify-task`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
-10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/refactor/examples/`). See the Skill Subfiles section below.
+10. **Subfiles** (**OPTIONAL**): skills may include supporting files (examples, reference data) in subdirectories under the skill folder (e.g., `skills/<name>/examples/`). See the Skill Subfiles section below.
 
 ### Skill Subfiles (`skills/<name>/<subdir>/*.md`)
 
@@ -301,7 +304,7 @@ Supporting files referenced by a skill's body (e.g., before/after code examples,
 1. **No frontmatter** — subfiles are not auto-triggered or indexed.
 2. **H1**: `<Operation> — <Context> Examples`.
 3. **Consistent structure across sibling files** — all files in the same subdirectory must follow the same skeleton.
-4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/extract-method.md`).
+4. **Referenced from parent skill** — the parent `SKILL.md` must reference subfiles by relative path (e.g., `examples/<topic>.md`).
 
 ---
 
@@ -461,11 +464,12 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 - Prompt frontmatter has `agent` + `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
 - Agent `description` is a single-line scalar (no YAML block scalars `|`/`>` — the validator does not parse them)
+- Skill `description` and prompt `description`/`agent` values are single-line scalars (same rule)
 - Agent `handoffs[].agent` values reference existing agent names
 - Agent declaring `agents:` in frontmatter includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
-- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ); those bullets must be top-level `- ` items — indented sub-bullets or numbered lines, which would escape the byte-identity comparison, are rejected
+- Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents (only the per-agent intro sentence may differ); those bullets must be top-level `- ` items — indented sub-bullets, `*`/`+` bullets, or numbered lines, which would escape the byte-identity comparison, are rejected
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 
 ### Tier 2: Human-review (PR review checklist)
@@ -475,7 +479,7 @@ These require manual verification. Reviewers should check:
 - [ ] H1 follows category naming convention
 - [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and its content still matches the canonical `instructions/` source of truth (the validator cross-checks byte-equality between agents, but never against `instructions/`)
 - [ ] Phase sections use imperative verb phrases
-- [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) the review/audit verification checklists in `code-review` / `security-audit`, which may *name* conventions as check items but add no detail (see AGENTS.md "Two narrow duplications")
+- [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases, which may *name* canonical conventions as one-line check items but add no detail beyond the instruction file — full rule restatement with added detail remains a defect (see AGENTS.md "Two narrow duplications")
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
 - [ ] Agent Skill Activation table matches the skills that reference that agent
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)

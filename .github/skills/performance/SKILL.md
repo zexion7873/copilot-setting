@@ -27,9 +27,9 @@ If the user has not measured yet, **stop and ask them to profile first**.
 | Symptom | Layer | Tools |
 |---|---|---|
 | Slow page load (TTFB/FCP/LCP) | Frontend / JSP | Chrome DevTools, Lighthouse |
-| API latency, CPU spikes | Backend (Java) | VisualVM, async-profiler, JFR |
-| Slow queries, lock contention | Database | `EXPLAIN ANALYZE`, slow query log |
-| Memory growth, OOM | Heap | JFR, heap dumps (jmap, MAT) |
+| API latency, CPU spikes | Backend (Java) | VisualVM, async-profiler |
+| Slow queries, lock contention | Database | `EXPLAIN` (8.0.18+: `EXPLAIN ANALYZE` — it actually executes the query), slow query log |
+| Memory growth, OOM | Heap | Heap dumps (jmap, MAT) |
 
 ## Phase 3 — Apply Fixes
 
@@ -47,6 +47,7 @@ If the user has not measured yet, **stop and ask them to profile first**.
 
 ## Handoffs
 
+- → `@reviewer` — for review after optimization changes
 - → `sql-review` skill — for deep SQL / index analysis
 - → `debug` skill — if the performance problem is actually a bug
 - → `refactor` skill — if optimization requires structural change

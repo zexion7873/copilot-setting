@@ -37,6 +37,7 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 - Body: `DECLARE EXIT HANDLER FOR SQLEXCEPTION` required; variables `v_` prefix
 - Tables: InnoDB, `utf8mb4`, `created_at` / `updated_at` timestamps mandatory
 - FK: `fk_<child>_<parent_col>`; `RESTRICT` default, `CASCADE` only for dependent children
+- Index: `idx_<table>_<columns>`
 
 ## Anti-Patterns
 

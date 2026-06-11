@@ -21,8 +21,10 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 
 ## Maven POM
 
-- Pin all dependency versions — no ranges, no `SNAPSHOT` in releases
+- Pin all dependency versions — no ranges, no `SNAPSHOT` in releases, no dynamic `LATEST`/`RELEASE` markers
 - `<dependencyManagement>` for version centralization in multi-module
+- Scopes: test-only libraries (JUnit, Mockito) use `<scope>test</scope>`; container-provided APIs (servlet, JSP) use `<scope>provided</scope>` — never bundle them into the WAR
+- `maven-compiler-plugin` with `source`/`target` = `1.8`; pin every plugin version (unpinned plugins follow Maven defaults — non-reproducible builds)
 - Encoding: `<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>`
 
 ## General

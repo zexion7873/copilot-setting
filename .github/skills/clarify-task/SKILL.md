@@ -1,6 +1,6 @@
 ---
 name: clarify-task
-description: 'Use when a user request is vague, ambiguous, or missing critical information and needs refinement before planning or implementation. Triggers on: clarify, unclear requirements, what do you mean, 需求不清楚, 先釐清, 這個需求是什麼意思, 幫我確認. Produces numbered clarifying questions and a confirmed understanding summary. Do NOT use for well-defined tasks ready for planning (prefer plan) or direct implementation (prefer implement).'
+description: 'Use when a user request is vague, ambiguous, or missing critical information and needs refinement before planning or implementation. Triggers on: clarify, unclear requirements, what do you mean, 先釐清, 需求不清楚, 這個需求是什麼意思, 幫我確認. Produces numbered clarifying questions and a confirmed understanding summary. Do NOT use for well-defined tasks ready for planning (prefer plan) or direct implementation (prefer implement).'
 ---
 
 # Clarify Task — Workflow

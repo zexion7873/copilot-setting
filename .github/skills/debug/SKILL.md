@@ -57,6 +57,7 @@ If any answer is "no" or "unsure" → return to Phase 3.
 
 - → `@implementer` — to implement the fix after root cause confirmed
 - ← `@debugger` — default activation
+- ← `@reviewer` — when review finds a defect needing root-cause analysis
 - ← `@implementer` — when implementation reveals a deeper bug
 - ← `implement` skill — when implementation reveals a bug
 - ← `performance` skill — when a performance issue turns out to be a bug

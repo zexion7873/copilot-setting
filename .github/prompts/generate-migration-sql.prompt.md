@@ -13,4 +13,5 @@ Rules:
 - InnoDB engine, utf8mb4
 - FK naming: `fk_<child>_<parent_col>`
 - Index naming: `idx_<table>_<columns>`
+- Column renames / merges: never a single-shot `RENAME`/`CHANGE` — add the new column and backfill; drop the old column in a later release
 - Write migration first, then rollback, clearly separated
