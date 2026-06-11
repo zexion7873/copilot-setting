@@ -42,7 +42,7 @@ One-time local setup so the validator also runs on `git commit`:
 git config core.hooksPath .githooks
 ```
 
-`.githooks/pre-commit` runs the validator only when staged paths match `.github/**/*.md`, so unrelated commits aren't slowed down.
+`.githooks/pre-commit` runs the validator — against a snapshot of the staged index, not the working tree — only when staged paths match `.github/` markdown (pathspec `.github/*.md`, which in git's default semantics matches every depth including the top-level files), so unrelated commits aren't slowed down.
 
 ## Architecture
 
@@ -58,7 +58,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
-| Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment); `applyTo: "**"` loads on every request |
+| Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment), or the model loads it on demand via semantic match on its `description` (discretionary); `applyTo: "**"` loads on every request |
 | Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User types `@agent-name` |
 | Skills (13) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Prompts (5) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
@@ -66,7 +66,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions, save the two narrow exceptions noted below.
 
-**Instruction loading model:** Glob triggering is evaluated at request time against files explicitly in context (attached via `#file:`, editor attachment) — files the agent reads dynamically during execution do NOT retroactively trigger glob instructions. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. **Two narrow duplications are sanctioned, both keeping the instruction file canonical:** (1) this version-lock hard-boundary embed in the code-touching agent bodies; and (2) the verification checklists in the review/audit skills (`code-review`, `security-audit`), which may *name* conventions as check items but must not add detail beyond the instruction file. Keep both minimal; any other rule-list duplication in a skill is a defect.
+**Instruction loading model:** instructions reach the model through two channels, and only the first is deterministic. (1) **Glob injection at request time** — `applyTo` globs are matched against files explicitly in context (attached via `#file:`, editor attachment) and matching instruction files are auto-attached. Files the agent reads or edits dynamically during execution do NOT retroactively trigger glob instructions — the VS Code feature request to refresh instructions mid-session (microsoft/vscode#282964) was closed as not planned. (2) **On-demand semantic loading** — each request also carries a list of all instruction files (glob + `description`), and the model may choose to load one whose description matches the task; this is model-discretionary, never guaranteed. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `schema-migration-review`, `security-audit`, `debug`, `performance`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. **Two narrow duplications are sanctioned, both keeping the instruction file canonical:** (1) this version-lock hard-boundary embed in the code-touching agent bodies; and (2) the verification checklists in the review/audit skills (`code-review`, `security-audit`), which may *name* conventions as check items but must not add detail beyond the instruction file. Keep both minimal; any other rule-list duplication in a skill is a defect.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -94,7 +94,7 @@ All cross-references use backtick-wrapped **relative paths from `.github/`**, ne
 
 ## Maintenance Rule — Inbound Reference Check
 
-Cross-references are not enforced by the validator. Before renaming or moving any file under `.github/`, scan for inbound references:
+The validator only enforces canonical path-style cross-references (`instructions/…`, `skills/…/SKILL.md`, `agents/….agent.md`, `prompts/….prompt.md`) and backtick-wrapped name-style prompt mentions, and it only scans files under `.github/` — `@agent` mentions, inline skill names, and references from root files (`README.md`, `AGENTS.md`) are not checked. Before renaming or moving any file under `.github/`, scan for inbound references:
 
 ```bash
 grep -rn "<old-filename>" .github/

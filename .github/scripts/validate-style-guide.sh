@@ -183,7 +183,12 @@ done
 cs_bullets() {
   awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$1" | grep -E '^- '
 }
-ref_bullets="$(cs_bullets "$GITHUB_DIR/agents/implementer.agent.md")"
+# grep exits 1 when the section has zero '- ' bullets; without '|| true' the
+# bare assignment kills the whole script under set -e with no diagnostic.
+ref_bullets="$(cs_bullets "$GITHUB_DIR/agents/implementer.agent.md" || true)"
+if [ -z "$ref_bullets" ]; then
+  error "agents/implementer.agent.md: '## Coding Standards' has no top-level '- ' bullets (drift guard has no reference to compare)"
+fi
 for a in $CODE_AGENTS; do
   [ "$a" = "implementer" ] && continue
   file="$GITHUB_DIR/agents/$a.agent.md"

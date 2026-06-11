@@ -23,7 +23,10 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 - SQL: `PreparedStatement` with `?` only
 - OS command: argument-escaping libs; no shell concatenation
 - XSS: `<c:out>` in JSP; context-aware encoding
-- XXE: disable DTDs and external entities on every XML parser (`DocumentBuilderFactory`, `SAXParserFactory`, `XMLInputFactory`, JAXB `Unmarshaller`) — set `FEATURE_SECURE_PROCESSING` and `disallow-doctype-decl`; critical in this XML-heavy stack
+- XXE: disable DTDs and external entities on every XML parser, using each API's own switch (they differ — `setFeature`/`disallow-doctype-decl` exists only on the first pair); critical in this XML-heavy stack:
+  - `DocumentBuilderFactory` / `SAXParserFactory`: `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)` plus `FEATURE_SECURE_PROCESSING`
+  - `XMLInputFactory` (StAX): `setProperty(XMLInputFactory.SUPPORT_DTD, false)` and `setProperty("javax.xml.stream.isSupportingExternalEntities", false)` — it has no `setFeature`
+  - JAXB `Unmarshaller`: no DTD switch of its own — unmarshal via a `SAXSource` wrapping a hardened `XMLReader` configured as above
 
 ## A04 Insecure Design
 

@@ -165,7 +165,7 @@ flowchart LR
 
 ### 📚 `@researcher` — 唯讀子代理（自動）
 
-不需手動呼叫。由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件。回傳結構化摘要 — 不提供建議與決策。
+通常由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件，也可直接以 `@researcher` 呼叫。回傳結構化摘要 — 不提供建議與決策。
 
 ---
 

@@ -165,7 +165,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 
 ### 📚 `@researcher` — Read-only subagent (automatic)
 
-Not invoked manually. Auto-delegated by `@planner`, `@implementer`, and `@reviewer` to scan the codebase and external docs before acting. Returns structured summaries — no opinions or recommendations.
+Usually auto-delegated by `@planner`, `@implementer`, and `@reviewer` to scan the codebase and external docs before acting; can also be invoked directly via `@researcher`. Returns structured summaries — no opinions or recommendations.
 
 ---
 
