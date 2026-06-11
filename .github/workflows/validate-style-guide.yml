@@ -16,3 +16,6 @@ jobs:
 
       - name: Run STYLE-GUIDE validation
         run: bash .github/scripts/validate-style-guide.sh
+
+      - name: Run hook regression tests
+        run: bash .github/hooks/scripts/test-block-dangerous-commands.sh

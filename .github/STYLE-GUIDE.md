@@ -367,9 +367,17 @@ Lifecycle guards that intercept agent tool calls before execution. Hooks inspect
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Deny reasons must not contain double quotes or backslashes — they are
+# embedded verbatim into the stdout JSON.
+deny() {
+  printf '{"permissionDecision":"deny","permissionDecisionReason":"%s"}\n' "$1"
+  echo "DENY: $1" >&2
+  exit 2
+}
+
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // ""')
-TOOL_INPUT=$(echo "$INPUT" | jq -r '.toolInput // "" | if type == "object" then tostring else . end')
+TOOL_NAME=$(jq -r '.toolName // .tool_name // ""' <<<"$INPUT") \
+  || deny "unparseable input (fail-closed)"
 
 # Filter by tool type — fail-closed: fast-path allow known read-only tools,
 # all other (incl. unknown) tools fall through to deny-pattern inspection
@@ -378,12 +386,23 @@ case "$TOOL_NAME" in
   *) ;;
 esac
 
+# camelCase surfaces (Copilot CLI, cloud agent) send toolArgs — an object
+# or a JSON-encoded string; the VS Code PascalCase payload sends tool_input.
+CMD=$(jq -r '(.toolArgs // .tool_input // "")
+  | if type == "string" then (fromjson? // .) else . end
+  | if type == "object" then (.command // "") else . end
+  | tostring' <<<"$INPUT") \
+  || deny "unparseable input (fail-closed)"
+
 # Deny patterns (case-insensitive)
 DENY_PATTERNS="<pipe-separated regex patterns>"
 
-if echo "$TOOL_INPUT" | grep -qiE "$DENY_PATTERNS" 2>/dev/null; then
-  echo "DENY: <reason>" >&2
-  exit 2
+RC=0
+grep -qiE "$DENY_PATTERNS" <<<"$CMD" || RC=$?
+if [ "$RC" -eq 0 ]; then
+  deny "<reason>"
+elif [ "$RC" -ge 2 ]; then
+  deny "pattern match error (fail-closed)"
 fi
 
 exit 0
@@ -393,11 +412,11 @@ exit 0
 
 1. **Shebang**: `#!/usr/bin/env bash` on line 1.
 2. **Error handling**: `set -euo pipefail` on line 2.
-3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`.
-4. **Input format**: JSON on stdin with `toolName` (string) and `toolInput` (string or object). Parse with `jq`.
+3. **Exit codes**: `0` = allow, `2` = deny. Exit `1` indicates a script error (not a policy decision) — Copilot treats it differently from `2`. On deny, also print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout — that JSON is the documented merge channel, so the agent sees *why* it was denied and can self-correct; the stderr line is only for human log readability.
+4. **Input format**: JSON on stdin. camelCase surfaces (Copilot CLI, cloud agent) send `toolName` (string) and `toolArgs` (object **or JSON-encoded string** — unwrap with `fromjson?`); the VS Code PascalCase payload sends `tool_name` and `tool_input`. Parse with `jq` fallback chains covering both shapes (see the skeleton). The field `toolInput` does not exist in any payload format — reading it silently yields an empty string and the hook inspects nothing.
 5. **Tool filtering**: always check `TOOL_NAME` first. This repo's hook is **fail-closed** (see the dangerous-command block-list section in `AGENTS.md`): known read-only tools (`read_file`, `list_dir`, `search`, …) `exit 0` immediately, and every other tool — including unknown ones — falls through to deny-pattern inspection. The deny patterns only match shell command strings, so non-shell tools that fall through are allowed in practice while no unknown tool is blanket-skipped. A plain allowlist (`exit 0` for everything non-shell) is also acceptable for less safety-critical hooks.
 6. **Timeout**: `timeout` ≤ 10 (the field name `default.json` uses). Hooks must be fast — they run on every tool call.
-7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny message on stderr).
+7. **No side effects**: hooks inspect input and allow/deny. They must not modify files, write to the workspace, or produce user-visible output (except the deny-decision JSON on stdout and the log line on stderr).
 8. **Pattern matching**: use `grep -qiE` (case-insensitive extended regex) for deny patterns. False positives are worse than false negatives — err on the side of allowing.
 
 ---
