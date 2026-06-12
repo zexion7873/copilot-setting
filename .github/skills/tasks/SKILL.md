@@ -76,4 +76,5 @@ T001 → T003 ──┘
 ## Handoffs
 
 - → `@implementer` — to start executing task list
+- → `implement` skill — to execute the atomic task list
 - ← `plan` skill — after plan is approved
