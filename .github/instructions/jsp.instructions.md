@@ -10,6 +10,8 @@ XSS prevention is the #1 priority. All dynamic output must be encoded.
 ## Output Encoding
 
 - **Every** dynamic value: `<c:out value="${...}"/>` or `fn:escapeXml()` — no raw `${...}` in HTML
+- Attribute context: the value must sit in a **double-quoted** attribute — `fn:escapeXml()` does NOT stop breakout from an unquoted attribute (a space or `=` ends it)
+- Never interpolate `${...}` into an inline event handler (`onclick="...${x}..."`) or a `javascript:` URL — escaping does not make these safe; pass the value through an HTML-escaped `data-*` attribute and read it from JS
 - JavaScript context: JSON-encode server-side with `<` escaped as `\u003c` — plain JSON encoding leaves `</script>` intact and the HTML parser ends the script block at the first `</script>` regardless of string context; or pass the JSON in an HTML-escaped `data-*` attribute and read it from JS
 - URL context: `<c:url>` with `<c:param>` for proper encoding
 
@@ -35,5 +37,7 @@ XSS prevention is the #1 priority. All dynamic output must be encoded.
 | Pattern | Problem | Fix |
 |---|---|---|
 | `${user.name}` without encoding | XSS — attacker injects script | `<c:out value="${user.name}"/>` |
+| `title=${x}` (unquoted attribute) | `fn:escapeXml` can't stop attribute breakout via space / `=` | Double-quote it: `title="<c:out value='${x}'/>"` |
+| `onclick="do('${x}')"` | EL in an event handler — escaping doesn't neutralize it | Pass via `data-*` attribute, read from JS |
 | `<%= request.getParameter("q") %>` | Scriptlet + unencoded = XSS | `<c:out value="${param.q}"/>` |
 | `<% if (cond) { %>` | Untestable Java in the view; violates JSTL-only policy | `<c:if test="${cond}">` |

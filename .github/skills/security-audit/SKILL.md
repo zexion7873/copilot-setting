@@ -40,7 +40,7 @@ For each entry point, trace data flow from input → processing → storage → 
 **A03 Injection** (check each):
 - [ ] SQL: all queries parameterized — search for string concat near `createQuery`/`createSQLQuery`/`PreparedStatement`
 - [ ] HQL: named parameters `:param` only — no `"... where x = '" + input + "'"`
-- [ ] OS command: no `Runtime.exec()` or `ProcessBuilder` with user input
+- [ ] OS command: no `Runtime.exec(String)` or `sh -c`; user input passed only as `ProcessBuilder` argument-list elements
 - [ ] XSS: every JSP variable in `<c:out>` — search for `${` without encoding
 - [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities using each API's own switch (`instructions/security.instructions.md` A03) — search for `DocumentBuilderFactory` / `SAXParserFactory` without `disallow-doctype-decl`, `XMLInputFactory` without `SUPPORT_DTD` set to false (StAX has no `setFeature`), and `Unmarshaller` not reading from a hardened `SAXSource`
 
@@ -86,6 +86,10 @@ Issue: <what's wrong>
 Exploit: <how an attacker would use this>
 Fix: <specific remediation>
 ```
+
+Close with a one-line summary (mirrors `sql-review` — no free-form prose conclusion):
+
+`Findings: N critical, N high, N medium, N low | Baseline risk: <Spring 3.2 / Hibernate 4.2 EOL CVE note per A06> | Top exposure: <one line>`
 
 ## Handoffs
 

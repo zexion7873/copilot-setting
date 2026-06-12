@@ -21,8 +21,8 @@ Surgical, behavior-preserving structural changes.
 
 1. **Identify the smell**: name it precisely (God Class, Long Method, Feature Envy, Duplicated Code, etc.)
 2. **Verify preconditions**: understand all callers and dependents before touching anything
-3. **Apply one refactoring at a time**: extract → rename → simplify. Never combine.
-4. **Verify after each step**: behavior must be identical — check callers still work
+3. **Apply one refactoring at a time**: extract → rename → simplify. Never combine — keep the diff minimal, one smell per session.
+4. **Verify after each step**: behavior must be identical — check callers still work; if existing tests break, the refactoring is wrong, not the tests. Found a bug along the way? Log it separately — never fix it in the same diff.
 
 ## Common Operations
 
@@ -34,13 +34,6 @@ Surgical, behavior-preserving structural changes.
 | God Class | Extract Class by responsibility | Each extracted class has single purpose |
 | Long parameter list (~4+ params, or flag/boolean args) | Introduce Parameter Object | All callers updated; immutable DTO preferred |
 | Primitive Obsession | Replace with domain type | Validation in constructor; all usages updated |
-
-## Rules
-
-- **Never change behavior while refactoring** — if you find a bug, log it separately
-- **Smallest possible diff** — one smell per refactoring session
-- **Preserve tests** — if existing tests break, the refactoring is wrong
-- **Update callers** — use search to find every reference before renaming/moving
 
 ## Handoffs
 

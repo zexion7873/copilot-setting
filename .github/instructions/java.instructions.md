@@ -14,7 +14,7 @@ This project is Java 8. AI models default to modern Java — correct that here.
 - `String.isBlank()`, `String.strip()` — use `StringUtils` or `.trim().isEmpty()`
 - `Optional.ifPresentOrElse()`, `Optional.stream()`
 - Module system (`module-info.java`)
-- `try-with-resources` on effectively-final variables (Java 9 feature)
+- `try-with-resources` on a pre-declared effectively-final variable (Java 9) — declare the resource *inside* the `try (...)` parentheses instead; try-with-resources itself is Java 7 and stays mandatory for JDBC (`instructions/sql.instructions.md`)
 
 ## Optional
 
