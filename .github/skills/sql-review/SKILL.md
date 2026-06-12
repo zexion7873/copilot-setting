@@ -55,7 +55,7 @@ Recommend `EXPLAIN` for queries touching large tables.
 - [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` keeps `ALGORITHM=INSTANT` (MySQL 8.0.12+ default; metadata-only, safe at any size) — append `, ALGORITHM=INSTANT` so it errors instead of silently falling back to a rebuild when INSTANT can't apply (expression/non-constant default, `ROW_FORMAT=COMPRESSED`, FULLTEXT index, >64 prior instant changes, or pre-8.0.29 non-trailing position)
 - [ ] Any `MODIFY COLUMN ... NOT NULL` (the real table-rebuilding step) on a large table is flagged for lock impact — it is `INPLACE` but rebuilds the table
 - [ ] Index creation uses `ALGORITHM=INPLACE, LOCK=NONE` on MySQL where supported
-- [ ] No long-running `UPDATE` / `DELETE` without batching (chunked in 1k–10k rows)
+- [ ] No long-running `UPDATE` / `DELETE` without batching — chunked by PK range and committed per chunk (size per `instructions/sql.instructions.md`)
 
 ## Phase 6 — Check Running-App Compatibility
 
@@ -106,7 +106,7 @@ Summary: `Statements reviewed: N | Findings: N critical, N high, N medium, N low
 
 - `DROP COLUMN` in same release that stopped writing it — keep removed-but-present for one full release cycle
 - Treating `ADD COLUMN ... NOT NULL DEFAULT <constant>` as a table rewrite — on MySQL 8.0.12+ it is `ALGORITHM=INSTANT` (metadata-only, instant at any size). Do NOT pre-emptively switch to the nullable → backfill → `MODIFY COLUMN ... NOT NULL` dance, whose final `MODIFY` is the genuinely expensive `INPLACE` **table rebuild**. Reserve that multi-step path for the cases INSTANT rejects (expression/non-constant default, `ROW_FORMAT=COMPRESSED`, FULLTEXT index, >64 prior instant changes). When `MODIFY` is unavoidable, note MySQL has no `ALTER COLUMN ... SET NOT NULL`, so it must re-list the full column definition (`DEFAULT` / `COMMENT` / charset) or they are dropped
-- `UPDATE huge_table SET ...` without `WHERE` + batching — batch with `WHERE id BETWEEN ? AND ?` in 1k–10k chunks
+- `UPDATE huge_table SET ...` without `WHERE` + batching — batch with `WHERE id BETWEEN ? AND ?`, committing per chunk (size per `instructions/sql.instructions.md`)
 - Renaming a column in one shot — add new column, dual-write, switch reads, drop old over multiple releases
 - Migration script that is not idempotent — `CREATE TABLE` / `DROP TABLE` take `IF [NOT] EXISTS`, but MySQL has **no** `IF [NOT] EXISTS` for `ADD`/`DROP COLUMN` or `CREATE`/`DROP INDEX`; guard those with an `information_schema.COLUMNS` / `STATISTICS` existence check (or rely on the migration tool's version tracking), not inline `IF NOT EXISTS`
 

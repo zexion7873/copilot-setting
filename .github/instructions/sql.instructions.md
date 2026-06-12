@@ -22,7 +22,7 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 - No `OFFSET` pagination on large tables — cursor: `WHERE id > ? ORDER BY id LIMIT N`
 - N+1 = SQL inside a loop — batch with `IN` or JOIN
 - `IN` vs `EXISTS` subqueries: MySQL 8.0 optimizes both with the same semijoin transforms (`EXISTS` since 8.0.16) — pick the clearer form and check `EXPLAIN`; beware `NOT IN` matching nothing when the subquery returns a `NULL`
-- Batch INSERT/UPDATE/DELETE (500–1000 rows); never row-by-row
+- Batch INSERT/UPDATE/DELETE — never row-by-row; chunk and commit per chunk to bound lock time, transaction size, and redo/binlog volume (low thousands of rows is a typical starting point, not a fixed limit — tune to row width, index count, and lock/replication pressure)
 
 ## JDBC Resources
 

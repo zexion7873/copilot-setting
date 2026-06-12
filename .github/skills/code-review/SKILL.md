@@ -51,7 +51,7 @@ Structured code review.
 - [ ] Logging: SLF4J `{}` placeholders, no string concatenation
 
 **Maintainability** (check each):
-- [ ] Methods ≤ 30 lines of logic
+- [ ] Each method does one thing (~30+ lines of logic is a smell to check, not a hard limit)
 - [ ] No copy-paste duplication
 - [ ] Names self-explanatory; comments explain WHY not WHAT
 
