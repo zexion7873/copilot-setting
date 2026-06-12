@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/**/*.md'
       - '.github/scripts/validate-style-guide.sh'
+      - '.github/scripts/test-validate-style-guide.sh'
       - '.github/hooks/**'
       - '.github/workflows/validate-style-guide.yml'
 
@@ -16,6 +17,9 @@ jobs:
 
       - name: Run STYLE-GUIDE validation
         run: bash .github/scripts/validate-style-guide.sh
+
+      - name: Run validator regression tests
+        run: bash .github/scripts/test-validate-style-guide.sh
 
       - name: Run hook regression tests
         run: bash .github/hooks/scripts/test-block-dangerous-commands.sh
