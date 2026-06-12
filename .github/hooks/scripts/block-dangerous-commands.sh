@@ -103,6 +103,10 @@ check() {
 Q='["'"'"']?'                       # optional opening/closing quote
 RM_TGT='(/|~/?|\.\.?/?|\./\*|\*)'   # exact dangerous targets: / ~ ~/ . .. ./ ../ ./* *
 RM_COMBO='-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*'
+# A dangerous token is "ended" by whitespace, end-of-string, OR a command
+# separator glued directly to it — a bare ( |$) anchor misses the glued
+# case (rm -rf /;true, git push -f&&echo) and would false-allow.
+END='( |$|[|;&])'
 
 # rm — recursive forced deletion
 #   Combined glued flags (-rf, -fr, -rfi, …) with a dangerous target in
@@ -114,16 +118,21 @@ RM_COMBO='-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*'
 #     (rm -r build -f) — blocked unconditionally (any target).
 #   Long flags: --recursive / --force anywhere in the rm command,
 #     including mixed short+long (rm -r --force) — blocked unconditionally.
-RM_RULES='(^|[^a-z])rm( [^|;&]*)? ('"$RM_COMBO"')( [^|;&]*)? '"$Q"'(\$|'"$RM_TGT$Q"'( |$))'
-RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? '"$Q"'(\$[^ ]*|'"$RM_TGT$Q"') [^|;&]*('"$RM_COMBO"')( |$)'
-RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? -[a-z]*r[a-z]*( [^|;&]*)? -[a-z]*f[a-z]*( |$)'
-RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? -[a-z]*f[a-z]*( [^|;&]*)? -[a-z]*r[a-z]*( |$)'
-RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? --(recursive|force)( |$)'
+RM_RULES='(^|[^a-z])rm( [^|;&]*)? ('"$RM_COMBO"')( [^|;&]*)? '"$Q"'(\$|'"$RM_TGT$Q$END"')'
+RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? '"$Q"'(\$[^ ]*|'"$RM_TGT$Q"') [^|;&]*('"$RM_COMBO"')'"$END"
+RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? -[a-z]*r[a-z]*( [^|;&]*)? -[a-z]*f[a-z]*'"$END"
+RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? -[a-z]*f[a-z]*( [^|;&]*)? -[a-z]*r[a-z]*'"$END"
+RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? --(recursive|force)'"$END"
 RM_RULES="$RM_RULES"'|--no-preserve-root'
 check "rm forced recursive deletion" "$RM_RULES"
 
-# find — destructive actions
-check "find destructive action" 'find .*-delete|find .*-exec(dir)? rm'
+# find — destructive actions.  Bounded to a single simple command ([^|;&]*
+# never crosses a separator) and to real flag boundaries: -delete must be a
+# standalone token (a leading space), so a "-delete" substring inside a
+# filename (find . -name on-delete-cascade.sql) is not a false positive.
+FIND_RULES='(^|[^a-z])find[^|;&]* -delete'"$END"
+FIND_RULES="$FIND_RULES"'|(^|[^a-z])find[^|;&]* -exec(dir)? rm'
+check "find destructive action" "$FIND_RULES"
 
 # Privilege escalation — token-anchored so glued separators (&&sudo, ;doas,
 # |pkexec) are still caught while visudo/sudoku are not.
@@ -139,9 +148,9 @@ check "destructive SQL" "$SQL_RULES"
 # Git destructive operations.  --force requires a token boundary so
 # --force-with-lease stays allowed; patterns stop at command separators
 # so a following command's -f flag cannot bleed in.
-GIT_RULES='git push[^|;&]* (--force( |$)|-f( |$)|\+[a-zA-Z])'
+GIT_RULES='git push[^|;&]* (--force'"$END"'|-f'"$END"'|\+[a-zA-Z])'
 GIT_RULES="$GIT_RULES"'|git reset --hard'
-GIT_RULES="$GIT_RULES"'|git clean[^|;&]* -[a-zA-Z]*f[a-zA-Z]*( |$)|git clean[^|;&]* --force( |$)'
+GIT_RULES="$GIT_RULES"'|git clean[^|;&]* -[a-zA-Z]*f[a-zA-Z]*'"$END"'|git clean[^|;&]* --force'"$END"
 check "destructive git operation" "$GIT_RULES"
 
 # Filesystem permissions and formatting
