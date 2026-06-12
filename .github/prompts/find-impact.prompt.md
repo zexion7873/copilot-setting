@@ -10,4 +10,4 @@ Find the full impact scope of this method / class:
 3. Related Spring XML config (if it is a bean)
 4. Related hbm.xml mappings (if it involves an entity)
 
-Output format: sorted by impact severity, with file paths and line numbers.
+Output format: sorted by impact severity (direct callers > Spring XML / `hbm.xml` wiring > indirect dependents), with file paths and line numbers.

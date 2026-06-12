@@ -29,15 +29,32 @@ From the feature/code under test, extract:
 
 ## Phase 3 — Write Test Case Document
 
-For each test case:
+Write to `docs/test-design/[component]-tests-v[N].md` (create the directory if absent), beside the plan it derives from. Wrap the cases in a fixed skeleton so `@implementer` has a stable structure to read:
 
-```
+```md
+---
+source: <plan path or feature under test>
+date: <YYYY-MM-DD>
+---
+
+# Test Design — <component>
+
+## Boundaries
+
+<Phase 1 output: input / state / integration boundaries>
+
+## Test Cases
+
 TC-NNN: <Short description>
 Category: <Happy path | Boundary | Error | Security | Concurrency | Performance>
 Precondition: <Setup required>
 Input: <Specific values>
 Expected result: <Exact expected outcome>
 Priority: <High | Medium | Low>
+
+## Coverage Audit
+
+<Phase 4 checklist results>
 ```
 
 ## Phase 4 — Coverage Audit

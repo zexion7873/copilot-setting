@@ -1,5 +1,5 @@
 ---
-description: 'XML conventions for Spring configuration, Hibernate hbm.xml, and Maven POM files.'
+description: 'XML conventions for Spring configuration, Hibernate hbm.xml, web.xml deployment descriptor, and Maven POM files.'
 applyTo: '**/*.xml'
 ---
 
@@ -26,6 +26,15 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 - Scopes: test-only libraries (JUnit, Mockito) use `<scope>test</scope>`; container-provided APIs (servlet, JSP) use `<scope>provided</scope>` — never bundle them into the WAR
 - `maven-compiler-plugin` with `source`/`target` = `1.8`; pin every plugin version (unpinned plugins follow Maven defaults — non-reproducible builds)
 - Encoding: `<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>`
+
+## web.xml
+
+This stack bootstraps via `web.xml` (no servlet initializers — see `instructions/spring-hibernate.instructions.md`), so these conventions apply:
+
+- `<web-app>` version matches the container's servlet spec and the Spring 3.2 runtime — do not declare a newer spec than the container provides
+- `CharacterEncodingFilter` set to UTF-8 and mapped **first** in the filter chain, before any filter that reads request parameters (ties into the JSP output-encoding story — `instructions/jsp.instructions.md`)
+- Context split: `ContextLoaderListener` loads the root context (services, DAOs); `DispatcherServlet` loads only its own web context (controllers, view resolvers) — do not redefine the same bean in both
+- `OpenSessionInViewFilter` (OSIV), if used, is configured here — see `instructions/spring-hibernate.instructions.md`
 
 ## General
 

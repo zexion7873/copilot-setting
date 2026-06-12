@@ -1,5 +1,5 @@
 ---
-description: 'OWASP Top 10 security rules for Java web applications.'
+description: 'OWASP Top 10 security rules for Java web apps — CSRF, XSS, XXE / XML parsing, password hashing (bcrypt), session & cookie flags, OS command & SQL injection, SSRF, unsafe deserialization, security headers.'
 applyTo: '**/*.java, **/*.jsp'
 ---
 
@@ -22,7 +22,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 ## A03 Injection
 
 - SQL: `PreparedStatement` with `?` only
-- OS command: argument-escaping libs; no shell concatenation
+- OS command: `ProcessBuilder` with an argument list — never `Runtime.exec(String)` or `sh -c` with user input; no shell-string concatenation
 - XSS: `<c:out>` in JSP; context-aware encoding
 - XXE: disable DTDs and external entities on every XML parser, using each API's own switch (they differ — `setFeature`/`disallow-doctype-decl` exists only on the first pair); critical in this XML-heavy stack:
   - `DocumentBuilderFactory` / `SAXParserFactory`: `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)` plus `FEATURE_SECURE_PROCESSING`

@@ -61,7 +61,7 @@ Before handing off, challenge the plan as an adversary would. Do not skip this w
 
 - **Unstated assumptions**: what must be true for this plan to work that you never wrote down? (data shape, library version, call order, single-threaded access…)
 - **What breaks**: which existing caller, Spring bean, or `hbm.xml` mapping fails if you ship this as written?
-- **Missing cases**: null/empty, concurrent access, rollback path, backward compatibility, migration ordering
+- **Missing cases**: null/empty, concurrent access, stale cache after a write (which caches hold this data, who invalidates them, in what order relative to the DB write), rollback path, backward compatibility, migration ordering
 - **Weakest link**: the one step you are least sure about — name it explicitly
 
 Fold material findings back into sections 4–5 and record the residual assumptions and gaps in section 7 (Medium+ scope); for Small plans, append findings to the approach notes.

@@ -13,6 +13,7 @@ disable-model-invocation: true
 1. **Analyze diff**: `git diff --staged` (or `git diff` if nothing staged)
 2. **Stage files**: add relevant changes; exclude unrelated modifications
 3. **Generate message**: Conventional Commits format
+4. **Commit**: run `git commit` with the generated message. If a pre-commit hook (e.g. this repo's `.githooks` validator) rejects it, report the hook output and fix the flagged files — never bypass with `--no-verify`
 
 ## Message Format
 
