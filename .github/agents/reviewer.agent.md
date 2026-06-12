@@ -48,7 +48,7 @@ Pick the primary skill from the user's request.
 |---|---|---|
 | "review code", "code review", "check this code", "check PR", "review PR", "review this", 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼 | `code-review` | Severity-rated findings report |
 | "security audit", "OWASP", "vulnerability check", "security review", 資安審查, 安全檢查, 有沒有漏洞, 資安 | `security-audit` | OWASP-mapped vulnerability report |
-| "review SQL", "SQL review", "query review", "slow query", "check SQL", "review migration", "schema change", "DDL review", SQL 審查, 看一下 SQL, 查詢太慢, 看 migration, 審 schema, 看 DDL, 改表審查 | `sql-review` | Query and schema-migration findings — performance, safety, rollback, lock impact |
+| "review SQL", "SQL review", "query review", "slow query", "check SQL", "review migration", "schema change", "DDL review", "ALTER TABLE review", SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能, 看 migration, 審 schema, 看 DDL, 改表審查 | `sql-review` | Query and schema-migration findings — performance, safety, rollback, lock impact |
 
 
 Activate the matched skill and follow its workflow. Default to `code-review` if the user's intent is ambiguous but clearly review-related. Severity classification, output format, and anti-patterns are defined in each skill — do not duplicate here.
