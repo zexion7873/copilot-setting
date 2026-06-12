@@ -520,9 +520,9 @@ Deleting or merging a skill / prompt / agent has touchpoints a filename grep wil
 
 Broken paths silently degrade Copilot output — they do not error.
 
-### Editing Existing Files (Cache-Friendly)
+### Editing Existing Files (Batch Decisively)
 
-`instructions/` / `agents/` / `skills/` content sits in Copilot's prompt-cache prefix — editing one line invalidates everything after it. Batch edits decisively, never trim purely to shave tokens (the cache already neutralised that cost), and land prompt-engineering changes together in one PR. Full policy and rationale: `AGENTS.md` → "Maintenance Rule — Cache-Friendly Edits".
+`instructions/` / `agents/` / `skills/` content is injected into every downstream session's context — keep it lean and stable. Editing shifts downstream behaviour between versions, so batch edits decisively and land prompt-engineering changes together in one PR; trim for clarity and correctness, not to chase a token count. Full policy: `AGENTS.md` → "Maintenance Rule — Keep Injected Context Lean & Stable".
 
 ### STYLE-GUIDE Changes
 

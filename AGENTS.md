@@ -1,5 +1,3 @@
-<!-- Generated: 2026-06-03 | Updated: 2026-06-10 -->
-
 # copilot-setting — Agent Guide
 
 **Canonical** guidance for any AI agent (Claude Code, OpenAI Codex, Cursor, GitHub Copilot, …) working in this repository. `CLAUDE.md` is a thin pointer that imports this file via `@AGENTS.md`, so every tool reads one source of truth; the authoritative *format* spec is `.github/STYLE-GUIDE.md`. Read both before editing. There are intentionally no per-directory `AGENTS.md` files — keep navigation in this single root file.
@@ -37,7 +35,7 @@ bash .github/scripts/test-validate-style-guide.sh   # regression-test the valida
 
 The regression suite builds throwaway fixtures (copies of `.github/` with one injected defect) and asserts the validator catches it — covering the `error` branches the live tree, always valid, never exercises.
 
-Both are enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator or its test harness, `.github/hooks/**`, or the workflow file. It checks: frontmatter on instructions / skills / agents / prompts (a missing OR empty `description` on an instruction or prompt is rejected — on-demand semantic loading matches against it); that `skills/<name>/SKILL.md` has `name` matching the directory, a `description` ≤ 1024 chars carrying the required markers (`Use when` / `Triggers on:` / `Do NOT use`, unless `disable-model-invocation: true`), and no `tools` field (tools belong on agents); that each code-touching skill names the canonical instruction file(s) it maps to (a `instructions/...` reference, digits allowed in the stem so `java8` resolves), and that each code-touching agent (implementer/reviewer/debugger) embeds a `## Coding Standards` section whose hard-boundary bullets are byte-identical across the three (top-level `- ` items only — any indented line, `*`/`+` bullet, or numbered line that would escape the byte-identity check is rejected); that instruction Anti-Patterns tables use the 3-column `Pattern | Problem | Fix` header; that agent `handoffs[].agent` references resolve (matched case-sensitively, in both the standalone `agent:` and list-item `- agent:` forms); that an agent declaring `agents:` lists `'agent'` in its `tools`; that agent and skill `description` values and prompt `description`/`agent` values are single-line scalars (YAML block scalars `|`/`>` AND multi-line plain/quoted scalars are rejected — the validator does not parse them, and a multi-line value would otherwise slip past the 1024-char cap); and that canonical cross-references (`` `instructions/...` ``, `` `skills/.../SKILL.md` ``, `` `agents/....agent.md` ``, `` `prompts/<name>.prompt.md` ``) point to real files — including inbound name-style prompt mentions (a backtick-wrapped lowercase name followed by the word "prompt", e.g. the `find-impact` prompt). Frontmatter parsing tolerates CRLF line endings and rejects an unterminated block (a missing closing `---` is treated as no frontmatter, not silently accepted).
+Both are enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator or its test harness, `.github/hooks/**`, or the workflow file. It enforces the format spec — frontmatter presence, skill `name`-matches-directory with a marker-bearing `description` and no `tools` field, byte-identical agent `## Coding Standards` bullets, single-line `description` / `agent` scalars, code-touching-skill instruction references, 3-column Anti-Patterns headers, and resolvable cross-references. Full machine-checked rule list: `.github/STYLE-GUIDE.md` → "Tier 1: Machine-checked".
 
 One-time local setup so the validator also runs on `git commit`:
 
@@ -69,7 +67,19 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions, save the two narrow exceptions noted below.
 
-**Instruction loading model:** instructions reach the model through two channels, and only the first is deterministic. (1) **Glob injection at request time** — `applyTo` globs are matched against files explicitly in context (attached via `#file:`, editor attachment) and matching instruction files are auto-attached. Files the agent reads or edits dynamically during execution do NOT retroactively trigger glob instructions — the VS Code feature request to refresh instructions mid-session (microsoft/vscode#282964) was closed as not planned. (2) **On-demand semantic loading** — each request also carries a list of all instruction files (glob + `description`), and the model may choose to load one whose description matches the task; this is model-discretionary, never guaranteed. `applyTo: "**"` is the only guaranteed always-on glob. Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards` — these load deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`) additionally name the canonical instruction file(s) they map to, which the model opens on demand when it reads the skill body. The instruction files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy. **Two narrow duplications are sanctioned, both keeping the instruction file canonical:** (1) this version-lock hard-boundary embed in the code-touching agent bodies; and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases (e.g. `code-review`, `security-audit`, `sql-review`, `implement`), which may *name* canonical conventions as one-line check items but must not add detail beyond the instruction file. Keep both minimal; full rule restatement with added detail in a skill is a defect.
+**Instruction loading model:** instructions reach the model through two channels, and only the first is deterministic:
+
+1. **Glob injection at request time** — `applyTo` globs match files explicitly in context (attached via `#file:`, editor attachment); matching instruction files auto-attach. Files the agent reads or edits dynamically during execution do NOT retroactively trigger glob instructions — the VS Code mid-session refresh request (microsoft/vscode#282964) was closed as not planned.
+2. **On-demand semantic loading** — each request also carries a list of all instruction files (glob + `description`); the model may load one whose description matches the task. Model-discretionary, never guaranteed. `applyTo: "**"` is the only guaranteed always-on glob.
+
+Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards`, loading deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`) additionally name the canonical instruction file(s) they map to, opened on demand when the model reads the skill body. The files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy.
+
+**Two narrow duplications are sanctioned**, both keeping the instruction file canonical:
+
+- the version-lock hard-boundary embed in the code-touching agent bodies;
+- skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases (e.g. `code-review`, `security-audit`, `sql-review`, `implement`) — which may *name* canonical conventions as one-line check items but must not add detail beyond the instruction file.
+
+Keep both minimal; full rule restatement with added detail in a skill is a defect.
 
 ## Canonical Format — STYLE-GUIDE.md
 
@@ -107,15 +117,12 @@ Broken paths silently degrade Copilot output — they don't error, they just sto
 
 When **deleting or merging** a file, the path grep alone is not enough — several places reference skills/prompts by *name* in hardcoded lists. Follow the sweep checklist in `.github/STYLE-GUIDE.md` → File Lifecycle → Removing or Merging Files.
 
-## Maintenance Rule — Cache-Friendly Edits
+## Maintenance Rule — Keep Injected Context Lean & Stable
 
-Copilot's usage-based billing (since June 2026) reuses **prompt cache** at stable prefix boundaries (system prompt, tool definitions, then injected instruction / agent / skill content). A cache *read* costs ~10× less than fresh input; the first *write* costs ~25% more. Within a session these files sit in the cached prefix, so the practical cost lever is **cache hit rate, not file length**.
+`instructions/`, `agents/`, and `skills/` content is injected into every downstream Copilot session's context window, so treat it as context engineering, not free text:
 
-Because caching is prefix-based, editing one line invalidates that file's cached segment **and everything after it** — the next session pays a full cache-write to rebuild. So:
-
-- **Batch edits to `instructions/`, `agents/`, and `skills/` — change once, decisively. Do not micro-tune for token count.** The input savings from a shorter file are near-zero once the prefix is cached; the cache-write churn from frequent edits costs more than it saves.
-- Trimming a file for clarity or correctness is fine. Trimming *purely* to shave tokens is a net loss — the cache already neutralised that cost.
-- Keep these files stable between releases; land prompt-engineering changes together rather than as a drip of small commits.
+- **Lean** — every line ships into every user's context, so cut whatever doesn't earn its place. Trim for clarity and correctness, not to chase a token count.
+- **Stable** — editing these files shifts downstream behaviour between versions, so batch edits decisively and keep them stable between releases — land prompt-engineering changes together in one atomic, reviewable release, not a drip of small commits.
 
 ## Maintenance Rule — List Ordering
 
@@ -136,9 +143,24 @@ This repo intentionally mixes languages. Respect the split:
 
 ## Hooks — Dangerous-Command Block List
 
-`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching these patterns (case-insensitive, input is whitespace-normalised before matching; patterns never cross a command separator `|`/`;`/`&`, so one command's flags cannot trigger on a neighbouring command). It reads the command from `toolArgs` (camelCase surfaces — object or JSON-encoded string) with a `tool_input` fallback (VS Code PascalCase payload). The hook is **fail-closed** — empty/whitespace-only input, JSON parse errors, missing `jq`, a missing `toolArgs`/`tool_input` key, or a `grep` error during pattern matching → deny. Denials exit 0 **and** print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout naming the matched category, so the agent can report why and self-correct — Copilot parses the stdout decision JSON only on exit 0, and exit 2 is reserved as a *non-blocking* warning (the command would run anyway); an unexpected script crash exits non-zero (not 2), which `preToolUse` treats as a fail-closed deny. Regression suite: `bash .github/hooks/scripts/test-block-dangerous-commands.sh` (also run in CI).
+`.github/hooks/scripts/block-dangerous-commands.sh` denies shell tool calls matching a blocklist (case-insensitive; input is whitespace-normalised first; patterns never cross a command separator `|`/`;`/`&`, so one command's flags can't trigger on a neighbour). Behaviour:
 
-**Blocked categories:** `rm` with recursive+force flags — combined `-rf`/`-fr` (flags and target in either order, e.g. `rm "$DIR" -rf`) only when targeting the exact tokens `/`, `~`, `~/`, `.`, `..`, `./`, `../`, `*`, `./*` or any `$`-prefixed variable (subpaths like `/tmp/x`, `.cache`, `./build` are allowed), but split `-r -f`/`-f -r` (tolerating intervening flags and operands, e.g. `rm -r build -f`) and long `--recursive`/`--force` (anywhere in the `rm` command, including mixed short+long like `rm -r --force`) blocked unconditionally (any target); `find -delete` / `find -exec rm` / `find -execdir rm`; `--no-preserve-root`; `sudo`, `doas`, `pkexec` (token-anchored — caught even glued to a separator like `&&sudo`, while `visudo` is not); `DROP DATABASE/SCHEMA/TABLE/INDEX/VIEW/FUNCTION/PROCEDURE`; `TRUNCATE TABLE` only — the bare `TRUNCATE <table>` form (MySQL allows the `TABLE` keyword to be omitted) is intentionally left unblocked so the coreutils `truncate` binary stays usable, since false positives are worse than false negatives for this net; `DELETE FROM`; `git push --force` / `git push -f` / `git push +refspec` (`--force-with-lease` is allowed); `git reset --hard`; `git clean` with any flag combo containing `-f`, or `--force`; `chmod 777` (tolerating preceding flags, glued `-R777`, and long `--recursive`; the mode must be the exact token `0?777` — `1777` is allowed); `mkfs.`/`mkfs ` (the `mkfs.*` family binary or the bare dispatcher); `shred`; `wipefs`; `curl|sh` / `wget|bash` — only when a bare shell word (`sh`/`bash`/`zsh`/`dash`/`ash`/`ksh`) immediately follows the pipe, including pipe chains (`curl … | cat | sh`), while piping into `sha256sum`/`jq`/`grep` is allowed (a path-prefixed or wrapped shell like `| /bin/sh` or `| env sh` is NOT matched — this is a best-effort net, not a sandbox); `base64 -d|` (decode-pipe); `dd` with `if=` or `of=/dev/` in any operand order; `kill -9 -1`; fork bomb `:(){ ... }`.
+- **Input** — reads the command from `toolArgs` (camelCase — object or JSON-encoded string) with a `tool_input` fallback (VS Code PascalCase payload).
+- **Fail-closed** — empty/whitespace-only input, JSON parse errors, missing `jq`, a missing `toolArgs`/`tool_input` key, or a `grep` error during matching all → deny.
+- **Deny protocol** — denials exit 0 **and** print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout naming the matched category, so the agent can report why and self-correct. Copilot parses the decision JSON only on exit 0; exit 2 is a *non-blocking* warning (the command runs anyway); an unexpected crash exits non-zero (not 2), which `preToolUse` treats as a fail-closed deny.
+- **Regression suite** — `bash .github/hooks/scripts/test-block-dangerous-commands.sh` (also run in CI).
+
+**Blocked categories** — names only; `block-dangerous-commands.sh` and its regression suite are the source of truth for the exact patterns, separators, and intentional exceptions:
+
+- destructive `rm`; `find -delete` / `-exec rm`; `--no-preserve-root`
+- privilege escalation — `sudo` / `doas` / `pkexec`
+- destructive SQL — `DROP …`, `TRUNCATE TABLE`, `DELETE FROM`
+- `git push --force`, `git reset --hard`, `git clean -f`
+- `chmod 777`; `mkfs` / `shred` / `wipefs`
+- `curl|sh` / `wget|bash`; `base64 -d|`
+- `dd` to a device; `kill -9 -1`; the classic fork bomb
+
+The matched category name is echoed in the deny JSON, so a blocked agent can self-correct; carve-outs (e.g. coreutils `truncate` and `--force-with-lease` stay usable) live in the script, not here.
 
 This is a **last-resort safety net, not a sandbox** — blocklists are inherently bypassable via encoding, aliases, or variable indirection. Downstream repos should run agents in restricted-permission environments. If you genuinely need one of these in development, run it directly outside the agent — do not bypass the hook.
 
@@ -162,7 +184,6 @@ When adding a new skill: pick the owning agent, list the skill in that agent's `
 
 ## Dependencies
 
-### External
 - **GitHub Copilot** — the runtime that loads everything under `.github/`
 - `bash` + `jq` — required by the validator and the dangerous-command hook (hook is fail-closed without `jq`)
 - **GitHub Actions** — CI enforcement
