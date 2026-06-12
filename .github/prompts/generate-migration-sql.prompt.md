@@ -10,8 +10,5 @@ Generate a MySQL migration script from this hbm.xml or entity change:
 3. Data migration statements (if columns are renamed or merged, data must be moved)
 
 Rules:
-- InnoDB engine, utf8mb4
-- FK naming: `fk_<child>_<parent_col>`
-- Index naming: `idx_<table>_<columns>`
-- Column renames / merges: never a single-shot `RENAME`/`CHANGE` — add the new column, backfill, dual-write to both, switch reads, then drop the old column in a later release
+- Follow the schema conventions and migration-safety rules in `instructions/sql.instructions.md` (naming, `ALGORITHM=INSTANT`, idempotent chunked backfill, expand-contract renames, running-app compatibility) — do not restate them here
 - Write migration first, then rollback, clearly separated
