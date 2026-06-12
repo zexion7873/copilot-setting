@@ -28,11 +28,11 @@ Surgical, behavior-preserving structural changes.
 
 | Smell | Refactoring | Safety check |
 |---|---|---|
-| Long method (>30 lines of logic) | Extract Method | All local vars accounted for; return type clear |
+| Long method (does >1 thing; ~30+ lines of logic) | Extract Method | All local vars accounted for; return type clear |
 | Duplicated code | Extract to shared method/utility | Both call sites produce identical behavior |
 | Feature Envy | Move Method to the class it envies | Update all references; check access modifiers |
 | God Class | Extract Class by responsibility | Each extracted class has single purpose |
-| Long parameter list (>4 params) | Introduce Parameter Object | All callers updated; immutable DTO preferred |
+| Long parameter list (~4+ params, or flag/boolean args) | Introduce Parameter Object | All callers updated; immutable DTO preferred |
 | Primitive Obsession | Replace with domain type | Validation in constructor; all usages updated |
 
 ## Rules

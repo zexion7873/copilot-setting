@@ -16,6 +16,7 @@ Structured code review.
 - `instructions/jsp.instructions.md` — JSP / JSTL, XSS
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+- `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
 
 ## Phase 1 — Understand the Change
 
@@ -47,11 +48,11 @@ Structured code review.
 **Convention** (check each):
 - [ ] Java 8 only — no `var`, `List.of()`, records, text blocks
 - [ ] Hibernate: `getCurrentSession()` + hbm.xml, no JPA annotations
-- [ ] Transactions: `<tx:advice>` only (unless existing `@Transactional` convention)
+- [ ] Transactions: production code uses `<tx:advice>` only (unless existing `@Transactional` convention); `@Transactional` on a test class for auto-rollback is sanctioned (`instructions/testing.instructions.md`)
 - [ ] Logging: SLF4J `{}` placeholders, no string concatenation
 
 **Maintainability** (check each):
-- [ ] Methods ≤ 30 lines of logic
+- [ ] Each method does one thing (~30+ lines of logic is a smell to check, not a hard limit)
 - [ ] No copy-paste duplication
 - [ ] Names self-explanatory; comments explain WHY not WHAT
 
@@ -59,7 +60,7 @@ Structured code review.
 - [ ] No `SNAPSHOT` in release builds; no `LATEST`/`RELEASE` markers
 - [ ] Versions centralized in `<dependencyManagement>` — no per-module duplicates
 - [ ] Test libs scoped `<scope>test</scope>`; servlet API scoped `provided`
-- [ ] Key dependencies (Spring, Hibernate, Jackson, Log4j, Commons) not on known-CVE versions
+- [ ] Non-framework dependencies (Jackson, Log4j, Commons, …) not on known-CVE versions — the pinned Spring 3.2 / Hibernate 4.2 carry unpatched CVEs documented as baseline risk (`instructions/security.instructions.md`), not a per-PR finding
 - [ ] `maven-compiler-plugin` source/target = `1.8`; all plugin versions pinned
 
 ## Phase 3 — Classify Findings

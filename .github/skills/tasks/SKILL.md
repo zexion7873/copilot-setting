@@ -77,4 +77,5 @@ T001 → T003 ──┘
 
 - → `@implementer` — to start executing task list
 - → `implement` skill — to execute the atomic task list
+- ← `@planner` — default activation
 - ← `plan` skill — after plan is approved

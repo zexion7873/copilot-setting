@@ -26,8 +26,9 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 - Queries: HQL via `session.createQuery()`; classic `Criteria` for dynamic; `createSQLQuery()` last resort
 - Named parameters (`:param`) only — never concatenation, even in HQL
 - `session.get()` over `session.load()` unless you need a lazy proxy
-- `StatelessSession` for batch >1000 rows
+- `StatelessSession` for large batches — bypasses the first-level cache (no dirty-check / flush / cascade); switch when persistence-context growth or flush cost dominates, not at a fixed row count
 - `session.byId()` / `session.byNaturalId()` (fluent load-access, added in Hibernate 4.1) work in 4.2 — allowed, but prefer `session.get()` / HQL / `Criteria` for house consistency
+- MySQL 8.0 dialect/driver gap: Hibernate 4.2 ships no MySQL 8 dialect — use `org.hibernate.dialect.MySQL5Dialect` (or `MySQL5InnoDBDialect`); `MySQL57Dialect` / `MySQL8Dialect` arrived in Hibernate 5.x / 5.3 and do NOT exist in 4.2, so never copy them from a 5.x or Spring Boot tutorial. MySQL 8.0's default `caching_sha2_password` auth needs Connector/J 8.0.x (or set the DB account to `mysql_native_password`)
 
 ## Session Lifecycle (DAOs)
 

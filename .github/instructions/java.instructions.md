@@ -70,7 +70,7 @@ This project is Java 8. AI models default to modern Java — correct that here.
 
 - Comments explain WHY, not WHAT — code should be self-explanatory
 - Delete commented-out code; that's what git is for
-- Keep methods ≤ 30 lines of logic; extract a method when one grows past that
+- Extract a method when it stops doing one thing — past ~30 lines of logic is a smell to look at, not a hard cap
 
 ## Anti-Patterns
 
