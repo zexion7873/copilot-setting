@@ -94,12 +94,23 @@ allow_cmd 'rm file.txt'
 allow_cmd 'rm -f single.txt'
 allow_cmd 'rm my-red -f x'
 allow_cmd 'rm -r src/old'
+# Glued command separator must not let an exact-target rm escape the net.
+deny_cmd 'rm -rf /;true'
+deny_cmd 'rm -rf *;ls'
+deny_cmd 'rm -rf ~&&echo done'
+deny_cmd 'rm -r build -f;ls'
 
 # ── find: destructive actions ───────────────────────────────────────
 deny_cmd 'find . -name "*.tmp" -delete'
 deny_cmd 'find /tmp -exec rm {} ;'
 deny_cmd 'find /tmp -execdir rm {} ;'
+deny_cmd 'find . -delete'
+deny_cmd 'find /var/log -mtime +7 -delete'
 allow_cmd 'find . -name "*.java" -print'
+# -delete as a filename substring, not a standalone flag, must be allowed.
+allow_cmd 'find . -name on-delete-cascade.sql'
+# The match must not cross a command separator into a later --delete flag.
+allow_cmd 'find . -type f && git branch --delete stale'
 
 # ── Privilege escalation ────────────────────────────────────────────
 deny_cmd 'sudo ls'
@@ -130,6 +141,12 @@ allow_cmd 'git push origin main && cp -f a.txt b.txt'
 allow_cmd 'git push --force-with-lease origin main'
 allow_cmd 'git clean -n'
 allow_cmd 'git reset --soft HEAD~1'
+# Glued command separator must not let a forced push/clean escape the net.
+deny_cmd 'git push -f&&echo done'
+deny_cmd 'git push --force;ls'
+deny_cmd 'git clean -fd;ls'
+# ...but --force-with-lease stays allowed even glued to a separator.
+allow_cmd 'git push --force-with-lease origin main&&echo ok'
 
 # ── Filesystem permissions / formatting ─────────────────────────────
 deny_cmd 'chmod 777 file'
