@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
 
-      - name: Run STYLE-GUIDE validation
-        run: bash .github/scripts/validate-style-guide.sh
-
       - name: Run validator regression tests
         run: bash .github/scripts/test-validate-style-guide.sh
+
+      - name: Run STYLE-GUIDE validation
+        run: bash .github/scripts/validate-style-guide.sh
 
       - name: Run hook regression tests
         run: bash .github/hooks/scripts/test-block-dangerous-commands.sh
