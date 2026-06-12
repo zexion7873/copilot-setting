@@ -19,10 +19,19 @@ pass() {
 
 # Usage: fm_block "file" — print ONLY the leading YAML frontmatter block.
 # Restricted to the first '---' (line 1) through the next '---', so body-level
-# '---' horizontal rules cannot re-open the slice (sed's /^---$/,/^---$/ range
-# otherwise re-triggers on every later pair, leaking body keys into the block).
+# '---' horizontal rules cannot re-open the slice. The block is buffered and
+# emitted ONLY if a closing '---' is found: an unterminated frontmatter (a
+# common merge/truncation artifact) is not valid frontmatter to Copilot's
+# parser, so we must not let body keys leak in and pass. The '\r?' tolerates
+# CRLF line endings (a Windows contributor with autocrlf misset) — without it
+# '---\r' fails /^---$/ and a perfectly valid file reports missing keys.
 fm_block() {
-  awk 'NR==1 && /^---$/{f=1; next} f && /^---$/{exit} f' "$1"
+  awk '
+    NR==1 && /^---\r?$/ {f=1; next}
+    f && /^---\r?$/ {closed=1; exit}
+    f {buf = buf $0 ORS}
+    END {if (closed) printf "%s", buf}
+  ' "$1"
 }
 
 # Usage: fm_value "file" "key" — extract value from YAML frontmatter.
@@ -30,9 +39,32 @@ fm_block() {
 # the seds; without the guard, any bare assignment ($(fm_value ...)) kills the
 # whole script under set -e with no diagnostic (same class as the cs_bullets
 # guard below). A missing key legitimately yields an empty string.
+# Strip order matters: drop CR and trailing whitespace BEFORE the quote strip,
+# so a CRLF value ("plan'\r") or a trailing space ("plan ", legal YAML the
+# parser ignores) does not defeat the closing-quote anchor or the name match.
 fm_value() {
   local file="$1" key="$2"
-  fm_block "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed "s/^['\"]//;s/['\"]$//" || true
+  fm_block "$file" | grep -E "^${key}:" | head -1 \
+    | sed "s/^${key}:[[:space:]]*//" \
+    | tr -d '\r' \
+    | sed 's/[[:space:]]*$//' \
+    | sed "s/^['\"]//;s/['\"]$//" || true
+}
+
+# Usage: fm_scalar_multiline "file" "key" — exit 0 if KEY's scalar value spans
+# more than one physical line. fm_value reads only the key's own line, so a
+# multi-line plain/quoted scalar is measured by its first line alone and slips
+# past the 1024-char cap. A YAML scalar continuation must be indented deeper
+# than the key, so "the line after the key line is indented" detects it. Scoped
+# to scalar keys only (NOT block keys like handoffs/tools, which are legitimately
+# indented). Mirrors the existing block-scalar (|/>) rejection: multi-line values
+# are not parsed by this validator, so they are an error, not a measurement.
+fm_scalar_multiline() {
+  fm_block "$1" | awk -v key="$2" '
+    seen { if ($0 ~ /^[[:space:]]+[^[:space:]]/) ml = 1; exit }
+    $0 ~ "^" key ":" { seen = 1 }
+    END { exit (ml ? 0 : 1) }
+  '
 }
 
 fm_has_key() {
@@ -52,6 +84,10 @@ for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
 
   if ! fm_has_key "$file" "description"; then
     error "$name: missing 'description' in frontmatter"
+  elif [ -z "$(fm_value "$file" "description")" ]; then
+    # Empty like applyTo: on-demand semantic loading matches against the
+    # description, so a blank one silently disables that channel.
+    error "$name: 'description' is empty (on-demand loading will never match)"
   fi
 
   if ! fm_has_key "$file" "applyTo"; then
@@ -93,6 +129,14 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
   # the literal '>-'/'|' (2 chars) and silently pass every downstream check.
   if fm_block "$file" | grep -qE '^description:[[:space:]]*[|>]'; then
     error "skills/$dir_name/SKILL.md: description must be a single-line scalar (YAML block scalars |/> are not parsed by the validator)"
+    continue
+  fi
+
+  # A multi-line plain/quoted scalar is not a block scalar, so the guard above
+  # misses it — yet fm_value measures only its first line, letting it slip past
+  # the 1024-char cap below. Reject it for the same reason: not parsed here.
+  if fm_scalar_multiline "$file" "description"; then
+    error "skills/$dir_name/SKILL.md: description must be a single-line scalar (multi-line YAML values are not parsed by the validator and bypass the 1024-char cap)"
     continue
   fi
 
@@ -154,8 +198,10 @@ for skill in $INSTRUCTION_REF_SKILLS; do
     error "instruction reference check: skills/$skill/SKILL.md not found"
     continue
   fi
-  # Must name at least one specific instruction file (not just the *.glob)
-  if ! grep -qE '`instructions/[a-z][a-z-]*\.instructions\.md`' "$file"; then
+  # Must name at least one specific instruction file (not just the *.glob).
+  # Digits allowed in the stem ([a-z][a-z0-9-]*) so a name like java8 resolves
+  # — the xref check already accepts digits, and the two must agree.
+  if ! grep -qE '`instructions/[a-z][a-z0-9-]*\.instructions\.md`' "$file"; then
     error "skills/$skill/SKILL.md: must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`)"
   fi
 done
@@ -179,11 +225,13 @@ for a in $CODE_AGENTS; do
   if ! grep -q "^## Coding Standards" "$file"; then
     error "agents/$a.agent.md: missing '## Coding Standards' section (hard-boundary rules must be embedded)"
   fi
-  # Coding Standards must use only top-level '- ' bullets; indented sub-bullets,
-  # '*'/'+' bullets, or numbered items (at any indentation) would escape the
-  # byte-identical drift guard below.
-  if awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$file" | grep -qE '^[[:space:]]+-|^[[:space:]]*([*+]|[0-9]+\.)([[:space:]]|$)'; then
-    error "agents/$a.agent.md: Coding Standards must use only top-level '- ' bullets (sub-bullets, */+ bullets, or numbered items escape the drift guard)"
+  # Coding Standards may contain ONLY a column-0 intro paragraph, blank lines,
+  # and top-level '- ' bullets. Reject any indented line (a plain indented
+  # continuation renders as part of the bullet above it, drifting the hard
+  # boundary, yet has no leading dash so cs_bullets never compares it) and any
+  # column-0 '*'/'+'/numbered item (which would also escape the '- ' compare).
+  if awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$file" | grep -qE '^[[:space:]]+[^[:space:]]|^([*+]|[0-9]+\.)([[:space:]]|$)'; then
+    error "agents/$a.agent.md: Coding Standards must use only top-level '- ' bullets (indented lines, */+ bullets, or numbered items escape the drift guard)"
   fi
 done
 
@@ -227,11 +275,13 @@ if [ -d "$GITHUB_DIR/prompts" ]; then
 
     if ! fm_has_key "$file" "description"; then
       error "$name: missing 'description' in frontmatter"
+    elif [ -z "$(fm_value "$file" "description")" ]; then
+      error "$name: 'description' is empty"
     fi
 
     if fm_block "$file" | grep -qE '^(description|agent):[[:space:]]*[|>]'; then
       error "$name: frontmatter values must be single-line scalars (YAML block scalars |/> are not parsed by the validator)"
-    elif fm_has_key "$file" "agent" && fm_has_key "$file" "description"; then
+    elif fm_has_key "$file" "agent" && fm_has_key "$file" "description" && [ -n "$(fm_value "$file" "description")" ]; then
       pass "$name"
     fi
   done
@@ -260,7 +310,11 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
     pass "$name"
   fi
 
-  handoff_agents=$(fm_block "$file" | grep -E '^\s+agent:' | sed 's/.*agent:[[:space:]]*//' | sed "s/^['\"]//;s/['\"]$//" || true)
+  # Match both the standalone form ('    agent: X') and the list-item form
+  # ('  - agent: X', the most common YAML list-of-mappings style) — the bare
+  # '^\s+agent:' missed the dash-line form, so a broken handoff ref written
+  # that way was invisible and passed.
+  handoff_agents=$(fm_block "$file" | grep -E '^[[:space:]]*-?[[:space:]]*agent:' | sed 's/.*agent:[[:space:]]*//' | tr -d '\r' | sed 's/[[:space:]]*$//' | sed "s/^['\"]//;s/['\"]$//" || true)
   if [ -n "$handoff_agents" ]; then
     while IFS= read -r target_agent; do
       [ -z "$target_agent" ] && continue
