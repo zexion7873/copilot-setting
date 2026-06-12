@@ -29,8 +29,8 @@ The target audience of the artifacts here is **Copilot users working in downstre
 The executable workflows are style-guide validation and its own regression suite. Run both before committing changes under `.github/`:
 
 ```bash
-bash .github/scripts/validate-style-guide.sh        # validate the real tree
 bash .github/scripts/test-validate-style-guide.sh   # regression-test the validator itself
+bash .github/scripts/validate-style-guide.sh        # validate the real tree
 ```
 
 The regression suite builds throwaway fixtures (copies of `.github/` with one injected defect) and asserts the validator catches it — covering the `error` branches the live tree, always valid, never exercises.
