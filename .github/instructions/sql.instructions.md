@@ -1,5 +1,5 @@
 ---
-description: 'SQL rules — injection prevention, performance, JDBC resources, MySQL DDL / schema-migration safety (rollback, lock impact, online schema change), and stored procedure conventions.'
+description: 'Load when writing or reviewing SQL — JDBC DAOs, HQL, MySQL DDL/migrations, query tuning. Triggers on: PreparedStatement/? (no concat), :paramName, no SELECT *, WHERE on UPDATE/DELETE, ALTER TABLE, indexes, EXPLAIN, online schema change (INSTANT/INPLACE, pt-osc), rollback scripts, chunked backfills. Raw JDBC, not Spring Boot. Defer Hibernate queries to spring-hibernate.instructions.md.'
 applyTo: '**/*.java, **/*.sql, **/*.xml'
 ---
 

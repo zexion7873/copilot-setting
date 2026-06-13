@@ -1,5 +1,5 @@
 ---
-description: 'JSP template conventions — XSS prevention, JSTL-only policy, and output encoding.'
+description: 'Load when writing or reviewing a .jsp view — XSS-safe encoding, JSTL-only (no scriptlets). Triggers on: c:out/fn:escapeXml, raw ${...}, <% %>/<%= %> scriptlets, EL in onclick/javascript:, JSON in <script>, view-layer LazyInitializationException. Defer XSS internals to security.instructions.md.'
 applyTo: '**/*.jsp'
 ---
 

@@ -87,7 +87,7 @@ Agent ──activates──→ Skill (embeds output template)
 
 ```yaml
 ---
-description: '<One-sentence summary — what rules this file covers and for what context.>'
+description: '<Selectability hint — when should the model pull THIS file for the task? Domain, then concrete triggers (task contexts, co-occurring symbols, version-lock negatives), then where to defer. One dense line; it ships into every VS Code request.>'
 applyTo: '<glob pattern>'
 ---
 ```
@@ -117,7 +117,7 @@ applyTo: '<glob pattern>'
 
 ### Rules
 
-1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading.
+1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading. The `description` is the model's **selectability hint** for on-demand semantic loading — VS Code passes every instruction's description into each request so the model can self-select which to load. Write it to signal *whether to load THIS file for THIS task*: lead with the domain, then concrete triggers (task contexts, co-occurring symbols, version-lock negatives), then where to defer to a sibling. Keep it one dense line — it ships into every VS Code request, so high signal-to-noise beats an exhaustive token list.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
 3. **Opening paragraph**: scope statement + cross-references to related instruction files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
 4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.

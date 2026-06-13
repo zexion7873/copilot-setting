@@ -1,5 +1,5 @@
 ---
-description: 'Spring 3.2 + Hibernate 4.2 — native Session API, hbm.xml mappings, XML tx:advice, and Spring 3.2 API boundary.'
+description: 'Load when writing or reviewing Java or hbm.xml on a Spring 3.2 + Hibernate 4.2 stack — native Session API, XML mappings/tx, Spring MVC. Triggers on: getCurrentSession (not openSession), hbm.xml (not JPA @Entity), <tx:advice> (not @Transactional), @Controller/@RequestMapping (not @GetMapping). No Spring Boot/JPA. Defer SQL to sql.instructions.md.'
 applyTo: '**/*.java, **/*.hbm.xml'
 ---
 

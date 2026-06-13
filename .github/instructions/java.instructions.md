@@ -1,5 +1,5 @@
 ---
-description: 'Java 8 language rules — forbidden syntax, exception handling, logging, and code style.'
+description: 'Load when writing or reviewing .java code — Java 8 version-lock floor: syntax, exceptions, logging, concurrency. Triggers on: var, records, text blocks, List.of/Map.of, pattern matching, java.time, BigDecimal, SLF4J. Forces Java 8, not modern Java. Defer SQL/Spring/JSP to their files.'
 applyTo: '**/*.java'
 ---
 

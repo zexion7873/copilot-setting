@@ -1,5 +1,5 @@
 ---
-description: 'OWASP Top 10 security rules for Java web apps — CSRF, XSS, XXE / XML parsing, password hashing (bcrypt), session & cookie flags, OS command & SQL injection, SSRF, unsafe deserialization, security headers.'
+description: 'Load when writing or auditing Java/JSP web code (Spring 3.2 + Hibernate 4.2, no Spring Boot) — OWASP Top 10. Triggers on: CSRF/session/cookie flags, BCrypt hashing (no MD5/SHA-1), XXE, ProcessBuilder command injection, SSRF, ObjectInputStream deserialization. Defer SQL injection to sql.instructions.md, XSS to jsp.instructions.md.'
 applyTo: '**/*.java, **/*.jsp'
 ---
 
