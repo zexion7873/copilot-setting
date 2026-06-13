@@ -60,7 +60,7 @@ Check each migration against the rollback rules in `instructions/sql.instruction
 Check each statement against the DDL / migration safety rules in `instructions/sql.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
 
 - [ ] Large-table `ALTER` uses online schema change (pt-osc / gh-ost) or carries a downtime note
-- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` pins `ALGORITHM=INSTANT` rather than the slow `MODIFY`-rebuild dance
+- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` is INSTANT, not a table rewrite (`instructions/sql.instructions.md`)
 - [ ] Table-rebuilding `MODIFY COLUMN` on a large table is flagged for lock impact
 - [ ] Index creation uses `ALGORITHM=INPLACE, LOCK=NONE` where supported
 - [ ] Long `UPDATE` / `DELETE` is chunked by PK range, committed per chunk
@@ -114,10 +114,10 @@ Summary: `Statements reviewed: N | Findings: N critical, N high, N medium, N low
 
 Canonical DDL / migration anti-patterns live in `instructions/sql.instructions.md` (`MySQL DDL & Migrations` plus its Anti-Patterns table). In review, watch especially for:
 
-- `DROP COLUMN` in the same release that stopped writing it — no rollback window
-- `ADD COLUMN ... NOT NULL DEFAULT <constant>` treated as a table rewrite instead of an INSTANT metadata change
-- Single-shot column rename instead of add-new → dual-write → drop-old
-- A non-idempotent migration leaning on a non-existent `IF NOT EXISTS` for `ADD`/`DROP COLUMN` or `CREATE`/`DROP INDEX`
+- `DROP COLUMN` in the release that stopped writing it
+- `ADD COLUMN ... NOT NULL DEFAULT` treated as a table rewrite
+- Single-shot column rename
+- Non-idempotent migration (false `IF NOT EXISTS` on `ADD`/`DROP COLUMN`, `CREATE`/`DROP INDEX`)
 - Unbatched `UPDATE` / `DELETE` on a huge table
 
 ## Handoffs
