@@ -36,7 +36,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] CSRF: all state-changing POST forms carry a CSRF token (Spring Security 3.2 `<csrf>` config or manual token+session check)
 
 **A02 Cryptographic Failures** (check each):
-- [ ] Passwords hashed with bcrypt (native `BCryptPasswordEncoder`) or Argon2 (needs argon2-jvm) — never plaintext, MD5, or SHA1
+- [ ] Passwords hashed with bcrypt or Argon2 per `instructions/security.instructions.md` A02 — never plaintext, MD5, or SHA1
 - [ ] Sensitive data encrypted at rest and in transit
 - [ ] No secrets in logs, error messages, or client responses
 - [ ] No hardcoded credentials in source or config — search for password/secret/apikey/token literals
@@ -46,7 +46,7 @@ For each entry point, trace data flow from input → processing → storage → 
 - [ ] HQL: named parameters `:param` only — no `"... where x = '" + input + "'"`
 - [ ] OS command: no `Runtime.exec(String)` or `sh -c`; user input passed only as `ProcessBuilder` argument-list elements
 - [ ] XSS: every JSP variable in `<c:out>` — search for `${` without encoding
-- [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities using each API's own switch (`instructions/security.instructions.md` A03) — search for `DocumentBuilderFactory` / `SAXParserFactory` without `disallow-doctype-decl`, `XMLInputFactory` without `SUPPORT_DTD` set to false (StAX has no `setFeature`), and `Unmarshaller` not reading from a hardened `SAXSource`
+- [ ] XXE: every XML parser of user-supplied input disables DTDs / external entities per `instructions/security.instructions.md` A03 (each API — DOM / SAX / StAX / JAXB — has its own switch) — search for `DocumentBuilderFactory`, `SAXParserFactory`, `XMLInputFactory`, `Unmarshaller` on request data
 
 **A04 Insecure Design** (check each):
 - [ ] Rate limiting on login/registration/password-reset
