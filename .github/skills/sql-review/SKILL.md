@@ -7,12 +7,16 @@ description: 'Use when user needs SQL reviewed — queries for injection risks, 
 
 SQL-focused review covering both queries and schema migrations. Rules: `instructions/sql.instructions.md`.
 
+## Phase 0 — Load canonical rules
+
 **Canonical rules — open the instruction files** (agent mode can read them directly):
 
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL DDL & migration safety
 - `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
 - `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
 
 ## Phase 1 — Collect and Classify
 

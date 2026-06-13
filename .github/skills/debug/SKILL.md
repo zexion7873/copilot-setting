@@ -7,12 +7,16 @@ description: 'Use when user reports a bug, error, exception, or unexpected behav
 
 Systematic isolation and minimal fix.
 
+## Phase 0 — Load canonical rules
+
 **MANDATORY pre-load gate — do NOT propose a fix (Phase 6) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
 
 ## Phase 1 — Define the Problem
 
