@@ -7,6 +7,8 @@ description: 'Use when user wants code reviewed for correctness, style, bugs, an
 
 Structured code review.
 
+## Phase 0 — Load canonical rules
+
 **Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
 
 - `instructions/java.instructions.md` — Java 8 language boundary
@@ -17,6 +19,8 @@ Structured code review.
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 - `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
+
+Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
 
 ## Phase 1 — Understand the Change
 

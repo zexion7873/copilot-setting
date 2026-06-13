@@ -1,5 +1,5 @@
 ---
-description: 'Test conventions — JUnit 4 + Mockito + Spring Test 3.2, no JUnit 5, no Spring Boot Test.'
+description: 'Load when writing or reviewing a *Test.java / *IT.java file — JUnit 4 + Mockito + Spring Test 3.2. Triggers on: @RunWith(MockitoJUnitRunner / SpringJUnit4ClassRunner), org.junit.Test, @Before/@After, @Transactional auto-rollback. Not JUnit 5 (@BeforeEach/@ExtendWith) or @SpringBootTest. Defer non-test Java to java.instructions.md.'
 applyTo: '**/*Test.java, **/*Tests.java, **/*IT.java'
 ---
 

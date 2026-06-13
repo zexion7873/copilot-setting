@@ -7,6 +7,8 @@ description: 'Use when user needs code written — new features or task executio
 
 Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects.
 
+## Phase 0 — Load canonical rules
+
 **MANDATORY pre-load gate — do NOT write code (Phase 3) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/java.instructions.md` — Java 8 language boundary
@@ -17,6 +19,8 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
 - `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 (when writing tests)
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
 
 ## Phase 1 — Understand Context
 

@@ -1,5 +1,5 @@
 ---
-description: 'OWASP Top 10 security rules for Java web apps — CSRF, XSS, XXE / XML parsing, password hashing (bcrypt), session & cookie flags, OS command & SQL injection, SSRF, unsafe deserialization, security headers.'
+description: 'Load when writing or auditing Java/JSP web code (Spring 3.2 + Hibernate 4.2, no Spring Boot) — OWASP Top 10. Triggers on: CSRF/session/cookie flags, BCrypt hashing (no MD5/SHA-1), XXE, ProcessBuilder command injection, SSRF, ObjectInputStream deserialization. Defer SQL injection to sql.instructions.md, XSS to jsp.instructions.md.'
 applyTo: '**/*.java, **/*.jsp'
 ---
 
@@ -10,6 +10,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 ## A01 Broken Access Control
 
 - Deny by default; explicitly check rights per resource
+- Authentication ≠ authorization: a logged-in user still needs an explicit role/permission check per endpoint — "logged in" never means "allowed"
 - Allow-list for user-supplied URLs/paths; prevent path traversal
 - CSRF: all state-changing POST forms must carry a CSRF token; Spring Security 3.2: configure `<csrf>` in security namespace; without Spring Security: manual double-submit cookie or synchronizer token
 - State-changing operations via POST/PUT/DELETE only — never GET; restrict handlers with `@RequestMapping(method = ...)` (a mapping without `method` matches every verb and bypasses POST-form CSRF tokens)

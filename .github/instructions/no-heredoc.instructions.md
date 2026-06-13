@@ -1,5 +1,5 @@
 ---
-description: 'Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. Works around VS Code Copilot terminal corruption.'
+description: 'Load when an agent would write file content via the terminal — cat/echo/printf/tee with >, >>, or << EOF heredocs. Triggers on: any terminal step that creates, overwrites, or appends a file. Use Write/Edit instead; the ban is only on WRITING content, not rm/builds/git/tests.'
 applyTo: '**'
 ---
 

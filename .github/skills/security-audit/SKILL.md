@@ -7,12 +7,16 @@ description: 'Use when user needs an OWASP-focused security audit of Java web co
 
 OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.md`.
 
+## Phase 0 — Load canonical rules
+
 **Canonical rules — open the instruction files** (agent mode can read them directly):
 
 - `instructions/security.instructions.md` — OWASP Top 10 for Java web
 - `instructions/sql.instructions.md` — SQL injection, parameterization, JDBC resources
 - `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+
+Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
 
 ## Phase 1 — Map Attack Surface
 

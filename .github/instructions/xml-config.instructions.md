@@ -1,5 +1,5 @@
 ---
-description: 'XML conventions for Spring configuration, Hibernate hbm.xml, web.xml deployment descriptor, and Maven POM files.'
+description: 'Load when writing or reviewing stack XML — Spring applicationContext, hbm.xml, web.xml, or Maven pom.xml. Triggers on: <tx:advice> (not <tx:annotation-driven>), spring-beans-3.2.xsd (not 4.0), <hibernate-mapping>, DispatcherServlet, <dependencyManagement>, scope test/provided, source/target 1.8, no -SNAPSHOT/LATEST. No Spring Boot. Defer SQL/Java to their files.'
 applyTo: '**/*.xml'
 ---
 

@@ -87,7 +87,7 @@ Agent ──activates──→ Skill (embeds output template)
 
 ```yaml
 ---
-description: '<One-sentence summary — what rules this file covers and for what context.>'
+description: '<Selectability hint — when should the model pull THIS file for the task? Domain, then concrete triggers (task contexts, co-occurring symbols, version-lock negatives), then where to defer. One dense line; it ships into every VS Code request.>'
 applyTo: '<glob pattern>'
 ---
 ```
@@ -117,7 +117,7 @@ applyTo: '<glob pattern>'
 
 ### Rules
 
-1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading.
+1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob pattern (e.g., `**/*.java`). An invalid glob silently prevents the instruction from loading. The `description` is the model's **selectability hint** for on-demand semantic loading — VS Code passes every instruction's description into each request so the model can self-select which to load. Write it to signal *whether to load THIS file for THIS task*: lead with the domain, then concrete triggers (task contexts, co-occurring symbols, version-lock negatives), then where to defer to a sibling. Keep it one dense line — it ships into every VS Code request, so high signal-to-noise beats an exhaustive token list.
 2. **H1**: descriptive title. No filename suffix, no category prefix.
 3. **Opening paragraph**: scope statement + cross-references to related instruction files (if any). Use full relative paths from `.github/` (e.g., `instructions/security.instructions.md`), not bare names.
 4. **Body sections**: H2 for topic grouping. Use bullet lists for rules, tables for quick-reference lookups. **Exception**: files with ≤3 lines of content (e.g., `no-heredoc`) may omit H2 sections.
@@ -251,10 +251,16 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 ```markdown
 # <Skill Name> — Workflow
 
-<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> For code-touching skills, follow with the named canonical instruction file(s) the skill maps to (rule 4) — a bullet list of `instructions/...` references the agent opens on demand. Non-code-touching skills omit this block.
+<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> Non-code-touching skills omit the Phase 0 block below.
+
+## Phase 0 — Load canonical rules
+
+<MANDATORY pre-load gate (rule 4) — the leading step for code-touching skills: open the named instruction file(s) before any code-touching phase. The agent-body `## Coding Standards` bullets are a floor, not the full rules.>
 
 - `instructions/<name>.instructions.md` — <what this file covers>
 - `instructions/<name>.instructions.md` — <what this file covers>
+
+Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
 
 ## Phase 1 — <Verb Phrase>
 
@@ -289,8 +295,8 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required. The only optional field is `disable-model-invocation: true`, for manual-only skills that must never auto-trigger (e.g., `git-commit`). No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). No exceptions — even the reference+process hybrids (`refactor`, `git-commit`), which are exempt from Phase sections below, use this exact H1.
 3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `instructions/sql.instructions.md`). The instruction-reference block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
-4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`). It names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `sql-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
-5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) — where Phase N format would damage readability — may use topic-based H2 sections instead.
+4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`). It lives inside the leading `## Phase 0 — Load canonical rules` section (rule 5) and names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Phase 0 closes with a read-back receipt: the agent must NAME each file it opened and QUOTE the single most load-bearing applicable rule from each. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `sql-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
+5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Phase 0 exception**: a code-touching skill's mandatory pre-load gate (rule 4) is its leading workflow step, rendered as `## Phase 0 — Load canonical rules` (the only sanctioned `## Phase 0`) immediately before `## Phase 1`. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) — where Phase N format would damage readability — may use topic-based H2 sections instead, and render the pre-load gate as a bare leading `## Load canonical rules` H2.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix. When present, Handoffs is always the last body section (mirroring agent rule 4's Handoff Guidance placement).
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
@@ -484,7 +490,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 These require manual verification. Reviewers should check:
 
 - [ ] H1 follows category naming convention
-- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and its content still matches the canonical `instructions/` source of truth (the validator cross-checks byte-equality between agents, but never against `instructions/`)
+- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its canonical `instructions/` source of truth per the **Floor ↔ Instruction map** below — the validator cross-checks byte-equality between agents, but never against `instructions/`, so this human check is the only guard against floor↔source drift
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases, which may *name* canonical conventions as one-line check items but add no detail beyond the instruction file — full rule restatement with added detail remains a defect (see AGENTS.md "Two narrow duplications")
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
@@ -493,6 +499,19 @@ These require manual verification. Reviewers should check:
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
 - [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
+
+**Floor ↔ Instruction map** (supports the Coding Standards checklist item above) — each agent `## Coding Standards` bullet is a condensed paraphrase of a canonical rule, not a verbatim copy, so the validator cannot byte-check it against `instructions/`; this pairing is human-verified. When you change a floor bullet or its source, re-check the pair:
+
+| Agent `## Coding Standards` bullet | Canonical `instructions/` source |
+|---|---|
+| `**Java 8**` | `instructions/java.instructions.md` |
+| `**Spring 3.2**` | `instructions/spring-hibernate.instructions.md` (Spring 3.2 Boundary) |
+| `**Hibernate 4.2**` | `instructions/spring-hibernate.instructions.md` (Hibernate) |
+| `**SQL**` | `instructions/sql.instructions.md` (JDBC `?` + HQL `:paramName`) |
+| `**Security**` | `instructions/jsp.instructions.md` (`<c:out>` encoding) + `instructions/security.instructions.md` (A07 cookie flags) |
+| `**Access Control (A01)**` | `instructions/security.instructions.md` (A01) |
+| `**Deserialization (A08)**` | `instructions/security.instructions.md` (A08) |
+| `**SSRF (A10)**` | `instructions/security.instructions.md` (A10) |
 
 ---
 
