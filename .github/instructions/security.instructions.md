@@ -10,6 +10,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 ## A01 Broken Access Control
 
 - Deny by default; explicitly check rights per resource
+- Authentication ≠ authorization: a logged-in user still needs an explicit role/permission check per endpoint — "logged in" never means "allowed"
 - Allow-list for user-supplied URLs/paths; prevent path traversal
 - CSRF: all state-changing POST forms must carry a CSRF token; Spring Security 3.2: configure `<csrf>` in security namespace; without Spring Security: manual double-submit cookie or synchronizer token
 - State-changing operations via POST/PUT/DELETE only — never GET; restrict handlers with `@RequestMapping(method = ...)` (a mapping without `method` matches every verb and bypasses POST-form CSRF tokens)

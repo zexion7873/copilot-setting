@@ -490,7 +490,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 These require manual verification. Reviewers should check:
 
 - [ ] H1 follows category naming convention
-- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and its content still matches the canonical `instructions/` source of truth (the validator cross-checks byte-equality between agents, but never against `instructions/`)
+- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its canonical `instructions/` source of truth per the **Floor ↔ Instruction map** below — the validator cross-checks byte-equality between agents, but never against `instructions/`, so this human check is the only guard against floor↔source drift
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases, which may *name* canonical conventions as one-line check items but add no detail beyond the instruction file — full rule restatement with added detail remains a defect (see AGENTS.md "Two narrow duplications")
 - [ ] Handoff sections are bidirectional (if A → B, then B ← A)
@@ -499,6 +499,19 @@ These require manual verification. Reviewers should check:
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
 - [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
+
+**Floor ↔ Instruction map** (supports the Coding Standards checklist item above) — each agent `## Coding Standards` bullet is a condensed paraphrase of a canonical rule, not a verbatim copy, so the validator cannot byte-check it against `instructions/`; this pairing is human-verified. When you change a floor bullet or its source, re-check the pair:
+
+| Agent `## Coding Standards` bullet | Canonical `instructions/` source |
+|---|---|
+| `**Java 8**` | `instructions/java.instructions.md` |
+| `**Spring 3.2**` | `instructions/spring-hibernate.instructions.md` (Spring 3.2 Boundary) |
+| `**Hibernate 4.2**` | `instructions/spring-hibernate.instructions.md` (Hibernate) |
+| `**SQL**` | `instructions/sql.instructions.md` (JDBC `?` + HQL `:paramName`) |
+| `**Security**` | `instructions/jsp.instructions.md` (`<c:out>` encoding) + `instructions/security.instructions.md` (A07 cookie flags) |
+| `**Access Control (A01)**` | `instructions/security.instructions.md` (A01) |
+| `**Deserialization (A08)**` | `instructions/security.instructions.md` (A08) |
+| `**SSRF (A10)**` | `instructions/security.instructions.md` (A10) |
 
 ---
 
