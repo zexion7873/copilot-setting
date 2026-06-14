@@ -94,6 +94,54 @@ allow_cmd 'rm file.txt'
 allow_cmd 'rm -f single.txt'
 allow_cmd 'rm my-red -f x'
 allow_cmd 'rm -r src/old'
+# System directories and home roots — glued -rf must not escape on an
+# absolute system path the way a split-flag rm already cannot.
+deny_cmd 'rm -rf /etc'
+deny_cmd 'rm -rf /usr'
+deny_cmd 'rm -rf /usr/local/lib'
+deny_cmd 'rm -rf /var/lib/mysql'
+deny_cmd 'rm -rf /bin'
+deny_cmd 'rm -rf /System/Library'
+deny_cmd 'rm -rf /Library/Caches'
+deny_cmd 'rm -rf /home'
+deny_cmd 'rm -rf /home/user'
+deny_cmd 'rm -rf /Users/dev'
+deny_cmd 'rm -rf /etc /usr'
+deny_cmd 'rm /etc -rf'
+deny_cmd 'rm -rf -- /etc'
+# Trailing slash is the canonical "$HOME/" shape — must deny too.
+deny_cmd 'rm -rf /Users/dev/'
+deny_cmd 'rm -rf /home/user/'
+deny_cmd 'rm -rf /Users/'
+deny_cmd 'rm -rf /home/'
+# macOS firmlink routes to /etc and /var.
+deny_cmd 'rm -rf /private/etc'
+deny_cmd 'rm -rf /private/var/lib'
+# Doubled slashes collapse to the same path on the OS — must not shift a
+# dangerous target off the single-slash anchor.
+deny_cmd 'rm -rf //'
+deny_cmd 'rm -rf //etc'
+deny_cmd 'rm -rf //usr'
+deny_cmd 'rm -rf //Users/name/'
+deny_cmd 'rm -rf /home//user'
+deny_cmd 'rm -rf /etc//'
+# Root-equivalent dot/wildcard forms — /. is the same inode as /, /* expands
+# to every top-level entry; both are the classic empty-variable foot-gun
+# (rm -rf "$X/." or rm -rf $X/* with X unset).
+deny_cmd 'rm -rf /.'
+deny_cmd 'rm -rf /./'
+deny_cmd 'rm -rf /..'
+deny_cmd 'rm -rf /*'
+deny_cmd 'rm -rf /*/'
+deny_cmd 'rm -rf ~/*'
+# ...but a wildcard scoped to a safe subdirectory stays allowed.
+allow_cmd 'rm -rf /tmp/*'
+allow_cmd 'rm -rf build/*'
+# ...but a deep project path under a home dir stays allowed (routine cleanup),
+# trailing slash and all.
+allow_cmd 'rm -rf /home/user/project/target'
+allow_cmd 'rm -rf /Users/dev/repo/build'
+allow_cmd 'rm -rf /Users/dev/repo/build/'
 # Glued command separator must not let an exact-target rm escape the net.
 deny_cmd 'rm -rf /;true'
 deny_cmd 'rm -rf *;ls'
