@@ -17,7 +17,7 @@ Systematic isolation and minimal fix.
 - `instructions/security.instructions.md` — OWASP Top 10 (a bug fix can regress a security control — XSS, IDOR, injection)
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Define the Problem
 

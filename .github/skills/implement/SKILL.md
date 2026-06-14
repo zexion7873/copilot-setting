@@ -20,7 +20,7 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects
 - `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 (when writing tests)
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Understand Context
 

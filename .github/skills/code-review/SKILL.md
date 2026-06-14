@@ -9,7 +9,7 @@ Structured code review.
 
 ## Phase 0 — Load canonical rules
 
-**Canonical rules — open the instruction files for the layers you touch** (agent mode can read them directly):
+**MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the instruction files for the layers under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
@@ -20,7 +20,7 @@ Structured code review.
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 - `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
 
-Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Understand the Change
 

@@ -260,7 +260,7 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 - `instructions/<name>.instructions.md` — <what this file covers>
 - `instructions/<name>.instructions.md` — <what this file covers>
 
-Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — <Verb Phrase>
 
@@ -476,8 +476,8 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 - No `tools` field in skill frontmatter
 - Prompt frontmatter has `agent` + `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
-- Agent `description` is a single-line scalar (no YAML block scalars `|`/`>` — the validator does not parse them)
-- Skill `description` and prompt `description`/`agent` values are single-line scalars (same rule)
+- Agent and prompt `description` (and prompt `agent`) reject YAML block scalars `|`/`>` — the validator does not parse them
+- Skill `description` additionally rejects multi-line plain/quoted scalars (not just block scalars), since a multi-line value would slip past the 1024-char cap
 - Agent `handoffs[].agent` values reference existing agent names
 - Agent declaring `agents:` in frontmatter includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
