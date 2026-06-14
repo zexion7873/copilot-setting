@@ -9,14 +9,14 @@ OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.
 
 ## Phase 0 — Load canonical rules
 
-**Canonical rules — open the instruction files** (agent mode can read them directly):
+**MANDATORY pre-load gate — do NOT report findings (Phase 4) until you have opened the instruction files for the code under audit.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/security.instructions.md` — OWASP Top 10 for Java web
 - `instructions/sql.instructions.md` — SQL injection, parameterization, JDBC resources
 - `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Map Attack Surface
 
@@ -99,5 +99,4 @@ Close with a one-line summary (mirrors `sql-review` — no free-form prose concl
 
 - → `@implementer` — to fix security findings
 - ← `@reviewer` — when security mode is activated
-- ← `code-review` skill — when code review finds security concerns
-- ← `code-review` skill — if POM CVE finding needs runtime exploit verification
+- ← `code-review` skill — when code review finds security concerns, or a POM CVE finding needs runtime exploit verification
