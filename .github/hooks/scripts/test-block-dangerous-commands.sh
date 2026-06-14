@@ -142,6 +142,28 @@ allow_cmd 'rm -rf build/*'
 allow_cmd 'rm -rf /home/user/project/target'
 allow_cmd 'rm -rf /Users/dev/repo/build'
 allow_cmd 'rm -rf /Users/dev/repo/build/'
+# Scratch dirs live under guarded system roots (/var, /private, /run) but are
+# routine cleanup targets — the carve-out allows a single simple rm of them.
+allow_cmd 'rm -rf /var/folders/ab/cd1234/T/scratch'   # macOS $TMPDIR
+allow_cmd 'rm -rf /var/tmp/build'
+allow_cmd 'rm -rf /private/tmp/scratch'
+allow_cmd 'rm -rf /private/var/folders/ab/cd/T/x'     # firmlink route to $TMPDIR
+allow_cmd 'rm -rf /run/user/1000/myapp'
+allow_cmd 'rm /var/tmp/build -rf'                      # flags after the target
+# ...but the carve-out is anchored end to end: a second operand or a chained
+# command cannot ride along — the real system target is still blocked.
+deny_cmd 'rm -rf /var/tmp/x /etc'
+deny_cmd 'rm -rf /var/tmp/x ; rm -rf /etc'
+deny_cmd 'rm -rf /var/tmp/x && rm -rf /usr'
+# ...and a scratch root with no subpath, or a non-scratch /var path, is not
+# carved out.
+deny_cmd 'rm -rf /var/tmp'
+deny_cmd 'rm -rf /var/lib/postgres'
+# Long flags stay unconditionally blocked even on a scratch path — the
+# carve-out only relaxes the short-flag form (deliberate: --force/--recursive
+# read as intentional, not an accidental cleanup).
+deny_cmd 'rm --recursive /var/tmp/x'
+deny_cmd 'rm -rf --no-preserve-root /var/tmp/x'
 # Glued command separator must not let an exact-target rm escape the net.
 deny_cmd 'rm -rf /;true'
 deny_cmd 'rm -rf *;ls'
