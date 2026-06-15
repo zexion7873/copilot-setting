@@ -27,7 +27,16 @@ From the feature/code under test, extract:
 | Concurrency | Shared state, race conditions | If multi-threaded |
 | Performance | Response time, throughput under load | If SLA exists |
 
-## Phase 3 — Write Test Case Document
+## Phase 3 — Coverage Audit
+
+Audit the test cases identified in Phases 1–2 before writing them up:
+
+- [ ] Every requirement from the feature maps to ≥1 test case
+- [ ] Every public method has at least one happy path + one error case
+- [ ] Boundary values covered for all numeric/string inputs
+- [ ] SQL operations tested for injection and empty result sets
+
+## Phase 4 — Write Test Case Document
 
 Write to `docs/test-design/[component]-tests-v[N].md` (create the directory if absent), beside the plan it derives from. Wrap the cases in a fixed skeleton so `@implementer` has a stable structure to read:
 
@@ -54,15 +63,8 @@ Priority: <High | Medium | Low>
 
 ## Coverage Audit
 
-<Phase 4 checklist results>
+<Phase 3 coverage audit results>
 ```
-
-## Phase 4 — Coverage Audit
-
-- [ ] Every requirement from the feature maps to ≥1 test case
-- [ ] Every public method has at least one happy path + one error case
-- [ ] Boundary values covered for all numeric/string inputs
-- [ ] SQL operations tested for injection and empty result sets
 
 ## Handoffs
 

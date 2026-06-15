@@ -10,7 +10,7 @@ This project is Java 8. AI models default to modern Java — correct that here.
 ## Language Boundary (Java 9+ Forbidden)
 
 - `var`, records, sealed classes, text blocks, pattern matching
-- `List.of()`, `Map.of()`, `Set.of()` — use `Arrays.asList()`, `Collections.unmodifiableMap()`
+- `List.of()`, `Map.of()`, `Set.of()` — use `Arrays.asList()` / `Collections.unmodifiableMap()` (note: `Arrays.asList` is fixed-size but element-mutable and allows nulls, unlike `List.of` — wrap in `Collections.unmodifiableList` when true immutability matters)
 - `String.isBlank()`, `String.strip()` — use `StringUtils` or `.trim().isEmpty()`
 - `Optional.ifPresentOrElse()`, `Optional.stream()`
 - Module system (`module-info.java`)

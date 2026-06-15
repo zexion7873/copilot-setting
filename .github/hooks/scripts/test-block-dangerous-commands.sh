@@ -94,6 +94,101 @@ allow_cmd 'rm file.txt'
 allow_cmd 'rm -f single.txt'
 allow_cmd 'rm my-red -f x'
 allow_cmd 'rm -r src/old'
+# System directories and home roots — glued -rf must not escape on an
+# absolute system path the way a split-flag rm already cannot.
+deny_cmd 'rm -rf /etc'
+deny_cmd 'rm -rf /usr'
+deny_cmd 'rm -rf /usr/local/lib'
+deny_cmd 'rm -rf /var/lib/mysql'
+deny_cmd 'rm -rf /bin'
+deny_cmd 'rm -rf /System/Library'
+deny_cmd 'rm -rf /Library/Caches'
+deny_cmd 'rm -rf /home'
+deny_cmd 'rm -rf /home/user'
+deny_cmd 'rm -rf /Users/dev'
+deny_cmd 'rm -rf /etc /usr'
+deny_cmd 'rm /etc -rf'
+deny_cmd 'rm -rf -- /etc'
+# Trailing slash is the canonical "$HOME/" shape — must deny too.
+deny_cmd 'rm -rf /Users/dev/'
+deny_cmd 'rm -rf /home/user/'
+deny_cmd 'rm -rf /Users/'
+deny_cmd 'rm -rf /home/'
+# macOS firmlink routes to /etc and /var.
+deny_cmd 'rm -rf /private/etc'
+deny_cmd 'rm -rf /private/var/lib'
+# Doubled slashes collapse to the same path on the OS — must not shift a
+# dangerous target off the single-slash anchor.
+deny_cmd 'rm -rf //'
+deny_cmd 'rm -rf //etc'
+deny_cmd 'rm -rf //usr'
+deny_cmd 'rm -rf //Users/name/'
+deny_cmd 'rm -rf /home//user'
+deny_cmd 'rm -rf /etc//'
+# Root-equivalent dot/wildcard forms — /. is the same inode as /, /* expands
+# to every top-level entry; both are the classic empty-variable foot-gun
+# (rm -rf "$X/." or rm -rf $X/* with X unset).
+deny_cmd 'rm -rf /.'
+deny_cmd 'rm -rf /./'
+deny_cmd 'rm -rf /..'
+deny_cmd 'rm -rf /*'
+deny_cmd 'rm -rf /*/'
+deny_cmd 'rm -rf ~/*'
+# ...but a wildcard scoped to a safe subdirectory stays allowed.
+allow_cmd 'rm -rf /tmp/*'
+allow_cmd 'rm -rf build/*'
+# ...but a deep project path under a home dir stays allowed (routine cleanup),
+# trailing slash and all.
+allow_cmd 'rm -rf /home/user/project/target'
+allow_cmd 'rm -rf /Users/dev/repo/build'
+allow_cmd 'rm -rf /Users/dev/repo/build/'
+# Scratch dirs live under guarded system roots (/var, /private, /run) but are
+# routine cleanup targets — the carve-out allows a single simple rm of them.
+allow_cmd 'rm -rf /var/folders/ab/cd1234/T/scratch'   # macOS $TMPDIR
+allow_cmd 'rm -rf /var/tmp/build'
+allow_cmd 'rm -rf /private/tmp/scratch'
+allow_cmd 'rm -rf /private/var/folders/ab/cd/T/x'     # firmlink route to $TMPDIR
+allow_cmd 'rm -rf /run/user/1000/myapp'
+allow_cmd 'rm /var/tmp/build -rf'                      # flags after the target
+allow_cmd 'rm -rf -- /var/tmp/x'                       # POSIX end-of-options marker
+# ...but "--" must not become a smuggling channel: a real target after it, a
+# second operand, or a traversal is still blocked.
+deny_cmd 'rm -rf -- /etc'
+deny_cmd 'rm -rf -- /var/tmp/x /etc'
+deny_cmd 'rm -rf -- /var/tmp/../etc'
+# ...but the carve-out is anchored end to end: a second operand or a chained
+# command cannot ride along — the real system target is still blocked.
+deny_cmd 'rm -rf /var/tmp/x /etc'
+deny_cmd 'rm -rf /var/tmp/x ; rm -rf /etc'
+deny_cmd 'rm -rf /var/tmp/x && rm -rf /usr'
+# ...and a scratch root with no subpath, or a non-scratch /var path, is not
+# carved out.
+deny_cmd 'rm -rf /var/tmp'
+deny_cmd 'rm -rf /var/lib/postgres'
+# Long flags stay unconditionally blocked even on a scratch path — the
+# carve-out only relaxes the short-flag form (deliberate: --force/--recursive
+# read as intentional, not an accidental cleanup).
+deny_cmd 'rm --recursive /var/tmp/x'
+deny_cmd 'rm -rf --no-preserve-root /var/tmp/x'
+# A '..' segment can climb out of a scratch root back onto a system dir —
+# tr -s '/' collapses // but never resolves '..', so the carve-out must NOT
+# fire on a traversal.  /tmp/.. IS / ; /tmp/../etc IS /etc.
+deny_cmd 'rm -rf /tmp/../etc'
+deny_cmd 'rm -rf /tmp/..'
+deny_cmd 'rm -rf /var/tmp/../../etc'
+deny_cmd 'rm -rf /var/folders/ab/cd/T/../../../../etc'
+deny_cmd 'rm -rf /private/tmp/../../etc'
+deny_cmd 'rm -rf /run/user/0/../../../etc'
+# A home-rooted '..' climb the per-target anchors miss, and the target-first
+# flag order, must both be caught by the absolute-'..' target rule.
+deny_cmd 'rm -rf /Users/x/../../etc'
+deny_cmd 'rm /tmp/.. -rf'
+# ...but a single-dot (hidden) name is not a traversal — carve-out still allows.
+allow_cmd 'rm -rf /var/folders/ab/cd1234/T/.cache'
+# ...and a RELATIVE '..' cleanup (no leading /) is a routine action, not a
+# system-dir climb — must stay allowed.
+allow_cmd 'rm -rf ../build'
+allow_cmd 'rm -rf ../../sibling/dist'
 # Glued command separator must not let an exact-target rm escape the net.
 deny_cmd 'rm -rf /;true'
 deny_cmd 'rm -rf *;ls'

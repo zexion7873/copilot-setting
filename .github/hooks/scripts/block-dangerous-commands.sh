@@ -79,8 +79,11 @@ fi
 # ── Normalize input ─────────────────────────────────────────────────
 # Collapse all consecutive whitespace to a single space so that
 # split-flag tricks (rm -r -f), multi-space evasion, and tab
-# insertion are neutralised before pattern matching.
-NORM=$(tr -s '[:space:]' ' ' <<<"$TOOL_INPUT")
+# insertion are neutralised before pattern matching.  Also squeeze runs
+# of '/' to a single slash: the OS treats // as /, so doubled-slash forms
+# (rm -rf //, //etc, /home//user) point at the same target but would
+# otherwise shift it off the single-slash anchor the patterns match on.
+NORM=$(tr -s '[:space:]' ' ' <<<"$TOOL_INPUT" | tr -s '/')
 
 # check <category> <pattern> — deny on match, AND deny on grep error
 # (rc >= 2): a broken pattern must fail closed, not fall through to allow.
@@ -101,25 +104,72 @@ check() {
 # Building blocks: matching never crosses a command separator (| ; &),
 # so one command's flags cannot satisfy another command's pattern.
 Q='["'"'"']?'                       # optional opening/closing quote
-RM_TGT='(/|~/?|\.\.?/?|\./\*|\*)'   # exact dangerous targets: / ~ ~/ . .. ./ ../ ./* *
+RM_TGT='(/(\.\.?)?/?|/\*/?|~/?|~/\*|\.\.?/?|\./\*|\*)'   # root/home-equivalent: / /. /./ /.. /../ /* /*/ ~ ~/ ~/* . .. ./ ../ ./* *
+# System directories where recursive-force deletion is never a legitimate
+# agent action — matched at any depth (/etc, /usr/lib, /var/lib/mysql).
+RM_SYSDIR='/(etc|usr|s?bin|lib(32|64|x32)?|var|boot|dev|proc|sys|opt|srv|run|root|private|System|Library|Applications)(/[^ |;&]*)?'
+# Home roots — block the bare root or a whole top-level home directory, with
+# or without a trailing slash (/home, /home/user/, /Users, /Users/name/) but
+# allow deeper project paths (/Users/name/repo/target) so routine cleanups
+# still work.  The trailing /? matches the canonical "$HOME/" shape, which a
+# slash-forbidding segment class would otherwise let escape the end anchor.
+RM_HOME='(/home|/Users)(/[^/ |;&]+)?/?'
+# Absolute path with a '..' segment.  tr -s '/' collapses // but never
+# resolves '..', so an absolute path can climb a scratch/whitelisted root back
+# onto a system dir the per-target anchors miss (/tmp/.. IS /, /tmp/../etc IS
+# /etc, /Users/x/../../etc IS /etc).  Requires a leading '/', so a routine
+# RELATIVE cleanup (../build, ../../dist) is exempt; '..' must be a whole path
+# segment, so a filename like my..file is not matched.
+RM_DOTDOT='/([^ |;&]*/)?\.\.(/[^ |;&]*)?'
 RM_COMBO='-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*'
 # A dangerous token is "ended" by whitespace, end-of-string, OR a command
 # separator glued directly to it — a bare ( |$) anchor misses the glued
 # case (rm -rf /;true, git push -f&&echo) and would false-allow.
 END='( |$|[|;&])'
 
+# Scratch-dir carve-out — MUST precede the rm block below.
+#   RM_SYSDIR blocks recursive deletes under /var, /private, /run at ANY
+#   depth: right for /var/lib/mysql, wrong for the platform scratch dirs
+#   that also live there — macOS $TMPDIR (/var/folders/…, and its /private
+#   firmlink route), /var/tmp, /private/tmp, and the Linux XDG runtime dir
+#   (/run/user/<uid>/…).  Routine agent cleanups hit these every run.
+#   Carve them back out, but ONLY when the whole command is a single simple
+#   rm of the shape "rm <flags> [--] <one scratch path> <flags>", anchored end
+#   to end.  A command separator or a second operand (rm -rf /var/tmp/x /etc)
+#   breaks the anchor, so the command falls through to the block below and
+#   the real target is still caught.  Requires a subpath (…/<x>): deleting a
+#   scratch root itself (rm -rf /var/tmp) is not a routine cleanup, so it
+#   stays blocked.  Only SHORT flags (-rf) qualify, plus an optional bare "--"
+#   end-of-options marker (rm -rf -- /var/tmp/x); the long forms (--recursive
+#   / --force / --no-preserve-root) are unconditionally blocked below
+#   regardless of target, and the carve-out must not undo that.
+SCRATCH='/(private/)?(var/(tmp|folders)|tmp)/[^ |;&]+|/run/user/[0-9]+/[^ |;&]+'
+# Path-traversal guard: tr -s '/' collapses // but never resolves '..', so a
+# scratch-prefixed traversal (/tmp/../etc, or /tmp/.. which IS /) would
+# otherwise hit this early exit 0 before RM_SYSDIR runs, re-allowing exactly
+# the system-dir deletes the rm block exists to stop.  If any '..' segment is
+# present, skip the carve-out and let the rm block below decide — failing
+# toward blocking, never carving a path that can climb out of the scratch root.
+# (A single-dot name like /var/folders/…/T/.cache has no '..' and still carves.)
+if ! grep -qE '(^|/)\.\.(/|$| |[|;&])' <<<"$NORM" \
+   && grep -qiE '^ *rm( +-[a-z]+)*( +--)? +'"$Q"'('"$SCRATCH"')'"$Q"'( +-[a-z]+)* *$' <<<"$NORM"; then
+  exit 0
+fi
+
 # rm — recursive forced deletion
 #   Combined glued flags (-rf, -fr, -rfi, …) with a dangerous target in
-#     either order (rm -rf /, rm "$DIR" -rf).  Targets are exact tokens
-#     (optionally quoted) or any $-prefixed variable — subpaths like
-#     /tmp/x, .cache, ./build are NOT matched.
+#     either order (rm -rf /, rm "$DIR" -rf).  Dangerous targets are exact
+#     tokens (optionally quoted), any $-prefixed variable, an OS system
+#     directory (RM_SYSDIR), a bare home root (RM_HOME), or an absolute path
+#     with a '..' segment (RM_DOTDOT) — subpaths like /tmp/x, .cache, ./build,
+#     /Users/me/repo/build and relative ../build are NOT matched.
 #   Split flags: a recursive token and a force token in either order in
 #     the same simple command, tolerating intervening flags AND operands
 #     (rm -r build -f) — blocked unconditionally (any target).
 #   Long flags: --recursive / --force anywhere in the rm command,
 #     including mixed short+long (rm -r --force) — blocked unconditionally.
-RM_RULES='(^|[^a-z])rm( [^|;&]*)? ('"$RM_COMBO"')( [^|;&]*)? '"$Q"'(\$|'"$RM_TGT$Q$END"')'
-RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? '"$Q"'(\$[^ ]*|'"$RM_TGT$Q"') [^|;&]*('"$RM_COMBO"')'"$END"
+RM_RULES='(^|[^a-z])rm( [^|;&]*)? ('"$RM_COMBO"')( [^|;&]*)? '"$Q"'(\$|('"$RM_TGT"'|'"$RM_SYSDIR"'|'"$RM_HOME"'|'"$RM_DOTDOT"')'"$Q$END"')'
+RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? '"$Q"'(\$[^ ]*|('"$RM_TGT"'|'"$RM_SYSDIR"'|'"$RM_HOME"'|'"$RM_DOTDOT"')'"$Q"') [^|;&]*('"$RM_COMBO"')'"$END"
 RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? -[a-z]*r[a-z]*( [^|;&]*)? -[a-z]*f[a-z]*'"$END"
 RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? -[a-z]*f[a-z]*( [^|;&]*)? -[a-z]*r[a-z]*'"$END"
 RM_RULES="$RM_RULES"'|(^|[^a-z])rm( [^|;&]*)? --(recursive|force)'"$END"

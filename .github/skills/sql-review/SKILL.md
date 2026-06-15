@@ -9,14 +9,14 @@ SQL-focused review covering both queries and schema migrations. Rules: `instruct
 
 ## Phase 0 — Load canonical rules
 
-**Canonical rules — open the instruction files** (agent mode can read them directly):
+**MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL DDL & migration safety
 - `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
 - `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
 - `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
-Read-back receipt (required): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement proves you did not open it.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Collect and Classify
 
