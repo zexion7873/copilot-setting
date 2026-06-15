@@ -150,6 +150,12 @@ allow_cmd 'rm -rf /private/tmp/scratch'
 allow_cmd 'rm -rf /private/var/folders/ab/cd/T/x'     # firmlink route to $TMPDIR
 allow_cmd 'rm -rf /run/user/1000/myapp'
 allow_cmd 'rm /var/tmp/build -rf'                      # flags after the target
+allow_cmd 'rm -rf -- /var/tmp/x'                       # POSIX end-of-options marker
+# ...but "--" must not become a smuggling channel: a real target after it, a
+# second operand, or a traversal is still blocked.
+deny_cmd 'rm -rf -- /etc'
+deny_cmd 'rm -rf -- /var/tmp/x /etc'
+deny_cmd 'rm -rf -- /var/tmp/../etc'
 # ...but the carve-out is anchored end to end: a second operand or a chained
 # command cannot ride along — the real system target is still blocked.
 deny_cmd 'rm -rf /var/tmp/x /etc'
@@ -164,6 +170,25 @@ deny_cmd 'rm -rf /var/lib/postgres'
 # read as intentional, not an accidental cleanup).
 deny_cmd 'rm --recursive /var/tmp/x'
 deny_cmd 'rm -rf --no-preserve-root /var/tmp/x'
+# A '..' segment can climb out of a scratch root back onto a system dir —
+# tr -s '/' collapses // but never resolves '..', so the carve-out must NOT
+# fire on a traversal.  /tmp/.. IS / ; /tmp/../etc IS /etc.
+deny_cmd 'rm -rf /tmp/../etc'
+deny_cmd 'rm -rf /tmp/..'
+deny_cmd 'rm -rf /var/tmp/../../etc'
+deny_cmd 'rm -rf /var/folders/ab/cd/T/../../../../etc'
+deny_cmd 'rm -rf /private/tmp/../../etc'
+deny_cmd 'rm -rf /run/user/0/../../../etc'
+# A home-rooted '..' climb the per-target anchors miss, and the target-first
+# flag order, must both be caught by the absolute-'..' target rule.
+deny_cmd 'rm -rf /Users/x/../../etc'
+deny_cmd 'rm /tmp/.. -rf'
+# ...but a single-dot (hidden) name is not a traversal — carve-out still allows.
+allow_cmd 'rm -rf /var/folders/ab/cd1234/T/.cache'
+# ...and a RELATIVE '..' cleanup (no leading /) is a routine action, not a
+# system-dir climb — must stay allowed.
+allow_cmd 'rm -rf ../build'
+allow_cmd 'rm -rf ../../sibling/dist'
 # Glued command separator must not let an exact-target rm escape the net.
 deny_cmd 'rm -rf /;true'
 deny_cmd 'rm -rf *;ls'
