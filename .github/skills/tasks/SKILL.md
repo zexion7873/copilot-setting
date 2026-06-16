@@ -9,9 +9,9 @@ Atomic task decomposition from an approved plan.
 
 ## Phase 1 — Parse Source
 
-Locate the approved plan in `docs/plans/` (the `plan` skill writes there). If the user named a plan, read that file. If exactly one plan exists, use it. If none exists or the source is ambiguous, **stop and ask** — do not invent a task list from scratch; redirect to the `plan` skill when no plan exists yet.
+Locate the approved plan at `docs/plans/<feature>/plan.md` (the `plan` skill writes there, one folder per feature/change). If the user named a feature, read that folder's `plan.md`. If exactly one plan folder exists, use it. If none exists or the source is ambiguous, **stop and ask** — do not invent a task list from scratch; redirect to the `plan` skill when no plan exists yet.
 
-From the plan, extract: phases/goals, file list, dependencies, constraints. Record the plan's path in the `source:` field of the output.
+From the plan, extract: phases/goals, file list, dependencies, constraints, and Acceptance Criteria (`AC-NNN`). Record the plan's path in the `source:` field of the output.
 
 ## Phase 2 — Decompose
 
@@ -31,16 +31,17 @@ Break each phase into atomic tasks. Each task must be:
 
 - [ ] Every task maps to ≥1 requirement
 - [ ] Every requirement maps to ≥1 task
+- [ ] Every plan Acceptance Criterion (`AC-NNN`) is covered by ≥1 task
 - [ ] No circular dependencies
 - [ ] Size estimates on every task
 
 ## Output Template
 
-Write the task breakdown to `docs/plans/<plan-basename>.tasks.md` beside the source plan, so the `source:` frontmatter link resolves as a relative sibling path.
+Write the task breakdown to `task.md` in the same feature folder as the source plan (`docs/plans/<feature>/task.md`), so the `source:` link resolves to the sibling `./plan.md`.
 
 ```md
 ---
-source: <Path to plan>
+source: ./plan.md
 date: <YYYY-MM-DD>
 ---
 
@@ -67,10 +68,13 @@ T001 → T003 ──┘
 
 ## Coverage Matrix
 
-| Requirement | Tasks |
+Map every plan requirement AND Acceptance Criterion to the tasks that satisfy it.
+
+| Plan item | Tasks |
 |---|---|
 | REQ-001 | T001, T002 |
-| REQ-002 | T003 |
+| AC-001 | T001, T002 |
+| AC-002 | T003 |
 ```
 
 ## Handoffs
