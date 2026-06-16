@@ -46,6 +46,7 @@ Fill the template below (Small scope: sections 1–3 only; Medium+: full templat
 - Approach: phased, each phase has a measurable goal
 - Files: real paths from the codebase scan
 - Risks: with specific mitigation, not generic "might be hard"
+- Acceptance Criteria: verifiable `AC-NNN` outcomes — always fill (even Small scope); each must be testable, not aspirational
 
 ## Phase 5 — Validate
 
@@ -54,6 +55,7 @@ Fill the template below (Small scope: sections 1–3 only; Medium+: full templat
 - [ ] No `TBD` or placeholders left
 - [ ] Medium+ scope: Alternatives section has at least one rejected option with reason
 - [ ] Refactor / structural plans: affected callers inventoried (verified via `find-impact`, not a single summary; Small plans record the inventory in the approach notes)
+- [ ] Acceptance Criteria present and every `AC-NNN` is verifiable — a testable outcome, no aspirational wording ("fast", "user-friendly")
 
 ## Phase 6 — Red-Team the Plan
 
@@ -68,7 +70,7 @@ Fold material findings back into sections 4–5 and record the residual assumpti
 
 ## Output Template
 
-Write the plan to `docs/plans/[purpose]-[component]-v[N].md` (create `docs/plans/` if absent). The `tasks` skill reads from this directory — keep the path stable so its `source:` link resolves.
+Write the plan to `docs/plans/<feature>/plan.md` — one folder per feature/change (create the folder if absent). The `tasks` skill writes `task.md` beside it in the same folder; keep this layout stable so the `source:` link resolves. Versioning is git history, not a `-vN` suffix.
 
 ```md
 ---
@@ -85,6 +87,13 @@ status: 'Planned'
 - REQ-001: <functional requirement>
 - CON-001: <constraint — e.g., Java 8, no Spring Boot>
 - PAT-001: <existing pattern to follow>
+
+### Acceptance Criteria
+
+Verifiable done conditions for the whole change — each must be testable, not aspirational ("fast" → "responds within 2s for 1000 rows"). Always fill, even for Small scope.
+
+- [ ] AC-001: <observable, testable outcome>
+- [ ] AC-002: <observable, testable outcome>
 
 ## 2. Implementation Approach
 
@@ -126,4 +135,3 @@ status: 'Planned'
 
 - → `tasks` skill — to break plan into atomic task list
 - → `implement` skill — when clarification resolves the task to a small, fully understood change that needs no plan
-- ← `@planner` — default activation

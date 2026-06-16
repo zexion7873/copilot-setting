@@ -98,5 +98,3 @@ Close with a one-line summary (mirrors `sql-review` — no free-form prose concl
 ## Handoffs
 
 - → `@implementer` — to fix security findings
-- ← `@reviewer` — when security mode is activated
-- ← `code-review` skill — when code review finds security concerns, or a POM CVE finding needs runtime exploit verification

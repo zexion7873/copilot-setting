@@ -57,7 +57,3 @@ Before writing new code, find and follow existing patterns:
 - → `@reviewer` — for code review after implementation
 - → `debug` skill — if implementation reveals a bug
 - → `refactor` skill — if existing code needs restructuring first
-- ← `plan` skill — when clarification (Phase 1) resolves the task to a small, fully understood change
-- ← `refactor` skill — if refactoring reveals need for new code
-- ← `@implementer` — default activation
-- ← `tasks` skill — executing a task list

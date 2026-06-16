@@ -176,7 +176,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
 | 📦 | `git-commit` | **Manual only** | [Conventional Commits](https://www.conventionalcommits.org/) message generation and intelligent staging |
 | 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
-| 📐 | `plan` | Auto + Manual | Implementation plan — clarifies vague requirements first, then phases, requirements, files, risks (hands off atomic tasks to `tasks` skill) |
+| 📐 | `plan` | Auto + Manual | Implementation plan — clarifies vague requirements first, then phases, requirements, acceptance criteria, files, risks (hands off atomic tasks to `tasks` skill) |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
 | 🔎 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns, DDL/DML migration safety |

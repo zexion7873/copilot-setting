@@ -123,5 +123,3 @@ Canonical DDL / migration anti-patterns live in `instructions/sql.instructions.m
 ## Handoffs
 
 - → `@implementer` — to fix SQL or migration findings
-- ← `@reviewer` — SQL or migration review mode activated
-- ← `code-review` skill — code review finds SQL issues or DAO-side mismatch with a schema change

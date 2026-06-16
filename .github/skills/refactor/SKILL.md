@@ -43,5 +43,3 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 
 - → `@reviewer` — for review after refactoring
 - → `implement` skill — if refactoring reveals a need for new code
-- ← `@implementer` — when code needs cleanup before feature work
-- ← `implement` skill — if existing code needs restructuring first

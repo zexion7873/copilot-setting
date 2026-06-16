@@ -285,7 +285,7 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 ## Handoffs
 
 - → `<skill>` skill — <when to hand off downstream>
-- ← `<skill>` skill — <when this skill receives handoff from upstream>
+- → `@<agent>` — <when to suggest an agent downstream>
 ```
 
 ### Rules
@@ -298,7 +298,7 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`). It lives inside the leading `## Phase 0 — Load canonical rules` section (rule 5) and names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Phase 0 closes with a read-back receipt: the agent must NAME each file it opened and QUOTE the single most load-bearing applicable rule from each. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `sql-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Phase 0 exception**: a code-touching skill's mandatory pre-load gate (rule 4) is its leading workflow step, rendered as `## Phase 0 — Load canonical rules` (the only sanctioned `## Phase 0`) immediately before `## Phase 1`. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) — where Phase N format would damage readability — may use topic-based H2 sections instead, and render the pre-load gate as a bare leading `## Load canonical rules` H2.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
-7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off to or receives from other skills/agents): use `→` for downstream (this skill hands off to) and `←` for upstream (this skill receives from). Reference by skill name in backticks and agent name with `@` prefix. When present, Handoffs is always the last body section (mirroring agent rule 4's Handoff Guidance placement).
+7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off downstream to other skills/agents): list only downstream targets with `→` (this skill hands off to). Do NOT record upstream `←` (who hands off to this skill) — it is a duplicate of the source's `→` and drifts out of sync; find inbound handoffs with `grep -rn "→ \`<name>\`" .github/`. Reference by skill name in backticks and agent name with `@` prefix. When present, Handoffs is always the last body section (mirroring agent rule 4's Handoff Guidance placement).
 8. **Anti-Patterns section** (**OPTIONAL**): include when the skill has common misuse patterns. Format as a bullet list with `→` separator, or as a paragraph if context-heavy.
 9. **Output Template section** (**CONDITIONAL**): required for skills that produce structured artifacts with a fixed shape — currently `plan`, `tasks`, `code-review`, `sql-review`. Skills whose output is code, free-form prose, or context-dependent (`implement`, `refactor`, `debug`, `security-audit`, `test-design`, `git-commit`) do not need this section — their workflow phases, self-verify checklists, or finding-format conventions are sufficient. When adding a new skill, decide by output shape: deterministic markdown skeleton → include the section; per-task variable output → omit.
 10. **Subfiles** (**OPTIONAL**): skills may keep supporting files (examples, reference data) in subdirectories under the skill folder. Subfiles carry no frontmatter (they are not skills and are never auto-triggered), and the parent `SKILL.md` must reference them by relative path (e.g., `examples/<topic>.md`). No skill currently ships subfiles — spec a full skeleton if and when they return.
@@ -493,7 +493,7 @@ These require manual verification. Reviewers should check:
 - [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its canonical `instructions/` source of truth per the **Floor ↔ Instruction map** below — the validator cross-checks byte-equality between agents, but never against `instructions/`, so this human check is the only guard against floor↔source drift
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases, which may *name* canonical conventions as one-line check items but add no detail beyond the instruction file — full rule restatement with added detail remains a defect (see AGENTS.md "Two narrow duplications")
-- [ ] Handoff sections are bidirectional (if A → B, then B ← A)
+- [ ] Handoff sections are downstream-only (`→`); no `←` upstream lines (reverse lookup is `grep -rn "→ \`<name>\`" .github/`)
 - [ ] Agent Skill Activation table matches the skills that reference that agent
 - [ ] Dependency direction rules are respected (see **Dependency Direction** section)
 - [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
@@ -533,7 +533,7 @@ Deleting or merging a skill / prompt / agent has touchpoints a filename grep wil
 4. `AGENTS.md`: Architecture table category counts, the instruction-loading-model skill lists, and the Agent Roster table.
 5. `README.md` + `README.zh-TW.md` (keep in sync): agent table, Typical Workflow tables, Skills / Prompts tables, and the "What Copilot Loads" tree.
 6. Sibling skill descriptions: `Do NOT use for … (prefer <name>)` clauses pointing at the removed entity.
-7. Handoffs sections in other skills and agents: delete dead `→` / `←` lines; keep the surviving pairs bidirectional.
+7. Handoffs sections in other skills and agents: delete dead `→` lines pointing at the removed entity (skills are downstream-only, so there are no `←` lines to clean).
 8. The owning agent's Skill Activation table; when merging, re-route the removed skill's trigger phrases to the absorbing skill.
 9. Run validator: `bash .github/scripts/validate-style-guide.sh`
 

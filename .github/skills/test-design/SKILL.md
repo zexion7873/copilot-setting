@@ -70,4 +70,3 @@ Priority: <High | Medium | Low>
 
 - → `@implementer` — to write test code based on this design
 - → `@reviewer` — to review the implemented test code (`code-review`)
-- ← `@implementer` — after implementation, to verify coverage
