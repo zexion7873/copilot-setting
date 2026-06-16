@@ -135,4 +135,3 @@ Verifiable done conditions for the whole change — each must be testable, not a
 
 - → `tasks` skill — to break plan into atomic task list
 - → `implement` skill — when clarification resolves the task to a small, fully understood change that needs no plan
-- ← `@planner` — default activation

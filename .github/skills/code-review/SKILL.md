@@ -114,6 +114,6 @@ Summary: <one-sentence assessment>
 ## Handoffs
 
 - → `@implementer` — to fix findings
+- → `debug` skill — when a finding needs root-cause analysis
 - → `security-audit` skill — security concerns warrant deeper audit
 - → `sql-review` skill — SQL issues or migration / DDL changes warrant dedicated review
-- ← `@reviewer` — default activation
