@@ -94,7 +94,7 @@ Per-category key constraints (full rules in STYLE-GUIDE.md):
 
 ## Cross-Reference Format
 
-All cross-references use backtick-wrapped **relative paths from `.github/`**, never bare names:
+All cross-references use backtick-wrapped paths, never bare names. Most use **relative paths from `.github/`**; the sole exception is skill→instruction refs, which are **filesystem-relative** (`../../instructions/…`) so they resolve at user scope (`~/.copilot/skills/`) as well as repo scope:
 
 | Type | Format |
 |---|---|

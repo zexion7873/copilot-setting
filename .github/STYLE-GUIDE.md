@@ -57,7 +57,7 @@ Agent ──activates──→ Skill (embeds output template)
 | From | To | Allowed? | Example |
 |---|---|---|---|
 | Agent → Skill | ✅ | Skill Activation table: `skill-name` |
-| Skill → Instruction | ✅ | "Rules live in `instructions/sql.instructions.md`" |
+| Skill → Instruction | ✅ | "Rules live in `../../instructions/sql.instructions.md`" |
 | Skill → Skill | ✅ | Handoffs section only: `→ code-review skill` |
 | Instruction → Instruction | ✅ | Cross-reference related rules: `instructions/java.instructions.md` |
 
@@ -257,8 +257,8 @@ Guidelines for the `Triggers on:` section in skill descriptions and the correspo
 
 <MANDATORY pre-load gate (rule 4) — the leading step for code-touching skills: open the named instruction file(s) before any code-touching phase. The agent-body `## Coding Standards` bullets are a floor, not the full rules.>
 
-- `instructions/<name>.instructions.md` — <what this file covers>
-- `instructions/<name>.instructions.md` — <what this file covers>
+- `../../instructions/<name>.instructions.md` — <what this file covers>
+- `../../instructions/<name>.instructions.md` — <what this file covers>
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
@@ -294,8 +294,8 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
 1. **Frontmatter** (**REQUIRED**): `name` + `description` — both required. The only optional field is `disable-model-invocation: true`, for manual-only skills that must never auto-trigger (e.g., `git-commit`). No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow`. No variation (`Executable Workflow`, `Overview`, etc.). No exceptions — even the reference+process hybrids (`refactor`, `git-commit`), which are exempt from Phase sections below, use this exact H1.
-3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `instructions/sql.instructions.md`). The instruction-reference block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
-4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`). It lives inside the leading `## Phase 0 — Load canonical rules` section (rule 5) and names the canonical instruction file(s) the skill maps to as a bullet list of `instructions/<name>.instructions.md` references — name specific files, not the `*` glob, so an agent with file access can open them directly. Phase 0 closes with a read-back receipt: the agent must NAME each file it opened and QUOTE the single most load-bearing applicable rule from each. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `sql-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
+3. **Opening paragraph** (**REQUIRED**): what + cross-references. Name the specific instruction file(s) the skill relates to (e.g., `sql-review` → `../../instructions/sql.instructions.md`). The instruction-reference block (rule 4) carries the full per-skill set — do not use the `instructions/*.instructions.md` glob to stand in for it.
+4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only): required for skills that modify or review code (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`). It lives inside the leading `## Phase 0 — Load canonical rules` section (rule 5) and names the canonical instruction file(s) the skill maps to as a bullet list of `../../instructions/<name>.instructions.md` references (filesystem-relative, so they resolve at user scope too) — name specific files, not the `*` glob, so an agent with file access can open them directly. Phase 0 closes with a read-back receipt: the agent must NAME each file it opened and QUOTE the single most load-bearing applicable rule from each. Each skill lists only the instruction files relevant to its domain (broad skills like `implement` name all; narrow skills like `sql-review` name just theirs). The hard-boundary rules previously duplicated in an inline condensed floor now live in the code-touching agent bodies under `## Coding Standards`.
 5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`. Verb phrase uses imperative mood (e.g., "Understand Before Writing", "Classify Findings", "Map the Attack Surface"). Numbered sequentially from 1. **Phase 0 exception**: a code-touching skill's mandatory pre-load gate (rule 4) is its leading workflow step, rendered as `## Phase 0 — Load canonical rules` (the only sanctioned `## Phase 0`) immediately before `## Phase 1`. **Exception**: skills that are inherently reference guides with embedded process (`refactor`, `git-commit`) — where Phase N format would damage readability — may use topic-based H2 sections instead, and render the pre-load gate as a bare leading `## Load canonical rules` H2.
 6. **Rules section** (**OPTIONAL**): include when the skill has rules specific to its own workflow that aren't covered by instruction files. Not a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required if the skill hands off downstream to other skills/agents): list only downstream targets with `→` (this skill hands off to). Do NOT record upstream `←` (who hands off to this skill) — it is a duplicate of the source's `→` and drifts out of sync; find inbound handoffs with `grep -rn "→ \`<name>\`" .github/`. Reference by skill name in backticks and agent name with `@` prefix. When present, Handoffs is always the last body section (mirroring agent rule 4's Handoff Guidance placement).
@@ -481,7 +481,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 - Agent `handoffs[].agent` values reference existing agent names
 - Agent declaring `agents:` in frontmatter includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
-- Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
+- Code-touching skills name at least one specific `../../instructions/<name>.instructions.md` file (not only the `*` glob)
 - Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents — the comparison covers only those `- ` lines; non-bullet prose (e.g. the per-agent intro sentence) is never compared and may differ, so prose drift is a Tier-2 human check; those bullets must be top-level `- ` items — indented sub-bullets, `*`/`+` bullets, or numbered lines, which would escape the byte-identity comparison, are rejected
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 

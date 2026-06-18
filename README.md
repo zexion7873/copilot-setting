@@ -44,6 +44,20 @@ my-workspace.code-workspace
 └── ...
 ```
 
+### Option C — User Profile (Personal, cross-repo)
+
+Install once into your user profile so every workspace shares the skills and rules without copying `.github/` into each project:
+
+```text
+~/.copilot/
+├── skills/          ← copy .github/skills/* here
+└── instructions/    ← copy .github/instructions/* here
+```
+
+Skill→instruction references are filesystem-relative (`../../instructions/…`), so a skill resolves its rules identically whether it loads from a project's `.github/skills/` or from `~/.copilot/skills/`.
+
+> **Note:** user-profile discovery depends on your VS Code / Copilot version. Confirm in your editor that a skill installed this way actually opens its instruction files before relying on it. Agents may also live in `~/.copilot/agents/`; prompts are not portable this way (they load only from the editor profile).
+
 ---
 
 ## ⚙️ How It Works

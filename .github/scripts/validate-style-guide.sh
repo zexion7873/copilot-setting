@@ -201,7 +201,7 @@ for skill in $INSTRUCTION_REF_SKILLS; do
   # Must name at least one specific instruction file (not just the *.glob).
   # Digits allowed in the stem ([a-z][a-z0-9-]*) so a name like java8 resolves
   # — the xref check already accepts digits, and the two must agree.
-  if ! grep -qE '`instructions/[a-z][a-z0-9-]*\.instructions\.md`' "$file"; then
+  if ! grep -qE '`(\.\./)*instructions/[a-z][a-z0-9-]*\.instructions\.md`' "$file"; then
     error "skills/$skill/SKILL.md: must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`)"
   fi
 done
@@ -382,11 +382,15 @@ echo "🔗 Cross-References"
 xref_errors_start=$ERRORS
 while IFS= read -r file; do
   rel_file="${file#$REPO_ROOT/}"
-  refs=$(grep -oE '`(instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md|prompts/[^`*<>]+\.prompt\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
+  refs=$(grep -oE '`((\.\./)*instructions/[^`*<>]+\.instructions\.md|skills/[^`*<>]+/SKILL\.md|agents/[^`*<>]+\.agent\.md|prompts/[^`*<>]+\.prompt\.md)`' "$file" 2>/dev/null | tr -d '`' | sort -u || true)
   [ -z "$refs" ] && continue
   while IFS= read -r ref; do
     [ -z "$ref" ] && continue
-    target="$GITHUB_DIR/$ref"
+    # Skill refs are filesystem-relative (../../instructions/X); agents/prompts would be ../instructions/X.
+    # Strip any leading ../ segments so every form resolves from .github/ — skills/ and instructions/
+    # sit at isomorphic depths in both repo scope (.github/) and user scope (~/.copilot/).
+    ref_path="${ref##*../}"
+    target="$GITHUB_DIR/$ref_path"
     if [ ! -f "$target" ]; then
       error "$rel_file: references '$ref' but file does not exist"
     fi

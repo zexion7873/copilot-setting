@@ -44,6 +44,20 @@ my-workspace.code-workspace
 └── ...
 ```
 
+### Option C — User Profile (Personal, cross-repo)
+
+安裝一次到使用者 profile，讓每個 workspace 共享 skill 與規則，不必把 `.github/` 複製進每個專案：
+
+```text
+~/.copilot/
+├── skills/          ← 複製 .github/skills/* 到這裡
+└── instructions/    ← 複製 .github/instructions/* 到這裡
+```
+
+Skill→instruction 引用採 filesystem-relative（`../../instructions/…`），所以無論 skill 從專案的 `.github/skills/` 或從 `~/.copilot/skills/` 載入，都解析到同一份規則。
+
+> **Note**：user profile 探索是否生效，取決於你的 VS Code / Copilot 版本。跨 repo 依賴前，先在編輯器確認這樣安裝的 skill 真能開啟它的 instruction 檔。Agent 也可放 `~/.copilot/agents/`；prompt 無法這樣可攜（只從編輯器 profile 載入）。
+
 ---
 
 ## ⚙️ How It Works

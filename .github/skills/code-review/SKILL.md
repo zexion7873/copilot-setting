@@ -11,14 +11,14 @@ Structured code review.
 
 **MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the instruction files for the layers under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/security.instructions.md` — OWASP Top 10
-- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-- `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
+- `../../instructions/java.instructions.md` — Java 8 language boundary
+- `../../instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
+- `../../instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `../../instructions/security.instructions.md` — OWASP Top 10
+- `../../instructions/jsp.instructions.md` — JSP / JSTL, XSS
+- `../../instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
+- `../../instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
+- `../../instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
@@ -52,7 +52,7 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 **Convention** (check each):
 - [ ] Java 8 only — no `var`, `List.of()`, records, text blocks
 - [ ] Hibernate: `getCurrentSession()` + hbm.xml, no JPA annotations
-- [ ] Transactions: production code uses `<tx:advice>` only (unless existing `@Transactional` convention); `@Transactional` on a test class for auto-rollback is sanctioned (`instructions/testing.instructions.md`)
+- [ ] Transactions: production code uses `<tx:advice>` only (unless existing `@Transactional` convention); `@Transactional` on a test class for auto-rollback is sanctioned (`../../instructions/testing.instructions.md`)
 - [ ] Logging: SLF4J `{}` placeholders, no string concatenation
 
 **Maintainability** (check each):
@@ -64,7 +64,7 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 - [ ] No `SNAPSHOT` in release builds; no `LATEST`/`RELEASE` markers
 - [ ] Versions centralized in `<dependencyManagement>` — no per-module duplicates
 - [ ] Test libs scoped `<scope>test</scope>`; servlet API scoped `provided`
-- [ ] Non-framework dependencies (Jackson, Log4j, Commons, …) not on known-CVE versions — the pinned Spring 3.2 / Hibernate 4.2 carry unpatched CVEs documented as baseline risk (`instructions/security.instructions.md`), not a per-PR finding
+- [ ] Non-framework dependencies (Jackson, Log4j, Commons, …) not on known-CVE versions — the pinned Spring 3.2 / Hibernate 4.2 carry unpatched CVEs documented as baseline risk (`../../instructions/security.instructions.md`), not a per-PR finding
 - [ ] `maven-compiler-plugin` source/target = `1.8`; all plugin versions pinned
 
 ## Phase 3 — Classify Findings
