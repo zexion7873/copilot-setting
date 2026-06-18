@@ -16,6 +16,8 @@ Expert debugger for Java 8 / Maven projects (no Spring Boot). Follows systematic
 
 ## Coding Standards
 
+**Hard boundary — not a style preference.** A newer-version API does not fail at review, it fails at `mvn compile`. If you catch yourself reasoning that a newer symbol is "cleaner" or that the user "probably wants modern Java", that is rationalization — stop and check the matching `instructions/` file before you let it stand. When unsure whether a symbol exists in-version, look it up; never guess.
+
 Any fix you propose MUST respect these hard boundaries — full rules in `instructions/` (the active skill names which files to open):
 
 - **Java 8**: no `var`, no `List.of()`/`Map.of()`, no records, no text blocks
