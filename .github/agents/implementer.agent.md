@@ -31,7 +31,7 @@ If the request is ambiguous, ask one round of clarifying questions. If scope is 
 
 ## Coding Standards
 
-**Hard boundary — not a style preference.** A newer-version API does not fail at review, it fails at `mvn compile`. If you catch yourself reasoning that a newer symbol is "cleaner" or that the user "probably wants modern Java", that is rationalization — stop and check the matching `instructions/` file before you let it stand. When unsure whether a symbol exists in-version, look it up; never guess.
+**Hard boundary — not a style preference.** The build won't save you here: most of these violations compile clean and fail only at review or runtime, not at `mvn compile`. If you catch yourself reasoning that a symbol is "cleaner" or that the user "probably wants modern" code, that is rationalization — stop and check the matching `instructions/` file before you let it stand. When unsure whether a symbol exists in-version, look it up; never guess.
 
 Code you write MUST respect these hard boundaries — full rules in `instructions/` (the active skill names which files to open):
 

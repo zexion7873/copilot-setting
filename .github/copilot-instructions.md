@@ -17,7 +17,7 @@
 - **SLF4J 1.7** + Logback
 - **JSP + JSTL 1.2** — view layer
 
-**Hard boundary — not a preference.** Do NOT use APIs, annotations, or patterns from newer versions of these frameworks. The pull toward modern idioms is a bias to resist, not a hint to follow — a newer-version symbol fails at the build, not at review. If unsure whether something exists in these versions, read the matching `instructions/` file before writing code; never guess.
+**Hard boundary — not a style preference.** Do NOT use APIs, annotations, or patterns from newer versions of these frameworks. The pull toward modern idioms is a bias to resist, not a hint to follow — and the build won't catch it: many such symbols compile clean and fail only at review or runtime. If unsure whether something exists in these versions, read the matching `instructions/` file before writing code; never guess.
 
 ## Coding Philosophy
 
