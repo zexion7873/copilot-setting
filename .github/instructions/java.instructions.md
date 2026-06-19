@@ -5,7 +5,7 @@ applyTo: '**/*.java'
 
 # Java 8 Conventions
 
-This project is Java 8. AI models default to modern Java — correct that here.
+This project is Java 8. AI models default to modern Java, and that pull is strong — treat it as a bias to correct, not a preference to follow. A newer-version symbol won't compile, but the convention and correctness rules below fail only at review or runtime — don't lean on the build to catch them. If you are not certain something exists in Java 8, verify against this file before writing it — never guess.
 
 ## Language Boundary (Java 9+ Forbidden)
 
