@@ -60,7 +60,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 | Category | Path | Role | Loads when |
 |---|---|---|---|
 | Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User selects the agent from the chat agents dropdown |
-| Skills (10) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
+| Skills (11) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment), or the model loads it on demand via semantic match on its `description` (discretionary); `applyTo: "**"` loads on every request |
 | Prompts (4) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
@@ -175,7 +175,7 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 | Agent | Model | Activates |
 |---|---|---|
 | `@planner` | Claude Opus 4.8 | `plan`, `tasks` |
-| `@implementer` | GPT-5.3-Codex | `implement`, `refactor`, `test-design` |
+| `@implementer` | GPT-5.3-Codex | `implement`, `source-check`, `refactor`, `test-design` |
 | `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
 | `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
