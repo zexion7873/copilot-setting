@@ -483,6 +483,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 - Instruction Anti-Patterns tables use 3-column format (`Pattern | Problem | Fix`)
 - Code-touching skills name at least one specific `instructions/<name>.instructions.md` file (not only the `*` glob)
 - Code-touching agents (`implementer`, `reviewer`, `debugger`) embed a `## Coding Standards` section, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three agents — the comparison covers only those `- ` lines; non-bullet prose (e.g. the per-agent intro sentence) is never compared and may differ, so prose drift is a Tier-2 human check; those bullets must be top-level `- ` items — indented sub-bullets, `*`/`+` bullets, or numbered lines, which would escape the byte-identity comparison, are rejected
+- Floor↔instruction canary: each code-touching agent `## Coding Standards` floor bullet's load-bearing anchor token (one distinctive token per bullet) appears verbatim in BOTH the floor and the **body** of its mapped `instructions/` file (frontmatter excluded — `description:` trigger keywords would otherwise mask a deleted rule). The validator holds the anchor→file registry; this machine-checks the floor↔source link that the byte comparison above cannot (that one compares floor to floor only). Dropping the rule on either side trips it; rewording an anchor requires updating the registry.
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``) resolve to existing files. Inbound prompt mentions (a skill or agent naming a prompt, e.g. the `find-impact` prompt) are also checked to resolve to a real `prompts/<name>.prompt.md`.
 
 ### Tier 2: Human-review (PR review checklist)
@@ -490,7 +491,7 @@ These are enforced automatically on every PR that touches `.github/**/*.md`, the
 These require manual verification. Reviewers should check:
 
 - [ ] H1 follows category naming convention
-- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its canonical `instructions/` source of truth per the **Floor ↔ Instruction map** below — the validator cross-checks byte-equality between agents, but never against `instructions/`, so this human check is the only guard against floor↔source drift
+- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its canonical `instructions/` source of truth per the **Floor ↔ Instruction map** below — the validator cross-checks byte-equality between agents and anchor-token co-occurrence against `instructions/` (the Floor↔Instruction Canary), but cannot byte-check the full paraphrase, so this human check guards the non-anchor remainder of each floor↔source pair
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories — two sanctioned exceptions only: (1) the agent-body `## Coding Standards` embed, and (2) skill verification checklists, self-verify gates, and one-line convention recaps inside workflow phases, which may *name* canonical conventions as one-line check items but add no detail beyond the instruction file — full rule restatement with added detail remains a defect (see AGENTS.md "Two narrow duplications")
 - [ ] Handoff sections are downstream-only (`→`); no `←` upstream lines (reverse lookup is `grep -rn "→ \`<name>\`" .github/`)
@@ -500,7 +501,7 @@ These require manual verification. Reviewers should check:
 - [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
 - [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
 
-**Floor ↔ Instruction map** (supports the Coding Standards checklist item above) — each agent `## Coding Standards` bullet is a condensed paraphrase of a canonical rule, not a verbatim copy, so the validator cannot byte-check it against `instructions/`; this pairing is human-verified. When you change a floor bullet or its source, re-check the pair:
+**Floor ↔ Instruction map** (supports the Coding Standards checklist item above) — each agent `## Coding Standards` bullet is a condensed paraphrase of a canonical rule, not a verbatim copy, so the validator cannot byte-check the full paraphrase against `instructions/`. A per-bullet **anchor token** IS machine-checked to co-occur in both (the Floor↔Instruction Canary in Tier 1; the anchor→file registry lives in the validator), but the rest of the paraphrase stays human-verified. When you change a floor bullet, its source, or an anchor token, re-check the pair AND update the canary registry:
 
 | Agent `## Coding Standards` bullet | Canonical `instructions/` source |
 |---|---|
