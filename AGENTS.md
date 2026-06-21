@@ -35,7 +35,7 @@ bash .github/scripts/validate-style-guide.sh        # validate the real tree
 
 The regression suite builds throwaway fixtures (copies of `.github/` with one injected defect) and asserts the validator catches it — exercising the parsing edge cases (multi-line scalar bypass, unterminated frontmatter, CRLF, indented bullets) that the always-valid live tree never triggers, rather than every `error` branch.
 
-Both are enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator or its test harness, `.github/hooks/**`, or the workflow file. It enforces the format spec — frontmatter presence, skill `name`-matches-directory with a marker-bearing `description` and no `tools` field, byte-identical agent `## Coding Standards` bullets, single-line `description` / `agent` scalars, code-touching-skill instruction references, 3-column Anti-Patterns headers, and resolvable cross-references. Full machine-checked rule list: `.github/STYLE-GUIDE.md` → "Tier 1: Machine-checked".
+Both are enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator or its test harness, `.github/hooks/**`, or the workflow file. It enforces the format spec — frontmatter presence, skill `name`-matches-directory with a marker-bearing `description` and no `tools` field, byte-identical agent `## Coding Standards` bullets, floor↔instruction anchor co-occurrence, single-line `description` / `agent` scalars, code-touching-skill instruction references, 3-column Anti-Patterns headers, and resolvable cross-references. Full machine-checked rule list: `.github/STYLE-GUIDE.md` → "Tier 1: Machine-checked".
 
 One-time local setup so the validator also runs on `git commit`:
 

@@ -34,6 +34,19 @@ fm_block() {
   ' "$1"
 }
 
+# Usage: body_block "file" — print everything AFTER the leading YAML frontmatter
+# (the inverse of fm_block). The canary greps anchors in the rule body only: an
+# instruction's `description:` frontmatter is a trigger-keyword soup that already
+# contains the anchor tokens, so a whole-file grep would stay green even after the
+# real rule is deleted from the body. Tolerates CRLF like fm_block.
+body_block() {
+  awk '
+    NR==1 && /^---\r?$/ {f=1; next}
+    f && /^---\r?$/ {f=0; body=1; next}
+    body {print}
+  ' "$1"
+}
+
 # Usage: fm_value "file" "key" — extract value from YAML frontmatter.
 # '|| true': grep exits 1 when the key is absent and pipefail propagates it past
 # the seds; without the guard, any bare assignment ($(fm_value ...)) kills the
@@ -260,6 +273,50 @@ done
 
 if [ "$ERRORS" -eq "$ca_errors_start" ]; then
   pass "all code-touching agents embed Coding Standards (and hard-boundary bullets match)"
+fi
+echo ""
+
+echo "🔒 Floor ↔ Instruction Canary"
+# Each code-touching agent's ## Coding Standards floor bullet is a PARAPHRASE of a
+# canonical instructions/ rule, so it cannot be byte-compared to its source (the
+# agent check above compares floor-to-floor only). Instead, assert each bullet's
+# load-bearing ANCHOR token appears verbatim in BOTH the floor and the BODY of its
+# mapped instruction file — body only (via body_block), because the instruction
+# `description:` frontmatter already lists the anchors as trigger keywords, so a
+# whole-file grep would stay green even after the real rule is deleted. Each anchor
+# is distinctive enough to live only in its own rule's body; rewording an anchor
+# means updating this registry. Skipped when the floor already drifted above —
+# implementer can't stand in for a broken floor, so a "missing anchor" here would
+# misattribute that failure to the registry.
+if [ "$ERRORS" -ne "$ca_errors_start" ]; then
+  echo "⏭  skipped — Coding Standards floor drifted above"
+else
+  canary_errors_start=$ERRORS
+  canary_floor="$(awk '/^## Coding Standards/{f=1; next} f && /^## /{exit} f' "$GITHUB_DIR/agents/implementer.agent.md")"
+  while IFS='|' read -r anchor stem; do
+    [ -z "$anchor" ] && continue
+    inst="$GITHUB_DIR/instructions/$stem.instructions.md"
+    if ! printf '%s' "$canary_floor" | grep -qF -- "$anchor"; then
+      error "Coding Standards floor missing anchor '$anchor' — canary registry out of sync with the floor bullets"
+    elif [ ! -f "$inst" ]; then
+      error "canary: instructions/$stem.instructions.md not found (mapped from anchor '$anchor')"
+    elif ! body_block "$inst" | grep -qF -- "$anchor"; then
+      error "floor-instruction drift: anchor '$anchor' is in the agent Coding Standards floor but not in the body of instructions/$stem.instructions.md"
+    fi
+  done <<'EOF'
+List.of(|java
+@GetMapping|spring-hibernate
+getCurrentSession(|spring-hibernate
+:paramName|sql
+<c:out>|jsp
+SameSite=Strict|security
+state-changing POST forms|security
+ObjectInputStream|security
+private IP|security
+EOF
+  if [ "$ERRORS" -eq "$canary_errors_start" ]; then
+    pass "all floor anchors co-occur in their mapped instruction body"
+  fi
 fi
 echo ""
 

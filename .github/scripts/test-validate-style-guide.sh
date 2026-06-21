@@ -164,6 +164,26 @@ perl -i -pe 's{instructions/[a-z0-9-]+\.instructions\.md}{instructions/sql2.inst
   "$fxh/.github/skills/sql-review/SKILL.md"
 expect_pass "H: code-touching skill may name a digit-containing instruction file" "$fxh"
 
+# ── I. Floor↔instruction anchor drift (body rule deleted) must be caught ──
+# Realistic drift: delete the A08 deserialization RULE from the instruction body
+# while leaving the `description:` frontmatter (which lists ObjectInputStream as a
+# trigger keyword) intact. A whole-file grep would stay green on the surviving
+# frontmatter copy — the canary's body-only scan must still catch the deleted rule.
+fxi="$(new_fixture)"
+perl -i -ne 'BEGIN{$fm=0} if(/^---$/){$fm++; print; next} if($fm>=2 && /ObjectInputStream/){next} print' \
+  "$fxi/.github/instructions/security.instructions.md"
+expect_fail "I: floor anchor deleted from instruction body (frontmatter copy survives) is caught" "$fxi" "ObjectInputStream"
+
+# ── J. Anchor masked by an UNRELATED body rule must still be caught ───
+# security.instructions.md has two body lines mentioning "CSRF": the real A01 rule,
+# and an unrelated verb-restriction rule that says "CSRF tokens" only in passing.
+# Delete the real rule, keep the aside + frontmatter — a bare `CSRF` anchor would
+# stay green, so the A01 bullet is anchored on the phrase unique to the real rule.
+fxj="$(new_fixture)"
+perl -i -ne 'BEGIN{$fm=0} if(/^---$/){$fm++; print; next} if($fm>=2 && /must carry a CSRF token/){next} print' \
+  "$fxj/.github/instructions/security.instructions.md"
+expect_fail "J: floor anchor masked by an unrelated body mention is caught" "$fxj" "state-changing POST forms"
+
 # ── Summary ─────────────────────────────────────────────────────────
 echo "----------------------------------------"
 echo "PASS: $PASS  FAIL: $FAIL"
