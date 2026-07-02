@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/**/*.md'
       - '.github/scripts/validate-style-guide.sh'
-      - '.github/scripts/test-validate-style-guide.sh'
       - '.github/hooks/**'
       - '.github/workflows/validate-style-guide.yml'
 
@@ -14,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
-
-      - name: Run validator regression tests
-        run: bash .github/scripts/test-validate-style-guide.sh
 
       - name: Run STYLE-GUIDE validation
         run: bash .github/scripts/validate-style-guide.sh

@@ -127,35 +127,6 @@ RM_COMBO='-[a-z]*r[a-z]*f[a-z]*|-[a-z]*f[a-z]*r[a-z]*'
 # case (rm -rf /;true, git push -f&&echo) and would false-allow.
 END='( |$|[|;&])'
 
-# Scratch-dir carve-out — MUST precede the rm block below.
-#   RM_SYSDIR blocks recursive deletes under /var, /private, /run at ANY
-#   depth: right for /var/lib/mysql, wrong for the platform scratch dirs
-#   that also live there — macOS $TMPDIR (/var/folders/…, and its /private
-#   firmlink route), /var/tmp, /private/tmp, and the Linux XDG runtime dir
-#   (/run/user/<uid>/…).  Routine agent cleanups hit these every run.
-#   Carve them back out, but ONLY when the whole command is a single simple
-#   rm of the shape "rm <flags> [--] <one scratch path> <flags>", anchored end
-#   to end.  A command separator or a second operand (rm -rf /var/tmp/x /etc)
-#   breaks the anchor, so the command falls through to the block below and
-#   the real target is still caught.  Requires a subpath (…/<x>): deleting a
-#   scratch root itself (rm -rf /var/tmp) is not a routine cleanup, so it
-#   stays blocked.  Only SHORT flags (-rf) qualify, plus an optional bare "--"
-#   end-of-options marker (rm -rf -- /var/tmp/x); the long forms (--recursive
-#   / --force / --no-preserve-root) are unconditionally blocked below
-#   regardless of target, and the carve-out must not undo that.
-SCRATCH='/(private/)?(var/(tmp|folders)|tmp)/[^ |;&]+|/run/user/[0-9]+/[^ |;&]+'
-# Path-traversal guard: tr -s '/' collapses // but never resolves '..', so a
-# scratch-prefixed traversal (/tmp/../etc, or /tmp/.. which IS /) would
-# otherwise hit this early exit 0 before RM_SYSDIR runs, re-allowing exactly
-# the system-dir deletes the rm block exists to stop.  If any '..' segment is
-# present, skip the carve-out and let the rm block below decide — failing
-# toward blocking, never carving a path that can climb out of the scratch root.
-# (A single-dot name like /var/folders/…/T/.cache has no '..' and still carves.)
-if ! grep -qE '(^|/)\.\.(/|$| |[|;&])' <<<"$NORM" \
-   && grep -qiE '^ *rm( +-[a-z]+)*( +--)? +'"$Q"'('"$SCRATCH"')'"$Q"'( +-[a-z]+)* *$' <<<"$NORM"; then
-  exit 0
-fi
-
 # rm — recursive forced deletion
 #   Combined glued flags (-rf, -fr, -rfi, …) with a dangerous target in
 #     either order (rm -rf /, rm "$DIR" -rf).  Dangerous targets are exact
