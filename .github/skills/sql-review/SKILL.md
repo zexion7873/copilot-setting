@@ -1,6 +1,6 @@
 ---
 name: sql-review
-description: 'Use when user needs SQL reviewed — queries for injection risks, performance, and index strategy, or DDL/DML migration scripts for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review SQL, SQL review, query review, slow query, check SQL, review migration, schema change, DDL review, ALTER TABLE review, SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified findings with EXPLAIN, rollback, and lock guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or initial schema design (prefer plan).'
+description: 'Use when user needs SQL reviewed — queries for injection risks, performance, and index strategy, or DDL/DML migration scripts for rollback safety, lock impact, and backward compatibility. Triggers on: review SQL, slow query, review migration, schema change, SQL 審查, 查詢太慢, 審 schema. Produces severity-classified findings with EXPLAIN, rollback, and lock guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or initial schema design (prefer plan).'
 ---
 
 # SQL Review — Workflow
@@ -9,14 +9,7 @@ SQL-focused review covering both queries and schema migrations. Rules: `instruct
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
-
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL DDL & migration safety
-- `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
-- `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Before reporting findings, open the instruction files for the SQL under review — glob auto-loading does not fire for files you read mid-task (these files are the canonical SQL and mapping rules): `instructions/sql.instructions.md`, `instructions/spring-hibernate.instructions.md`, `instructions/xml-config.instructions.md`, `instructions/no-heredoc.instructions.md`.
 
 ## Phase 1 — Collect and Classify
 

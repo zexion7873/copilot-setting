@@ -1,11 +1,11 @@
 ---
 name: plan
-description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding — including clarifying vague or ambiguous requirements first. Triggers on: plan, design approach, implementation strategy, how should we build, clarify, unclear requirements, 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟, 先釐清, 需求不清楚. Produces a structured plan document, preceded by numbered clarifying questions when requirements have gaps. Do NOT use for atomic task lists (prefer tasks) or direct implementation of well-understood small tasks (prefer implement).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, and risks before coding — including clarifying vague requirements first and breaking the approved plan into dependency-ordered atomic tasks. Triggers on: plan, design approach, break down tasks, unclear requirements, 規劃, 怎麼做, 拆任務, 需求不清楚. Produces a plan document plus a T###-formatted task breakdown. Do NOT use for direct implementation of well-understood small tasks (prefer implement).'
 ---
 
 # Plan — Workflow
 
-Structured implementation plan. Clarify vague requirements first (Phase 1), then plan.
+Structured implementation plan. Clarify vague requirements first (Phase 1), plan, then decompose the approved plan into tasks (Phase 7).
 
 ## Phase 1 — Clarify Requirements
 
@@ -63,14 +63,22 @@ Before handing off, challenge the plan as an adversary would. Do not skip this w
 
 - **Unstated assumptions**: what must be true for this plan to work that you never wrote down? (data shape, library version, call order, single-threaded access…)
 - **What breaks**: which existing caller, Spring bean, or `hbm.xml` mapping fails if you ship this as written?
-- **Missing cases**: null/empty, concurrent access, stale cache after a write (which caches hold this data, who invalidates them, in what order relative to the DB write), rollback path, backward compatibility, migration ordering
+- **Missing cases**: null/empty, concurrent access, stale cache after a write, rollback path, backward compatibility, migration ordering
 - **Weakest link**: the one step you are least sure about — name it explicitly
 
-Fold material findings back into sections 4–5 and record the residual assumptions and gaps in section 7 (Medium+ scope); for Small plans, append findings to the approach notes.
+Fold material findings back into sections 4–5 and record residual assumptions in section 7 (Medium+ scope); for Small plans, append findings to the approach notes.
+
+## Phase 7 — Decompose into Tasks
+
+Run after the plan is approved (or when the user asks to break down an existing plan — locate it at `docs/plans/<feature>/plan.md`; if none exists, stop and run Phases 1–6 first, never invent a task list from scratch).
+
+1. **Decompose** — break each plan phase into atomic tasks: one action each, verifiable done-when condition, sized S (< 30 min) / M (30–120 min) / L (> 2 hours)
+2. **Order by dependency** — build the graph, number sequentially `T001…`, mark parallel-safe tasks `[P]` and user-sign-off tasks `[US]`
+3. **Validate** — every task maps to ≥1 requirement and vice versa; every `AC-NNN` is covered by ≥1 task; no circular dependencies; size on every task
 
 ## Output Template
 
-Write the plan to `docs/plans/<feature>/plan.md` — one folder per feature/change (create the folder if absent). The `tasks` skill writes `task.md` beside it in the same folder; keep this layout stable so the `source:` link resolves. Versioning is git history, not a `-vN` suffix.
+Write the plan to `docs/plans/<feature>/plan.md` and the task breakdown to `task.md` beside it — one folder per feature/change (create if absent). Versioning is git history, not a `-vN` suffix.
 
 ```md
 ---
@@ -93,7 +101,6 @@ status: 'Planned'
 Verifiable done conditions for the whole change — each must be testable, not aspirational ("fast" → "responds within 2s for 1000 rows"). Always fill, even for Small scope.
 
 - [ ] AC-001: <observable, testable outcome>
-- [ ] AC-002: <observable, testable outcome>
 
 ## 2. Implementation Approach
 
@@ -102,17 +109,12 @@ Verifiable done conditions for the whole change — each must be testable, not a
 - What this phase achieves
 - Approach: components touched, order of work
 
-### Phase 2 — <Goal>
-
-- ...
-
 ## 3. Files
 
 - FILE-001: `path/to/File.java` — what changes
 
 ## 4. Impact / Affected Callers
 
-- Refactors / structural changes: inventory every caller and dependent of changed symbols, across packages — verify with the `find-impact` prompt, do not rely on a single research summary
 - IMP-001: `path/to/Caller.java:NN` — calls `<symbol>`; needs `<update>`
 - Spring XML beans / `hbm.xml` mappings referencing changed types
 
@@ -131,7 +133,36 @@ Verifiable done conditions for the whole change — each must be testable, not a
 - GAP-001: <known gap / weakest link — what could break, and how it would be caught>
 ```
 
+Task breakdown (`docs/plans/<feature>/task.md`):
+
+```md
+---
+source: ./plan.md
+date: <YYYY-MM-DD>
+---
+
+# Task Breakdown
+
+## Tasks
+
+| ID | Task | Size | Depends On | Markers | Done When |
+|---|---|---|---|---|---|
+| T001 | <action on specific file/module> | S/M/L | — | | <verifiable condition> |
+| T002 | ... | M | T001 | [P] | ... |
+
+### Markers
+
+- `[P]` — parallel-safe at same dependency level
+- `[US]` — requires user sign-off
+
+## Coverage Matrix
+
+| Plan item | Tasks |
+|---|---|
+| REQ-001 | T001, T002 |
+| AC-001 | T001 |
+```
+
 ## Handoffs
 
-- → `tasks` skill — to break plan into atomic task list
-- → `implement` skill — when clarification resolves the task to a small, fully understood change that needs no plan
+- → `implement` skill — to execute the task list, or when clarification resolves the request to a small, fully understood change that needs no plan

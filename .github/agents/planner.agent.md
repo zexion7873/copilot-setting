@@ -25,8 +25,7 @@ If the request is vague or missing success criteria, ask clarifying questions be
 
 | Trigger | Skill | Output |
 |---|---|---|
-| "plan", "design approach", "implementation strategy", "how should we build", "clarify", "unclear requirements", 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟, 先釐清, 需求不清楚 | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers; clarifies vague requirements first (Phase 1) |
-| "break down tasks", "task list", "decompose", "create tasks", 拆任務, 拆工作, 任務拆解, 列出步驟 | `tasks` | Dependency-ordered task list with T### IDs (requires approved plan) |
+| "plan", "design approach", "break down tasks", "unclear requirements", 規劃, 怎麼做, 拆任務, 需求不清楚 | `plan` | Phased roadmap with REQ-/CON-/FILE- identifiers; clarifies vague requirements first; decomposes an approved plan into a dependency-ordered task list |
 
 Default to `plan` if the user's intent is ambiguous but clearly planning-related.
 
@@ -38,7 +37,7 @@ Skip when context is already sufficient (small scope, known codebase area).
 
 ## Workflow
 
-Follow the activated skill's workflow. Each skill (`plan`, `tasks`) defines its own phases, templates, and validation rules — do not duplicate here.
+Follow the activated skill's workflow. The `plan` skill defines its own phases, templates, and validation rules — do not duplicate here.
 
 Use Context7 for external API / library docs when the plan involves unfamiliar dependencies. If Context7 is not available, proceed with available context.
 
@@ -51,4 +50,4 @@ Use Context7 for external API / library docs when the plan involves unfamiliar d
 ## Handoff Guidance
 
 - If the plan involves security-sensitive design → suggest `@reviewer` for security audit
-- Plan approved → use `tasks` skill for atomic task decomposition, then suggest `@implementer` to execute
+- Plan approved → run the task-decomposition phase of `plan`, then suggest `@implementer` to execute
