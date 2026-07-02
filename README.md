@@ -82,11 +82,10 @@ Select from the agents dropdown in Copilot Chat. All agents are tailored for Jav
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
-| 📐 | `@planner` | Claude Opus 4.8 | Activates `plan` / `tasks` skills; clarification, planning, and task decomposition in one agent |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `source-check` / `refactor` / `test-design` skills, mode-routed by trigger phrase |
+| 📐 | `@planner` | Claude Opus 4.8 | Activates the `plan` skill — clarification, planning, and task decomposition in one agent |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` (incl. refactor / test-design / source-check modes) and `debug` skills |
 | 🔍 | `@reviewer` | Claude Opus 4.8 | Activates `code-review` / `security-audit` / `sql-review` skills, mode-routed by review type |
-| 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
-| 📚 | `@researcher` | GPT-5.4 mini | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
+| 📚 | `@researcher` | GPT-5.4 mini | Lightweight read-only subagent for `@planner` and `@implementer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -99,19 +98,14 @@ flowchart LR
 
     Implementer["🔨 Implementer"] -->|"Code review"| Reviewer
     Implementer -->|"Security review"| Reviewer
-    Implementer -->|"Debug"| Debugger
     Implementer -->|"Re-plan"| Planner
 
     Reviewer["🔍 Reviewer"] -->|"Fix issues"| Implementer
     Reviewer -->|"Refactor"| Implementer
-    Reviewer -->|"Debug"| Debugger
     Reviewer -->|"Re-plan"| Planner
-
-    Debugger["🐛 Debugger"] -->|"Fix bug"| Implementer
 
     Implementer -.->|"subagent"| Researcher["📚 Researcher"]
     Planner -.->|"subagent"| Researcher
-    Reviewer -.->|"subagent"| Researcher
 ```
 
 ---
@@ -124,20 +118,17 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
-| `plan` | Clarify vague requirements, then create a phased implementation plan with risks and dependencies | stay in `@planner` |
-| `tasks` | Break approved plan into atomic, dependency-ordered tasks | → `@implementer` |
+| `plan` | Clarify vague requirements, create a phased plan, then break the approved plan into atomic, dependency-ordered tasks | → `@implementer` |
 
 > [!TIP]
 > Skip `@planner` for small changes (1–3 files) — go straight to `@implementer`.
 
-### 🔨 `@implementer` — Write and change code
+### 🔨 `@implementer` — Write, change, and debug code
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
-| `implement` | Implement feature tasks or fix review findings | → `@reviewer` |
-| `source-check` | Verify an API against version-matched official docs before relying on it | → `implement` |
-| `refactor` | Behavior-preserving structural improvements | → `@reviewer` |
-| `test-design` | Design test case document (categories, boundaries, coverage gaps) | → `@reviewer` |
+| `implement` | Implement feature tasks or fix review findings — includes refactor, test-design, and version-matched API source-check modes | → `@reviewer` |
+| `debug` | Reproduce → hypothesize → isolate → verify root cause → propose minimal fix | → `implement` |
 
 ### 🔍 `@reviewer` — Review and audit
 
@@ -150,20 +141,11 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 
 > [!WARNING]
 > Every finding is graded CRITICAL / HIGH / MEDIUM / LOW. Never merge with an open CRITICAL or HIGH.
-> If review uncovers a deeper bug → `@debugger`. If design-level rework is needed → `@planner`.
-
-### 🐛 `@debugger` — Diagnose bugs
-
-| Skill | What it does | Then hand off to |
-|---|---|---|
-| `debug` | Reproduce → hypothesize → isolate → verify root cause → propose minimal fix | → `@implementer` (fix) |
-
-> [!NOTE]
-> `@debugger` diagnoses only — it does not implement fixes. Always hand off to `@implementer`.
+> If review uncovers a deeper bug → `@implementer` (debug). If design-level rework is needed → `@planner`.
 
 ### 📚 `@researcher` — Read-only subagent (automatic)
 
-Usually auto-delegated by `@planner`, `@implementer`, and `@reviewer` to scan the codebase and external docs before acting; can also be selected directly from the agents dropdown. Returns structured summaries — no opinions or recommendations.
+Usually auto-delegated by `@planner` and `@implementer` to scan the codebase and external docs before acting; can also be selected directly from the agents dropdown. Returns structured summaries — no opinions or recommendations.
 
 ---
 
@@ -175,18 +157,10 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 |:-:|-------|---------|-------------|
 | 🔍 | `code-review` | Auto + Manual | Structured code review — correctness, style, bug patterns |
 | 🐛 | `debug` | Auto + Manual | Systematic debugging with hypothesis ranking and isolation |
-| 📦 | `git-commit` | **Manual only** | [Conventional Commits](https://www.conventionalcommits.org/) message generation and intelligent staging |
-| 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification |
-| 📐 | `plan` | Auto + Manual | Implementation plan — clarifies vague requirements first, then phases, requirements, acceptance criteria, files, risks (hands off atomic tasks to `tasks` skill) |
-| ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
+| 🔨 | `implement` | Auto + Manual | Feature implementation — pattern discovery, convention compliance, self-verification; includes refactor, test-design, and version-matched API source-check modes |
+| 📐 | `plan` | Auto + Manual | Implementation plan — clarifies vague requirements first, then phases, acceptance criteria, files, risks; decomposes the approved plan into dependency-ordered tasks (T### IDs) |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
-| 📖 | `source-check` | Auto + Manual | Version-matched API verification — detect versions, fetch official docs, confirm signature, cite source |
 | 🔎 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns, DDL/DML migration safety |
-| ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
-| 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
-
-> [!WARNING]
-> `git-commit` uses `disable-model-invocation: true` to prevent auto-triggering. Always invoke explicitly via `/git-commit`.
 
 ---
 
@@ -200,6 +174,7 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 | `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
 | `/find-impact` | List all callers and dependents of the selected method/class |
 | `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
+| `/git-commit` | Stage related changes and commit with a [Conventional Commits](https://www.conventionalcommits.org/) message |
 
 ---
 
@@ -236,7 +211,6 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 ```text
 .github/
 ├── agents/                                ← Selected from the agents dropdown in chat
-│   ├── debugger.agent.md             (Claude Sonnet 4.6)
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
 │   ├── planner.agent.md              (Claude Opus 4.8)
 │   ├── researcher.agent.md           (GPT-5.4 mini)
@@ -261,20 +235,16 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── check-n-plus-1.prompt.md
 │   ├── check-tx.prompt.md
 │   ├── find-impact.prompt.md
-│   └── generate-migration-sql.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── git-commit.prompt.md
 │
 ├── skills/                                ← Executable skills for agents (output templates embedded)
 │   ├── code-review/
 │   ├── debug/
-│   ├── git-commit/
 │   ├── implement/
 │   ├── plan/
-│   ├── refactor/
 │   ├── security-audit/
-│   ├── source-check/
-│   ├── sql-review/
-│   ├── tasks/
-│   └── test-design/
+│   └── sql-review/
 │
 └── copilot-instructions.md                ← Global base instructions
 ```
