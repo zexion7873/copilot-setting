@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 'Use when user wants code reviewed for correctness, style, bugs, and maintainability. Triggers on: review code, code review, check this code, check PR, review PR, review this, 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼. Produces severity-classified findings with a verdict. Do NOT use for security-focused audit (prefer security-audit) or SQL-focused review (prefer sql-review).'
+description: 'Use when user wants code reviewed for correctness, style, bugs, and maintainability. Triggers on: code review, review PR, check this code, 審查程式碼, 幫我看程式碼. Produces severity-classified findings with a verdict. Do NOT use for security-focused audit (prefer security-audit) or SQL-focused review (prefer sql-review).'
 ---
 
 # Code Review — Workflow
@@ -9,18 +9,7 @@ Structured code review.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the instruction files for the layers under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
-
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/security.instructions.md` — OWASP Top 10
-- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-- `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Before rendering a verdict, open the instruction files for the layers under review — glob auto-loading does not fire for files you read mid-task, and your training data defaults to modern Java/Spring (these files are the version lock): `instructions/java.instructions.md`, `instructions/spring-hibernate.instructions.md`, `instructions/sql.instructions.md`, `instructions/security.instructions.md`, `instructions/jsp.instructions.md`, `instructions/xml-config.instructions.md`, `instructions/testing.instructions.md`, `instructions/no-heredoc.instructions.md`.
 
 ## Phase 1 — Understand the Change
 

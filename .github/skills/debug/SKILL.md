@@ -1,6 +1,6 @@
 ---
 name: debug
-description: 'Use when user reports a bug, error, exception, or unexpected behavior needing root cause analysis and minimal fix. Triggers on: debug this, why does this fail, root-cause this, fix the exception, 除錯, 找 bug, 報錯了, 為什麼會錯. Performs systematic isolation and minimal fix. Do NOT use for feature requests (prefer implement) or known simple typos (prefer implement).'
+description: 'Use when user reports a bug, error, exception, or unexpected behavior needing root cause analysis and minimal fix. Triggers on: debug this, why does this fail, root-cause this, 除錯, 找 bug, 報錯了. Performs systematic isolation and minimal fix. Do NOT use for feature requests or known simple typos (prefer implement).'
 ---
 
 # Debug — Workflow
@@ -9,15 +9,7 @@ Systematic isolation and minimal fix.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT propose a fix (Phase 6) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
-
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/security.instructions.md` — OWASP Top 10 (a bug fix can regress a security control — XSS, IDOR, injection)
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Before proposing a fix, open the instruction files for the layers you touch — glob auto-loading does not fire for files you read mid-task, and your training data defaults to modern Java/Spring (these files are the version lock): `instructions/java.instructions.md`, `instructions/spring-hibernate.instructions.md`, `instructions/sql.instructions.md`, `instructions/security.instructions.md` (a bug fix can regress a security control), `instructions/no-heredoc.instructions.md`.
 
 ## Phase 1 — Define the Problem
 

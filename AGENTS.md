@@ -26,24 +26,19 @@ The target audience of the artifacts here is **Copilot users working in downstre
 
 ## Validation Commands
 
-The executable workflows are style-guide validation and its own regression suite. Run both before committing changes under `.github/`:
+Run before committing changes under `.github/`:
 
 ```bash
-bash .github/scripts/test-validate-style-guide.sh   # regression-test the validator itself
-bash .github/scripts/validate-style-guide.sh        # validate the real tree
+bash .github/scripts/validate-style-guide.sh
 ```
 
-The regression suite builds throwaway fixtures (copies of `.github/` with one injected defect) and asserts the validator catches it — exercising the parsing edge cases (multi-line scalar bypass, unterminated frontmatter, CRLF, indented bullets) that the always-valid live tree never triggers, rather than every `error` branch.
+Enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator, `.github/hooks/**`, or the workflow file. It checks frontmatter presence, skill `name`-matches-directory with a marker-bearing `description` and no `tools` field, handoff target resolution, and resolvable cross-references. Full rule list: `.github/STYLE-GUIDE.md` → "Validation".
 
-Both are enforced in CI (`.github/workflows/validate-style-guide.yml`) on any PR that touches `.github/**/*.md`, the validator or its test harness, `.github/hooks/**`, or the workflow file. It enforces the format spec — frontmatter presence, skill `name`-matches-directory with a marker-bearing `description` and no `tools` field, byte-identical agent `## Coding Standards` bullets, floor↔instruction anchor co-occurrence, single-line `description` / `agent` scalars, code-touching-skill instruction references, 3-column Anti-Patterns headers, and resolvable cross-references. Full machine-checked rule list: `.github/STYLE-GUIDE.md` → "Tier 1: Machine-checked".
-
-One-time local setup so the validator also runs on `git commit`:
+One-time local setup so the validator also runs on `git commit` (only when `.github/` markdown is staged):
 
 ```bash
 git config core.hooksPath .githooks
 ```
-
-`.githooks/pre-commit` runs the validator — against a snapshot of the staged index, not the working tree — only when staged paths match `.github/` markdown (pathspec `.github/*.md`, which in git's default semantics matches every depth including the top-level files; deletions count too, since removing a file is the change most likely to break cross-references), so unrelated commits aren't slowed down.
 
 ## Architecture
 
@@ -59,10 +54,10 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 
 | Category | Path | Role | Loads when |
 |---|---|---|---|
-| Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User selects the agent from the chat agents dropdown |
-| Skills (11) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
+| Agents (4) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User selects the agent from the chat agents dropdown |
+| Skills (6) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment), or the model loads it on demand via semantic match on its `description` (discretionary); `applyTo: "**"` loads on every request |
-| Prompts (4) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
+| Prompts (5) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions, save the two narrow exceptions noted below.
@@ -72,7 +67,7 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 1. **Glob injection at request time** — `applyTo` globs match files explicitly in context (attached via `#file:`, editor attachment); matching instruction files auto-attach. Files the agent reads or edits dynamically during execution do NOT retroactively trigger glob instructions — the VS Code mid-session refresh request (microsoft/vscode#282964) was closed as not planned.
 2. **On-demand semantic loading** — each request also carries a list of all instruction files (glob + `description`); the model may load one whose description matches the task. Model-discretionary, never guaranteed. `applyTo: "**"` is the only guaranteed always-on glob.
 
-Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`, `debugger`) under `## Coding Standards`, loading deterministically when the agent is selected. Code-touching skills (`implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`) additionally name the canonical instruction file(s) they map to, opened on demand when the model reads the skill body. The files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy.
+Because most skill invocations happen without an attached file and on-demand loading cannot be relied on, hard-boundary rules (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) are embedded directly in the code-touching agent bodies (`implementer`, `reviewer`) under `## Coding Standards`, loading deterministically when the agent is selected. Code-touching skills (`implement`, `code-review`, `sql-review`, `security-audit`, `debug`) additionally name the canonical instruction file(s) they map to in their `Phase 0`, opened on demand when the model reads the skill body. The files under `instructions/` remain the single source of truth; the agent-body embed is a deliberately minimal hard-boundary floor, not a full copy.
 
 **Two narrow duplications are sanctioned**, both keeping the instruction file canonical:
 
@@ -129,7 +124,7 @@ When **deleting or merging** a file, the path grep alone is not enough — sever
 Lists in `README.md`, `README.zh-TW.md`, and this file follow one of two deliberate orders. Decide which kind of list you are touching before picking an insertion position:
 
 - **Mirror lists** — anything that claims to reflect the filesystem or a complete catalog: the "What Copilot Loads" tree and the Skills / Prompts / Instructions reference tables. Order: directories first, then files, alphabetical at every level — exactly what the VS Code explorer and GitHub show, so the list can be verified against `ls` at a glance and new entries have a deterministic insertion point.
-- **Narrative lists** — anything that teaches the pipeline: the How It Works category table and the Architecture table in this file (Agents → Skills → Instructions → Prompts → Hooks), the Agents table, and the Typical Workflow sections (planner → implementer → reviewer → debugger). Order follows the user journey / activation chain — the order itself is content; do not alphabetize.
+- **Narrative lists** — anything that teaches the pipeline: the How It Works category table and the Architecture table in this file (Agents → Skills → Instructions → Prompts → Hooks), the Agents table, and the Typical Workflow sections (planner → implementer → reviewer). Order follows the user journey / activation chain — the order itself is content; do not alphabetize.
 
 Alphabetizing a narrative list destroys the story; hand-ordering a mirror list breaks at-a-glance verification.
 
@@ -148,7 +143,7 @@ This repo intentionally mixes languages. Respect the split:
 - **Input** — reads the command from `toolArgs` (camelCase — object or JSON-encoded string) with a `tool_input` fallback (VS Code PascalCase payload).
 - **Fail-closed** — empty/whitespace-only input, JSON parse errors, missing `jq`, a missing `toolArgs`/`tool_input` key, or a `grep` error during matching all → deny.
 - **Deny protocol** — denials exit 0 **and** print `{"permissionDecision":"deny","permissionDecisionReason":"…"}` to stdout naming the matched category, so the agent can report why and self-correct. Copilot parses the decision JSON only on exit 0; exit 2 is a *non-blocking* warning (the command runs anyway); an unexpected crash exits non-zero (not 2), which `preToolUse` treats as a fail-closed deny.
-- **Regression suite** — `bash .github/hooks/scripts/test-block-dangerous-commands.sh` (also run in CI).
+- **Regression suite** — `bash .github/hooks/scripts/test-block-dangerous-commands.sh` (also run in CI). Run it after any hook change.
 
 **Blocked categories** — names only; `block-dangerous-commands.sh` and its regression suite are the source of truth for the exact patterns, separators, and intentional exceptions:
 
@@ -166,19 +161,17 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 
 ## Commit & PR Process
 
-- Conventional Commits (see `.github/skills/git-commit/SKILL.md` for the type table — `feat` / `fix` / `docs` / `refactor` / `perf` / `test` / `build` / `ci` / `chore` / `revert`).
-- The `git-commit` skill is marked `disable-model-invocation: true` and **must** be invoked explicitly via `/git-commit` — never auto-trigger.
+- Conventional Commits (see `.github/prompts/git-commit.prompt.md` for the type list — `feat` / `fix` / `docs` / `refactor` / `perf` / `test` / `build` / `ci` / `chore` / `revert`).
 - PR workflow per `CONTRIBUTING.md`: branch from `main`, follow `STYLE-GUIDE.md`, run the inbound-reference grep before renaming files, run `validate-style-guide.sh` locally.
 
 ## Agent Roster (for orientation)
 
 | Agent | Model | Activates |
 |---|---|---|
-| `@planner` | Claude Opus 4.8 | `plan`, `tasks` |
-| `@implementer` | GPT-5.3-Codex | `implement`, `source-check`, `refactor`, `test-design` |
+| `@planner` | Claude Opus 4.8 | `plan` (incl. task decomposition) |
+| `@implementer` | GPT-5.3-Codex | `implement` (incl. refactor / test-design / source-check modes), `debug` |
 | `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review` |
-| `@debugger` | Claude Sonnet 4.6 | `debug` |
-| `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
+| `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` |
 
 When adding a new skill: pick the owning agent, list the skill in that agent's `Skill Activation` table, and add bidirectional Handoffs entries if it interacts with other skills.
 

@@ -82,11 +82,10 @@ flowchart LR
 
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
-| 📐 | `@planner` | Claude Opus 4.8 | 觸發 `plan` / `tasks` skill；需求釐清、規劃、任務拆解一站完成 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `source-check` / `refactor` / `test-design` skill，依觸發詞分流 |
+| 📐 | `@planner` | Claude Opus 4.8 | 觸發 `plan` skill — 需求釐清、規劃、任務拆解一站完成 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement`（含重構 / 測試設計 / API 查證模式）與 `debug` skill |
 | 🔍 | `@reviewer` | Claude Opus 4.8 | 觸發 `code-review` / `security-audit` / `sql-review` skill，依審查類型分流 |
-| 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
-| 📚 | `@researcher` | GPT-5.4 mini | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
+| 📚 | `@researcher` | GPT-5.4 mini | 輕量唯讀 subagent，供 `@planner` 和 `@implementer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
 ### 🤝 Agent Handoffs Workflow
 
@@ -99,19 +98,14 @@ flowchart LR
 
     Implementer["🔨 Implementer"] -->|"Code Review"| Reviewer
     Implementer -->|"安全性審查"| Reviewer
-    Implementer -->|"除錯分析"| Debugger
     Implementer -->|"回到規劃"| Planner
 
     Reviewer["🔍 Reviewer"] -->|"修復問題"| Implementer
     Reviewer -->|"重構程式碼"| Implementer
-    Reviewer -->|"除錯分析"| Debugger
     Reviewer -->|"重新規劃"| Planner
-
-    Debugger["🐛 Debugger"] -->|"修復 Bug"| Implementer
 
     Implementer -.->|"subagent"| Researcher["📚 Researcher"]
     Planner -.->|"subagent"| Researcher
-    Reviewer -.->|"subagent"| Researcher
 ```
 
 ---
@@ -124,20 +118,17 @@ flowchart LR
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
-| `plan` | 先釐清模糊需求，再建立分階段實作計畫，含風險與依賴 | 留在 `@planner` |
-| `tasks` | 將核准的計畫拆成有依賴順序的原子任務 | → `@implementer` |
+| `plan` | 先釐清模糊需求，建立分階段實作計畫，再將核准的計畫拆成有依賴順序的原子任務 | → `@implementer` |
 
 > [!TIP]
 > 小改動（1–3 檔）跳過 `@planner`，直接找 `@implementer`。
 
-### 🔨 `@implementer` — 寫 code、改 code
+### 🔨 `@implementer` — 寫 code、改 code、除錯
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
-| `implement` | 實作功能任務或修復審查發現 | → `@reviewer` |
-| `source-check` | 依賴 API 前先對照版本相符的官方文件確認 | → `implement` |
-| `refactor` | 行為不變的結構改善 | → `@reviewer` |
-| `test-design` | 設計測試案例文件（分類、邊界、覆蓋缺口） | → `@reviewer` |
+| `implement` | 實作功能任務或修復審查發現 — 含重構、測試設計、版本相符 API 查證模式 | → `@reviewer` |
+| `debug` | 重現 → 假說 → 隔離 → 驗證根因 → 提出最小修復 | → `implement` |
 
 ### 🔍 `@reviewer` — 審查與稽核
 
@@ -150,20 +141,11 @@ flowchart LR
 
 > [!WARNING]
 > 每個 finding 分級 CRITICAL / HIGH / MEDIUM / LOW；有未解的 CRITICAL/HIGH 不放行。
-> 審查發現更深層 bug → `@debugger`。需要設計層級重做 → `@planner`。
-
-### 🐛 `@debugger` — 診斷 bug
-
-| Skill | 做什麼 | 接著交給 |
-|---|---|---|
-| `debug` | 重現 → 假說 → 隔離 → 驗證根因 → 提出最小修復 | → `@implementer`（修復） |
-
-> [!NOTE]
-> `@debugger` 只診斷，不實作修復。一律交給 `@implementer`。
+> 審查發現更深層 bug → `@implementer`（debug）。需要設計層級重做 → `@planner`。
 
 ### 📚 `@researcher` — 唯讀子代理（自動）
 
-通常由 `@planner`、`@implementer`、`@reviewer` 自動派遣去掃 codebase 和外部文件，也可直接從 agents dropdown 選擇。回傳結構化摘要 — 不提供建議與決策。
+通常由 `@planner`、`@implementer` 自動派遣去掃 codebase 和外部文件，也可直接從 agents dropdown 選擇。回傳結構化摘要 — 不提供建議與決策。
 
 ---
 
@@ -175,18 +157,10 @@ flowchart LR
 |:-:|-------|----------|------|
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
-| 📦 | `git-commit` | **僅手動** | [Conventional Commits](https://www.conventionalcommits.org/) 訊息產生與智慧檔案暫存 |
-| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證 |
-| 📐 | `plan` | 自動 + 手動 | 實作計畫 — 先釐清模糊需求，再產出階段、需求、驗收標準、檔案、風險（原子任務拆解交給 `tasks` skill） |
-| ♻️ | `refactor` | 自動 + 手動 | 只動該動的重構 — 擷取、重命名、消除異味 |
+| 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證；含重構、測試設計、版本相符 API 查證模式 |
+| 📐 | `plan` | 自動 + 手動 | 實作計畫 — 先釐清模糊需求，再產出階段、驗收標準、檔案、風險，最後將核准的計畫拆成依賴排序的原子任務（T### IDs） |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
-| 📖 | `source-check` | 自動 + 手動 | 版本相符的 API 驗證 — 偵測版本、抓官方文件、確認簽名、附引用 |
 | 🔎 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測、DDL/DML migration 安全性 |
-| ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
-| 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
-
-> [!WARNING]
-> `git-commit` 使用 `disable-model-invocation: true` 防止自動觸發，請一律以 `/git-commit` 顯式呼叫。
 
 ---
 
@@ -200,6 +174,7 @@ flowchart LR
 | `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
 | `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
 | `/generate-migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
+| `/git-commit` | 暫存相關變更並以 [Conventional Commits](https://www.conventionalcommits.org/) 格式提交 |
 
 ---
 
@@ -236,7 +211,6 @@ flowchart LR
 ```text
 .github/
 ├── agents/                                ← 從 Chat 的 agents dropdown 選擇
-│   ├── debugger.agent.md             (Claude Sonnet 4.6)
 │   ├── implementer.agent.md          (GPT-5.3-Codex)
 │   ├── planner.agent.md              (Claude Opus 4.8)
 │   ├── researcher.agent.md           (GPT-5.4 mini)
@@ -261,20 +235,16 @@ flowchart LR
 │   ├── check-n-plus-1.prompt.md
 │   ├── check-tx.prompt.md
 │   ├── find-impact.prompt.md
-│   └── generate-migration-sql.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── git-commit.prompt.md
 │
 ├── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
 │   ├── code-review/
 │   ├── debug/
-│   ├── git-commit/
 │   ├── implement/
 │   ├── plan/
-│   ├── refactor/
 │   ├── security-audit/
-│   ├── source-check/
-│   ├── sql-review/
-│   ├── tasks/
-│   └── test-design/
+│   └── sql-review/
 │
 └── copilot-instructions.md                ← 全域基礎指示
 ```
