@@ -4,7 +4,7 @@
 
 - Always respond in **Traditional Chinese (繁體中文)**.
 - Code, variable names, comments, and commit messages must be in **English**.
-- Keep responses concise and direct. Avoid unnecessary verbosity.
+- Keep responses concise and direct.
 
 ## Tech Stack
 
@@ -30,5 +30,5 @@
 ## File Operations
 
 - Never use `cat`/`echo`/`printf`/`tee` with `>`/`>>`/`<< EOF` to write file content — VS Code terminal integration corrupts these (tab completion, escaping, exit 130).
-- Create / modify files with the file editing tools (Write / Edit); `rm` is fine for deletion.
+- Create / modify files with the file editing tools (Write / Edit).
 - Terminal remains fine for package management, builds, tests, git, `ls`/`mkdir`/`rm`, and downloads that don't pipe into files.

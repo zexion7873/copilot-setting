@@ -5,13 +5,14 @@ description: 'Use when user needs SQL reviewed — queries for injection risks, 
 
 # SQL Review — Workflow
 
-SQL-focused review covering both queries and schema migrations. Rules: `instructions/sql.instructions.md`.
+SQL-focused review covering both queries and schema migrations. Rules: `instructions/sql.instructions.md` (queries) + `instructions/sql-ddl.instructions.md` (migrations).
 
 ## Phase 0 — Load canonical rules
 
 **MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL DDL & migration safety
+- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
 - `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
 - `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
 
@@ -46,20 +47,20 @@ Recommend `EXPLAIN` for queries touching large tables.
 
 ## Phase 4 — Verify Migration Rollback Safety
 
-Check each migration against the rollback rules in `instructions/sql.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
+Check each migration against the rollback rules in `instructions/sql-ddl.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
 
 - [ ] Down migration / rollback script exists for every up statement
 - [ ] Dropped columns are renamed-then-dropped across two releases (not single-shot)
 - [ ] Renames go through add-new + dual-write + drop-old phases
 - [ ] No `DROP TABLE` without explicit user sign-off
-- [ ] Backfill scripts are idempotent and re-runnable
+- [ ] Backfill scripts are idempotent and re-runnable — no false `IF NOT EXISTS` guards on `ADD`/`DROP COLUMN` or `CREATE`/`DROP INDEX`
 
 ## Phase 5 — Assess Lock and Downtime Impact
 
-Check each statement against the DDL / migration safety rules in `instructions/sql.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
+Check each statement against the DDL / migration safety rules in `instructions/sql-ddl.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
 
 - [ ] Large-table `ALTER` uses online schema change (pt-osc / gh-ost) or carries a downtime note
-- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` is INSTANT, not a table rewrite (`instructions/sql.instructions.md`)
+- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` is INSTANT, not a table rewrite (`instructions/sql-ddl.instructions.md`)
 - [ ] Table-rebuilding `MODIFY COLUMN` on a large table is flagged for lock impact
 - [ ] Index creation uses `ALGORITHM=INPLACE, LOCK=NONE` where supported
 - [ ] Long `UPDATE` / `DELETE` is chunked by PK range, committed per chunk
@@ -99,16 +100,6 @@ Impact: <performance / security / correctness / data loss / downtime / rollback 
 | ⚪ LOW | Alias naming; formatting; column comment missing |
 
 Summary: `Statements reviewed: N | Findings: N critical, N high, N medium, N low | Top issue: <most impactful>`
-
-## Anti-Patterns
-
-Canonical DDL / migration anti-patterns live in `instructions/sql.instructions.md` (`MySQL DDL & Migrations` plus its Anti-Patterns table). In review, watch especially for:
-
-- `DROP COLUMN` in the release that stopped writing it
-- `ADD COLUMN ... NOT NULL DEFAULT` treated as a table rewrite
-- Single-shot column rename
-- Non-idempotent migration (false `IF NOT EXISTS` on `ADD`/`DROP COLUMN`, `CREATE`/`DROP INDEX`)
-- Unbatched `UPDATE` / `DELETE` on a huge table
 
 ## Handoffs
 

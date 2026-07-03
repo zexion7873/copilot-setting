@@ -56,7 +56,7 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 - Root `<hibernate-mapping package="...">` with explicit package
 - Collections `lazy="true"` explicit for intent
-- FK naming `foreign-key="fk_<child>_<parent_col>"` — match the SQL DDL convention so Hibernate-generated and hand-written DDL agree (`instructions/sql.instructions.md`)
+- FK naming `foreign-key="fk_<child>_<parent_col>"` — match the SQL DDL convention so Hibernate-generated and hand-written DDL agree (`instructions/sql-ddl.instructions.md`)
 - Second-level cache opt-in per entity, never global
 
 ## Anti-Patterns

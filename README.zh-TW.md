@@ -213,7 +213,8 @@ flowchart LR
 | `jsp` | `**/*.jsp` | JSP 慣例 — 透過 `<c:out>` 防 XSS、JSTL-only 政策、輸出編碼 |
 | `security` | `**/*.java, **/*.jsp` | OWASP Top 10 精華版，針對 Java web 應用 |
 | `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core 3.2 + Hibernate 4.2 — native Session API、hbm.xml mapping、`getCurrentSession()` 生命週期、XML `<tx:advice>` transaction。**最關鍵的一份** |
-| `sql` | `**/*.java, **/*.sql, **/*.hbm.xml` | SQL injection 防護、效能陷阱、JDBC resource handling、MySQL 預存程序慣例 |
+| `sql` | `**/*.java, **/*.hbm.xml` | SQL injection 防護、效能陷阱、JDBC resource handling |
+| `sql-ddl` | `**/*.sql` | MySQL DDL 與 migration 安全 — rollback script、online schema change、預存程序 |
 | `testing` | `**/*Test.java, **/*Tests.java, **/*IT.java` | 測試慣例 — JUnit 4 + Mockito + Spring Test 3.2，禁 JUnit 5 / Spring Boot Test |
 | `xml-config` | `**/*.xml` | Spring XML config、Hibernate hbm.xml、Maven POM 慣例 |
 
@@ -251,6 +252,7 @@ flowchart LR
 │   ├── jsp.instructions.md
 │   ├── security.instructions.md
 │   ├── spring-hibernate.instructions.md
+│   ├── sql-ddl.instructions.md
 │   ├── sql.instructions.md
 │   ├── testing.instructions.md
 │   └── xml-config.instructions.md

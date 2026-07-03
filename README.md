@@ -213,7 +213,8 @@ Automatically injected into the system prompt when the current file matches the 
 | `jsp` | `**/*.jsp` | JSP conventions — XSS prevention via `<c:out>`, JSTL-only policy, output encoding. |
 | `security` | `**/*.java, **/*.jsp` | OWASP Top 10 essentials for Java web applications. |
 | `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core 3.2 + Hibernate 4.2 — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, XML `<tx:advice>` transactions. The most critical file. |
-| `sql` | `**/*.java, **/*.sql, **/*.hbm.xml` | SQL injection prevention, performance pitfalls, JDBC resource handling, and MySQL stored procedure conventions. |
+| `sql` | `**/*.java, **/*.hbm.xml` | SQL injection prevention, performance pitfalls, and JDBC resource handling. |
+| `sql-ddl` | `**/*.sql` | MySQL DDL and migration safety — rollback scripts, online schema change, stored procedures. |
 | `testing` | `**/*Test.java, **/*Tests.java, **/*IT.java` | Test conventions — JUnit 4 + Mockito + Spring Test 3.2, no JUnit 5, no Spring Boot Test. |
 | `xml-config` | `**/*.xml` | Spring XML config, Hibernate hbm.xml, and Maven POM conventions. |
 
@@ -251,6 +252,7 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── jsp.instructions.md
 │   ├── security.instructions.md
 │   ├── spring-hibernate.instructions.md
+│   ├── sql-ddl.instructions.md
 │   ├── sql.instructions.md
 │   ├── testing.instructions.md
 │   └── xml-config.instructions.md

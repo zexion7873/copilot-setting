@@ -1,6 +1,6 @@
 ---
 name: source-check
-description: 'Use when verifying a framework or library API against version-matched official documentation for the pinned Spring 3.2 / Hibernate 4.2 / Java 8 versions before relying on it. Triggers on: verify API, check official docs, confirm signature, 查官方文件, 這版有沒有. Produces a documented verification — version-matched source, confirmed fact, and a cited deep-link. Do NOT use for writing the feature itself (prefer implement) or reviewing already-written code (prefer code-review).'
+description: 'Use when verifying a framework or library API against version-matched official documentation for the pinned Spring 3.2 / Hibernate 4.2 / Java 8 versions before relying on it. Triggers on: verify API, check official docs, confirm signature, 查官方文件, 這版有沒有. Produces a cited, version-matched verification. Do NOT use for writing the feature itself (prefer implement) or reviewing already-written code (prefer code-review).'
 ---
 
 # Source-Check — Workflow

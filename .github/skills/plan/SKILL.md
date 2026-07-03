@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding — including clarifying vague or ambiguous requirements first. Triggers on: plan, how should we build, unclear requirements, 規劃, 幫我想方案. Produces a structured plan document, preceded by numbered clarifying questions when requirements have gaps. Do NOT use for atomic task lists (prefer tasks) or direct implementation of well-understood small tasks (prefer implement).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding — including clarifying vague or ambiguous requirements first. Triggers on: plan, how should we build, unclear requirements, 規劃, 幫我想方案. Produces a structured plan document. Do NOT use for atomic task lists (prefer tasks) or direct implementation of well-understood small tasks (prefer implement).'
 ---
 
 # Plan — Workflow
