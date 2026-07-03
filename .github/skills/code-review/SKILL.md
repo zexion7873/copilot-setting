@@ -50,6 +50,7 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 - [ ] Hibernate: `getCurrentSession()` + hbm.xml, no JPA annotations
 - [ ] Transactions: production code uses `<tx:advice>` only (unless existing `@Transactional` convention); `@Transactional` on a test class for auto-rollback is sanctioned (`instructions/testing.instructions.md`)
 - [ ] Logging: SLF4J `{}` placeholders, no string concatenation
+- [ ] No speculative abstraction or unrequested flexibility — minimum code for the asked change (YAGNI)
 
 **POM / Dependencies** (check if `pom.xml` is in scope):
 - [ ] No `SNAPSHOT` in release builds; no `LATEST`/`RELEASE` markers

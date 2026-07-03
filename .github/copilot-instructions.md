@@ -23,6 +23,7 @@
 
 - State assumptions explicitly. If uncertain, ask — don't guess.
 - If multiple interpretations exist, present them. Don't pick silently.
+- Prefer what already exists — a codebase pattern, the stdlib, an already-installed dependency — before writing new code.
 - Minimum code that solves the problem — no speculative abstractions, no features beyond what was asked.
 - Touch only what the task requires; match existing style, even if you'd do it differently.
 - Clean up orphans YOUR changes created. Don't remove pre-existing dead code — mention it, don't delete it.
