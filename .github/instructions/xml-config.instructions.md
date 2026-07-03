@@ -15,9 +15,7 @@ Conventions for Spring XML config (`applicationContext*.xml`), Hibernate `hbm.xm
 
 ## Hibernate hbm.xml
 
-- One file per entity: `<EntityName>.hbm.xml`, alongside the POJO
-- Root: `<hibernate-mapping package="...">` with explicit package
-- Collections: `lazy="true"` explicit; FK: `foreign-key="fk_<child>_<parent_col>"` (match SQL DDL — see `instructions/sql.instructions.md`)
+hbm.xml mapping conventions (file-per-entity, root package, lazy/FK naming): see `instructions/spring-hibernate.instructions.md`.
 
 ## Maven POM
 
@@ -35,12 +33,6 @@ This stack bootstraps via `web.xml` (no servlet initializers — see `instructio
 - `CharacterEncodingFilter` set to UTF-8 and mapped **first** in the filter chain, before any filter that reads request parameters (ties into the JSP output-encoding story — `instructions/jsp.instructions.md`)
 - Context split: `ContextLoaderListener` loads the root context (services, DAOs); `DispatcherServlet` loads only its own web context (controllers, view resolvers) — do not redefine the same bean in both
 - `OpenSessionInViewFilter` (OSIV), if used, is configured here — see `instructions/spring-hibernate.instructions.md`
-
-## General
-
-- Indentation: 4 spaces for Spring/hbm.xml; 2 spaces for POM
-- Close all tags; self-closing for empty elements
-- Comment only non-obvious configuration choices
 
 ## Anti-Patterns
 

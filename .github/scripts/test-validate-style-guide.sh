@@ -103,7 +103,7 @@ expect_fail "C: unterminated frontmatter is rejected" "$fxc"
 
 # ── D. CRLF line endings must still parse as frontmatter ─────────────
 fxd="$(new_fixture)"
-perl -i -pe 's/\n/\r\n/' "$fxd/.github/instructions/no-heredoc.instructions.md"
+perl -i -pe 's/\n/\r\n/' "$fxd/.github/instructions/testing.instructions.md"
 expect_pass "D: CRLF line endings still parse frontmatter" "$fxd"
 
 # ── E. Empty description must be rejected (instruction + prompt) ─────
@@ -148,21 +148,6 @@ awk '
 ' "$fxg/.github/agents/reviewer.agent.md" > "$fxg/.github/agents/reviewer.agent.md.tmp" \
   && mv "$fxg/.github/agents/reviewer.agent.md.tmp" "$fxg/.github/agents/reviewer.agent.md"
 expect_fail "G: indented continuation in Coding Standards is caught" "$fxg" "top-level"
-
-# ── H. A digit-containing instruction filename must be accepted ──────
-fxh="$(new_fixture)"
-printf '%s\n' \
-  '---' \
-  "description: 'SQL v2 rules.'" \
-  "applyTo: '**/*.sql'" \
-  '---' \
-  '# SQL v2' \
-  '' \
-  '- rule' \
-  > "$fxh/.github/instructions/sql2.instructions.md"
-perl -i -pe 's{instructions/[a-z0-9-]+\.instructions\.md}{instructions/sql2.instructions.md}g' \
-  "$fxh/.github/skills/sql-review/SKILL.md"
-expect_pass "H: code-touching skill may name a digit-containing instruction file" "$fxh"
 
 # ── I. Floor↔instruction anchor drift (body rule deleted) must be caught ──
 # Realistic drift: delete the A08 deserialization RULE from the instruction body

@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 'Use when user wants code reviewed for correctness, style, bugs, and maintainability. Triggers on: review code, code review, check this code, check PR, review PR, review this, 審查程式碼, 幫我看程式碼, review 一下, 檢查程式碼. Produces severity-classified findings with a verdict. Do NOT use for security-focused audit (prefer security-audit) or SQL-focused review (prefer sql-review).'
+description: 'Use when user wants code reviewed for correctness, style, bugs, and maintainability. Triggers on: review code, code review, check PR, 審查程式碼, 檢查程式碼. Produces severity-classified findings with a verdict. Do NOT use for security-focused audit (prefer security-audit) or SQL-focused review (prefer sql-review).'
 ---
 
 # Code Review — Workflow
@@ -17,7 +17,6 @@ Structured code review.
 - `instructions/security.instructions.md` — OWASP Top 10
 - `instructions/jsp.instructions.md` — JSP / JSTL, XSS
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 - `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
@@ -31,9 +30,6 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 ## Phase 2 — Review by Category
 
 **Correctness** (check each):
-- [ ] Null/empty inputs handled at method entry
-- [ ] Off-by-one: loop bounds, substring, index access
-- [ ] Edge cases: zero, negative, empty collection, max-size
 - [ ] Shared mutable state accessed from multiple threads → synchronized or thread-local?
 - [ ] JDBC resources (`Connection`, `PreparedStatement`, `ResultSet`, streams) managed via try-with-resources; Hibernate `Session` from `getCurrentSession()` is never closed/flushed manually (Spring owns its lifecycle)
 
@@ -54,11 +50,6 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 - [ ] Hibernate: `getCurrentSession()` + hbm.xml, no JPA annotations
 - [ ] Transactions: production code uses `<tx:advice>` only (unless existing `@Transactional` convention); `@Transactional` on a test class for auto-rollback is sanctioned (`instructions/testing.instructions.md`)
 - [ ] Logging: SLF4J `{}` placeholders, no string concatenation
-
-**Maintainability** (check each):
-- [ ] Each method does one thing (~30+ lines of logic is a smell to check, not a hard limit)
-- [ ] No copy-paste duplication
-- [ ] Names self-explanatory; comments explain WHY not WHAT
 
 **POM / Dependencies** (check if `pom.xml` is in scope):
 - [ ] No `SNAPSHOT` in release builds; no `LATEST`/`RELEASE` markers

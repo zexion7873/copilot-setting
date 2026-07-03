@@ -85,6 +85,4 @@ State escalation: "Escalating to [skill] — found [trigger]."
 
 ## Handoff Guidance
 
-- Issues or vulnerabilities found → suggest `@implementer` for fixes
-- Bug needing root cause analysis → suggest `@debugger`
-- Fundamental design problems → suggest `@planner` for re-planning
+Findings → `@implementer` for fixes; bug needing root cause analysis → `@debugger`; fundamental design flaw → `@planner` for re-planning.

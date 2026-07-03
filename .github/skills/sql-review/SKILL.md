@@ -1,6 +1,6 @@
 ---
 name: sql-review
-description: 'Use when user needs SQL reviewed — queries for injection risks, performance, and index strategy, or DDL/DML migration scripts for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review SQL, SQL review, query review, slow query, check SQL, review migration, schema change, DDL review, ALTER TABLE review, SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified findings with EXPLAIN, rollback, and lock guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or initial schema design (prefer plan).'
+description: 'Use when user needs SQL reviewed — queries for injection risks, performance, and index strategy, or DDL/DML migration scripts for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review SQL, slow query, review migration, SQL 審查, 看 migration. Produces severity-classified findings with EXPLAIN, rollback, and lock guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or initial schema design (prefer plan).'
 ---
 
 # SQL Review — Workflow
@@ -14,7 +14,6 @@ SQL-focused review covering both queries and schema migrations. Rules: `instruct
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL DDL & migration safety
 - `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
 - `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
@@ -100,15 +99,6 @@ Impact: <performance / security / correctness / data loss / downtime / rollback 
 | ⚪ LOW | Alias naming; formatting; column comment missing |
 
 Summary: `Statements reviewed: N | Findings: N critical, N high, N medium, N low | Top issue: <most impactful>`
-
-### EXPLAIN Cheat Sheet (MySQL)
-
-| Column | Watch for |
-|---|---|
-| `type` | `ALL` = full scan (bad); `ref`/`range` = index used (good) |
-| `key` | `NULL` = no index used |
-| `rows` | High number on filtered query = missing index |
-| `Extra` | `Using filesort` = ORDER BY not indexed; `Using temporary` = temp table |
 
 ## Anti-Patterns
 

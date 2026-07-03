@@ -63,11 +63,6 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 
 | Pattern | Problem | Fix |
 |---|---|---|
-| `@Entity` / `@Column` on POJO | This project is hbm.xml only | Remove; metadata in hbm.xml |
-| `@RestController` | Spring 4+ — does not exist in 3.2 | `@Controller` + `@ResponseBody` |
 | `@Transactional` on service (new code) | Conflicts with XML `<tx:advice>` | Use `<tx:method>` entry — unless the legacy codebase is already `@Transactional`-based; then sustain existing convention |
-| `sessionFactory.openSession()` in DAO | Session outside tx boundary | `getCurrentSession()` |
-| `session.beginTransaction()` in advised code | Fights Spring tx sync | Let `<tx:advice>` handle it |
-| Lazy collection accessed after tx commits | `LazyInitializationException` | `JOIN FETCH` or `Hibernate.initialize()` in service |
 | `this.otherMethod()` for new tx | Self-invocation bypasses proxy | Inject proxied bean; call through reference |
 | `for (u : users) { u.getOrders().size(); }` | N+1 queries | `JOIN FETCH` or `fetch="join"` in hbm.xml |

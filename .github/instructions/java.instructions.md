@@ -66,23 +66,11 @@ This project is Java 8. AI models default to modern Java, and that pull is stron
 - Never log secrets, tokens, PII, or full request/response bodies
 - ERROR = needs human attention; WARN = unexpected but recoverable; INFO = business events; DEBUG = diagnostics
 
-## Code Style
-
-- Comments explain WHY, not WHAT — code should be self-explanatory
-- Delete commented-out code; that's what git is for
-- Extract a method when it stops doing one thing — past ~30 lines of logic is a smell to look at, not a hard cap
-
 ## Anti-Patterns
 
 | Pattern | Problem | Fix |
 |---|---|---|
-| `var result = ...` | Java 9+ — won't compile | Explicit type declaration |
-| `List.of("a", "b")` | Java 9+ — won't compile on Java 8 | `Arrays.asList("a", "b")` |
 | `catch (Throwable t) { }` | Catches unrecoverable `Error`s; empty body swallows | Catch specific exception; never empty body |
-| `log.info("User " + userId)` | Concatenation runs even when level disabled | `log.info("User {}", userId)` |
 | `System.out.println(...)` | Unstructured, no levels, lost in production | `log.debug(...)` via SLF4J |
-| `throw new RuntimeException("err")` without cause | Loses original stack trace | `throw new RuntimeException("msg", original)` |
 | `catch (Exception e) { return null; }` | Converts to NPE elsewhere | Rethrow meaningful exception or `Optional.empty()` |
 | `new Date()` / `Calendar.getInstance()` in business logic | Legacy mutable API | `java.time` (`LocalDateTime.now()` etc.) — but hbm.xml entity date fields & `<fmt:formatDate>` inputs must stay `java.util.Date` (Hibernate 4.2 / JSTL 1.2 lack java.time) |
-| `double price = 19.99` for money | Binary float rounding errors | `new BigDecimal("19.99")` |
-| Shared `HashMap` mutated by servlet threads | Race condition; lost updates | `ConcurrentHashMap` or confine to method scope |

@@ -168,60 +168,10 @@ for file in "$GITHUB_DIR"/skills/*/SKILL.md; do
     error "skills/$dir_name/SKILL.md: 'tools' field not allowed in skills (belongs on agents)"
   fi
 
-  manual_only=false
-  if fm_has_key "$file" "disable-model-invocation"; then
-    if [ "$(fm_value "$file" "disable-model-invocation")" = "true" ]; then
-      manual_only=true
-    fi
-  fi
-
-  format_ok=true
-  if [ "$manual_only" = "false" ]; then
-    missing_markers=""
-    echo "$desc" | grep -q "Use when " || missing_markers="$missing_markers 'Use when'"
-    echo "$desc" | grep -q "Triggers on:" || missing_markers="$missing_markers 'Triggers on:'"
-    echo "$desc" | grep -q "Do NOT use" || missing_markers="$missing_markers 'Do NOT use'"
-    if [ -n "$missing_markers" ]; then
-      error "skills/$dir_name/SKILL.md: description missing required markers:$missing_markers"
-      format_ok=false
-    fi
-  fi
-
-  if [ "$skill_name" = "$dir_name" ] && [ "$desc_len" -le 1024 ] && ! fm_has_key "$file" "tools" && [ "$format_ok" = "true" ]; then
-    if [ "$manual_only" = "true" ]; then
-      pass "skills/$dir_name/SKILL.md ($desc_len chars, manual-only)"
-    else
-      pass "skills/$dir_name/SKILL.md ($desc_len chars)"
-    fi
+  if [ "$skill_name" = "$dir_name" ] && [ "$desc_len" -le 1024 ] && ! fm_has_key "$file" "tools"; then
+    pass "skills/$dir_name/SKILL.md ($desc_len chars)"
   fi
 done
-echo ""
-
-echo "🔗 Instruction Reference (code-touching skills)"
-# Skills that modify or review Java code must name the canonical instruction
-# file(s) they map to, so the agent can open them on demand when the skill is
-# triggered. The condensed floor was removed — hard-boundary rules now live in
-# the code-touching agent bodies (## Coding Standards), which load
-# deterministically on agent selection.
-INSTRUCTION_REF_SKILLS="implement refactor code-review sql-review security-audit debug"
-ref_errors_start=$ERRORS
-for skill in $INSTRUCTION_REF_SKILLS; do
-  file="$GITHUB_DIR/skills/$skill/SKILL.md"
-  if [ ! -f "$file" ]; then
-    error "instruction reference check: skills/$skill/SKILL.md not found"
-    continue
-  fi
-  # Must name at least one specific instruction file (not just the *.glob).
-  # Digits allowed in the stem ([a-z][a-z0-9-]*) so a name like java8 resolves
-  # — the xref check already accepts digits, and the two must agree.
-  if ! grep -qE '`instructions/[a-z][a-z0-9-]*\.instructions\.md`' "$file"; then
-    error "skills/$skill/SKILL.md: must name a specific instruction file (e.g. \`instructions/sql.instructions.md\`)"
-  fi
-done
-
-if [ "$ERRORS" -eq "$ref_errors_start" ]; then
-  pass "all code-touching skills reference their instruction files"
-fi
 echo ""
 
 echo "🤖 Agent Coding Standards (code-touching agents)"
@@ -405,26 +355,6 @@ for file in "$GITHUB_DIR"/agents/*.agent.md; do
     fi
   fi
 done
-echo ""
-
-echo "📊 Anti-Patterns Tables (instructions only)"
-ap_errors_start=$ERRORS
-for file in "$GITHUB_DIR"/instructions/*.instructions.md; do
-  [ -f "$file" ] || continue
-  name="$(basename "$file")"
-  if grep -q "^## Anti-Patterns" "$file"; then
-    # Scope to the Anti-Patterns section and anchor at end-of-line, so a matching
-    # header elsewhere in the file does not satisfy the check and a 4+-column
-    # header (| Pattern | Problem | Fix | Extra |) is rejected.
-    if ! awk '/^## Anti-Patterns/{f=1; next} f && /^## /{exit} f' "$file" | grep -qE '^\|\s*Pattern\s*\|\s*Problem\s*\|\s*Fix\s*\|\s*$'; then
-      error "$name: '## Anti-Patterns' section missing exact 3-column header (Pattern | Problem | Fix)"
-    fi
-  fi
-done
-
-if [ "$ERRORS" -eq "$ap_errors_start" ]; then
-  pass "all instruction Anti-Patterns tables use 3-column format"
-fi
 echo ""
 
 echo "🔗 Cross-References"

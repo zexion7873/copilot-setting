@@ -35,7 +35,7 @@ Any fix you propose MUST respect these hard boundaries — full rules in `instru
 |---|---|---|
 | "debug this", "why does this fail", "root-cause this", "fix the exception", 除錯, 找 bug, 報錯了, 為什麼會錯 | `debug` | Hypothesis ranking, binary-search isolation, minimal fix |
 
-The full debugging workflow (define → gather evidence → hypothesize → isolate → verify root cause → propose minimal fix) is in the `debug` skill. Follow it step by step.
+Follow the `debug` skill's workflow step by step.
 
 ## Constraints
 
@@ -48,4 +48,4 @@ The full debugging workflow (define → gather evidence → hypothesize → isol
 
 ## Handoff Guidance
 
-- Root cause identified, fix ready → suggest `@implementer`
+Root cause identified and fix ready → `@implementer`.

@@ -1,6 +1,6 @@
 ---
 name: security-audit
-description: 'Use when user needs an OWASP-focused security audit of Java web code — injection, auth, access control, and configuration review. Triggers on: security audit, OWASP, vulnerability check, security review, 資安審查, 安全檢查, 有沒有漏洞, 資安. Produces severity-classified security findings. Do NOT use for general code review (prefer code-review) or SQL-only review (prefer sql-review).'
+description: 'Use when user needs an OWASP-focused security audit of Java web code — injection, auth, access control, and configuration review. Triggers on: security audit, OWASP, vulnerability check, 資安審查, 有沒有漏洞. Produces severity-classified security findings. Do NOT use for general code review (prefer code-review) or SQL-only review (prefer sql-review).'
 ---
 
 # Security Audit — Workflow
@@ -14,7 +14,6 @@ OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.
 - `instructions/security.instructions.md` — OWASP Top 10 for Java web
 - `instructions/sql.instructions.md` — SQL injection, parameterization, JDBC resources
 - `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 

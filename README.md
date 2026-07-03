@@ -211,10 +211,9 @@ Automatically injected into the system prompt when the current file matches the 
 |------|---------|-------------|
 | `java` | `**/*.java` | Java 8 language boundary, exception handling, SLF4J logging, and code style — focuses on what AI models get wrong by default. |
 | `jsp` | `**/*.jsp` | JSP conventions — XSS prevention via `<c:out>`, JSTL-only policy, output encoding. |
-| `no-heredoc` | `**` | Forbid terminal heredoc / redirection for writing file content; use file editing tools instead. |
 | `security` | `**/*.java, **/*.jsp` | OWASP Top 10 essentials for Java web applications. |
 | `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core 3.2 + Hibernate 4.2 — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, XML `<tx:advice>` transactions. The most critical file. |
-| `sql` | `**/*.java, **/*.sql, **/*.xml` | SQL injection prevention, performance pitfalls, JDBC resource handling, and MySQL stored procedure conventions. |
+| `sql` | `**/*.java, **/*.sql, **/*.hbm.xml` | SQL injection prevention, performance pitfalls, JDBC resource handling, and MySQL stored procedure conventions. |
 | `testing` | `**/*Test.java, **/*Tests.java, **/*IT.java` | Test conventions — JUnit 4 + Mockito + Spring Test 3.2, no JUnit 5, no Spring Boot Test. |
 | `xml-config` | `**/*.xml` | Spring XML config, Hibernate hbm.xml, and Maven POM conventions. |
 
@@ -250,7 +249,6 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 ├── instructions/                          ← Auto-applied rules based on applyTo pattern
 │   ├── java.instructions.md
 │   ├── jsp.instructions.md
-│   ├── no-heredoc.instructions.md
 │   ├── security.instructions.md
 │   ├── spring-hibernate.instructions.md
 │   ├── sql.instructions.md

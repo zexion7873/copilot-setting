@@ -1,6 +1,6 @@
 ---
 name: plan
-description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding — including clarifying vague or ambiguous requirements first. Triggers on: plan, design approach, implementation strategy, how should we build, clarify, unclear requirements, 規劃, 怎麼做, 幫我想方案, 寫計畫, 設計實作步驟, 先釐清, 需求不清楚. Produces a structured plan document, preceded by numbered clarifying questions when requirements have gaps. Do NOT use for atomic task lists (prefer tasks) or direct implementation of well-understood small tasks (prefer implement).'
+description: 'Use when user needs a phased implementation plan with requirements, file impact, risks, and alternatives before coding — including clarifying vague or ambiguous requirements first. Triggers on: plan, how should we build, unclear requirements, 規劃, 幫我想方案. Produces a structured plan document, preceded by numbered clarifying questions when requirements have gaps. Do NOT use for atomic task lists (prefer tasks) or direct implementation of well-understood small tasks (prefer implement).'
 ---
 
 # Plan — Workflow
@@ -46,7 +46,6 @@ Fill the template below (Small scope: sections 1–3 only; Medium+: full templat
 - Approach: phased, each phase has a measurable goal
 - Files: real paths from the codebase scan
 - Risks: with specific mitigation, not generic "might be hard"
-- Acceptance Criteria: verifiable `AC-NNN` outcomes — always fill (even Small scope); each must be testable, not aspirational
 
 ## Phase 5 — Validate
 
@@ -54,8 +53,6 @@ Fill the template below (Small scope: sections 1–3 only; Medium+: full templat
 - [ ] File list matches codebase scan results
 - [ ] No `TBD` or placeholders left
 - [ ] Medium+ scope: Alternatives section has at least one rejected option with reason
-- [ ] Refactor / structural plans: affected callers inventoried (verified via `find-impact`, not a single summary; Small plans record the inventory in the approach notes)
-- [ ] Acceptance Criteria present and every `AC-NNN` is verifiable — a testable outcome, no aspirational wording ("fast", "user-friendly")
 
 ## Phase 6 — Red-Team the Plan
 
