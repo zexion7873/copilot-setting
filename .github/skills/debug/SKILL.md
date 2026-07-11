@@ -14,6 +14,7 @@ Systematic isolation and minimal fix.
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
 - `instructions/security.instructions.md` — OWASP Top 10 (a bug fix can regress a security control — XSS, IDOR, injection)
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.

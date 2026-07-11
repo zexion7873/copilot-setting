@@ -14,6 +14,7 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
 - `instructions/security.instructions.md` — OWASP Top 10
 - `instructions/jsp.instructions.md` — JSP / JSTL, XSS
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
