@@ -137,7 +137,7 @@ flowchart LR
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
-| `implement` | 實作功能任務或修復審查發現 | → `verify`（gate），再交 `@reviewer` |
+| `implement` | 實作功能任務或修復審查發現 | → `@reviewer`（verify 閘 → review） |
 | `refactor` | 行為不變的結構改善 | → `@reviewer` |
 
 ### 🔍 `@reviewer` — 審查與稽核
