@@ -46,9 +46,9 @@ Prompt (Shortcut) ──manual /prompt-name──→ Standalone execution
 | Category | Path | Role | Loads when |
 |---|---|---|---|
 | Agents (5) | `.github/agents/*.agent.md` | Router — activates workflows, manages handoffs | User selects the agent from the chat agents dropdown |
-| Skills (11) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
+| Skills (10) | `.github/skills/<name>/SKILL.md` | Step-by-step workflow process (output templates embedded) | Description matches user intent, or `/skill-name` |
 | Instructions (8) | `.github/instructions/*.instructions.md` | Single source of truth for coding conventions | A file matching `applyTo` glob is explicitly in context at request time (e.g. via `#file:`, editor attachment), or the model loads it on demand via semantic match on its `description` (discretionary); `applyTo: "**"` loads on every request |
-| Prompts (4) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
+| Prompts (5) | `.github/prompts/*.prompt.md` | Lightweight single-task shortcuts | Manual invocation (`/prompt-name`) |
 | Hooks | `.github/hooks/default.json` + `scripts/` | Block dangerous shell commands pre-tool | Agent tool-use events |
 
 **Critical separation-of-concerns rule:** each category has exactly one job. Content that belongs in another category must be **referenced**, not copied. Skills embed their own output templates directly. Instructions must not contain workflow content. Skills must not contain rule lists that duplicate instructions, save the two narrow exceptions noted below.
@@ -124,8 +124,8 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 
 ## Commit & PR Process
 
-- Conventional Commits (see `.github/skills/git-commit/SKILL.md` for the type table — `feat` / `fix` / `docs` / `refactor` / `perf` / `test` / `build` / `ci` / `chore` / `revert`).
-- The `git-commit` skill is marked `disable-model-invocation: true` and **must** be invoked explicitly via `/git-commit` — never auto-trigger.
+- Conventional Commits (see `.github/prompts/git-commit.prompt.md` — `feat` / `fix` / `docs` / `refactor` / `perf` / `test` / `build` / `ci` / `chore` / `revert`).
+- The `git-commit` prompt is invoked explicitly via `/git-commit` — a manual shortcut, never auto-triggered.
 - PR workflow per `CONTRIBUTING.md`: branch from `main`, follow `STYLE-GUIDE.md`, run the inbound-reference grep before renaming files, run `validate-style-guide.sh` locally.
 
 ## Agent Roster (for orientation)

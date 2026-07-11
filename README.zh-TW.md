@@ -175,7 +175,6 @@ flowchart LR
 |:-:|-------|----------|------|
 | 🔍 | `code-review` | 自動 + 手動 | 結構化程式碼審查 — 正確性、風格、bug 模式 |
 | 🐛 | `debug` | 自動 + 手動 | 系統化除錯，假說排序與二分隔離 |
-| 📦 | `git-commit` | **僅手動** | [Conventional Commits](https://www.conventionalcommits.org/) 訊息產生與智慧檔案暫存 |
 | 🔨 | `implement` | 自動 + 手動 | 功能實作 — 探索既有 pattern、遵循規範、自我驗證 |
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 先釐清模糊需求，再產出階段、需求、驗收標準、檔案、風險（原子任務拆解交給 `tasks` skill） |
 | ♻️ | `refactor` | 自動 + 手動 | 只動該動的重構 — 擷取、重命名、消除異味 |
@@ -184,9 +183,6 @@ flowchart LR
 | 🔎 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測、DDL/DML migration 安全性 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
 | 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
-
-> [!WARNING]
-> `git-commit` 使用 `disable-model-invocation: true` 防止自動觸發，請一律以 `/git-commit` 顯式呼叫。
 
 ---
 
@@ -200,6 +196,7 @@ flowchart LR
 | `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
 | `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
 | `/generate-migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
+| `/git-commit` | 暫存相關變更並以 Conventional Commits 格式提交 |
 
 ---
 
@@ -261,12 +258,12 @@ flowchart LR
 │   ├── check-n-plus-1.prompt.md
 │   ├── check-tx.prompt.md
 │   ├── find-impact.prompt.md
-│   └── generate-migration-sql.prompt.md
+│   ├── generate-migration-sql.prompt.md
+│   └── git-commit.prompt.md
 │
 ├── skills/                                ← Agent 可執行的技能（輸出模板內嵌）
 │   ├── code-review/
 │   ├── debug/
-│   ├── git-commit/
 │   ├── implement/
 │   ├── plan/
 │   ├── refactor/

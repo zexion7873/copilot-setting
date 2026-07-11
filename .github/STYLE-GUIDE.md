@@ -236,11 +236,11 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 
 Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
-1. **Frontmatter** (**REQUIRED**): `name` + `description`. Only optional field: `disable-model-invocation: true` for manual-only skills (e.g., `git-commit`). No `tools` in skill frontmatter (tools belong on agents).
-2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow` — no variation, no exceptions, including the reference+process hybrids (`refactor`, `git-commit`).
+1. **Frontmatter** (**REQUIRED**): `name` + `description`. Only optional field: `disable-model-invocation: true` for manual-only skills. No `tools` in skill frontmatter (tools belong on agents).
+2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow` — no variation, no exceptions, including the reference+process hybrid (`refactor`).
 3. **Opening paragraph** (**REQUIRED**): what the skill does + the specific instruction file(s) it relates to. The Phase 0 block (rule 4) carries the full per-skill set — never the `instructions/*.instructions.md` glob.
 4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only: `implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`): `## Phase 0 — Load canonical rules` names the canonical file(s) as specific `instructions/<name>.instructions.md` bullets (never the `*` glob) and closes with the read-back receipt — NAME each file opened, QUOTE its most load-bearing applicable rule. Broad skills name all relevant files; narrow skills just theirs. Human-reviewed — no longer machine-checked.
-5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`, imperative mood, numbered from 1; `## Phase 0 — Load canonical rules` (rule 4) is the only sanctioned Phase 0. **Exception**: reference-style skills (`refactor`, `git-commit`) may use topic-based H2 sections, with the pre-load gate as a bare leading `## Load canonical rules`.
+5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`, imperative mood, numbered from 1; `## Phase 0 — Load canonical rules` (rule 4) is the only sanctioned Phase 0. **Exception**: the reference-style skill (`refactor`) may use topic-based H2 sections, with the pre-load gate as a bare leading `## Load canonical rules`.
 6. **Rules section** (**OPTIONAL**): workflow-specific rules only — never a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required when the skill hands off downstream): downstream `→` targets only — never upstream `←` lines (they duplicate the source's `→` and drift; reverse lookup: `grep -rn "→ \`<name>\`" .github/`). Skills by backticked name, agents with `@` prefix. Always the last body section when present.
 8. **Anti-Patterns section** (**OPTIONAL**): bullet list with `→` separator, or a paragraph if context-heavy.
