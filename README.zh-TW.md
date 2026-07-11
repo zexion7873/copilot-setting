@@ -83,7 +83,7 @@ flowchart LR
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.8 | 觸發 `plan` / `tasks` skill；需求釐清、規劃、任務拆解一站完成 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `source-check` / `refactor` skill，依觸發詞分流 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `refactor` skill，依觸發詞分流 |
 | 🔍 | `@reviewer` | Claude Opus 4.8 | 觸發 `code-review` / `security-audit` / `sql-review` / `verify` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | GPT-5.4 mini | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
@@ -120,6 +120,9 @@ flowchart LR
 
 每個 `→` 是 VS Code 裡的 handoff 按鈕——點下去，下一個 agent 拿到完整對話脈絡。每條路徑都以 `/git-commit` 收尾（手動呼叫，不會自動觸發）。
 
+> [!NOTE]
+> **閉環**（close-the-loop）：`plan` 定下驗收標準（AC-NNN）→ `@implementer` 實作 → `verify` 用可跑的檢查逐條把關 → 紅燈退回 `@implementer`，全綠才收 loop。exit condition 是這份驗證標準，不是 agent 自己的判斷。
+
 ### 📐 `@planner` — 新功能從這裡開始
 
 | Skill | 做什麼 | 接著交給 |
@@ -134,8 +137,7 @@ flowchart LR
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
-| `implement` | 實作功能任務或修復審查發現 | → `@reviewer` |
-| `source-check` | 依賴 API 前先對照版本相符的官方文件確認 | → `implement` |
+| `implement` | 實作功能任務或修復審查發現 | → `verify`（gate），再交 `@reviewer` |
 | `refactor` | 行為不變的結構改善 | → `@reviewer` |
 
 ### 🔍 `@reviewer` — 審查與稽核
@@ -179,7 +181,6 @@ flowchart LR
 | 📐 | `plan` | 自動 + 手動 | 實作計畫 — 先釐清模糊需求，再產出階段、需求、驗收標準、檔案、風險（原子任務拆解交給 `tasks` skill） |
 | ♻️ | `refactor` | 自動 + 手動 | 只動該動的重構 — 擷取、重命名、消除異味 |
 | 🛡️ | `security-audit` | 自動 + 手動 | OWASP Top 10 審查與嚴重度分類 |
-| 📖 | `source-check` | 自動 + 手動 | 版本相符的 API 驗證 — 偵測版本、抓官方文件、確認簽名、附引用 |
 | 🔎 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測、DDL/DML migration 安全性 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
 | ✅ | `verify` | 自動 + 手動 | 閉環驗證 — 從驗收標準推導檢查、綁定可跑指令、執行、判定 pass/fail |
@@ -196,7 +197,7 @@ flowchart LR
 | `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
 | `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
 | `/generate-migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
-| `/git-commit` | 暫存相關變更並以 Conventional Commits 格式提交 |
+| `/git-commit` | 暫存相關變更並以 [Conventional Commits](https://www.conventionalcommits.org/) 格式提交 |
 
 ---
 
@@ -268,7 +269,6 @@ flowchart LR
 │   ├── plan/
 │   ├── refactor/
 │   ├── security-audit/
-│   ├── source-check/
 │   ├── sql-review/
 │   ├── tasks/
 │   └── verify/

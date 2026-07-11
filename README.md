@@ -83,7 +83,7 @@ Select from the agents dropdown in Copilot Chat. All agents are tailored for Jav
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.8 | Activates `plan` / `tasks` skills; clarification, planning, and task decomposition in one agent |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `source-check` / `refactor` skills, mode-routed by trigger phrase |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `refactor` skills, mode-routed by trigger phrase |
 | 🔍 | `@reviewer` | Claude Opus 4.8 | Activates `code-review` / `security-audit` / `sql-review` / `verify` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | GPT-5.4 mini | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
@@ -120,6 +120,9 @@ flowchart LR
 
 Each `→` is a handoff button in VS Code — click it and the next agent inherits the full conversation context. Every path finishes with `/git-commit` (invoke it manually; it never auto-triggers).
 
+> [!NOTE]
+> **Close-the-loop**: `plan` fixes the acceptance criteria (AC-NNN) → `@implementer` builds → `verify` gates each criterion with a runnable check → a red gate loops back to `@implementer`, an all-green gate closes it. The verification standard — not the agent's own judgment — is the loop's exit condition.
+
 ### 📐 `@planner` — Start here for new features
 
 | Skill | What it does | Then hand off to |
@@ -134,8 +137,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
-| `implement` | Implement feature tasks or fix review findings | → `@reviewer` |
-| `source-check` | Verify an API against version-matched official docs before relying on it | → `implement` |
+| `implement` | Implement feature tasks or fix review findings | → `verify` (gate), then `@reviewer` |
 | `refactor` | Behavior-preserving structural improvements | → `@reviewer` |
 
 ### 🔍 `@reviewer` — Review and audit
@@ -179,7 +181,6 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📐 | `plan` | Auto + Manual | Implementation plan — clarifies vague requirements first, then phases, requirements, acceptance criteria, files, risks (hands off atomic tasks to `tasks` skill) |
 | ♻️ | `refactor` | Auto + Manual | Surgical refactoring — extract, rename, eliminate smells |
 | 🛡️ | `security-audit` | Auto + Manual | OWASP Top 10 audit with severity classification |
-| 📖 | `source-check` | Auto + Manual | Version-matched API verification — detect versions, fetch official docs, confirm signature, cite source |
 | 🔎 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns, DDL/DML migration safety |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
 | ✅ | `verify` | Auto + Manual | Close-the-loop verification — derive checks from acceptance criteria, bind each to a runnable command, run, and gate pass/fail |
@@ -196,7 +197,7 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 | `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
 | `/find-impact` | List all callers and dependents of the selected method/class |
 | `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
-| `/git-commit` | Stage related changes and commit with a Conventional Commits message |
+| `/git-commit` | Stage related changes and commit with a [Conventional Commits](https://www.conventionalcommits.org/) message |
 
 ---
 
@@ -268,7 +269,6 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── plan/
 │   ├── refactor/
 │   ├── security-audit/
-│   ├── source-check/
 │   ├── sql-review/
 │   ├── tasks/
 │   └── verify/

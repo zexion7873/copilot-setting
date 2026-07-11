@@ -49,14 +49,13 @@ Code you write MUST respect these hard boundaries — full rules in `instruction
 | Trigger | Skill | Output |
 |---|---|---|
 | "implement", "code this", "build feature", "write code", 實作, 寫程式, 開始做, 幫我寫 | `implement` | Understand context → discover patterns → implement → self-verify |
-| "verify API", "check official docs", "confirm signature", "does this exist in version", "version-matched docs", 查官方文件, 確認 API, 這版有沒有, 版本對不對, 對照官方文件 | `source-check` | Version-matched API verification — detect versions, fetch official docs, confirm signature, cite source |
 | "refactor", "clean up", "extract method", "rename", "reduce duplication", 重構, 整理程式碼, 拆方法, 改名 | `refactor` | Behavior-preserving restructuring with code smell detection |
 
 Activate the matched skill and follow its workflow. Default to `implement` if the user's intent is ambiguous but clearly implementation-related.
 
 ## Subagent Delegation
 
-Before writing code (Phase 1 of `implement`; Safe Process step 2 of `refactor`), delegate codebase research to the **Researcher** subagent to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers.
+Before writing code (Phase 1 of `implement`; Safe Process step 2 of `refactor`), delegate codebase research to the **Researcher** subagent to find: existing patterns, naming conventions, interface contracts, similar implementations, and affected callers. For any framework/library API you are not certain exists in the pinned version and the `instructions/` files do not cover, also have the Researcher fetch the version-matched official doc before you rely on it — verify before writing, cite the source at the use site.
 
 Skip when the task is trivial (single-file typo fix, known location).
 
