@@ -83,8 +83,8 @@ Select from the agents dropdown in Copilot Chat. All agents are tailored for Jav
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
 | 📐 | `@planner` | Claude Opus 4.8 | Activates `plan` / `tasks` skills; clarification, planning, and task decomposition in one agent |
-| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `source-check` / `refactor` / `test-design` skills, mode-routed by trigger phrase |
-| 🔍 | `@reviewer` | Claude Opus 4.8 | Activates `code-review` / `security-audit` / `sql-review` skills, mode-routed by review type |
+| 🔨 | `@implementer` | GPT-5.3-Codex | Activates `implement` / `source-check` / `refactor` skills, mode-routed by trigger phrase |
+| 🔍 | `@reviewer` | Claude Opus 4.8 | Activates `code-review` / `security-audit` / `sql-review` / `verify` skills, mode-routed by review type |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | Activates `debug` skill — hypothesis ranking, binary-search isolation, minimal fix proposal |
 | 📚 | `@researcher` | GPT-5.4 mini | Lightweight read-only subagent for `@planner`, `@implementer`, and `@reviewer` — searches codebase and external docs, returns structured summaries — no opinions or recommendations |
 
@@ -137,7 +137,6 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 | `implement` | Implement feature tasks or fix review findings | → `@reviewer` |
 | `source-check` | Verify an API against version-matched official docs before relying on it | → `implement` |
 | `refactor` | Behavior-preserving structural improvements | → `@reviewer` |
-| `test-design` | Design test case document (categories, boundaries, coverage gaps) | → `@reviewer` |
 
 ### 🔍 `@reviewer` — Review and audit
 
@@ -146,6 +145,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 | `code-review` | General code review — correctness, style, bugs | → `@implementer` (fix) |
 | `security-audit` | OWASP Top 10 focused security audit | → `@implementer` (fix) |
 | `sql-review` | SQL injection, index strategy, query anti-patterns, migration rollback safety and lock impact | → `@implementer` (fix) |
+| `verify` | Derive checks from acceptance criteria, bind each to a runnable command, run, and gate pass/fail | → `@implementer` (fix) |
 
 
 > [!WARNING]
@@ -182,7 +182,7 @@ Executable workflows. Auto-triggered by Copilot when relevant (unless disabled),
 | 📖 | `source-check` | Auto + Manual | Version-matched API verification — detect versions, fetch official docs, confirm signature, cite source |
 | 🔎 | `sql-review` | Auto + Manual | SQL review — injection prevention, index strategy, anti-patterns, DDL/DML migration safety |
 | ☑️ | `tasks` | Auto + Manual | Dependency-ordered atomic task breakdown (T### IDs, [P] markers) after plan is approved |
-| 🧪 | `test-design` | Auto + Manual | Test case document design — boundary identification, category classification, coverage gap audit (produces documentation, not test code) |
+| ✅ | `verify` | Auto + Manual | Close-the-loop verification — derive checks from acceptance criteria, bind each to a runnable command, run, and gate pass/fail |
 
 ---
 
@@ -271,7 +271,7 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 │   ├── source-check/
 │   ├── sql-review/
 │   ├── tasks/
-│   └── test-design/
+│   └── verify/
 │
 └── copilot-instructions.md                ← Global base instructions
 ```

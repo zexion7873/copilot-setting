@@ -51,7 +51,6 @@ Code you write MUST respect these hard boundaries — full rules in `instruction
 | "implement", "code this", "build feature", "write code", 實作, 寫程式, 開始做, 幫我寫 | `implement` | Understand context → discover patterns → implement → self-verify |
 | "verify API", "check official docs", "confirm signature", "does this exist in version", "version-matched docs", 查官方文件, 確認 API, 這版有沒有, 版本對不對, 對照官方文件 | `source-check` | Version-matched API verification — detect versions, fetch official docs, confirm signature, cite source |
 | "refactor", "clean up", "extract method", "rename", "reduce duplication", 重構, 整理程式碼, 拆方法, 改名 | `refactor` | Behavior-preserving restructuring with code smell detection |
-| "test cases", "what should we test", "test plan", "test design", "design tests", 測試案例, 要測什麼, 測試規劃, 列測試項目 | `test-design` | Test case design document — boundary analysis, case categorization, coverage gap audit |
 
 Activate the matched skill and follow its workflow. Default to `implement` if the user's intent is ambiguous but clearly implementation-related.
 
