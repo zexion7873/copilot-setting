@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Use when user needs code written — new features or task execution in Java 8 / Maven / Spring / Hibernate projects. Triggers on: implement, code this, build feature, write code, 實作, 寫程式, 開始做, 幫我寫. Produces working code following existing patterns. Do NOT use for refactoring without new behavior (prefer refactor) or bug investigation (prefer debug).'
+description: 'Use when user needs code written — new features or task execution in Java 8 / Maven / Spring / Hibernate projects. Triggers on: implement, code this, write code, 實作, 幫我寫. Produces working code following existing patterns. Do NOT use for refactoring without new behavior (prefer refactor) or bug investigation (prefer debug).'
 ---
 
 # Implement — Workflow
@@ -14,11 +14,11 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects
 - `instructions/java.instructions.md` — Java 8 language boundary
 - `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
 - `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
 - `instructions/security.instructions.md` — OWASP Top 10
 - `instructions/jsp.instructions.md` — JSP / JSTL, XSS
 - `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
 - `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 (when writing tests)
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 

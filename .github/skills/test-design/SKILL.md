@@ -1,6 +1,6 @@
 ---
 name: test-design
-description: 'Use when user needs test case identification and documentation — boundary analysis, category classification, and coverage gap audit. Triggers on: test cases, what should we test, test plan, test design, design tests, 測試案例, 要測什麼, 測試規劃, 列測試項目. Produces a test case document (not test code). Do NOT use for implementation (prefer implement), code review (prefer code-review), or debugging (prefer debug).'
+description: 'Use when user needs test case identification and documentation — boundary analysis, category classification, and coverage gap audit. Triggers on: test cases, what should we test, test design, 測試案例, 要測什麼. Produces a test case document (not test code). Do NOT use for implementation (prefer implement), code review (prefer code-review), or debugging (prefer debug).'
 ---
 
 # Test Design — Workflow
@@ -11,21 +11,11 @@ Framework rules for any test code that follows from this design: `instructions/t
 
 ## Phase 1 — Identify Boundaries
 
-From the feature/code under test, extract:
-- Input boundaries: min, max, empty, null, overflow
-- State boundaries: initial, in-progress, completed, error
-- Integration boundaries: external API calls, DB operations, file I/O
+From the feature/code under test, extract input boundaries, state boundaries, and integration boundaries.
 
 ## Phase 2 — Classify Categories
 
-| Category | What to test | Priority |
-|---|---|---|
-| Happy path | Normal flow with valid inputs | Must have |
-| Boundary | Edge values at limits | Must have |
-| Error / Exception | Invalid input, unavailable deps, timeout | Must have |
-| Security | Injection, auth bypass, privilege escalation | Must have for user-facing |
-| Concurrency | Shared state, race conditions | If multi-threaded |
-| Performance | Response time, throughput under load | If SLA exists |
+Assign each case one of the template categories: Happy path, Boundary, Error / Exception, Security, Concurrency, Performance.
 
 ## Phase 3 — Coverage Audit
 
@@ -38,7 +28,7 @@ Audit the test cases identified in Phases 1–2 before writing them up:
 
 ## Phase 4 — Write Test Case Document
 
-Write to `docs/test-design/[component]-tests-v[N].md` (create the directory if absent), beside the plan it derives from. Wrap the cases in a fixed skeleton so `@implementer` has a stable structure to read:
+Write to `docs/plans/<feature>/test-design.md` — the same per-feature folder as the plan it derives from (create the folder if absent). Versioning is git history, not a `-vN` suffix. Wrap the cases in a fixed skeleton so `@implementer` has a stable structure to read:
 
 ```md
 ---

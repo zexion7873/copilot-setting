@@ -8,21 +8,12 @@
 4. Verify cross-references: `grep -rn "<filename>" .github/` before renaming or moving files
 5. Enable the pre-commit hook: `git config core.hooksPath .githooks`
 6. Commit with [Conventional Commits](https://www.conventionalcommits.org/) messages
-7. Run the validator before opening the PR: `bash .github/scripts/validate-style-guide.sh` — CI enforces it on any change touching `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file (the pre-commit hook from step 5 only covers staged `.github/` markdown)
+7. Run the validator before opening the PR: `bash .github/scripts/validate-style-guide.sh` — it checks frontmatter presence and termination, single-line `description` / `agent` scalars, skill `description` ≤ 1024 chars, skill `name` matching its directory, no `tools` field on skills, agent required frontmatter keys, byte-identical agent `## Coding Standards` bullets across `implementer` / `reviewer` / `debugger`, the floor↔instruction anchor canary, and resolution of path-style cross-references, handoff targets, and backtick-wrapped prompt mentions. CI enforces it on any change touching `.github/**/*.md`, the validator script, `.github/hooks/**`, or the workflow file (the pre-commit hook from step 5 only covers staged `.github/` markdown)
 8. Open a Pull Request
 
 ## Architecture
 
-Each category has one job. Content that belongs elsewhere must be delegated, not copied.
-
-| Category | Path | Responsibility |
-|---|---|---|
-| Instructions | `instructions/*.instructions.md` | Coding conventions (loaded when a matching file is in context, via `applyTo`) |
-| Agents | `agents/*.agent.md` | Routing and handoffs |
-| Skills | `skills/*/SKILL.md` | Workflow execution (output templates embedded) |
-| Prompts | `prompts/*.prompt.md` | Lightweight single-task shortcuts |
-
-Canonical format for each category is defined in [STYLE-GUIDE.md](.github/STYLE-GUIDE.md).
+See [AGENTS.md](AGENTS.md) → Architecture for the category table and separation-of-concerns rules.
 
 ## Verifying loading behavior
 
@@ -33,14 +24,6 @@ The validator only checks file *format*, not whether Copilot actually loads a fi
 3. **Glob path** — repeat with the `.java` file attached via `#file:`. The per-file-type instruction files should also load; confirm via the chat **References** list.
 
 If step 2 fails (modern-Java output with no file attached), the agent-body embed is not injecting and the loading architecture needs rework.
-
-## Rules
-
-- Instructions must not duplicate skill workflow content (and vice versa)
-- Skills embed output templates directly — prompts are lightweight shortcuts, not templates
-- Cross-references use relative paths from `.github/` (e.g., `instructions/sql.instructions.md`)
-- Skill `name` field must match its parent directory name
-- Skill `description` max 1024 characters
 
 ## Questions?
 

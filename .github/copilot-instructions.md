@@ -4,7 +4,7 @@
 
 - Always respond in **Traditional Chinese (繁體中文)**.
 - Code, variable names, comments, and commit messages must be in **English**.
-- Keep responses concise and direct. Avoid unnecessary verbosity.
+- Keep responses concise and direct.
 
 ## Tech Stack
 
@@ -21,20 +21,15 @@
 
 ## Coding Philosophy
 
-### Think Before Coding
-
 - State assumptions explicitly. If uncertain, ask — don't guess.
 - If multiple interpretations exist, present them. Don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-
-### Simplicity First
-
-- Minimum code that solves the problem. No speculative abstractions, no features beyond what was asked.
-- No "flexibility" or "configurability" that wasn't requested.
-- If 200 lines could be 50, rewrite it.
-
-### Surgical Changes
-
-- Touch only what the task requires. Don't "improve" adjacent code, comments, or formatting.
-- Match existing style, even if you'd do it differently.
+- Prefer what already exists — a codebase pattern, the stdlib, an already-installed dependency — before writing new code.
+- Minimum code that solves the problem — no speculative abstractions, no features beyond what was asked.
+- Touch only what the task requires; match existing style, even if you'd do it differently.
 - Clean up orphans YOUR changes created. Don't remove pre-existing dead code — mention it, don't delete it.
+
+## File Operations
+
+- Never use `cat`/`echo`/`printf`/`tee` with `>`/`>>`/`<< EOF` to write file content — VS Code terminal integration corrupts these (tab completion, escaping, exit 130).
+- Create / modify files with the file editing tools (Write / Edit).
+- Terminal remains fine for package management, builds, tests, git, `ls`/`mkdir`/`rm`, and downloads that don't pipe into files.

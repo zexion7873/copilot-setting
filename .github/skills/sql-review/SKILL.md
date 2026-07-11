@@ -1,20 +1,20 @@
 ---
 name: sql-review
-description: 'Use when user needs SQL reviewed — queries for injection risks, performance, and index strategy, or DDL/DML migration scripts for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review SQL, SQL review, query review, slow query, check SQL, review migration, schema change, DDL review, ALTER TABLE review, SQL 審查, 看一下 SQL, 查詢太慢, SQL 效能, 看 migration, 審 schema, 看 DDL, 改表審查. Produces severity-classified findings with EXPLAIN, rollback, and lock guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or initial schema design (prefer plan).'
+description: 'Use when user needs SQL reviewed — queries for injection risks, performance, and index strategy, or DDL/DML migration scripts for rollback safety, data-loss risk, lock impact, and backward compatibility. Triggers on: review SQL, slow query, review migration, SQL 審查, 看 migration. Produces severity-classified findings with EXPLAIN, rollback, and lock guidance. Do NOT use for general code review (prefer code-review), security-only audit (prefer security-audit), or initial schema design (prefer plan).'
 ---
 
 # SQL Review — Workflow
 
-SQL-focused review covering both queries and schema migrations. Rules: `instructions/sql.instructions.md`.
+SQL-focused review covering both queries and schema migrations. Rules: `instructions/sql.instructions.md` (queries) + `instructions/sql-ddl.instructions.md` (migrations).
 
 ## Phase 0 — Load canonical rules
 
 **MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
 
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources, MySQL DDL & migration safety
+- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
+- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
 - `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
 - `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
-- `instructions/no-heredoc.instructions.md` — edit files with tools, not terminal redirection
 
 Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
@@ -47,20 +47,20 @@ Recommend `EXPLAIN` for queries touching large tables.
 
 ## Phase 4 — Verify Migration Rollback Safety
 
-Check each migration against the rollback rules in `instructions/sql.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
+Check each migration against the rollback rules in `instructions/sql-ddl.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
 
 - [ ] Down migration / rollback script exists for every up statement
 - [ ] Dropped columns are renamed-then-dropped across two releases (not single-shot)
 - [ ] Renames go through add-new + dual-write + drop-old phases
 - [ ] No `DROP TABLE` without explicit user sign-off
-- [ ] Backfill scripts are idempotent and re-runnable
+- [ ] Backfill scripts are idempotent and re-runnable — no false `IF NOT EXISTS` guards on `ADD`/`DROP COLUMN` or `CREATE`/`DROP INDEX`
 
 ## Phase 5 — Assess Lock and Downtime Impact
 
-Check each statement against the DDL / migration safety rules in `instructions/sql.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
+Check each statement against the DDL / migration safety rules in `instructions/sql-ddl.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
 
 - [ ] Large-table `ALTER` uses online schema change (pt-osc / gh-ost) or carries a downtime note
-- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` is INSTANT, not a table rewrite (`instructions/sql.instructions.md`)
+- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` is INSTANT, not a table rewrite (`instructions/sql-ddl.instructions.md`)
 - [ ] Table-rebuilding `MODIFY COLUMN` on a large table is flagged for lock impact
 - [ ] Index creation uses `ALGORITHM=INPLACE, LOCK=NONE` where supported
 - [ ] Long `UPDATE` / `DELETE` is chunked by PK range, committed per chunk
@@ -100,25 +100,6 @@ Impact: <performance / security / correctness / data loss / downtime / rollback 
 | ⚪ LOW | Alias naming; formatting; column comment missing |
 
 Summary: `Statements reviewed: N | Findings: N critical, N high, N medium, N low | Top issue: <most impactful>`
-
-### EXPLAIN Cheat Sheet (MySQL)
-
-| Column | Watch for |
-|---|---|
-| `type` | `ALL` = full scan (bad); `ref`/`range` = index used (good) |
-| `key` | `NULL` = no index used |
-| `rows` | High number on filtered query = missing index |
-| `Extra` | `Using filesort` = ORDER BY not indexed; `Using temporary` = temp table |
-
-## Anti-Patterns
-
-Canonical DDL / migration anti-patterns live in `instructions/sql.instructions.md` (`MySQL DDL & Migrations` plus its Anti-Patterns table). In review, watch especially for:
-
-- `DROP COLUMN` in the release that stopped writing it
-- `ADD COLUMN ... NOT NULL DEFAULT` treated as a table rewrite
-- Single-shot column rename
-- Non-idempotent migration (false `IF NOT EXISTS` on `ADD`/`DROP COLUMN`, `CREATE`/`DROP INDEX`)
-- Unbatched `UPDATE` / `DELETE` on a huge table
 
 ## Handoffs
 

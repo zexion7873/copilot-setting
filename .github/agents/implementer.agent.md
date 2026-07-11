@@ -71,6 +71,4 @@ Skip when the task is trivial (single-file typo fix, known location).
 
 ## Handoff Guidance
 
-- Code / refactor / tests complete → suggest `@reviewer` for review
-- Complex bug requiring root cause analysis → suggest `@debugger`
-- Scope larger than expected → suggest `@planner` for re-planning
+Completed code, refactors, or tests → `@reviewer` for review; complex bug → `@debugger` for root cause analysis; scope larger than expected → `@planner` for re-planning.

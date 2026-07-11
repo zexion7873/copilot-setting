@@ -1,6 +1,6 @@
 ---
 name: tasks
-description: 'Use when a plan needs to be broken into dependency-ordered atomic tasks for implementation. Triggers on: break down tasks, task list, decompose, create tasks, 拆任務, 拆工作, 任務拆解, 列出步驟. Produces a T###-formatted task list with dependency ordering and parallel markers. Do NOT use for creating plans (prefer plan) or direct implementation (prefer implement).'
+description: 'Use when a plan needs to be broken into dependency-ordered atomic tasks for implementation. Triggers on: break down tasks, task list, decompose, 拆任務, 任務拆解. Produces a T###-formatted task list with dependency ordering and parallel markers. Do NOT use for creating plans (prefer plan) or direct implementation (prefer implement).'
 ---
 
 # Tasks — Workflow
