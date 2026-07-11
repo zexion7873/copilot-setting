@@ -120,6 +120,9 @@ flowchart LR
 
 每個 `→` 是 VS Code 裡的 handoff 按鈕——點下去，下一個 agent 拿到完整對話脈絡。每條路徑都以 `/git-commit` 收尾（手動呼叫，不會自動觸發）。
 
+> [!NOTE]
+> **閉環**（close-the-loop）：`plan` 定下驗收標準（AC-NNN）→ `@implementer` 實作 → `verify` 用可跑的檢查逐條把關 → 紅燈退回 `@implementer`，全綠才收 loop。exit condition 是這份驗證標準，不是 agent 自己的判斷。
+
 ### 📐 `@planner` — 新功能從這裡開始
 
 | Skill | 做什麼 | 接著交給 |
@@ -134,7 +137,7 @@ flowchart LR
 
 | Skill | 做什麼 | 接著交給 |
 |---|---|---|
-| `implement` | 實作功能任務或修復審查發現 | → `@reviewer` |
+| `implement` | 實作功能任務或修復審查發現 | → `verify`（gate），再交 `@reviewer` |
 | `source-check` | 依賴 API 前先對照版本相符的官方文件確認 | → `implement` |
 | `refactor` | 行為不變的結構改善 | → `@reviewer` |
 

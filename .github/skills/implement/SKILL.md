@@ -54,6 +54,7 @@ Before writing new code, find and follow existing patterns:
 
 ## Handoffs
 
+- → `verify` skill — to gate the change against its acceptance criteria (close the loop; a red gate comes back here to fix)
 - → `@reviewer` — for code review after implementation
 - → `debug` skill — if implementation reveals a bug
 - → `refactor` skill — if existing code needs restructuring first

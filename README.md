@@ -120,6 +120,9 @@ flowchart LR
 
 Each `→` is a handoff button in VS Code — click it and the next agent inherits the full conversation context. Every path finishes with `/git-commit` (invoke it manually; it never auto-triggers).
 
+> [!NOTE]
+> **Close-the-loop**: `plan` fixes the acceptance criteria (AC-NNN) → `@implementer` builds → `verify` gates each criterion with a runnable check → a red gate loops back to `@implementer`, an all-green gate closes it. The verification standard — not the agent's own judgment — is the loop's exit condition.
+
 ### 📐 `@planner` — Start here for new features
 
 | Skill | What it does | Then hand off to |
@@ -134,7 +137,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
-| `implement` | Implement feature tasks or fix review findings | → `@reviewer` |
+| `implement` | Implement feature tasks or fix review findings | → `verify` (gate), then `@reviewer` |
 | `source-check` | Verify an API against version-matched official docs before relying on it | → `implement` |
 | `refactor` | Behavior-preserving structural improvements | → `@reviewer` |
 
