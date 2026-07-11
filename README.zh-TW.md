@@ -197,7 +197,7 @@ flowchart LR
 | `/check-tx` | 檢查 transaction 邊界正確性（self-invocation、rollback-for、read-only） |
 | `/find-impact` | 列出 method/class 的所有呼叫者和影響範圍 |
 | `/generate-migration-sql` | 從 hbm.xml 變更產生 MySQL migration + rollback script |
-| `/git-commit` | 暫存相關變更並以 Conventional Commits 格式提交 |
+| `/git-commit` | 暫存相關變更並以 [Conventional Commits](https://www.conventionalcommits.org/) 格式提交 |
 
 ---
 

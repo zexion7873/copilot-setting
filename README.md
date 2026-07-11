@@ -197,7 +197,7 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 | `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
 | `/find-impact` | List all callers and dependents of the selected method/class |
 | `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
-| `/git-commit` | Stage related changes and commit with a Conventional Commits message |
+| `/git-commit` | Stage related changes and commit with a [Conventional Commits](https://www.conventionalcommits.org/) message |
 
 ---
 
