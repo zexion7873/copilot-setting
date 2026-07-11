@@ -83,8 +83,8 @@ flowchart LR
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
 | 📐 | `@planner` | Claude Opus 4.8 | 觸發 `plan` / `tasks` skill；需求釐清、規劃、任務拆解一站完成 |
-| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `source-check` / `refactor` / `test-design` skill，依觸發詞分流 |
-| 🔍 | `@reviewer` | Claude Opus 4.8 | 觸發 `code-review` / `security-audit` / `sql-review` skill，依審查類型分流 |
+| 🔨 | `@implementer` | GPT-5.3-Codex | 觸發 `implement` / `source-check` / `refactor` skill，依觸發詞分流 |
+| 🔍 | `@reviewer` | Claude Opus 4.8 | 觸發 `code-review` / `security-audit` / `sql-review` / `verify` skill，依審查類型分流 |
 | 🐛 | `@debugger` | Claude Sonnet 4.6 | 觸發 `debug` skill — 假說排序、二分隔離、最小修正方案 |
 | 📚 | `@researcher` | GPT-5.4 mini | 輕量唯讀 subagent，供 `@planner`、`@implementer` 和 `@reviewer` 派遣 — 搜 codebase 與外部文件，回傳結構化摘要，不提供建議與決策 |
 
@@ -137,7 +137,6 @@ flowchart LR
 | `implement` | 實作功能任務或修復審查發現 | → `@reviewer` |
 | `source-check` | 依賴 API 前先對照版本相符的官方文件確認 | → `implement` |
 | `refactor` | 行為不變的結構改善 | → `@reviewer` |
-| `test-design` | 設計測試案例文件（分類、邊界、覆蓋缺口） | → `@reviewer` |
 
 ### 🔍 `@reviewer` — 審查與稽核
 
@@ -146,6 +145,7 @@ flowchart LR
 | `code-review` | 一般程式碼審查 — 正確性、風格、bug | → `@implementer`（修復） |
 | `security-audit` | OWASP Top 10 資安稽核 | → `@implementer`（修復） |
 | `sql-review` | SQL 注入、索引策略、查詢反模式、migration rollback 安全性與鎖定影響 | → `@implementer`（修復） |
+| `verify` | 從驗收標準推導檢查、綁定可跑指令、執行、判定 pass/fail | → `@implementer`（修復） |
 
 
 > [!WARNING]
@@ -182,7 +182,7 @@ flowchart LR
 | 📖 | `source-check` | 自動 + 手動 | 版本相符的 API 驗證 — 偵測版本、抓官方文件、確認簽名、附引用 |
 | 🔎 | `sql-review` | 自動 + 手動 | SQL 審查 — 注入防護、索引策略、反模式偵測、DDL/DML migration 安全性 |
 | ☑️ | `tasks` | 自動 + 手動 | 依賴排序的原子任務拆解（T### IDs、[P] 平行標記），需 plan 先存在 |
-| 🧪 | `test-design` | 自動 + 手動 | 測試案例文件設計 — 邊界識別、分類、覆蓋率缺口分析（產出文件，非測試程式碼） |
+| ✅ | `verify` | 自動 + 手動 | 閉環驗證 — 從驗收標準推導檢查、綁定可跑指令、執行、判定 pass/fail |
 
 ---
 
@@ -271,7 +271,7 @@ flowchart LR
 │   ├── source-check/
 │   ├── sql-review/
 │   ├── tasks/
-│   └── test-design/
+│   └── verify/
 │
 └── copilot-instructions.md                ← 全域基礎指示
 ```

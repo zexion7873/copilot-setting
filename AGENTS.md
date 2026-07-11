@@ -133,8 +133,8 @@ This is a **last-resort safety net, not a sandbox** — blocklists are inherentl
 | Agent | Model | Activates |
 |---|---|---|
 | `@planner` | Claude Opus 4.8 | `plan`, `tasks` |
-| `@implementer` | GPT-5.3-Codex | `implement`, `source-check`, `refactor`, `test-design` |
-| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review` |
+| `@implementer` | GPT-5.3-Codex | `implement`, `source-check`, `refactor` |
+| `@reviewer` | Claude Opus 4.8 | `code-review`, `security-audit`, `sql-review`, `verify` |
 | `@debugger` | Claude Sonnet 4.6 | `debug` |
 | `@researcher` | GPT-5.4 mini | Read-only subagent invoked by `@planner` / `@implementer` / `@reviewer` |
 
