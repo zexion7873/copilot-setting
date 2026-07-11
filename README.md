@@ -228,6 +228,12 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 
 ---
 
+## 🧪 Downstream tooling
+
+`.github/scripts/behavior-detect.sh` — a standalone grader for the Spring 3.2 mapping-annotation rule. It flags the Spring 4.3+ shorthand annotations (`@GetMapping` / `@PostMapping` / …) that `instructions/spring-hibernate.instructions.md` bans in favour of `@RequestMapping(method = …)`. This repo has no Java of its own; wire it into your Spring 3.2 project's CI — `bash .github/scripts/behavior-detect.sh path/to/File.java` prints `OK`, or `VIOLATION` and exits 1 — to catch the banned annotations in generated or hand-written code. It grades this one rule, not the whole version lock, and is self-tested (`test-behavior-detect.sh`) in CI before it grades anything.
+
+---
+
 <details>
 <summary><h2>📁 What Copilot Loads</h2></summary>
 

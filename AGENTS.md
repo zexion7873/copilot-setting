@@ -31,6 +31,8 @@ git config core.hooksPath .githooks
 
 The validator enforces: frontmatter presence with a terminated block, single-line `description` / `agent` scalars, skill `description` ≤ 1024 chars, skill `name`-matches-directory, no `tools` field on skills, agent required frontmatter keys, byte-identical agent `## Coding Standards` floor across `implementer` / `reviewer` / `debugger`, the floor↔instruction anchor canary, and resolution of path-style cross-references (`instructions/…`, `skills/…/SKILL.md`, `agents/….agent.md`, `prompts/….prompt.md`), handoff targets, and backtick-wrapped prompt mentions. Full machine-checked rule list: `.github/STYLE-GUIDE.md` → "Tier 1: Machine-checked".
 
+CI additionally runs `.github/scripts/test-behavior-detect.sh` — the self-test for `behavior-detect.sh`, a standalone downstream grader for the Spring 3.2 mapping-annotation rule (not config injected into sessions; see the README "Downstream tooling" note). The self-test runs here; grading real Java is the downstream caller's job.
+
 ## Architecture
 
 ```text

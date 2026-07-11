@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# Rung 3 behavioral detector — Spring 3.2 mapping-annotation rule.
+# Downstream grader — Spring 3.2 mapping-annotation rule.
 #
-# The format validator (Rung 1) and the floor↔instruction canary (Rung 2) prove
-# the rule TEXT is well-formed and consistent. Neither proves the rule changes
-# what an agent writes. This detector is the deterministic INSTRUMENT for that
-# third rung: given Java source, it reports whether the source uses the Spring
-# 4.3+ shorthand annotations (@GetMapping / @PostMapping / ...) banned on Spring
-# 3.2 — the canonical rule in `instructions/spring-hibernate.instructions.md`,
-# which prescribes `@RequestMapping(method = RequestMethod.GET)` instead.
+# A standalone lexical grader for Java source: it reports whether the source uses
+# the Spring 4.3+ shorthand annotations (@GetMapping / @PostMapping / ...) banned
+# on Spring 3.2, where `instructions/spring-hibernate.instructions.md` prescribes
+# `@RequestMapping(method = RequestMethod.GET)` instead. This repo has no Java of
+# its own — wire it into a downstream Spring 3.2 project's CI to catch the banned
+# annotations leaking into generated or hand-written code. It grades this ONE
+# rule, not the whole version lock.
 #
-# It is a lexical check, not a parser. The instrument is unit-tested (RED / GREEN
-# / trap) by `test-behavior-detect.sh` BEFORE it is trusted to grade any model
-# output — the same "test the grader first" discipline that keeps a substring
-# matcher from passing on garbage.
+# A lexical check, not a parser. It is unit-tested (RED / GREEN / trap) by
+# `test-behavior-detect.sh` BEFORE it is trusted to grade anything — the "test
+# the grader first" discipline that keeps a substring matcher from passing on
+# garbage. That self-test is what runs in THIS repo's CI; grading real source is
+# the downstream caller's job.
 #
 # Usage:   behavior-detect.sh [FILE]      (reads stdin when FILE is omitted)
 # Output:  "OK"        + exit 0  when clean
