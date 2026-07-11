@@ -137,7 +137,7 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 
 | Skill | What it does | Then hand off to |
 |---|---|---|
-| `implement` | Implement feature tasks or fix review findings | → `verify` (gate), then `@reviewer` |
+| `implement` | Implement feature tasks or fix review findings | → `@reviewer` (verify gate → review) |
 | `refactor` | Behavior-preserving structural improvements | → `@reviewer` |
 
 ### 🔍 `@reviewer` — Review and audit
