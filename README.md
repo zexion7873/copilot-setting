@@ -123,6 +123,16 @@ Each `→` is a handoff button in VS Code — click it and the next agent inheri
 > [!NOTE]
 > **Close-the-loop**: `plan` fixes the acceptance criteria (AC-NNN) → `@implementer` builds → `verify` gates each criterion with a runnable check → a red gate loops back to `@implementer`, an all-green gate closes it. The verification standard — not the agent's own judgment — is the loop's exit condition.
 
+**Artifacts** — the doc-producing skills write to `docs/plans/<feature>/` (one folder per feature):
+
+| Skill | Produces |
+|---|---|
+| `plan` | `plan.md` — phased plan with acceptance criteria (AC-NNN) |
+| `tasks` | `tasks.md` — atomic, dependency-ordered tasks (T###) |
+| `verify` | `verification.md` — each criterion bound to a runnable check + pass/fail gate |
+
+`code-review` / `security-audit` / `sql-review` / `debug` produce chat findings, not files.
+
 ### 📐 `@planner` — Start here for new features
 
 | Skill | What it does | Then hand off to |

@@ -37,7 +37,7 @@ Break each phase into atomic tasks. Each task must be:
 
 ## Output Template
 
-Write the task breakdown to `task.md` in the same feature folder as the source plan (`docs/plans/<feature>/task.md`), so the `source:` link resolves to the sibling `./plan.md`.
+Write the task breakdown to `tasks.md` in the same feature folder as the source plan (`docs/plans/<feature>/tasks.md`), so the `source:` link resolves to the sibling `./plan.md`.
 
 ```md
 ---
