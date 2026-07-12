@@ -67,7 +67,7 @@ Fold material findings back into sections 4–5 and record the residual assumpti
 
 ## Output Template
 
-Write the plan to `docs/plans/<feature>/plan.md` — one folder per feature/change (create the folder if absent). The `tasks` skill writes `task.md` beside it in the same folder; keep this layout stable so the `source:` link resolves. Versioning is git history, not a `-vN` suffix.
+Write the plan to `docs/plans/<feature>/plan.md` — one folder per feature/change (create the folder if absent). The `tasks` skill writes `tasks.md` beside it in the same folder; keep this layout stable so the `source:` link resolves. Versioning is git history, not a `-vN` suffix.
 
 ```md
 ---

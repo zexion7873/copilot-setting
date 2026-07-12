@@ -123,6 +123,16 @@ flowchart LR
 > [!NOTE]
 > **閉環**（close-the-loop）：`plan` 定下驗收標準（AC-NNN）→ `@implementer` 實作 → `verify` 用可跑的檢查逐條把關 → 紅燈退回 `@implementer`，全綠才收 loop。exit condition 是這份驗證標準，不是 agent 自己的判斷。
 
+**產出文件** — 產文件的 skill 全部寫進 `docs/plans/<feature>/`（一個功能一個資料夾）：
+
+| Skill | 產出 |
+|---|---|
+| `plan` | `plan.md` — 分階段計畫，含驗收標準（AC-NNN） |
+| `tasks` | `tasks.md` — 有依賴順序的原子任務（T###） |
+| `verify` | `verification.md` — 每條標準綁一個可跑檢查 + pass/fail 閘門 |
+
+`code-review` / `security-audit` / `sql-review` / `debug` 只出聊天 findings，不落檔。
+
 ### 📐 `@planner` — 新功能從這裡開始
 
 | Skill | 做什麼 | 接著交給 |
