@@ -238,6 +238,12 @@ flowchart LR
 
 ---
 
+## 🧪 下游工具
+
+`.github/scripts/behavior-detect.sh` — Spring 3.2 mapping annotation 規則的獨立 grader。它抓出 `instructions/spring-hibernate.instructions.md` 禁用、應改用 `@RequestMapping(method = …)` 的 Spring 4.3+ 簡寫註解(`@GetMapping` / `@PostMapping` / …)。這個 repo 本身沒有 Java;把它接進你下游 Spring 3.2 專案的 CI —— `bash .github/scripts/behavior-detect.sh path/to/File.java` 印出 `OK`,或印 `VIOLATION` 並 exit 1 —— 就能攔住這些禁用註解漏進生成或手寫的 code。它只 grade 這一條規則,不是整個 version lock,且在 CI 裡由 `test-behavior-detect.sh` self-test 過才拿來 grade。
+
+---
+
 <details>
 <summary><h2>📁 What Copilot Loads</h2></summary>
 
