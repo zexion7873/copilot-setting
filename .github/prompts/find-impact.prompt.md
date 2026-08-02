@@ -7,7 +7,7 @@ Find the full impact scope of this method / class:
 
 1. Direct callers (which files and methods call it)
 2. Indirect dependents (callers of callers, up to two levels)
-3. Related Spring XML config (if it is a bean)
-4. Related hbm.xml mappings (if it involves an entity)
+3. Related framework wiring / DI configuration (if it is a managed component)
+4. Related ORM mapping files (if it involves a persisted entity)
 
-Output format: sorted by impact severity (direct callers > Spring XML / `hbm.xml` wiring > indirect dependents), with file paths and line numbers.
+Output format: sorted by impact severity (direct callers > framework wiring / ORM mappings > indirect dependents), with file paths and line numbers.

@@ -5,22 +5,17 @@ description: 'Use when user needs SQL reviewed — queries for injection risks, 
 
 # SQL Review — Workflow
 
-SQL-focused review covering both queries and schema migrations. Rules: `instructions/sql.instructions.md` (queries) + `instructions/sql-ddl.instructions.md` (migrations).
+SQL-focused review covering both queries and schema migrations. Rules: the stack's SQL/query and DDL/migration modules under `instructions/`.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
+**MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the stack instruction modules for the SQL under review.** Your training data defaults to the newest idioms; the files under `instructions/` are this project's stack modules — its version lock and house rules. At minimum open the SQL/query, DDL/migration, ORM-mapping, and config modules. The negative lists in the agent body are a floor, not the full rules.
 
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
-- `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
-- `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each module you opened and QUOTE the single most load-bearing rule from each that applies to this review — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Collect and Classify
 
-Find all SQL in scope: raw JDBC, HQL, native queries, stored procedures, dynamic query construction, and migration scripts (DDL / data-modifying DML).
+Find all SQL in scope: raw driver-level SQL, ORM query-language statements, native queries, stored procedures, dynamic query construction, and migration scripts (DDL / data-modifying DML).
 
 Route each statement:
 
@@ -47,22 +42,22 @@ Recommend `EXPLAIN` for queries touching large tables.
 
 ## Phase 4 — Verify Migration Rollback Safety
 
-Check each migration against the rollback rules in `instructions/sql-ddl.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
+Check each migration against the rollback rules in the stack's DDL/migration module; flag every violation:
 
 - [ ] Down migration / rollback script exists for every up statement
 - [ ] Dropped columns are renamed-then-dropped across two releases (not single-shot)
 - [ ] Renames go through add-new + dual-write + drop-old phases
 - [ ] No `DROP TABLE` without explicit user sign-off
-- [ ] Backfill scripts are idempotent and re-runnable — no false `IF NOT EXISTS` guards on `ADD`/`DROP COLUMN` or `CREATE`/`DROP INDEX`
+- [ ] Backfill scripts are idempotent and re-runnable — existence guards verified against what the engine actually supports (see the DDL/migration module)
 
 ## Phase 5 — Assess Lock and Downtime Impact
 
-Check each statement against the DDL / migration safety rules in `instructions/sql-ddl.instructions.md` (`MySQL DDL & Migrations`); flag every violation:
+Check each statement against the DDL / migration safety rules in the stack's DDL/migration module; flag every violation:
 
-- [ ] Large-table `ALTER` uses online schema change (pt-osc / gh-ost) or carries a downtime note
-- [ ] `ADD COLUMN ... NOT NULL DEFAULT <constant>` is INSTANT, not a table rewrite (`instructions/sql-ddl.instructions.md`)
-- [ ] Table-rebuilding `MODIFY COLUMN` on a large table is flagged for lock impact
-- [ ] Index creation uses `ALGORITHM=INPLACE, LOCK=NONE` where supported
+- [ ] Large-table `ALTER` uses the engine's online schema-change path (per the DDL/migration module) or carries a downtime note
+- [ ] Column adds verified against the engine's instant/in-place rules (per the DDL/migration module) — never assumed lock-free
+- [ ] Table-rebuilding column modifications on a large table are flagged for lock impact
+- [ ] Index creation uses the engine's non-blocking build option where supported
 - [ ] Long `UPDATE` / `DELETE` is chunked by PK range, committed per chunk
 
 ## Phase 6 — Check Running-App Compatibility
@@ -72,7 +67,7 @@ For each DDL/DML, answer: "If old app version runs DURING this migration, what b
 - [ ] New columns nullable or have DB default → old app INSERT won't fail
 - [ ] Column drops happen AFTER all app instances stop reading/writing
 - [ ] FK constraints don't reference columns being altered in same migration
-- [ ] `hbm.xml` / DAO aligned with post-migration schema after deploy
+- [ ] ORM mappings / data-access layer aligned with post-migration schema after deploy
 
 If any answer is "old app breaks" → finding is at least HIGH; recommend splitting into multi-release migration.
 

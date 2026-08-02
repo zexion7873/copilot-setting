@@ -12,7 +12,7 @@
 
 </div>
 
-Agentic context engineering for GitHub Copilot — agents route, skills execute, instructions enforce, hooks guard.
+Agentic context engineering for GitHub Copilot — agents route, skills execute, instructions enforce, hooks guard. Built as a **generic process core** plus a **swappable stack layer**, shipped with a Java 8 legacy reference stack (Spring 3.2 / Hibernate 4.2).
 
 ---
 
@@ -23,14 +23,13 @@ Agentic context engineering for GitHub Copilot — agents route, skills execute,
 Copy the `.github/` directory into your project root:
 
 ```text
-your-java-project/
+your-project/
 ├── .github/          ← paste here
 ├── src/
-├── pom.xml
 └── ...
 ```
 
-Copilot picks it up automatically — agents, skills, instructions, hooks, all active.
+Copilot picks it up automatically — agents, skills, instructions, hooks, all active. The shipped stack layer targets Java 8 / Maven legacy projects — see [Porting to Another Stack](#-porting-to-another-stack) to retarget it.
 
 ### Option B — Workspace-Wide
 
@@ -60,6 +59,15 @@ Just pick an **agent** — everything else loads automatically.
 
 Each category has one job. Content that belongs elsewhere is referenced, not copied.
 
+### 🧬 Generic core vs. stack layer
+
+| Layer | Contents | When porting to another stack |
+|---|---|---|
+| **Generic core** | All 9 skills, `check-n-plus-1` / `find-impact` / `git-commit` prompts, hooks, validator | Ships unchanged |
+| **Stack layer** | Agent `## Coding Standards` floor + personas, all of `instructions/` (the "stack modules"), `check-tx` / `generate-migration-sql` prompts, `copilot-instructions.md` Tech Stack, the validator's canary anchor registry | Swap per stack |
+
+Skills never hardcode stack names or instruction filenames — they enforce rules through the agent floor ("expand the floor's banned symbols and grep the diff") and the module directory ("open the stack modules under `instructions/`"). Swap the stack layer and the same pipeline drives any stack.
+
 ```mermaid
 flowchart LR
     Hook["🛡️ Hooks"] -->|lifecycle guard| Agent
@@ -69,7 +77,7 @@ flowchart LR
 ```
 
 > [!IMPORTANT]
-> **Agent chat caveat:** `applyTo` instructions load only when a matching file is in the request context (attached via `#file:` or the editor), evaluated at request time — files the agent reads mid-task do not retroactively trigger them. To cover `@agent` use without an attached file, the hard-boundary rules are embedded directly in the code-touching agent bodies under `## Coding Standards`; code-touching skills additionally name the instruction files they map to.
+> **Agent chat caveat:** `applyTo` instructions load only when a matching file is in the request context (attached via `#file:` or the editor), evaluated at request time — files the agent reads mid-task do not retroactively trigger them. To cover `@agent` use without an attached file, the hard-boundary rules are embedded directly in the code-touching agent bodies under `## Coding Standards`; code-touching skills open the stack modules under `instructions/` via their Phase 0 pre-load gate.
 
 > [!TIP]
 > **Maintenance rule:** before renaming or moving any file under `.github/`, run `grep -rn "<old-filename>" .github/` to find inbound references. Broken paths silently degrade Copilot output.
@@ -78,7 +86,7 @@ flowchart LR
 
 ## 🤖 Agents
 
-Select from the agents dropdown in Copilot Chat. All agents are tailored for Java 8 / Maven projects.
+Select from the agents dropdown in Copilot Chat. Agent personas and the `## Coding Standards` floor carry the shipped stack layer (Java 8 / Maven); everything else about the agents is stack-agnostic.
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
@@ -204,16 +212,16 @@ Lightweight shortcuts. Invoke via `/prompt-name` in Copilot Chat.
 | Prompt | Description |
 |--------|-------------|
 | `/check-n-plus-1` | Check a service method for N+1 query problems |
-| `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) |
+| `/check-tx` | Verify transaction boundary correctness (self-invocation, rollback-for, read-only) — stack-layer prompt |
 | `/find-impact` | List all callers and dependents of the selected method/class |
-| `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes |
+| `/generate-migration-sql` | Generate MySQL migration + rollback scripts from hbm.xml changes — stack-layer prompt |
 | `/git-commit` | Stage related changes and commit with a [Conventional Commits](https://www.conventionalcommits.org/) message |
 
 ---
 
 ## 📏 Instructions
 
-Automatically injected into the system prompt when the current file matches the `applyTo` glob.
+The **stack modules** — the swappable stack layer's rule set. Automatically injected into the system prompt when the current file matches the `applyTo` glob; code-touching skills also open them on demand via their Phase 0 gate.
 
 | File | applyTo | Description |
 |------|---------|-------------|
@@ -233,8 +241,20 @@ Automatically injected into the system prompt when the current file matches the 
 Minimal global rules loaded in every conversation. Language, tech stack, and coding philosophy — all other conventions live in dedicated instruction files.
 
 - Respond in Traditional Chinese (繁體中文)
-- Tech stack: Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, SLF4J 1.7 + Logback, JSP + JSTL 1.2
+- Tech stack declaration (the stack layer's anchor): Java 8, Maven, Spring 3.2, Spring Security 3.2, Hibernate 4.2, MySQL 8.0, SLF4J 1.7 + Logback, JSP + JSTL 1.2
 - Coding philosophy: think before coding (surface assumptions, don't guess), simplicity first (no speculative abstractions), surgical changes (touch only what the task requires)
+
+---
+
+## 🔁 Porting to Another Stack
+
+The process pipeline (plan → tasks → implement → verify, the reviews, debug) is stack-free. To retarget the whole config at a different stack, swap the stack layer in one PR:
+
+1. Rewrite the agent `## Coding Standards` floor bullets (byte-identical across `implementer` / `reviewer` / `debugger` — write once, paste three times) and each agent's persona line.
+2. Replace the `instructions/` module set, keeping role coverage: language, framework/ORM, SQL, DDL/migrations, security, views, config, testing.
+3. Replace or drop the stack-bound prompts (`/check-tx`, `/generate-migration-sql`).
+4. Update the Tech Stack section of `copilot-instructions.md`.
+5. Update the canary anchor registry inside `.github/scripts/validate-style-guide.sh` (the floor↔instruction anchors are stack tokens) and run the validator.
 
 ---
 

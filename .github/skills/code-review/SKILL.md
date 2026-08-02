@@ -9,18 +9,9 @@ Structured code review.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the instruction files for the layers under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
+**MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the stack instruction modules for the layers under review.** Your training data defaults to the newest idioms; the files under `instructions/` are this project's stack modules — its version lock and house rules. List that directory, then open every module covering the layers this change touches (include the testing module when tests are in scope — it sanctions carve-outs the floor does not mention) — the negative lists in the agent body are a floor, not the full rules.
 
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
-- `instructions/security.instructions.md` — OWASP Top 10
-- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each module you opened and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Understand the Change
 
@@ -32,11 +23,11 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 
 **Correctness** (check each):
 - [ ] Shared mutable state accessed from multiple threads → synchronized or thread-local?
-- [ ] JDBC resources (`Connection`, `PreparedStatement`, `ResultSet`, streams) managed via try-with-resources; Hibernate `Session` from `getCurrentSession()` is never closed/flushed manually (Spring owns its lifecycle)
+- [ ] External resources (connections, statements, cursors, streams) released via the stack's ownership idiom; never manually manage a lifecycle the framework owns (see the stack's ORM/framework module)
 
 **Security** (check each):
 - [ ] Every SQL query uses bind parameters (`?` or `:named`)
-- [ ] Every JSP output wrapped in `<c:out>` or equivalent encoding
+- [ ] Every template/view output goes through the stack's context-aware encoding idiom
 - [ ] Every endpoint has explicit access control check
 - [ ] No hardcoded credentials, API keys, or secrets
 
@@ -47,18 +38,17 @@ Read-back receipt (self-check, not machine-enforced): before leaving this step, 
 - [ ] Result sets bounded (LIMIT or pagination)
 
 **Convention** (check each):
-- [ ] Java 8 only — no `var`, `List.of()`, records, text blocks
-- [ ] Hibernate: `getCurrentSession()` + hbm.xml, no JPA annotations
-- [ ] Transactions: production code uses `<tx:advice>` only (unless existing `@Transactional` convention); `@Transactional` on a test class for auto-rollback is sanctioned (`instructions/testing.instructions.md`)
-- [ ] Logging: SLF4J `{}` placeholders, no string concatenation
+- [ ] Language level matches the declared stack — expand the agent floor's banned symbols and grep the diff; zero hits
+- [ ] Persistence and transaction idioms match the floor and stack modules — no ORM or transaction pattern the floor bans (module-sanctioned carve-outs allowed)
+- [ ] Logging uses the stack's parameterized-logging idiom — no string concatenation in log calls
 - [ ] No speculative abstraction or unrequested flexibility — minimum code for the asked change (YAGNI)
 
-**POM / Dependencies** (check if `pom.xml` is in scope):
-- [ ] No `SNAPSHOT` in release builds; no `LATEST`/`RELEASE` markers
-- [ ] Versions centralized in `<dependencyManagement>` — no per-module duplicates
-- [ ] Test libs scoped `<scope>test</scope>`; servlet API scoped `provided`
-- [ ] Non-framework dependencies (Jackson, Log4j, Commons, …) not on known-CVE versions — the pinned Spring 3.2 / Hibernate 4.2 carry unpatched CVEs documented as baseline risk (`instructions/security.instructions.md`), not a per-PR finding
-- [ ] `maven-compiler-plugin` source/target = `1.8`; all plugin versions pinned
+**Build Manifest / Dependencies** (check if the build manifest is in scope):
+- [ ] No snapshot or floating version markers in release builds — every dependency and plugin pinned
+- [ ] Versions centralized per the stack's config module — no per-module duplicates
+- [ ] Test-only libraries scoped to test; container-provided APIs scoped as provided (or the stack's equivalent)
+- [ ] Dependencies not on known-CVE versions — EOL versions pinned by the declared stack are documented baseline risk per the stack's security module, not a per-PR finding
+- [ ] Compiler source/target matches the declared language level; all plugin versions pinned
 
 ## Phase 3 — Classify Findings
 
@@ -75,11 +65,11 @@ The reviewer is read-only and does not run the build itself — require the auth
 
 Before rendering a verdict, confirm fresh evidence that the change builds and tests pass:
 
-- [ ] Actual `mvn` output is present in the PR / change context (e.g. `mvn -q clean verify`, or at least `compile` + `test`)
+- [ ] Actual build/test runner output is present in the PR / change context (a clean build-and-test run, or at least compile + test)
 - [ ] The evidence reflects the **current** revision under review — not a stale run from before the latest change
-- [ ] Tests covering the change actually ran (not skipped, no `-DskipTests`)
+- [ ] Tests covering the change actually ran (not skipped via runner flags)
 
-If build/test evidence is missing or stale, you **cannot** APPROVE — render REQUEST CHANGES (or NEEDS DISCUSSION) and ask the author to attach fresh `mvn` output. Never infer a passing build from reading the diff.
+If build/test evidence is missing or stale, you **cannot** APPROVE — render REQUEST CHANGES (or NEEDS DISCUSSION) and ask the author to attach fresh build/test output. Never infer a passing build from reading the diff.
 
 ## Phase 5 — Render Verdict
 
@@ -89,7 +79,7 @@ APPROVE requires ALL of:
 
 - Zero unresolved 🔴 CRITICAL or 🟠 HIGH findings
 - Fresh build & test evidence for the current revision (Phase 4)
-- No outstanding Java 8 / `<tx:advice>` / N+1 convention violations from Phase 2
+- No outstanding floor, convention, or N+1 violations from Phase 2
 
 Otherwise render REQUEST CHANGES or NEEDS DISCUSSION.
 
@@ -100,7 +90,7 @@ Per finding: `[SEVERITY] Category — description @ file:line → suggestion`
 ```
 ## Verdict: APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
 Findings: N critical, N high, N medium, N low
-Evidence: <mvn command + result, or "MISSING — fresh build/test output required">
+Evidence: <build/test command + result, or "MISSING — fresh build/test output required">
 Summary: <one-sentence assessment>
 ```
 

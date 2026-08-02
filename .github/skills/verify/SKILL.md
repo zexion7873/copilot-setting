@@ -5,16 +5,13 @@ description: 'Use when checking whether an implementation actually meets its acc
 
 # Verify — Workflow
 
-Close-the-loop verification: derive what must be true, bind each to a runnable check, execute, and gate. The gate is a separate pass from authoring — derive the expected behaviour from the requirement, never from the code under test, or the gate just rubber-stamps whatever the code does. Framework rules for any run command or test code referenced here: `instructions/testing.instructions.md`.
+Close-the-loop verification: derive what must be true, bind each to a runnable check, execute, and gate. The gate is a separate pass from authoring — derive the expected behaviour from the requirement, never from the code under test, or the gate just rubber-stamps whatever the code does. Framework rules for any run command or test code referenced here: the stack's testing module under `instructions/`.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT derive or run checks until you have opened the instruction files for the layers under verification.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time:
+**MANDATORY pre-load gate — do NOT derive or run checks (Phases 1–3) until you have opened the stack instruction modules for the layers under verification.** Your training data defaults to the newest idioms; the files under `instructions/` are this project's stack modules — its version lock and house rules. At minimum open the testing module — every run command and any test code must match the declared test stack, not the newest framework — plus the layer modules for the feature under verification (their Anti-Patterns are the negative cases Phase 1 must cover). The negative lists in the agent body are a floor, not the full rules.
 
-- `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 — every run command and any test code must match this stack, not JUnit 5 / Spring Boot Test
-- The layer instruction(s) for the feature under verification (e.g. `instructions/sql.instructions.md`, `instructions/security.instructions.md`) — their Anti-Patterns are the negative cases Phase 1 must cover
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this verification — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each module you opened and QUOTE the single most load-bearing rule from each that applies to this verification — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — Derive the checks
 
@@ -28,7 +25,7 @@ Work from the requirement / `plan.md` acceptance criteria (AC-NNN), NOT from the
 
 Every check gets a concrete, binary oracle — a command plus its expected observable. A check with no runnable command is a documentation item, not a gate: mark it `MANUAL` and exclude it from the automated pass/fail count.
 
-- `mvn -Dtest=<Class>#<method> test` for one behaviour; `mvn test` for the suite
+- Single-behaviour run for each check, full-suite run for the gate — derive exact commands from the project's build tooling (build manifest / CI config); any test code you write must follow the stack's testing module
 - Expected result stated as an observable — exit 0, a specific assertion, a DB state, an HTTP status — never "looks correct"
 
 ## Phase 3 — Run and record

@@ -29,7 +29,7 @@ Skip this phase when the request is already well-defined. When it is vague, ambi
 
 1. Scan codebase for existing patterns relevant to the goal
 2. Identify affected files and modules
-3. Note constraints: tech stack (Java 8 / Maven / Spring 3.2 / Hibernate 4.2), backward compatibility, data migration needs
+3. Note constraints: the declared tech stack (see `copilot-instructions.md` Tech Stack), backward compatibility, data migration needs
 
 ## Phase 3 — Classify Scope
 
@@ -59,7 +59,7 @@ Fill the template below (Small scope: sections 1–3 only; Medium+: full templat
 Before handing off, challenge the plan as an adversary would. Do not skip this when the plan "looks complete" — that is exactly when blind spots hide.
 
 - **Unstated assumptions**: what must be true for this plan to work that you never wrote down? (data shape, library version, call order, single-threaded access…)
-- **What breaks**: which existing caller, Spring bean, or `hbm.xml` mapping fails if you ship this as written?
+- **What breaks**: which existing caller, framework wiring, or ORM mapping fails if you ship this as written?
 - **Missing cases**: null/empty, concurrent access, stale cache after a write (which caches hold this data, who invalidates them, in what order relative to the DB write), rollback path, backward compatibility, migration ordering
 - **Weakest link**: the one step you are least sure about — name it explicitly
 
@@ -82,7 +82,7 @@ status: 'Planned'
 ## 1. Requirements & Constraints
 
 - REQ-001: <functional requirement>
-- CON-001: <constraint — e.g., Java 8, no Spring Boot>
+- CON-001: <constraint — e.g., a version lock from the declared stack>
 - PAT-001: <existing pattern to follow>
 
 ### Acceptance Criteria
@@ -105,13 +105,13 @@ Verifiable done conditions for the whole change — each must be testable, not a
 
 ## 3. Files
 
-- FILE-001: `path/to/File.java` — what changes
+- FILE-001: `path/to/file` — what changes
 
 ## 4. Impact / Affected Callers
 
 - Refactors / structural changes: inventory every caller and dependent of changed symbols, across packages — verify with the `find-impact` prompt, do not rely on a single research summary
-- IMP-001: `path/to/Caller.java:NN` — calls `<symbol>`; needs `<update>`
-- Spring XML beans / `hbm.xml` mappings referencing changed types
+- IMP-001: `path/to/caller:NN` — calls `<symbol>`; needs `<update>`
+- Framework wiring / ORM mappings (DI config, mapping files) referencing changed types
 
 ## 5. Risks & Alternatives
 

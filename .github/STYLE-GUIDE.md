@@ -199,12 +199,9 @@ For manual-only skills (`disable-model-invocation: true`) the entire description
 
 ## Phase 0 — Load canonical rules
 
-<MANDATORY pre-load gate (rule 4) — the leading step for code-touching skills: open the named instruction file(s) before any code-touching phase. The agent-body `## Coding Standards` bullets are a floor, not the full rules.>
+<MANDATORY pre-load gate (rule 4) — the leading step for code-touching skills: open the stack modules under `instructions/` covering the layers this task touches, referenced by module ROLE (e.g. "the stack's testing module"), never by hardcoded per-stack filename. The agent-body `## Coding Standards` bullets are a floor, not the full rules.>
 
-- `instructions/<name>.instructions.md` — <what this file covers>
-- `instructions/<name>.instructions.md` — <what this file covers>
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each module you opened and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
 
 ## Phase 1 — <Verb Phrase>
 
@@ -238,9 +235,9 @@ Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
 
 1. **Frontmatter** (**REQUIRED**): `name` + `description`. Only optional field: `disable-model-invocation: true` for manual-only skills. No `tools` in skill frontmatter (tools belong on agents).
 2. **H1** (**REQUIRED**): always `<Skill Name> — Workflow` — no variation, no exceptions, including the reference+process hybrid (`refactor`).
-3. **Opening paragraph** (**REQUIRED**): what the skill does + the specific instruction file(s) it relates to. The Phase 0 block (rule 4) carries the full per-skill set — never the `instructions/*.instructions.md` glob.
-4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only: `implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`): `## Phase 0 — Load canonical rules` names the canonical file(s) as specific `instructions/<name>.instructions.md` bullets (never the `*` glob) and closes with the read-back receipt — NAME each file opened, QUOTE its most load-bearing applicable rule. Broad skills name all relevant files; narrow skills just theirs. Human-reviewed — no longer machine-checked.
-5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`, imperative mood, numbered from 1; `## Phase 0 — Load canonical rules` (rule 4) is the only sanctioned Phase 0. **Exception**: the reference-style skill (`refactor`) may use topic-based H2 sections, with the pre-load gate as a bare leading `## Load canonical rules`.
+3. **Opening paragraph** (**REQUIRED**): what the skill does + the stack-module role(s) it relies on (e.g. "the stack's testing module under `instructions/`"). Skills are generic core — they must never hardcode per-stack instruction filenames; the `instructions/` directory is the swappable stack layer.
+4. **Instruction reference block** (**CONDITIONAL** — code-touching skills only: `implement`, `refactor`, `code-review`, `sql-review`, `security-audit`, `debug`, plus `verify` for its testing-module gate): `## Phase 0 — Load canonical rules` directs the model to open the stack modules under `instructions/` for the layers the task touches — module roles, never hardcoded filenames — and closes with the read-back receipt: NAME each module opened, QUOTE its most load-bearing applicable rule. Broad skills gate on all relevant layers; narrow skills scope the roles they need. Human-reviewed — no longer machine-checked.
+5. **Phase sections** (**REQUIRED** unless excepted): `## Phase N — <Verb Phrase>`, imperative mood, numbered from 1; `## Phase 0 — Load canonical rules` (rule 4) is the only sanctioned Phase 0. **Exception**: the reference-style skill (`refactor`) may use topic-based H2 sections after its `## Phase 0 — Load canonical rules` gate.
 6. **Rules section** (**OPTIONAL**): workflow-specific rules only — never a repeat of instruction-level rules. Omit rather than add an empty section.
 7. **Handoffs section** (**CONDITIONAL** — required when the skill hands off downstream): downstream `→` targets only — never upstream `←` lines (they duplicate the source's `→` and drift; reverse lookup: `grep -rn "→ \`<name>\`" .github/`). Skills by backticked name, agents with `@` prefix. Always the last body section when present.
 8. **Anti-Patterns section** (**OPTIONAL**): bullet list with `→` separator, or a paragraph if context-heavy.
@@ -318,7 +315,7 @@ Start any new hook script as a copy of the live, regression-tested `hooks/script
 | Reference type | Format | Example | Validated? |
 |---|---|---|---|
 | Instruction file | `` `instructions/<name>.instructions.md` `` | `` `instructions/sql.instructions.md` `` | ✅ CI |
-| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Avoid in skills — name specific files in the instruction-reference block instead | ❌ |
+| Instruction glob (all) | `` `instructions/*.instructions.md` `` | Avoid in skills — point at the module directory by role (the stack layer stays swappable); never hardcode per-stack filenames | ❌ |
 | Skill file | `` `skills/<name>/SKILL.md` `` | `` `skills/plan/SKILL.md` `` | ✅ CI |
 | Agent file | `` `agents/<name>.agent.md` `` | `` `agents/planner.agent.md` `` | ✅ CI |
 | Prompt file | `` `prompts/<name>.prompt.md` `` | `` `prompts/find-impact.prompt.md` `` | ✅ CI |
@@ -352,7 +349,7 @@ Enforced automatically on every PR that touches `.github/**/*.md`, the validator
 ### Tier 2: Human-review (PR review checklist)
 
 - [ ] H1 follows category naming convention
-- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its `instructions/` source per the **Floor ↔ Instruction map** below — the validator checks inter-agent byte-equality and anchor co-occurrence; the non-anchor remainder of each paraphrase is human-verified
+- [ ] Agent `## Coding Standards` floor covers the stack layer's version-lock essentials (shipped stack: Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) plus the drift sentinel, and each bullet still matches its `instructions/` source per the **Floor ↔ Instruction map** below — the validator checks inter-agent byte-equality and anchor co-occurrence; the non-anchor remainder of each paraphrase is human-verified
 - [ ] Phase sections use imperative verb phrases
 - [ ] No duplicated content across categories — two sanctioned exceptions: (1) the agent-body `## Coding Standards` embed, (2) skill checklists / self-verify gates / one-line recaps that *name* canonical conventions without adding detail (see AGENTS.md "Two narrow duplications"); full restatement with added detail is a defect
 - [ ] Handoff sections are downstream-only (`→`); no `←` upstream lines
@@ -374,6 +371,7 @@ Enforced automatically on every PR that touches `.github/**/*.md`, the validator
 | `**Access Control (A01)**` | `instructions/security.instructions.md` (A01) |
 | `**Deserialization (A08)**` | `instructions/security.instructions.md` (A08) |
 | `**SSRF (A10)**` | `instructions/security.instructions.md` (A10) |
+| `**Drift sentinel**` | — (guards floor ↔ `pom.xml` agreement; no instruction source, no canary anchor) |
 
 ---
 
@@ -399,6 +397,17 @@ Deleting or merging a skill / prompt / agent has touchpoints a filename grep wil
 8. Run validator: `bash .github/scripts/validate-style-guide.sh`
 
 Broken paths silently degrade Copilot output — they do not error.
+
+### Swapping the Stack Layer (porting to another stack)
+
+The generic core (skills, the `git-commit` / `check-n-plus-1` / `find-impact` prompts, hooks) ships unchanged. Swap, in one PR:
+
+1. Agent `## Coding Standards` floor bullets ×3 (byte-identical — write once, paste into `implementer` / `reviewer` / `debugger`) + each agent's persona line.
+2. The entire `instructions/` module set (keep role coverage: language, framework/ORM, SQL, DDL/migrations, security, views, config, testing).
+3. Stack-bound prompts: `prompts/check-tx.prompt.md`, `prompts/generate-migration-sql.prompt.md`.
+4. `copilot-instructions.md` Tech Stack section.
+5. The canary anchor registry inside `validate-style-guide.sh` (anchors are stack tokens) and the **Floor ↔ Instruction map** above.
+6. README tables (both languages) + run the validator.
 
 ### STYLE-GUIDE Changes
 

@@ -33,16 +33,17 @@ If the request is ambiguous, ask one round of clarifying questions. If scope is 
 
 **Hard boundary — not a style preference.** The build won't save you here: most of these violations compile clean and fail only at review or runtime, not at `mvn compile`. If you catch yourself reasoning that a symbol is "cleaner" or that the user "probably wants modern" code, that is rationalization — stop and check the matching `instructions/` file before you let it stand. When unsure whether a symbol exists in-version, look it up; never guess.
 
-Code you write MUST respect these hard boundaries — full rules in `instructions/` (the active skill names which files to open):
+Code you write MUST respect these hard boundaries — full rules live in the stack modules under `instructions/` (the active skill's pre-load gate opens them):
 
 - **Java 8**: no `var`, no `List.of()`/`Map.of()`, no records, no text blocks
-- **Spring 3.2**: XML config + `<tx:advice>` only — no `@Transactional` (unless legacy codebase already uses it consistently), no Spring Boot, no `@GetMapping`/`@PostMapping` (use `@RequestMapping`)
+- **Spring 3.2**: XML config + `<tx:advice>` only — no `@Transactional` (unless legacy codebase already uses it consistently), no manual `beginTransaction()`/`commit()`/`rollback()` in advised code, no Spring Boot, no `@GetMapping`/`@PostMapping` (use `@RequestMapping`)
 - **Hibernate 4.2**: `getCurrentSession()` + `hbm.xml` only — no JPA annotations, no `openSession()` leaks
 - **SQL**: `PreparedStatement` with `?` (JDBC) / named params `:paramName` (HQL) — never concatenate user input into query strings
 - **Security**: `<c:out>` / escape all JSP output; `HttpOnly` + `Secure` + `SameSite=Strict` cookie flags
 - **Access Control (A01)**: deny by default; every endpoint must check role/permission, not just login; CSRF tokens on all state-changing POST forms
 - **Deserialization (A08)**: never deserialize untrusted data via `ObjectInputStream` — prefer JSON
 - **SSRF (A10)**: allow-list hosts/ports/protocols for any server-side URL fetch with user-supplied target; block private IP ranges
+- **Drift sentinel**: if `pom.xml` pins a version that conflicts with this floor, stop and report the mismatch — never silently follow either side
 
 ## Skill Activation
 
@@ -61,7 +62,7 @@ Skip when the task is trivial (single-file typo fix, known location).
 
 ## Constraints
 
-- **Instruction pre-load**: before executing a code-touching skill, open the instruction files it references — glob auto-loading only fires when a matching file is attached to the request, so do not rely on it
+- **Instruction pre-load**: before executing a code-touching skill, open the stack modules under `instructions/` for the layers it touches — glob auto-loading only fires when a matching file is attached to the request, so do not rely on it
 - No new dependencies without explicit user approval
 - **Verify by running, not asserting**: actually run `mvn compile` and the relevant tests via the execute tool before declaring complete — never claim "it compiles" from inspection alone
 - Match existing naming conventions and package structure
