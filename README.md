@@ -64,7 +64,7 @@ Each category has one job. Content that belongs elsewhere is referenced, not cop
 | Layer | Contents | When porting to another stack |
 |---|---|---|
 | **Generic core** | All 9 skills, `check-n-plus-1` / `find-impact` / `git-commit` prompts, hooks, validator | Ships unchanged |
-| **Stack layer** | Agent `## Coding Standards` floor + personas, all of `instructions/` (the "stack modules"), `check-tx` / `generate-migration-sql` prompts, `copilot-instructions.md` Tech Stack, the validator's canary anchor registry | Swap per stack |
+| **Stack layer** | Agent `## Coding Standards` floor + personas (+ residual frontmatter/body mentions), all of `instructions/` (the "stack modules"), `check-tx` / `generate-migration-sql` prompts, `copilot-instructions.md` Tech Stack, the validator's canary anchor registry + anchor-keyed test fixtures | Swap per stack |
 
 Skills never hardcode stack names or instruction filenames — they enforce rules through the agent floor ("expand the floor's banned symbols and grep the diff") and the module directory ("open the stack modules under `instructions/`"). Swap the stack layer and the same pipeline drives any stack.
 
@@ -86,7 +86,7 @@ flowchart LR
 
 ## 🤖 Agents
 
-Select from the agents dropdown in Copilot Chat. Agent personas and the `## Coding Standards` floor carry the shipped stack layer (Java 8 / Maven); everything else about the agents is stack-agnostic.
+Select from the agents dropdown in Copilot Chat. The agents carry the shipped stack layer (Java 8 / Maven) in their personas, the `## Coding Standards` floor, and a few frontmatter/workflow mentions — the porting checklist sweeps them all; the routing and process logic is stack-agnostic.
 
 |   | Agent | Model | Description |
 |:-:|-------|-------|-------------|
@@ -250,11 +250,14 @@ Minimal global rules loaded in every conversation. Language, tech stack, and cod
 
 The process pipeline (plan → tasks → implement → verify, the reviews, debug) is stack-free. To retarget the whole config at a different stack, swap the stack layer in one PR:
 
-1. Rewrite the agent `## Coding Standards` floor bullets (byte-identical across `implementer` / `reviewer` / `debugger` — write once, paste three times) and each agent's persona line.
+1. Rewrite the agent `## Coding Standards` floor bullets (byte-identical across `implementer` / `reviewer` / `debugger` — write once, paste three times) and each agent's persona line, then sweep the rest of each agent file (frontmatter descriptions, constraints, delegation rules) for residual stack mentions.
 2. Replace the `instructions/` module set, keeping role coverage: language, framework/ORM, SQL, DDL/migrations, security, views, config, testing.
 3. Replace or drop the stack-bound prompts (`/check-tx`, `/generate-migration-sql`).
 4. Update the Tech Stack section of `copilot-instructions.md`.
-5. Update the canary anchor registry inside `.github/scripts/validate-style-guide.sh` (the floor↔instruction anchors are stack tokens) and run the validator.
+5. Update the canary anchor registry inside `.github/scripts/validate-style-guide.sh` (the floor↔instruction anchors are stack tokens), the anchor-keyed fixture mutations in `.github/scripts/test-validate-style-guide.sh`, and the Floor ↔ Instruction map in `.github/STYLE-GUIDE.md`.
+6. Grep the tree for the old stack's tokens, update the README tables, and run the validator plus its regression suite.
+
+The canonical checklist lives in `.github/STYLE-GUIDE.md` → File Lifecycle → Swapping the Stack Layer; if the two diverge, that one wins.
 
 ---
 

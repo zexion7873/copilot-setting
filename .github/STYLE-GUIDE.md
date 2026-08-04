@@ -402,12 +402,12 @@ Broken paths silently degrade Copilot output — they do not error.
 
 The generic core (skills, the `git-commit` / `check-n-plus-1` / `find-impact` prompts, hooks) ships unchanged. Swap, in one PR:
 
-1. Agent `## Coding Standards` floor bullets ×3 (byte-identical — write once, paste into `implementer` / `reviewer` / `debugger`) + each agent's persona line.
+1. Agent `## Coding Standards` floor bullets ×3 (byte-identical — write once, paste into `implementer` / `reviewer` / `debugger`) + each agent's persona line — then sweep the rest of every agent file (frontmatter `description`, constraints, delegation rules) for residual stack references: build commands, manifest names, and mapping-file names live outside the floor too.
 2. The entire `instructions/` module set (keep role coverage: language, framework/ORM, SQL, DDL/migrations, security, views, config, testing).
 3. Stack-bound prompts: `prompts/check-tx.prompt.md`, `prompts/generate-migration-sql.prompt.md`.
 4. `copilot-instructions.md` Tech Stack section.
-5. The canary anchor registry inside `validate-style-guide.sh` (anchors are stack tokens) and the **Floor ↔ Instruction map** above.
-6. README tables (both languages) + run the validator.
+5. The canary anchor registry inside `validate-style-guide.sh` (anchors are stack tokens), the fixture mutations keyed to shipped-stack anchor lines inside `test-validate-style-guide.sh` (on a swapped tree they no-op and the suite fails closed), and the **Floor ↔ Instruction map** above.
+6. README tables and porting sections (both languages) + the `AGENTS.md` stack mentions; finish with a whole-tree grep for the old stack's tokens, then run the validator and its regression suite.
 
 ### STYLE-GUIDE Changes
 

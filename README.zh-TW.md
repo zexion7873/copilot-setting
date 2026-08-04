@@ -64,7 +64,7 @@ my-workspace.code-workspace
 | 層 | 內容 | 移植到其他 stack 時 |
 |---|---|---|
 | **通用核心** | 全部 9 個 skill、`check-n-plus-1` / `find-impact` / `git-commit` prompt、hooks、validator | 原封不動 |
-| **Stack 層** | Agent 的 `## Coding Standards` floor + 角色設定、整個 `instructions/`（即「stack 模組」）、`check-tx` / `generate-migration-sql` prompt、`copilot-instructions.md` 的 Tech Stack、validator 內的 canary anchor registry | 逐 stack 替換 |
+| **Stack 層** | Agent 的 `## Coding Standards` floor + 角色設定（+ 散落於 frontmatter 與內文的殘留字句）、整個 `instructions/`（即「stack 模組」）、`check-tx` / `generate-migration-sql` prompt、`copilot-instructions.md` 的 Tech Stack、validator 內的 canary anchor registry + 以 stack 錨點為鍵的測試 fixture | 逐 stack 替換 |
 
 Skill 不寫死任何 stack 名稱或 instruction 檔名 — 規則透過 agent floor（「展開 floor 禁用符號並 grep diff」）與模組目錄（「開啟 `instructions/` 下的 stack 模組」）間接執行。換掉 stack 層，同一條 pipeline 就能驅動任何 stack。
 
@@ -86,7 +86,7 @@ flowchart LR
 
 ## 🤖 Agents
 
-在 Copilot Chat 的 agents dropdown 選擇。Agent 的角色設定與 `## Coding Standards` floor 承載隨附的 stack 層（Java 8 / Maven）；其餘部分皆與 stack 無關。
+在 Copilot Chat 的 agents dropdown 選擇。Agent 以角色設定、`## Coding Standards` floor 及少數 frontmatter / 工作流字句承載隨附的 stack 層（Java 8 / Maven）— 移植 checklist 會全數清掃；路由與流程邏輯則與 stack 無關。
 
 |   | Agent | 模型 | 說明 |
 |:-:|-------|------|------|
@@ -250,11 +250,14 @@ flowchart LR
 
 流程 pipeline（plan → tasks → implement → verify、各審查、debug）完全不含 stack。要把整包設定改指向其他技術棧，在同一個 PR 內替換 stack 層：
 
-1. 改寫 agent 的 `## Coding Standards` floor bullet（`implementer` / `reviewer` / `debugger` 三份 byte-identical — 寫一次、貼三份）與各 agent 的角色設定行。
+1. 改寫 agent 的 `## Coding Standards` floor bullet（`implementer` / `reviewer` / `debugger` 三份 byte-identical — 寫一次、貼三份）與各 agent 的角色設定行，接著清掃各 agent 檔的其餘部分（frontmatter 描述、constraints、委派規則），移除殘留的 stack 字句。
 2. 替換整個 `instructions/` 模組集，保持角色涵蓋：語言、框架/ORM、SQL、DDL/migration、安全、視圖、設定、測試。
 3. 替換或移除 stack 綁定的 prompt（`/check-tx`、`/generate-migration-sql`）。
 4. 更新 `copilot-instructions.md` 的 Tech Stack 區段。
-5. 更新 `.github/scripts/validate-style-guide.sh` 內的 canary anchor registry（floor↔instruction 錨點是 stack token），並執行 validator。
+5. 更新 `.github/scripts/validate-style-guide.sh` 內的 canary anchor registry（floor↔instruction 錨點是 stack token）、`.github/scripts/test-validate-style-guide.sh` 內以 stack 錨點為鍵的 fixture 變異，以及 `.github/STYLE-GUIDE.md` 內的 Floor ↔ Instruction map。
+6. grep 全樹清查舊 stack 的殘留字句，更新 README 表格，並執行 validator 與其回歸測試。
+
+正典 checklist 位於 `.github/STYLE-GUIDE.md` → File Lifecycle → Swapping the Stack Layer；兩者若有出入，以該處為準。
 
 ---
 

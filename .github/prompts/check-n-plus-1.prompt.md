@@ -9,4 +9,4 @@ Check this service method for N+1 query problems:
 2. Are SQL / ORM queries executed inside a loop?
 3. Are there lazy associations solvable with the ORM's eager or batch fetch mechanism?
 
-Output one entry per problem: location (`file:line`) → the triggering access (loop + lazy association) → fix (the ORM's eager-fetch or batch-fetch idiom). If the method is N+1-clean, say so in one line — do not pad with a per-check explanation.
+Output one entry per problem: location (`file:line`) → the triggering access (loop + lazy association) → fix (the eager-fetch or batch-fetch idiom the stack's ORM module under `instructions/` sanctions — never a mechanism it bans). If the method is N+1-clean, say so in one line — do not pad with a per-check explanation.

@@ -45,6 +45,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 - Pin dependency versions; no `SNAPSHOT` in production
 - Track CVEs: OWASP Dependency-Check (`mvn org.owasp:dependency-check-maven:check`) — `versions:display-dependency-updates` only lists newer versions, it does not scan vulnerabilities
+- Highest CVE-churn dependencies — cross-check these first when no scan report is attached: Spring, Hibernate, Jackson, Log4j, Commons
 - Spring 3.2 (EOL 2016) and Hibernate 4.2 (EOL — final release 2015) carry unpatched CVEs — document as baseline risk in every audit
 
 ## A07 Authentication Failures
