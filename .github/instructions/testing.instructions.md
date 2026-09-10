@@ -17,25 +17,13 @@ Java 8 language rules apply: `instructions/java.instructions.md`.
 ## Structure
 
 - One behavior per test; name `methodName_condition_expectedResult`; Arrange–Act–Assert, visually separated
-- No interdependence (isolated, any order); no logic (loops / conditionals) inside a test
 
 ## Integration Tests
 
 - `@ContextConfiguration` against a test-scoped XML context, not production beans
 - Test-class `@Transactional` auto-rollback is sanctioned — test-only; does NOT violate the production `<tx:advice>`-only rule (`instructions/spring-hibernate.instructions.md`)
-- Never hit a real external service — stub at the boundary
 
 ## Data & Mocks
 
 - Mock collaborators at the layer boundary (DAO in service tests); no shared mutable static fixtures
 - Deterministic: no `new Date()` / unseeded random — inject a fixed clock or seed
-
-## Anti-Patterns
-
-| Pattern | Problem | Fix |
-|---|---|---|
-| `org.junit.jupiter.api.Test` | JUnit 5 | `org.junit.Test` |
-| `@SpringBootTest` | No Spring Boot | `@RunWith(SpringJUnit4ClassRunner.class)` + `@ContextConfiguration` |
-| `@BeforeEach` / `@AfterEach` | JUnit 5 lifecycle | `@Before` / `@After` |
-| `@ExtendWith(MockitoExtension.class)` | JUnit 5 extension | `@RunWith(MockitoJUnitRunner.class)` |
-| `Thread.sleep()` for async | Flaky, slow | Await a condition / synchronous executor |

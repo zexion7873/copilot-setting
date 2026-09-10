@@ -25,13 +25,3 @@ applyTo: '**/*.jsp'
 ## Data Preparation
 
 - JSP must NOT trigger lazy loading — prepare all data in the controller/service before forwarding (`instructions/spring-hibernate.instructions.md`); a lazy-collection hit in a JSP means the service missed an eager fetch — fix the service, not the JSP
-
-## Anti-Patterns
-
-| Pattern | Problem | Fix |
-|---|---|---|
-| `${user.name}` unencoded | XSS | `<c:out value="${user.name}"/>` |
-| `title=${x}` (unquoted attribute) | Breakout via space / `=` despite escaping | `title="<c:out value='${x}'/>"` |
-| `onclick="do('${x}')"` | EL in event handler — escaping doesn't neutralize | `data-*` attribute, read from JS |
-| `<%= request.getParameter("q") %>` | Scriptlet + unencoded = XSS | `<c:out value="${param.q}"/>` |
-| `<% if (cond) { %>` | Java in the view | `<c:if test="${cond}">` |

@@ -69,7 +69,7 @@ Keep both minimal; full rule restatement with added detail in a skill is a defec
 
 ## Canonical Format — STYLE-GUIDE.md
 
-`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction, read the matching skeleton in STYLE-GUIDE.md. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
+`.github/STYLE-GUIDE.md` is the authoritative format spec for every file under `.github/`. Before adding or restructuring any agent / skill / instruction, read the matching category section in STYLE-GUIDE.md and an existing sibling file as the worked example. Format changes to any category require updating STYLE-GUIDE.md **first**, then propagating to existing files.
 
 ## Cross-Reference Format & Inbound Reference Check
 

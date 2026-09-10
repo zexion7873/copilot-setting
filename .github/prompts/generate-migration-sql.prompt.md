@@ -1,5 +1,4 @@
 ---
-agent: 'agent'
 description: 'Generate MySQL migration and rollback scripts from hbm.xml or entity changes.'
 ---
 

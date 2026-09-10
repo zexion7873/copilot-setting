@@ -9,13 +9,9 @@ OWASP Top 10 focused audit. Security rules: `instructions/security.instructions.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT report findings (Phase 4) until you have opened the instruction files for the code under audit.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
+**MANDATORY pre-load gate — do NOT report findings (Phase 4) until you have opened the instruction files for the code under audit.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules. Read-back receipt: NAME each file you opened and QUOTE its single most load-bearing rule for this change — a generic restatement you could have written from memory means you skipped the file.
 
-- `instructions/security.instructions.md` — OWASP Top 10 for Java web
-- `instructions/sql.instructions.md` — SQL injection, parameterization, JDBC resources
-- `instructions/jsp.instructions.md` — JSP / JSTL output encoding, XSS
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Code under audit — open each one: `instructions/security.instructions.md`, `instructions/sql.instructions.md`, `instructions/jsp.instructions.md`.
 
 ## Phase 1 — Map Attack Surface
 

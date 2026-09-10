@@ -34,13 +34,9 @@ This stack bootstraps via `web.xml` (no servlet initializers — see `instructio
 - Context split: `ContextLoaderListener` loads the root context (services, DAOs); `DispatcherServlet` loads only its own web context (controllers, view resolvers) — do not redefine the same bean in both
 - `OpenSessionInViewFilter` (OSIV), if used, is configured here — see `instructions/spring-hibernate.instructions.md`
 
-## Anti-Patterns
+## Version-Lock Traps (silent failures)
 
-| Pattern | Problem | Fix |
-|---|---|---|
-| `spring-beans-4.0.xsd` in namespace | Schema version exceeds Spring 3.2 runtime — silent misconfiguration | Use `spring-beans-3.2.xsd` (match actual framework version) |
-| `<tx:annotation-driven/>` | Conflicts with project's `<tx:advice>` + `<aop:config>` transaction strategy | Remove in greenfield / `<tx:advice>` modules; **keep** if the module is consistently `@Transactional`-based — removing it silently disables every annotated transaction (see the legacy exception in `instructions/spring-hibernate.instructions.md`) |
-| `<context:component-scan base-package="com.example"/>` | Scans entire package tree — picks up test doubles, unintended beans | Narrow to specific subpackage: `com.example.service` |
-| `<hibernate-mapping>` without `package` | Every `<class>` needs FQCN; noisy and error-prone | Add `package="com.example.entity"` on root element |
-| `<version>[1.0,2.0)</version>` | Version range — non-reproducible builds | Pin exact version: `<version>1.2.3</version>` |
-| `<version>2.0-SNAPSHOT</version>` in release POM | SNAPSHOT in release — build depends on mutable artifact | Release with fixed version; strip `-SNAPSHOT` before tagging |
+- `spring-beans-4.0.xsd` in a namespace declaration — schema version exceeds the Spring 3.2 runtime and misconfigures silently; use `spring-beans-3.2.xsd` to match the actual framework version
+- `<tx:annotation-driven/>` conflicts with this project's `<tx:advice>` + `<aop:config>` strategy — remove it in greenfield / `<tx:advice>` modules, but **keep** it if the module is consistently `@Transactional`-based: removing it silently disables every annotated transaction (see the legacy exception in `instructions/spring-hibernate.instructions.md`)
+- `<context:component-scan base-package="com.example"/>` scans the entire package tree and picks up test doubles and unintended beans — narrow it to specific subpackages
+- `MySQL8Dialect` / `MySQL57Dialect` in a `sessionFactory` bean — neither exists in Hibernate 4.2 (they arrived in 5.x); use `org.hibernate.dialect.MySQL5Dialect` or `MySQL5InnoDBDialect`, and never copy a dialect from a Hibernate 5.x or Spring Boot tutorial (`instructions/spring-hibernate.instructions.md`)

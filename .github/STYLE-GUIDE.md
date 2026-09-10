@@ -1,47 +1,9 @@
 # Copilot Configuration Style Guide
 
-Canonical format for every file type under `.github/`. All files MUST follow these skeletons. Format changes require updating this guide first.
+Canonical format for every file type under `.github/`. All files MUST follow the frontmatter and rules for their category; an existing sibling file is the worked example for body structure. Format changes require updating this guide first.
 
 The category roles and activation pipeline (Hooks → Agents → Skills → Instructions; Prompts standalone) are defined once in `AGENTS.md` → **Architecture** — this guide does not repeat the diagram.
-Each category has ONE job; content that belongs in another category MUST be referenced, not copied (see **Dependency Direction**).
-
----
-
-## Decision Tree
-
-Use this table to determine which file to create or modify.
-
-| I want to... | Create | Where |
-|---|---|---|
-| Add a coding convention | Instruction | `instructions/<name>.instructions.md` |
-| Add a new workflow | Skill | `skills/<name>/SKILL.md` (embed output template if needed) |
-| Add a new AI agent role | Agent | `agents/<name>.agent.md` |
-| Add a lightweight shortcut | Prompt | `prompts/<verb>-<object>.prompt.md` |
-| Block a dangerous command | Hook script | `hooks/scripts/<name>.sh` + register in `hooks/default.json` |
-| Add a review mode to @reviewer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/reviewer.agent.md` Skill Activation table |
-| Add a build mode to @implementer | Skill + agent table row | `skills/<name>/SKILL.md` + `agents/implementer.agent.md` Skill Activation table |
-
-After creating any file, verify inbound references resolve: `grep -rn "<new-filename>" .github/`.
-
----
-
-## Dependency Direction
-
-References between categories must follow these directions — prevents cycles and keeps each category's scope clean.
-
-| From → To | Allowed? | Notes |
-|---|---|---|
-| Agent → Skill | ✅ | Skill Activation table: `skill-name` |
-| Skill → Instruction | ✅ | "Rules live in `instructions/sql.instructions.md`" |
-| Skill → Skill | ✅ | Handoffs section only: `→ code-review skill` |
-| Instruction → Instruction | ✅ | Cross-reference related rules |
-| Skill → Agent | ✅ | Handoffs section only: "suggest `@reviewer`" |
-| Skill/Agent → Prompt | ✅ | Backticked name + the word "prompt" (e.g. the `find-impact` prompt); CI validates it resolves |
-| Instruction → Skill/Agent | ❌ | Rules are consumed, not consumers |
-| Prompt → Skill | ❌ | Prompts are standalone leaves; invoke the skill instead |
-| Hook → Skill/Agent/Instruction | ❌ | Hooks inspect tool calls only |
-
-> Prompt `agent:` frontmatter declares execution context, not a content dependency — the prompt **body** must not reference skill or agent files.
+Each category has ONE job; content that belongs in another category MUST be referenced, not copied.
 
 ---
 
@@ -56,37 +18,13 @@ applyTo: '<glob pattern>'
 ---
 ```
 
-### Body Skeleton
-
-```markdown
-# <Descriptive Title>
-
-<Scope statement (1–2 sentences), plus cross-references to related instruction files as relative paths from `.github/` (e.g., `instructions/sql.instructions.md`).>
-
-## <Topic Section>
-
-- Rule items as bullet lists
-- Reference tables where appropriate
-
-## Anti-Patterns
-
-| Pattern | Problem | Fix |
-|---|---|---|
-| `bad code` | Why it's wrong | `good code` or description |
-
-## Checklist
-
-- [ ] Verification item (optional section)
-```
-
 ### Rules
 
 1. **Frontmatter**: `description` + `applyTo` — both required, no other fields. `applyTo` must be a non-empty glob (an invalid glob silently prevents the instruction from loading). The `description` is the model's **selectability hint** for on-demand loading — VS Code passes every instruction's description into each request. Lead with the domain, then concrete triggers (task contexts, co-occurring symbols, version-lock negatives), then where to defer to a sibling; keep it one dense line.
 2. **H1**: descriptive title — no filename suffix, no category prefix.
 3. **Body**: opening scope statement + cross-references, then H2 topic sections — bullet lists for rules, tables for quick-reference lookups.
-4. **Anti-Patterns table**: 3-column `Pattern | Problem | Fix`. Column 2 explains *why* it's wrong, not a restatement of the pattern.
-5. **Checklist section**: optional `- [ ]` self-check — include only when the instruction benefits from one.
-6. **Cross-references**: backtick-wrapped relative paths from `.github/` (e.g., `` `instructions/sql.instructions.md` ``) — never bare names or absolute paths.
+4. **Checklist section**: optional `- [ ]` self-check — include only when the instruction benefits from one.
+5. **Cross-references**: backtick-wrapped relative paths from `.github/` (e.g., `` `instructions/sql.instructions.md` ``) — never bare names or absolute paths.
 
 ---
 
@@ -107,40 +45,6 @@ handoffs:                          # optional — only if this agent has handoff
     prompt: <Handoff prompt text>
     send: false
 ---
-```
-
-### Body Skeleton
-
-```markdown
-# <Name> — <Role Subtitle>
-
-<Role description (1–2 sentences). Tech stack context (e.g., "Java 8 / Maven projects"). Ambiguity-handling stance (e.g., "ask clarifying questions before planning").>
-
-## Coding Standards
-
-<Code-touching agents only. Hard-boundary coding rules the agent must enforce on every change.>
-
-## Skill Activation
-
-| Trigger | Skill | Output |
-|---|---|---|
-| "keyword", "關鍵字" | `skill-name` | What it produces |
-
-Default to `<default-skill>` if the user's intent is ambiguous but clearly <domain>-related.
-
-## Subagent Delegation
-
-<When and how to delegate to subagents. What to ask for, what NOT to ask for.>
-
-Skip delegation when <condition>.
-
-## Constraints
-
-- Constraint items (if applicable)
-
-## Handoff Guidance
-
-- <condition> → suggest `@agent`
 ```
 
 ### Rules
@@ -190,48 +94,6 @@ For manual-only skills (`disable-model-invocation: true`) the entire description
 - **No overlap with sibling skills on the same agent** — grep before adding: `grep -i "<new-trigger>" .github/skills/*/SKILL.md`. Cross-agent overlap is fine; the user's `@agent` choice disambiguates.
 - If a phrase could plausibly activate two sibling skills, the agent's Skill Activation section must name a default (e.g., "Default to `implement` if ambiguous").
 
-### Body Skeleton
-
-```markdown
-# <Skill Name> — Workflow
-
-<What this skill does (1–2 sentences). Cross-reference to instruction files that define rules.> Non-code-touching skills omit the Phase 0 block below.
-
-## Phase 0 — Load canonical rules
-
-<MANDATORY pre-load gate (rule 4) — the leading step for code-touching skills: open the named instruction file(s) before any code-touching phase. The agent-body `## Coding Standards` bullets are a floor, not the full rules.>
-
-- `instructions/<name>.instructions.md` — <what this file covers>
-- `instructions/<name>.instructions.md` — <what this file covers>
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
-
-## Phase 1 — <Verb Phrase>
-
-<Phase content — instructions, bash commands, tables, etc.>
-
-## Phase N — <Verb Phrase>
-
-<Phase content>
-
-## Rules
-
-- Rule items specific to this skill's workflow
-
-## Output Template
-
-<CONDITIONAL — only for skills emitting a fixed-shape structured artifact (plan, tasks, code-review, sql-review). The deterministic markdown skeleton the skill produces.>
-
-## Anti-Patterns
-
-- <Anti-pattern description> → <consequence or fix>
-
-## Handoffs
-
-- → `<skill>` skill — <when to hand off downstream>
-- → `@<agent>` — <when to suggest an agent downstream>
-```
-
 ### Rules
 
 Each rule is marked **REQUIRED**, **CONDITIONAL**, or **OPTIONAL**.
@@ -254,9 +116,10 @@ Standalone single-task shortcuts the user invokes via `/<prompt-name>`. A prompt
 
 ### Frontmatter (required fields)
 
+Do **not** set `agent:`. Omitting it means the prompt runs under whatever agent is already selected, so `/check-tx` invoked from `@implementer` keeps that agent's `## Coding Standards` floor loaded. Pinning `agent: 'agent'` switches to the built-in agent and discards the floor — the only deterministic channel a prompt has for the version lock.
+
 ```yaml
 ---
-agent: 'agent'
 description: '<One-sentence task description starting with an imperative verb.>'
 ---
 ```
@@ -293,7 +156,7 @@ Lifecycle guards that intercept agent tool calls before execution. Hooks inspect
       {
         "type": "command",
         "bash": "bash .github/hooks/scripts/<script-name>.sh",
-        "timeout": 5
+        "timeout": 30
       }
     ]
   }
@@ -340,27 +203,16 @@ Enforced automatically on every PR that touches `.github/**/*.md`, the validator
 - Frontmatter is a terminated `---` block starting at line 1 — an unterminated block is treated as no frontmatter at all
 - Instruction frontmatter has `description` + `applyTo`, both non-empty
 - Skill frontmatter has `name` + `description`; `name` matches the parent directory name; `description` ≤ 1024 characters; no `tools` field (tools belong on agents)
-- Prompt frontmatter has `agent` + `description` (non-empty)
+- Prompt frontmatter has a non-empty `description`
 - Agent frontmatter has `name`, `description`, `model`, `tools`
-- Agent and prompt `description` (and prompt `agent`) reject YAML block scalars `|`/`>`; skill `description` also rejects multi-line plain/quoted scalars — multi-line values are unparsed and would bypass the 1024-char cap
+- Agent and prompt `description` (and prompt `agent`, if present) reject YAML block scalars `|`/`>`; skill `description` also rejects multi-line plain/quoted scalars — multi-line values are unparsed and would bypass the 1024-char cap
 - Agent `handoffs[].agent` values reference existing agent names (case-sensitive)
 - An agent declaring `agents:` includes `'agent'` in its `tools` list (subagent delegation requires the `agent` tool)
 - Code-touching agents (`implementer`, `reviewer`, `debugger`) embed `## Coding Standards`, and its hard-boundary bullets (lines starting with `- `) are byte-identical across all three — only the `- ` lines are compared (per-agent intro prose may differ; prose drift is a Tier-2 check), and only top-level `- ` bullets are allowed, since indented lines, `*`/`+` bullets, or numbered items would escape the byte comparison
 - Floor↔instruction canary: each floor bullet's load-bearing anchor token appears verbatim in BOTH the `## Coding Standards` floor and the **body** of its mapped `instructions/` file (frontmatter excluded — `description:` trigger keywords would mask a deleted rule). This machine-checks the floor↔source link the byte-identity check cannot (that one compares floor to floor only). The validator holds the anchor→file registry — dropping the rule on either side trips it; rewording an anchor requires updating the registry
 - All canonical cross-references (`` `instructions/...` ``, `` `skills/...` ``, `` `agents/...` ``, `` `prompts/...` ``) resolve to existing files; name-style prompt mentions (backticked name + the word "prompt") resolve to a real `prompts/<name>.prompt.md`
 
-### Tier 2: Human-review (PR review checklist)
-
-- [ ] H1 follows category naming convention
-- [ ] Agent `## Coding Standards` floor covers the version-lock essentials (Java 8 / Spring 3.2 / Hibernate 4.2 / SQL / security) and each bullet still matches its `instructions/` source per the **Floor ↔ Instruction map** below — the validator checks inter-agent byte-equality and anchor co-occurrence; the non-anchor remainder of each paraphrase is human-verified
-- [ ] Phase sections use imperative verb phrases
-- [ ] No duplicated content across categories — two sanctioned exceptions: (1) the agent-body `## Coding Standards` embed, (2) skill checklists / self-verify gates / one-line recaps that *name* canonical conventions without adding detail (see AGENTS.md "Two narrow duplications"); full restatement with added detail is a defect
-- [ ] Handoff sections are downstream-only (`→`); no `←` upstream lines
-- [ ] Agent Skill Activation table matches the skills that reference that agent
-- [ ] Dependency direction rules are respected (see **Dependency Direction**)
-- [ ] Inline skill/agent mentions (`` `@agent` ``, `` `skill-name` ``) reference real entities
-- [ ] New/modified trigger keywords do not overlap with sibling skills on the same agent
-- [ ] Skills producing structured artifacts have `## Output Template` section (plan, tasks, code-review, sql-review)
+### Tier 2: Human-review
 
 **Floor ↔ Instruction map** — each floor bullet is a condensed paraphrase of a canonical rule, so the validator cannot byte-check the full paraphrase against `instructions/`; only the per-bullet **anchor token** is machine-checked (the Tier-1 canary; registry lives in the validator). When you change a floor bullet, its source, or an anchor token, re-check the pair AND update the canary registry:
 

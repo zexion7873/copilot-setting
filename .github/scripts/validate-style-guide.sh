@@ -276,10 +276,6 @@ if [ -d "$GITHUB_DIR/prompts" ]; then
     [ -f "$file" ] || continue
     name="$(basename "$file")"
 
-    if ! fm_has_key "$file" "agent"; then
-      error "$name: missing 'agent' in frontmatter"
-    fi
-
     if ! fm_has_key "$file" "description"; then
       error "$name: missing 'description' in frontmatter"
     elif [ -z "$(fm_value "$file" "description")" ]; then
@@ -288,7 +284,7 @@ if [ -d "$GITHUB_DIR/prompts" ]; then
 
     if fm_block "$file" | grep -qE '^(description|agent):[[:space:]]*[|>]'; then
       error "$name: frontmatter values must be single-line scalars (YAML block scalars |/> are not parsed by the validator)"
-    elif fm_has_key "$file" "agent" && fm_has_key "$file" "description" && [ -n "$(fm_value "$file" "description")" ]; then
+    elif fm_has_key "$file" "description" && [ -n "$(fm_value "$file" "description")" ]; then
       pass "$name"
     fi
   done
