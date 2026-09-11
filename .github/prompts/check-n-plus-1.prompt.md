@@ -1,5 +1,4 @@
 ---
-agent: 'agent'
 description: 'Check a service method for N+1 query problems — lazy loading, loop queries, missing JOIN FETCH.'
 ---
 

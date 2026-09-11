@@ -1,5 +1,4 @@
 ---
-agent: 'agent'
 description: 'Find all callers and dependents of the selected method or class — impact analysis before making changes.'
 ---
 

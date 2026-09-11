@@ -9,12 +9,9 @@ Close-the-loop verification: derive what must be true, bind each to a runnable c
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT derive or run checks until you have opened the instruction files for the layers under verification.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time:
+**MANDATORY pre-load gate — do NOT derive or run checks until you have opened the instruction files for the layers under verification.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time. Read-back receipt: NAME each file you opened and QUOTE its single most load-bearing rule for this change — a generic restatement you could have written from memory means you skipped the file.
 
-- `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 — every run command and any test code must match this stack, not JUnit 5 / Spring Boot Test
-- The layer instruction(s) for the feature under verification (e.g. `instructions/sql.instructions.md`, `instructions/security.instructions.md`) — their Anti-Patterns are the negative cases Phase 1 must cover
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this verification — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Open `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2, and every run command or test you write must match this stack, not JUnit 5 / Spring Boot Test — plus the layer instruction(s) for the feature under verification (e.g. `instructions/sql.instructions.md`, `instructions/security.instructions.md`), whose version-lock and hard-boundary rules are the negative cases Phase 1 must cover.
 
 ## Phase 1 — Derive the checks
 

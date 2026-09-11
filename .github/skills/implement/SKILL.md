@@ -9,44 +9,30 @@ Feature implementation for Java 8 / Maven / Spring Core / Hibernate 4.2 projects
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT write code (Phase 3) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
+**MANDATORY pre-load gate — do NOT write code (Phase 2) until you have opened the instruction files for the layers you touch.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules. Read-back receipt: NAME each file you opened and QUOTE its single most load-bearing rule for this change — a generic restatement you could have written from memory means you skipped the file.
 
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
-- `instructions/security.instructions.md` — OWASP Top 10
-- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/testing.instructions.md` — JUnit 4 / Mockito / Spring Test 3.2 (when writing tests)
+Layers you touch — open each one: `instructions/java.instructions.md`, `instructions/spring-hibernate.instructions.md`, `instructions/sql.instructions.md`, `instructions/sql-ddl.instructions.md`, `instructions/security.instructions.md`, `instructions/jsp.instructions.md`, `instructions/xml-config.instructions.md`, `instructions/testing.instructions.md` (the last when writing tests).
 
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
-
-## Phase 1 — Understand Context
-
-1. Read the task / user request
-2. Scan existing code for patterns: naming, layering, error handling, logging
-3. Identify affected files and their callers/dependents
-
-## Phase 2 — Discover Patterns
+## Phase 1 — Understand Context & Discover Patterns
 
 Before writing new code, find and follow existing patterns:
 - DAO pattern: how other DAOs use `SessionFactory`
 - Service pattern: how tx boundaries are structured
 - Error handling: project's exception hierarchy
 - Naming: existing conventions for classes, methods, variables
+- Affected files and their callers/dependents
 
-## Phase 3 — Implement
+## Phase 2 — Implement
 
 - Match existing patterns exactly — consistency over personal preference
 - One logical change per commit scope
 - Add logging at INFO for business events, DEBUG for diagnostics
 - Handle errors at the right layer; translate at boundaries
 
-## Phase 4 — Self-Verify
+## Phase 3 — Self-Verify
 
 - [ ] Ran `mvn compile` and the relevant tests — actually green, not assumed
-- [ ] Follows patterns found in Phase 2
+- [ ] Follows patterns found in Phase 1
 - [ ] Ran `grep -rnE '@Entity|@Table|@Column|openSession\(|beginTransaction\(' <changed files>` — zero hits, or each `beginTransaction(` hit consciously justified as non-advised code per `instructions/spring-hibernate.instructions.md` (the first four compile but violate the Spring 3.2 / Hibernate 4.2 lock; the grep is mechanical, the `beginTransaction(` justification is the only judgement step)
 - [ ] No `@Transactional` on NEW production code (use `<tx:advice>`); test-class auto-rollback usage is sanctioned per `instructions/testing.instructions.md`; a module already consistently `@Transactional` may sustain it per `instructions/spring-hibernate.instructions.md`
 - [ ] SQL uses parameterized queries only

@@ -53,7 +53,7 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 
 ## A08 Integrity Failures
 
-- Reject untrusted deserialization; prefer JSON over Java native serialization
+- Reject untrusted deserialization — never `ObjectInputStream.readObject()` on data from a client; prefer JSON over Java native serialization
 
 ## A09 Logging Failures
 
@@ -63,15 +63,4 @@ Secure by default. State what risk is mitigated when writing security code. SQL 
 ## A10 SSRF
 
 - Allow-list for hosts/ports/protocols on user-supplied URLs
-- Block private, loopback, and link-local ranges (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `127.0.0.0/8`, `169.254.0.0/16` — link-local, covers the `169.254.169.254` cloud-metadata endpoint; IPv6 `::1` and `fc00::/7`)
-
-## Anti-Patterns
-
-| Pattern | Problem | Fix |
-|---|---|---|
-| Stack trace in error response | Leaks internals (A05) | Log server-side; generic error to client |
-| `new URL(userInput).openStream()` | SSRF (A10) | Allow-list hosts; block private IPs |
-| No logging on failed logins | Brute-force undetected (A09) | Log with IP + timestamp |
-| `ObjectInputStream.readObject()` on untrusted data | Deserialization RCE (A08) | Prefer JSON |
-| Hardcoded credentials | First thing attackers try (A05) | Env vars / secret store |
-| `DocumentBuilderFactory.newInstance()` parsing user XML unhardened | XXE — file read, SSRF, DoS (A03) | `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)` |
+- Block private IP ranges, loopback, and link-local (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `127.0.0.0/8`, `169.254.0.0/16` — link-local, covers the `169.254.169.254` cloud-metadata endpoint; IPv6 `::1` and `fc00::/7`)

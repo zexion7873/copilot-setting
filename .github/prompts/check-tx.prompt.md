@@ -1,5 +1,4 @@
 ---
-agent: 'agent'
 description: 'Check transaction boundary correctness — self-invocation, rollback-for, read-only, and tx:advice coverage.'
 ---
 

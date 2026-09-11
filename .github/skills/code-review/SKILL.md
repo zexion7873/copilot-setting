@@ -9,24 +9,13 @@ Structured code review.
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the instruction files for the layers under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
+**MANDATORY pre-load gate — do NOT render a verdict (Phase 5) until you have opened the instruction files for the layers under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules. Read-back receipt: NAME each file you opened and QUOTE its single most load-bearing rule for this change — a generic restatement you could have written from memory means you skipped the file.
 
-- `instructions/java.instructions.md` — Java 8 language boundary
-- `instructions/spring-hibernate.instructions.md` — Spring 3.2 + Hibernate 4.2
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
-- `instructions/security.instructions.md` — OWASP Top 10
-- `instructions/jsp.instructions.md` — JSP / JSTL, XSS
-- `instructions/xml-config.instructions.md` — Spring XML, hbm.xml, Maven POM
-- `instructions/testing.instructions.md` — test conventions (test-class `@Transactional` auto-rollback is sanctioned)
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+Layers under review — open each one the change touches: `instructions/java.instructions.md`, `instructions/spring-hibernate.instructions.md`, `instructions/sql.instructions.md`, `instructions/sql-ddl.instructions.md`, `instructions/security.instructions.md`, `instructions/jsp.instructions.md`, `instructions/xml-config.instructions.md`, `instructions/testing.instructions.md` (test-class `@Transactional` auto-rollback is sanctioned).
 
 ## Phase 1 — Understand the Change
 
-1. Read the diff / files under review
-2. Understand the intent: what problem does this solve?
-3. Check if the approach matches existing patterns
+Read the diff and the files under review; establish the intent (what problem it solves) and whether the approach matches existing patterns.
 
 ## Phase 2 — Review by Category
 

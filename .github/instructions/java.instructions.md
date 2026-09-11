@@ -18,15 +18,7 @@ This project is Java 8. AI models default to modern Java, and that pull is stron
 
 ## Optional
 
-- Return type only — never field, parameter, or collection element
-- `orElse()` for cheap defaults; `orElseGet()` for expensive computation
 - `orElseThrow(SomeException::new)` over `.get()` — `.get()` throws cryptic `NoSuchElementException`. Note: Java 8 requires the supplier form `orElseThrow(() -> new ...)` — the no-arg `orElseThrow()` is Java 10+.
-
-## Streams
-
-- One operation per line; break chain at `.collect()`
-- Never modify external state inside `forEach` / `map` / `filter`
-- Prefer `for` loop for simple iterations with side effects
 
 ## Date and Time
 
@@ -65,12 +57,3 @@ This project is Java 8. AI models default to modern Java, and that pull is stron
 - Exception as last arg: `log.error("Failed order {}", orderId, e)`
 - Never log secrets, tokens, PII, or full request/response bodies
 - ERROR = needs human attention; WARN = unexpected but recoverable; INFO = business events; DEBUG = diagnostics
-
-## Anti-Patterns
-
-| Pattern | Problem | Fix |
-|---|---|---|
-| `catch (Throwable t) { }` | Catches unrecoverable `Error`s; empty body swallows | Catch specific exception; never empty body |
-| `System.out.println(...)` | Unstructured, no levels, lost in production | `log.debug(...)` via SLF4J |
-| `catch (Exception e) { return null; }` | Converts to NPE elsewhere | Rethrow meaningful exception or `Optional.empty()` |
-| `new Date()` / `Calendar.getInstance()` in business logic | Legacy mutable API | `java.time` (`LocalDateTime.now()` etc.) — but hbm.xml entity date fields & `<fmt:formatDate>` inputs must stay `java.util.Date` (Hibernate 4.2 / JSTL 1.2 lack java.time) |

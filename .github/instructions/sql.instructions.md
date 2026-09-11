@@ -1,6 +1,6 @@
 ---
 description: 'Load when writing or reviewing SQL in Java code — JDBC DAOs, HQL, query tuning. Triggers on: PreparedStatement/? (no concat), :paramName, no SELECT *, WHERE on UPDATE/DELETE, indexes, EXPLAIN. Raw JDBC, not Spring Boot. DDL/migrations: sql-ddl.instructions.md. Defer Hibernate queries to spring-hibernate.instructions.md.'
-applyTo: '**/*.java, **/*.hbm.xml'
+applyTo: '**/*.java, **/*.hbm.xml, **/*.sql'
 ---
 
 # SQL Conventions
@@ -29,14 +29,3 @@ Non-negotiable rules for all SQL — raw JDBC, HQL, native queries. Hibernate qu
 - `try-with-resources` for `Connection`, `PreparedStatement`, `ResultSet`
 - `WHERE` clause mandatory on every `UPDATE` and `DELETE`
 - Transactions (raw JDBC only — Spring-managed `<tx:advice>` handles this automatically): commit or rollback on every code path
-
-## Anti-Patterns
-
-| Pattern | Problem | Fix |
-|---|---|---|
-| `"WHERE name = '" + name + "'"` | SQL injection | `PreparedStatement` with `?` + `setString()` |
-| `SELECT * FROM orders` | Unnecessary columns; schema-fragile | List columns explicitly |
-| `WHERE YEAR(created_at) = 2024` | Function kills index | Range: `>= '2024-01-01' AND < '2025-01-01'` |
-| `LIMIT 10 OFFSET 10000` | Scans 10K rows to discard | Cursor: `WHERE id > ? ORDER BY id LIMIT 10` |
-| SQL inside a `for` loop | N+1 queries | `WHERE id IN (?, ...)` or JOIN |
-| `Connection` without try-with-resources | Leak on exception; pool exhaustion | `try (Connection c = ...) { }` |

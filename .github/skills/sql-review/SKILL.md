@@ -9,14 +9,9 @@ SQL-focused review covering both queries and schema migrations. Rules: `instruct
 
 ## Phase 0 — Load canonical rules
 
-**MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules:
+**MANDATORY pre-load gate — do NOT report findings (Phase 7) until you have opened the instruction files for the SQL under review.** Your training data defaults to modern Java/Spring; these files are the version lock for Java 8 / Spring 3.2 / Hibernate 4.2. Open them first, every time — the negative lists in the agent body are a floor, not the full rules. Read-back receipt: NAME each file you opened and QUOTE its single most load-bearing rule for this change — a generic restatement you could have written from memory means you skipped the file.
 
-- `instructions/sql.instructions.md` — SQL injection, indexing, JDBC resources
-- `instructions/sql-ddl.instructions.md` — MySQL DDL & migration safety, stored procedures
-- `instructions/spring-hibernate.instructions.md` — Hibernate hbm.xml mappings to re-align after a schema change
-- `instructions/xml-config.instructions.md` — hbm.xml structure / conventions
-
-Read-back receipt (self-check, not machine-enforced): before leaving this step, NAME each instruction file you opened above and QUOTE the single most load-bearing rule from each that applies to this change — a generic restatement you could have written from memory means you skipped the file, so open it for real.
+SQL under review — open each one: `instructions/sql.instructions.md`, `instructions/sql-ddl.instructions.md`, `instructions/spring-hibernate.instructions.md` (hbm.xml mappings to re-align after a schema change), `instructions/xml-config.instructions.md` (hbm.xml structure / conventions).
 
 ## Phase 1 — Collect and Classify
 

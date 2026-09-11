@@ -1,5 +1,4 @@
 ---
-agent: 'agent'
 description: 'Stage related changes and commit with a Conventional Commits message'
 ---
 
