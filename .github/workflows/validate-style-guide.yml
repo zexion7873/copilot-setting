@@ -6,6 +6,8 @@ on:
       - '.github/**/*.md'
       - '.github/scripts/validate-style-guide.sh'
       - '.github/scripts/test-validate-style-guide.sh'
+      - '.github/scripts/behavior-detect.sh'
+      - '.github/scripts/test-behavior-detect.sh'
       - '.github/hooks/**'
       - '.github/workflows/validate-style-guide.yml'
 
@@ -23,3 +25,6 @@ jobs:
 
       - name: Run hook regression tests
         run: bash .github/hooks/scripts/test-block-dangerous-commands.sh
+
+      - name: Run behavior detector self-test (Rung 3 instrument)
+        run: bash .github/scripts/test-behavior-detect.sh
