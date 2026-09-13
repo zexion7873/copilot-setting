@@ -257,6 +257,7 @@ else
 List.of(|java
 @GetMapping|spring-hibernate
 getCurrentSession(|spring-hibernate
+hbm2ddl.auto|properties-config
 :paramName|sql
 <c:out>|jsp
 SameSite=Strict|security

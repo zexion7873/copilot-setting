@@ -58,3 +58,4 @@ No Spring Boot, no Spring 4+, no JPA annotations — AI defaults to all three. S
 - Collections `lazy="true"` explicit for intent
 - FK naming `foreign-key="fk_<child>_<parent_col>"` — match the SQL DDL convention so Hibernate-generated and hand-written DDL agree (`instructions/sql-ddl.instructions.md`)
 - Second-level cache opt-in per entity, never global
+- Verify every `column=` against the live schema before committing a mapping — with `hbm2ddl` off (the rule on this stack, `instructions/properties-config.instructions.md`) Hibernate 4.2 validates nothing at startup, so a wrong column name surfaces as a query-time failure far from the edit
