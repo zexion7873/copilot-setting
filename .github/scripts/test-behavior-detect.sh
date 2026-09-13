@@ -37,9 +37,21 @@ assert() {
 assert "RED: @GetMapping is a violation" 1 \
   $'@GetMapping("/users")\npublic List<User> users() { return svc.all(); }'
 
-# RED — sibling shorthand annotations are banned too.
+# RED — one case per alternative in the detector's `(Get|Post|Put|Delete|Patch)`
+# group. These read as repetition but are not: with only Get and Post covered,
+# dropping `Put`, `Delete` or `Patch` from that group leaves the suite fully
+# green, so each alternative needs its own case to be guarded at all.
 assert "RED: @PostMapping is a violation" 1 \
   $'@PostMapping("/users")\npublic void create(@RequestBody User u) {}'
+
+assert "RED: @PutMapping is a violation" 1 \
+  $'@PutMapping("/users/{id}")\npublic void update(@PathVariable Long id) {}'
+
+assert "RED: @DeleteMapping is a violation" 1 \
+  $'@DeleteMapping("/users/{id}")\npublic void remove(@PathVariable Long id) {}'
+
+assert "RED: @PatchMapping is a violation" 1 \
+  $'@PatchMapping("/users/{id}")\npublic void patch(@PathVariable Long id) {}'
 
 # GREEN — the prescribed Spring 3.2 form must pass (exit 0).
 assert "GREEN: @RequestMapping is the prescribed form" 0 \
@@ -56,6 +68,13 @@ assert "TRAP: longer token is not the banned annotation" 0 \
 # TRAP — a commented-out mention must NOT trip.
 assert "TRAP: commented-out mention" 0 \
   $'// legacy note: do not use @GetMapping here\n@RequestMapping("/x")\npublic void x() {}'
+
+# TRAP — a javadoc reference names the type without applying it. This is what
+# guards the leading `@` in the pattern: the line starts with ` *`, not `//`, so
+# the comment filter does not reach it, and `GetMapping}` satisfies the trailing
+# guard. Drop the `@` anchor and this case is the only one that fails.
+assert "TRAP: javadoc reference is a mention, not a use" 0 \
+  $'/**\n * See {@link GetMapping} for the banned Spring 4.3 form.\n */\n@RequestMapping("/x")\npublic void x() {}'
 
 echo "----------------------------------------"
 echo "PASS: $PASS  FAIL: $FAIL"

@@ -16,11 +16,12 @@ The target audience of the artifacts here is **Copilot users working in downstre
 
 ## Validation Commands
 
-Run both before committing changes under `.github/` (also enforced in CI via `.github/workflows/validate-style-guide.yml`):
+Run all three before committing changes under `.github/` (also enforced in CI via `.github/workflows/validate-style-guide.yml`):
 
 ```bash
 bash .github/scripts/test-validate-style-guide.sh   # regression-test the validator itself
 bash .github/scripts/validate-style-guide.sh        # validate the real tree
+bash .github/scripts/test-behavior-detect.sh        # self-test the downstream grader
 ```
 
 One-time local setup so the validator also runs on `git commit` (`.githooks/pre-commit` runs it against the staged index when `.github/` markdown is staged):
@@ -31,7 +32,7 @@ git config core.hooksPath .githooks
 
 The validator enforces: frontmatter presence with a terminated block, single-line `description` / `agent` scalars, skill `description` ≤ 1024 chars, skill `name`-matches-directory, no `tools` field on skills, agent required frontmatter keys, byte-identical agent `## Coding Standards` floor across `implementer` / `reviewer` / `debugger`, the floor↔instruction anchor canary, and resolution of path-style cross-references (`instructions/…`, `skills/…/SKILL.md`, `agents/….agent.md`, `prompts/….prompt.md`), handoff targets, and backtick-wrapped prompt mentions. Full machine-checked rule list: `.github/STYLE-GUIDE.md` → "Tier 1: Machine-checked".
 
-CI additionally runs `.github/scripts/test-behavior-detect.sh` — the self-test for `behavior-detect.sh`, a standalone downstream grader for the Spring 3.2 mapping-annotation rule (not config injected into sessions; see the README "Downstream tooling" note). The self-test runs here; grading real Java is the downstream caller's job.
+`behavior-detect.sh` is a standalone downstream grader for the Spring 3.2 mapping-annotation rule, not config injected into sessions (see the README "Downstream tooling" note). Only its self-test runs here; grading real Java is the downstream caller's job. The pre-commit hook runs `validate-style-guide.sh` alone, so that self-test is yours to run — hence its place in the list above.
 
 ## Architecture
 
