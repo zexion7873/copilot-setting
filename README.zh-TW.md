@@ -218,10 +218,10 @@ flowchart LR
 | 檔案 | applyTo | 說明 |
 |------|---------|------|
 | `java` | `**/*.java` | Java 8 語言邊界、例外處理、SLF4J logging、程式碼風格 — 聚焦在 AI 模型預設會搞錯的部分 |
-| `jsp` | `**/*.jsp` | JSP 慣例 — 透過 `<c:out>` 防 XSS、JSTL-only 政策、輸出編碼 |
-| `security` | `**/*.java, **/*.jsp` | OWASP Top 10 精華版，針對 Java web 應用 |
+| `jsp` | `**/*.jsp, **/*.jspf, **/*.tag, **/*.tagf` | JSP 慣例 — 透過 `<c:out>` 防 XSS、JSTL-only 政策、輸出編碼 |
+| `security` | `**/*.java, **/*.jsp, **/*.jspf, **/*.tag, **/*.tagf` | OWASP Top 10 精華版，針對 Java web 應用 |
 | `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core 3.2 + Hibernate 4.2 — native Session API、hbm.xml mapping、`getCurrentSession()` 生命週期、XML `<tx:advice>` transaction。**最關鍵的一份** |
-| `sql` | `**/*.java, **/*.hbm.xml` | SQL injection 防護、效能陷阱、JDBC resource handling |
+| `sql` | `**/*.java, **/*.hbm.xml, **/*.sql` | SQL injection 防護、效能陷阱、JDBC resource handling |
 | `sql-ddl` | `**/*.sql` | MySQL DDL 與 migration 安全 — rollback script、online schema change、預存程序 |
 | `testing` | `**/*Test.java, **/*Tests.java, **/*IT.java` | 測試慣例 — JUnit 4 + Mockito + Spring Test 3.2，禁 JUnit 5 / Spring Boot Test |
 | `xml-config` | `**/*.xml` | Spring XML config、Hibernate hbm.xml、Maven POM 慣例 |

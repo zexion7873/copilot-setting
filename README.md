@@ -218,10 +218,10 @@ Automatically injected into the system prompt when the current file matches the 
 | File | applyTo | Description |
 |------|---------|-------------|
 | `java` | `**/*.java` | Java 8 language boundary, exception handling, SLF4J logging, and code style — focuses on what AI models get wrong by default. |
-| `jsp` | `**/*.jsp` | JSP conventions — XSS prevention via `<c:out>`, JSTL-only policy, output encoding. |
-| `security` | `**/*.java, **/*.jsp` | OWASP Top 10 essentials for Java web applications. |
+| `jsp` | `**/*.jsp, **/*.jspf, **/*.tag, **/*.tagf` | JSP conventions — XSS prevention via `<c:out>`, JSTL-only policy, output encoding. |
+| `security` | `**/*.java, **/*.jsp, **/*.jspf, **/*.tag, **/*.tagf` | OWASP Top 10 essentials for Java web applications. |
 | `spring-hibernate` | `**/*.java, **/*.hbm.xml` | Spring Core 3.2 + Hibernate 4.2 — native Session API, hbm.xml mappings, `getCurrentSession()` lifecycle, XML `<tx:advice>` transactions. The most critical file. |
-| `sql` | `**/*.java, **/*.hbm.xml` | SQL injection prevention, performance pitfalls, and JDBC resource handling. |
+| `sql` | `**/*.java, **/*.hbm.xml, **/*.sql` | SQL injection prevention, performance pitfalls, and JDBC resource handling. |
 | `sql-ddl` | `**/*.sql` | MySQL DDL and migration safety — rollback scripts, online schema change, stored procedures. |
 | `testing` | `**/*Test.java, **/*Tests.java, **/*IT.java` | Test conventions — JUnit 4 + Mockito + Spring Test 3.2, no JUnit 5, no Spring Boot Test. |
 | `xml-config` | `**/*.xml` | Spring XML config, Hibernate hbm.xml, and Maven POM conventions. |
