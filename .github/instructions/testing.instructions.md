@@ -17,6 +17,7 @@ Java 8 language rules apply: `instructions/java.instructions.md`.
 ## Structure
 
 - One behavior per test; name `methodName_condition_expectedResult`; Arrange–Act–Assert, visually separated
+- No interdependence (isolated, any order); no logic (loops / conditionals) inside a test
 
 ## Integration Tests
 
@@ -26,4 +27,6 @@ Java 8 language rules apply: `instructions/java.instructions.md`.
 ## Data & Mocks
 
 - Mock collaborators at the layer boundary (DAO in service tests); no shared mutable static fixtures
+- Never hit a real external service — stub at the boundary
 - Deterministic: no `new Date()` / unseeded random — inject a fixed clock or seed
+- Never `Thread.sleep()` to wait for async — flaky and slow; await a condition or inject a synchronous executor
