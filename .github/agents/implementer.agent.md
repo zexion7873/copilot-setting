@@ -38,6 +38,7 @@ Code you write MUST respect these hard boundaries — full rules in `instruction
 - **Java 8**: no `var`, no `List.of()`/`Map.of()`, no records, no text blocks
 - **Spring 3.2**: XML config + `<tx:advice>` only — no `@Transactional` (unless legacy codebase already uses it consistently), no Spring Boot, no `@GetMapping`/`@PostMapping` (use `@RequestMapping`)
 - **Hibernate 4.2**: `getCurrentSession()` + `hbm.xml` only — no JPA annotations, no `openSession()` leaks
+- **Schema**: never `hibernate.hbm2ddl.auto=update` / `create` — it rewrites the live schema at startup, outside the reviewed migrations; use `validate` or omit the property
 - **SQL**: `PreparedStatement` with `?` (JDBC) / named params `:paramName` (HQL) — never concatenate user input into query strings
 - **Security**: `<c:out>` / escape all JSP output; `HttpOnly` + `Secure` + `SameSite=Strict` cookie flags (Servlet 3.0 has no SameSite API — set it via the `Set-Cookie` response header or container config)
 - **Access Control (A01)**: deny by default; every endpoint must check role/permission, not just login; CSRF tokens on all state-changing POST forms

@@ -1,6 +1,6 @@
 ---
-description: 'Load when writing or reviewing a .jsp view — XSS-safe encoding, JSTL-only (no scriptlets). Triggers on: c:out/fn:escapeXml, raw ${...}, <% %>/<%= %> scriptlets, EL in onclick/javascript:, JSON in <script>, view-layer LazyInitializationException. Defer XSS internals to security.instructions.md.'
-applyTo: '**/*.jsp'
+description: 'Load when writing or reviewing a .jsp / .jspf / .tag view — XSS-safe encoding, JSTL-only (no scriptlets). Triggers on: c:out/fn:escapeXml, raw ${...}, <% %>/<%= %> scriptlets, EL in onclick/javascript:, JSON in <script>, view-layer LazyInitializationException. Defer XSS internals to security.instructions.md.'
+applyTo: '**/*.jsp, **/*.jspf, **/*.tag, **/*.tagf'
 ---
 
 # JSP Conventions
@@ -17,6 +17,7 @@ applyTo: '**/*.jsp'
 
 - No scriptlets (`<% ... %>`); no `<%= ... %>` — use `<c:out>`
 - Logic: `<c:if>`, `<c:choose>`, `<c:forEach>`; formatting: `<fmt:formatDate>`, `<fmt:formatNumber>`
+- `<fmt:formatDate value="${...}"/>` takes a `java.util.Date` only — JSTL 1.2 predates `java.time`, so a `LocalDateTime` reaching it fails at render. Convert at the service boundary, never in the view (`instructions/java.instructions.md`)
 
 ## Includes
 

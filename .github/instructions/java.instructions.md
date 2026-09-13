@@ -18,7 +18,15 @@ This project is Java 8. AI models default to modern Java, and that pull is stron
 
 ## Optional
 
+- Return type only — never field, parameter, or collection element
 - `orElseThrow(SomeException::new)` over `.get()` — `.get()` throws cryptic `NoSuchElementException`. Note: Java 8 requires the supplier form `orElseThrow(() -> new ...)` — the no-arg `orElseThrow()` is Java 10+.
+- `orElse()` for cheap defaults; `orElseGet()` for expensive computation
+
+## Streams
+
+- One operation per line; break chain at `.collect()`
+- Never modify external state inside `forEach` / `map` / `filter`
+- Prefer `for` loop for simple iterations with side effects
 
 ## Date and Time
 
@@ -53,6 +61,7 @@ This project is Java 8. AI models default to modern Java, and that pull is stron
 ## Logging (SLF4J)
 
 - `private static final Logger log = LoggerFactory.getLogger(MyClass.class);`
+- Never `System.out.println` — unstructured, no levels, lost in production
 - Parameterized only: `log.info("User {} logged in", userId)` — never `+` concatenation
 - Exception as last arg: `log.error("Failed order {}", orderId, e)`
 - Never log secrets, tokens, PII, or full request/response bodies
